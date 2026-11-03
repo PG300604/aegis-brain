@@ -54,6 +54,11 @@ def main() -> None:
     search_parser.add_argument("query", help="Search query string")
     search_parser.add_argument("--limit", "-n", type=int, default=5, help="Max results")
 
+    # recall (instant recall for recent tasks or query)
+    recall_parser = subparsers.add_parser("recall", help="Instantly recall recent tasks, decisions, or search memories")
+    recall_parser.add_argument("query", nargs="?", default=None, help="Optional search query keyword")
+    recall_parser.add_argument("--limit", "-n", type=int, default=5, help="Max results (default: 5)")
+
     # decision
     dec_parser = subparsers.add_parser("decision", help="Record an architectural decision")
     dec_parser.add_argument("--category", "-c", default="GENERAL", help="Decision category")
@@ -131,6 +136,30 @@ def main() -> None:
             print(f"    Decision:  {r.get('decision')}")
             if r.get("rationale"):
                 print(f"    Rationale: {r.get('rationale')}")
+            print()
+
+    elif args.command == "recall":
+        if args.query:
+            results = search_memories(args.query, limit=args.limit)
+            header = f"Matches for '{args.query}'"
+        else:
+            results = get_recent_decisions(limit=args.limit)
+            header = "Recent Decisions and Workflows"
+
+        print(f"=== AegisBrain Memory Recall ({header}) ===\n")
+        if not results:
+            print("No matching memories found.")
+        for idx, r in enumerate(results, 1):
+            created = r.get("created_at", "")
+            time_str = f" [{created}]" if created else ""
+            print(f"[{idx}] [{r.get('category')}]{time_str} {r.get('title')}")
+            print(f"    Summary:   {r.get('decision')}")
+            if r.get("rationale"):
+                print(f"    Rationale: {r.get('rationale')}")
+            tags = r.get("tags")
+            if tags:
+                if isinstance(tags, list):
+                    print(f"    Tags:      {', '.join(tags)}")
             print()
 
     elif args.command == "decision":

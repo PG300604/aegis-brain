@@ -129,6 +129,18 @@ python3 -m aegis.cli bootstrap > /dev/null 2>&1
 
 ## Workflows
 
+### Instant Memory Recall
+
+Quickly recall past tasks, decisions, or recent workflows with near-zero latency and minimal token consumption:
+
+```bash
+# Recall the most recent tasks and decisions (default: last 5)
+aegis recall
+
+# Search across past workflows and decisions with a keyword
+aegis recall "banner"
+```
+
 ### Memory Search
 
 Search across all recorded architectural decisions, past technical solutions, and workspace notes instantly:

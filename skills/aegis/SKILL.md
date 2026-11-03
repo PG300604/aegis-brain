@@ -25,6 +25,7 @@ Whenever invoked via `/aegis` or asked to recall project decisions:
 |---|---|---|
 | `/aegis status` | Inspect system health | Daemon state, autostart runner, tracked PRs, recorded decisions |
 | `/aegis bootstrap` | Compile workspace context | Generates `~/.aegis-brain/ACTIVE_CONTEXT.md` ($\le 400$ tokens) |
+| `/aegis recall [q]` | Instantly recall past memory | Sub-second recall of recent tasks, workflows, or FTS5 keyword match |
 | `/aegis search <q>` | Query memory bus | Sub-millisecond SQLite FTS5 search across architectural records |
 | `/aegis decision` | Record technical decision | Persists decision, rationale, and tags to SQLite WAL index |
 | `/aegis mode private` | Ephemeral stealth mode | Zero-disk logging; completely bypasses disk writes |
