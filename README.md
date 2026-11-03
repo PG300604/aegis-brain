@@ -72,13 +72,14 @@ The diagram below outlines the system topology—bridging agent clients, the cor
 
 ### System Components
 
-1. **Client Ingress Layer (Left)**: Antigravity, Claude Code, Codex, Hermes, and Cursor communicate with AegisBrain via the global CLI, slash commands, or local HTTP.
+1. **Unified AI Agent Client Layer (Left)**: All AI coding agents—irrespective of whether you use Google Antigravity, Anthropic Claude Code, OpenAI Codex, Cursor, Windsurf, Nous Hermes, or Aider—connect through **one common unified bus** (`127.0.0.1:8765`, CLI `aegis recall`, or companion skills). Every single feature in the daemon is universally accessible to all connected agents.
 2. **AegisBrain Daemon Chassis (Center, :8765)**:
-   - **Context Governor**: Dynamically inspects git branch, diffs, commits, and tracked PRs, pruning context to $\le 400$ tokens.
-   - **Neural Memory Bus**: Multi-threaded SQLite engine in WAL mode with auto-synchronizing FTS5 virtual tables.
-   - **Skill Distiller**: OpenAI-compatible reverse proxy (`127.0.0.1:8765/v1`) augmenting prompts with domain heuristics before forwarding to Ollama.
-   - **Media Bridge**: Standard library dispatch to OpenHiggsfield image/video generation models.
-3. **Execution & Storage Floor (Right)**: Local `brain.db` database, deterministic `ACTIVE_CONTEXT.md`, local Ollama runtime (`127.0.0.1:11434`), and OpenHiggsfield Studio.
+   - **Internal Dispatcher**: Routes requests from any agent across all core co-processor engines.
+   - **Deterministic Context Governor**: Dynamically inspects git branch, diffs, commits, and tracked PRs, pruning context to $\le 400$ tokens.
+   - **Neural Memory Bus & Instant Recall**: Multi-threaded SQLite engine in WAL mode with auto-synchronizing FTS5 virtual tables (< 50ms recall, 95%+ token reduction).
+   - **Cross-Model Skill Distiller & Proxy**: OpenAI-compatible reverse proxy (`127.0.0.1:8765/v1`) augmenting prompts with domain heuristics before forwarding to local Ollama.
+   - **OpenHiggsfield Media Bridge**: Zero-dependency standard library dispatch to OpenHiggsfield image/video generation models.
+3. **Storage & Target Runtimes (Right)**: Dedicated downstream channels persist to `brain.db` (SQLite WAL), compile deterministic `ACTIVE_CONTEXT.md` ($\le 400$ tokens), proxy to local Ollama (`127.0.0.1:11434`), and dispatch to OpenHiggsfield APIs.
 
 ---
 
