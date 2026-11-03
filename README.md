@@ -19,6 +19,7 @@
   <a href="#quickstart">Quickstart</a> &bull;
   <a href="#workflows">Workflows</a> &bull;
   <a href="#openhiggsfield-media-bridge">Media Bridge</a> &bull;
+  <a href="#caffeinate--whatsapp-remote-control">Caffeinate & Remote</a> &bull;
   <a href="#benchmarks">Benchmarks</a> &bull;
   <a href="#documentation">Docs</a> &bull;
   <a href="#license">License</a>
@@ -247,6 +248,69 @@ aegis media --model flux-2 --prompt "Minimalist industrial CAD diagram of a neur
 
 ---
 
+## Caffeinate & WhatsApp Remote Control
+
+Long-running agent workflows often get interrupted when the workstation goes into system sleep or idle standby while the developer is away. AegisBrain provides a cross-platform wake-lock engine (Caffeinate) combined with a secure WhatsApp Remote Bridge. Developers can monitor tasks, dispatch commands, inspect generated artifacts, and safely shut down their workstation right from their phone.
+
+### Native Caffeinate (Anti-Sleep Wake-Lock)
+
+Prevent your workstation from sleeping during long agent sessions with zero external dependencies:
+
+```bash
+# Enable wake-lock (keeps system active in the background)
+aegis caffeinate on
+
+# Keep display awake as well
+aegis caffeinate on --display
+
+# Check active wake-lock status
+aegis caffeinate status
+
+# Release wake-lock
+aegis caffeinate off
+```
+
+- **Windows**: Invokes `kernel32.SetThreadExecutionState` with `ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED` and an active pulse thread.
+- **macOS**: Spawns native `caffeinate -i` process.
+- **Linux**: Integrates with `systemd-inhibit` fallback.
+
+### WhatsApp Remote Agent Bridge
+
+Control your AI coding agent remotely from your mobile device via Twilio WhatsApp Sandbox:
+
+```bash
+# 1. Run interactive setup wizard (configures Twilio credentials & PIN)
+aegis remote setup
+
+# 2. View current remote bridge status
+aegis remote status
+
+# 3. Start remote session (activates Caffeinate, starts daemon, sends WhatsApp ping)
+aegis remote start
+```
+
+#### Available Remote WhatsApp Commands
+
+Send any of the following commands in your WhatsApp conversation:
+
+| WhatsApp Command | Description |
+|---|---|
+| `/status` | View CPU, memory, daemon status, and active wake-lock uptime |
+| `/caffeinate on` / `off` | Toggle anti-sleep wake-lock remotely |
+| `/recall <query>` | Sub-millisecond memory search across past architectural decisions |
+| `/artifacts` | Inspect and read the latest generated artifacts and outputs |
+| `/git status` / `diff` / `commit` / `push` | Inspect repo status or trigger version control actions |
+| `/exec <cmd>` | Execute a sandboxed shell command inside your workspace |
+| `/sleep` | Put the workstation to sleep remotely |
+| `/shutdown` | Gracefully shut down the PC with a safety delay |
+
+#### Security & Authentication
+- **PIN Protected**: Commands require authorization via a secret pairing PIN (`/auth <PIN>`).
+- **Sender Verification**: Incoming webhooks verify the caller's phone number against the configured allowlist.
+- **Zero PIP Dependencies**: Implemented strictly with standard library `http.server`, `urllib.request`, and `xml.sax`.
+
+---
+
 ## Benchmarks
 
 ### Memory Recall Efficiency (AegisBrain vs Raw Log Crawling)
@@ -270,7 +334,7 @@ All measurements executed on Python 3.14 on Windows 11 / AMD & Intel host platfo
 | **Context Token Budget** | **≤ 400 tokens** | Unbounded | Unbounded |
 | **Zero-Disk Stealth Mode** | **Native (`private`)** | Requires reconfig | In-memory only |
 | **Universal Agent Support** | **Antigravity, Claude, Codex, Cursor** | Isolated SDK only | Generic key-value |
-| **Test Suite Runtime** | **1.21s (8/8 passing)** | 8.5 to 18s | N/A |
+| **Test Suite Runtime** | **1.42s (23/23 passing)** | 8.5 to 18s | N/A |
 
 ---
 
@@ -302,12 +366,12 @@ python -m unittest tests/test_aegis.py
 ```text
 ........
 ----------------------------------------------------------------------
-Ran 8 tests in 1.210s
+Ran 23 tests in 1.417s
 
 OK
 ```
 
-All 8 tests execute in $< 1.5\text{ seconds}$ across Ubuntu, Windows, and macOS on every pull request.
+All 23 tests (core engine + wake-lock + remote bridge) execute in $< 2.0\text{ seconds}$ across Ubuntu, Windows, and macOS on every pull request.
 
 ---
 

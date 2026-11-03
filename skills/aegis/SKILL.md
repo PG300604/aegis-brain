@@ -1,15 +1,15 @@
 ---
 name: aegis
-description: "Universal local neural memory bus, instant memory recall, and context governor for Antigravity, Claude Code, Codex, Cursor, Windsurf, and OpenCode."
+description: "Universal local neural memory bus, instant memory recall, wake-lock caffeinate, WhatsApp remote agent bridge, and context governor for Antigravity, Claude Code, Codex, Cursor, Windsurf, and OpenCode."
 tools: [claude-code, codex, gemini-cli, antigravity, hermes, cursor, opencode, aider]
 category: memory
 risk: safe
-tags: [agent-memory, context-governor, ollama, local-ai, fts5, sqlite, prompt-caching, open-higgsfield, instant-recall]
+tags: [agent-memory, context-governor, ollama, local-ai, fts5, sqlite, prompt-caching, open-higgsfield, instant-recall, caffeinate, remote-whatsapp]
 ---
 
 # AegisBrain Universal Controller Skill
 
-AegisBrain provides deterministic workspace memory, sub-second instant recall, active context compiling ($\le 400$ tokens), and skill proxying for all major autonomous AI coding agents:
+AegisBrain provides deterministic workspace memory, sub-second instant recall, active context compiling ($\le 400$ tokens), wake-lock caffeinate, WhatsApp remote agent bridge, and skill proxying for all major autonomous AI coding agents:
 - **Google Antigravity CLI**
 - **Anthropic Claude Code**
 - **OpenAI Codex CLI**
@@ -25,8 +25,11 @@ Whenever invoked via `/aegis` or asked to recall project decisions:
 |---|---|---|
 | `/aegis recall [q]` | **Instant memory recall** | Sub-second recall of recent tasks, workflows, or FTS5 keyword match |
 | `/aegis search <q>` | Query memory bus | Sub-millisecond SQLite FTS5 search across architectural records |
+| `/aegis caffeinate [on/off]` | Anti-sleep wake-lock | Prevents PC sleep during long agent workflows (`--display` optional) |
+| `/aegis remote start` | WhatsApp remote session | Activates Caffeinate, ensures daemon runs, and pings WhatsApp |
+| `/aegis remote setup` | Twilio & pairing setup | Interactive configuration wizard for WhatsApp remote bridge |
 | `/aegis bootstrap` | Compile workspace context | Generates `~/.aegis-brain/ACTIVE_CONTEXT.md` ($\le 400$ tokens) |
-| `/aegis status` | Inspect system health | Daemon state, autostart runner, tracked PRs, recorded decisions |
+| `/aegis status` | Inspect system health | Daemon state, autostart runner, Caffeinate state, tracked PRs, recorded decisions |
 | `/aegis decision` | Record technical decision | Persists decision, rationale, and tags to SQLite WAL index |
 | `/aegis mode private` | Ephemeral stealth mode | Zero-disk logging; completely bypasses disk writes |
 | `/aegis mode public` | Persistent memory mode | Enables SQLite WAL storage and automatic full-text indexing |

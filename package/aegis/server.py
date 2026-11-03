@@ -37,6 +37,14 @@ from .db import (
 from .governor import generate_active_context
 from .proxy import forward_chat_completion
 from .watchdog import WatchdogRunner, sweep_tracked_prs
+from .caffeinate import (
+    enable_caffeinate,
+    disable_caffeinate,
+    get_caffeinate_status,
+    remote_suspend_pc,
+    remote_shutdown_pc,
+)
+from .remote import handle_twilio_webhook
 
 
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
@@ -60,6 +68,15 @@ class AegisRequestHandler(BaseHTTPRequestHandler):
         payload = text.encode("utf-8")
         self.send_response(status_code)
         self.send_header("Content-Type", "text/markdown; charset=utf-8")
+        self.send_header("Content-Length", str(len(payload)))
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        self.wfile.write(payload)
+
+    def _send_xml(self, status_code: int, xml_text: str) -> None:
+        payload = xml_text.encode("utf-8")
+        self.send_response(status_code)
+        self.send_header("Content-Type", "application/xml; charset=utf-8")
         self.send_header("Content-Length", str(len(payload)))
         self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
@@ -112,17 +129,56 @@ class AegisRequestHandler(BaseHTTPRequestHandler):
         elif path == "/alerts":
             alerts = get_active_alerts()
             self._send_json(200, alerts)
+        elif path == "/caffeinate":
+            self._send_json(200, get_caffeinate_status())
         else:
             self._send_json(404, {"error": "Not Found", "path": self.path})
 
     def do_POST(self) -> None:
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path.rstrip("/")
+        content_type = self.headers.get("Content-Type", "")
 
-        try:
-            body = self._read_json_body()
-        except Exception as e:
-            self._send_json(400, {"error": f"Invalid JSON payload: {str(e)}"})
+        body: Dict[str, Any] = {}
+        form_params: Dict[str, Any] = {}
+
+        length = int(self.headers.get("Content-Length", 0))
+        raw_bytes = self.rfile.read(length) if length > 0 else b""
+
+        if "application/x-www-form-urlencoded" in content_type:
+            raw_text = raw_bytes.decode("utf-8", errors="ignore")
+            form_params = urllib.parse.parse_qs(raw_text)
+        elif raw_bytes:
+            try:
+                body = json.loads(raw_bytes.decode("utf-8", errors="ignore"))
+            except Exception as e:
+                self._send_json(400, {"error": f"Invalid JSON payload: {str(e)}"})
+                return
+
+        if path in ("/webhook/twilio", "/webhook/whatsapp"):
+            post_data = form_params if form_params else body
+            twiml = handle_twilio_webhook(post_data)
+            self._send_xml(200, twiml)
+            return
+        elif path == "/caffeinate":
+            action = body.get("action", "status")
+            if action in ("on", "enable"):
+                ok, msg = enable_caffeinate(keep_display=body.get("keep_display", False))
+                self._send_json(200, {"active": True, "message": msg})
+            elif action in ("off", "disable"):
+                ok, msg = disable_caffeinate()
+                self._send_json(200, {"active": False, "message": msg})
+            else:
+                self._send_json(200, get_caffeinate_status())
+            return
+        elif path == "/power/sleep":
+            ok, msg = remote_suspend_pc()
+            self._send_json(200, {"status": "sleep_initiated" if ok else "error", "message": msg})
+            return
+        elif path == "/power/shutdown":
+            delay = int(body.get("delay", 15))
+            ok, msg = remote_shutdown_pc(delay_seconds=delay)
+            self._send_json(200, {"status": "shutdown_scheduled" if ok else "error", "message": msg})
             return
 
         if path == "/decision":

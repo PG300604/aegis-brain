@@ -23,6 +23,19 @@ from .service import (
 )
 from .watchdog import sweep_tracked_prs
 from .media import generate_media
+from .caffeinate import (
+    enable_caffeinate,
+    disable_caffeinate,
+    get_caffeinate_status,
+    remote_suspend_pc,
+    remote_shutdown_pc,
+)
+from .remote import (
+    run_remote_setup_wizard,
+    show_remote_status,
+    run_remote_test,
+    start_remote_session,
+)
 
 
 def main() -> None:
@@ -83,6 +96,16 @@ def main() -> None:
     auto_parser = subparsers.add_parser("autostart", help="Manage system logon autostart")
     auto_parser.add_argument("state", nargs="?", choices=["on", "off", "status"], default="status", help="Enable, disable, or query autostart")
 
+    # caffeinate (anti-sleep wake-lock)
+    caff_parser = subparsers.add_parser("caffeinate", help="Prevent system sleep while agents run")
+    caff_parser.add_argument("state", nargs="?", choices=["on", "off", "status", "sleep", "shutdown"], default="status", help="Turn caffeinate on/off, inspect status, or trigger sleep/shutdown")
+    caff_parser.add_argument("--display", "-d", action="store_true", help="Also prevent display from turning off")
+
+    # remote (WhatsApp remote bridge)
+    rem_parser = subparsers.add_parser("remote", help="Manage WhatsApp remote control and agent execution bridge")
+    rem_parser.add_argument("action", nargs="?", choices=["start", "setup", "status", "test"], default="status", help="Start session, run setup wizard, view status, or send test ping")
+    rem_parser.add_argument("--message", "-m", default=None, help="Custom test message string for 'test' action")
+
     # media (OpenHiggsfield AI generation bridge)
     media_parser = subparsers.add_parser("media", help="Generate AI image/video assets via OpenHiggsfield bridge")
     media_parser.add_argument("--model", "-m", default="flux-2", help="Model name (e.g. flux-2, seedance-2.5, kling-3, wan-2.6)")
@@ -107,6 +130,9 @@ def main() -> None:
         print(f"Daemon:        {'RUNNING (http://127.0.0.1:8765)' if running else 'STOPPED'}")
         print(f"Autostart:     {'ENABLED (starts on login/wake)' if auto_enabled else 'DISABLED'}")
         print(f"Mode:          {mode.upper()}")
+        caff = get_caffeinate_status()
+        caff_str = f"ACTIVE ({caff['uptime_seconds']}s)" if caff["active"] else "INACTIVE"
+        print(f"Caffeinate:    {caff_str}")
         db_p = get_db_path()
         print(f"Database:      {db_p} ({'Exists' if db_p.exists() else 'Not initialized'})")
         print(f"Decisions:     {len(decisions)} recorded")
@@ -205,6 +231,38 @@ def main() -> None:
             running = is_daemon_running()
             print(f"Autostart: {'ENABLED' if enabled else 'DISABLED'}")
             print(f"Daemon:    {'RUNNING' if running else 'STOPPED'}")
+
+    elif args.command == "caffeinate":
+        if args.state == "on":
+            ok, msg = enable_caffeinate(keep_display=args.display)
+            print(f"[AegisBrain] {msg}")
+        elif args.state == "off":
+            ok, msg = disable_caffeinate()
+            print(f"[AegisBrain] {msg}")
+        elif args.state == "sleep":
+            ok, msg = remote_suspend_pc()
+            print(f"[AegisBrain] {msg}")
+        elif args.state == "shutdown":
+            ok, msg = remote_shutdown_pc(delay_seconds=10)
+            print(f"[AegisBrain] {msg}")
+        else:
+            st = get_caffeinate_status()
+            active_str = f"ACTIVE ({st['uptime_seconds']}s)" if st["active"] else "INACTIVE"
+            print("=== AegisBrain Caffeinate Status ===")
+            print(f"Status:       {active_str}")
+            print(f"Platform:     {st['platform']}")
+            print(f"Keep Display: {st['keep_display']}")
+
+    elif args.command == "remote":
+        if args.action == "setup":
+            run_remote_setup_wizard()
+        elif args.action == "start":
+            start_remote_session()
+        elif args.action == "test":
+            msg = args.message or "🟢 AegisBrain Remote Test Ping!"
+            run_remote_test(msg)
+        else:
+            show_remote_status()
 
     elif args.command == "media":
         print(f"[AegisBrain] Media generation dispatch (OpenHiggsfield)")

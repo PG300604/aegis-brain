@@ -21,3 +21,17 @@ from .db import (
 )
 from .governor import generate_active_context
 from .hooks import bootstrap_agent_session, seed_initial_knowledge
+from .caffeinate import (
+    enable_caffeinate,
+    disable_caffeinate,
+    is_caffeinate_active,
+    get_caffeinate_status,
+    remote_suspend_pc,
+    remote_shutdown_pc,
+)
+from .remote import (
+    send_whatsapp_message,
+    handle_remote_command,
+    load_remote_config,
+    save_remote_config,
+)
