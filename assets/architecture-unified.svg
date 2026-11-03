@@ -39,7 +39,7 @@
         .text-dark { fill: #F8FAFC !important; }
         .text-dark-sub { fill: #CBD5E1 !important; }
 
-        /* Inner badges dark mode: clean tinted container with colored stroke & luminous text */
+        /* Inner badges dark mode: clean tinted container with colored stroke and luminous text */
         .badge-amber { fill: #382006 !important; stroke: #D97706 !important; stroke-width: 1.2 !important; }
         .badge-amber-text { fill: #FDE68A !important; }
         .badge-emerald { fill: #063824 !important; stroke: #059669 !important; stroke-width: 1.2 !important; }
