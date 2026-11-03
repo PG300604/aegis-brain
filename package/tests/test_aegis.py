@@ -25,6 +25,7 @@ from aegis.db import (
 )
 from aegis.distiller import distill_rules_for_prompt
 from aegis.governor import generate_active_context
+from aegis.media import generate_media
 from aegis.proxy import augment_chat_completion_payload
 from aegis.server import create_server
 
@@ -155,6 +156,15 @@ class TestAegisBrain(unittest.TestCase):
         finally:
             server.shutdown()
             server.server_close()
+
+    def test_media_generation_bridge(self):
+        res = generate_media(model="seedance-2.5", prompt="Cinematic developer workstation with neural HUD")
+        self.assertEqual(res["status"], "simulated")
+        self.assertEqual(res["model"], "seedance-2.5")
+
+        matches = search_memories("Cinematic developer workstation")
+        self.assertGreaterEqual(len(matches), 1)
+        self.assertIn("seedance-2.5", matches[0]["title"])
 
 
 if __name__ == "__main__":

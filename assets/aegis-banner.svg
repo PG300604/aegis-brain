@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090A0F" />
+      <stop offset="50%" stop-color="#0E1118" />
+      <stop offset="100%" stop-color="#07080C" />
+    </linearGradient>
+
+    <!-- Neural Glow Gradients -->
+    <radialGradient id="glowCobalt" cx="30%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#2563EB" stop-opacity="0.25" />
+      <stop offset="60%" stop-color="#1D4ED8" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowCyan" cx="80%" cy="30%" r="50%">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Shield & Accent Gradient -->
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="50%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1E40AF" />
+    </linearGradient>
+    <linearGradient id="shieldBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#1E3A8A" stop-opacity="0.2" />
+    </linearGradient>
+
+    <!-- Grid Pattern -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1" />
+    </pattern>
+  </defs>
+
+  <!-- Background Layer -->
+  <rect width="1200" height="360" fill="url(#bgGrad)" />
+  <rect width="1200" height="360" fill="url(#grid)" />
+  <rect width="1200" height="360" fill="url(#glowCobalt)" />
+  <rect width="1200" height="360" fill="url(#glowCyan)" />
+
+  <!-- Outer Hairline Border -->
+  <rect x="0.5" y="0.5" width="1199" height="359" fill="none" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" rx="0" />
+
+  <!-- Abstract Neural Circuit Accents (Right Side) -->
+  <g opacity="0.35" transform="translate(760, 40)">
+    <!-- Circuit Lines -->
+    <path d="M 50 140 L 140 140 L 190 90 L 290 90" fill="none" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="4,4" />
+    <path d="M 90 200 L 170 200 L 230 260 L 320 260" fill="none" stroke="#2563EB" stroke-width="1.5" />
+    <path d="M 140 140 L 170 200" fill="none" stroke="rgba(255, 255, 255, 0.2)" stroke-width="1" />
+    <path d="M 230 40 L 290 90 L 350 90" fill="none" stroke="#06B6D4" stroke-width="1.5" />
+
+    <!-- Circuit Nodes -->
+    <circle cx="50" cy="140" r="4" fill="#38BDF8" />
+    <circle cx="140" cy="140" r="3" fill="#60A5FA" />
+    <circle cx="190" cy="90" r="5" fill="#38BDF8" />
+    <circle cx="290" cy="90" r="3" fill="#93C5FD" />
+    <circle cx="90" cy="200" r="4" fill="#2563EB" />
+    <circle cx="170" cy="200" r="5" fill="#38BDF8" />
+    <circle cx="230" cy="260" r="3" fill="#2563EB" />
+    <circle cx="320" cy="260" r="4" fill="#60A5FA" />
+    <circle cx="230" cy="40" r="4" fill="#06B6D4" />
+    <circle cx="350" cy="90" r="3" fill="#38BDF8" />
+  </g>
+
+  <!-- Left Shield & Neural Emblem (Vector Mark) -->
+  <g transform="translate(100, 80)">
+    <!-- Ambient Shield Glow -->
+    <circle cx="100" cy="100" r="85" fill="#2563EB" opacity="0.12" filter="blur(20px)" />
+
+    <!-- Outer Aegis Shield -->
+    <path d="M 100 20 L 165 48 L 165 110 C 165 152 135 182 100 195 C 65 182 35 152 35 110 L 35 48 Z"
+          fill="rgba(14, 21, 37, 0.75)" stroke="url(#shieldBorder)" stroke-width="2" />
+
+    <!-- Inner Core Geometry (Neural Nexus) -->
+    <path d="M 100 45 L 145 66 L 145 112 C 145 142 124 164 100 174 C 76 164 55 142 55 112 L 55 66 Z"
+          fill="none" stroke="rgba(56, 189, 248, 0.4)" stroke-width="1.2" stroke-dasharray="3,3" />
+
+    <!-- Central Neural Node Hierarchy -->
+    <circle cx="100" cy="85" r="8" fill="url(#accentGrad)" />
+    <circle cx="100" cy="85" r="14" fill="none" stroke="#38BDF8" stroke-width="1" opacity="0.5" />
+
+    <circle cx="78" cy="125" r="6" fill="#1D4ED8" />
+    <circle cx="122" cy="125" r="6" fill="#1D4ED8" />
+    <circle cx="100" cy="148" r="5" fill="#06B6D4" />
+
+    <!-- Node Connectors -->
+    <line x1="100" y1="93" x2="78" y2="125" stroke="#38BDF8" stroke-width="1.5" opacity="0.8" />
+    <line x1="100" y1="93" x2="122" y2="125" stroke="#38BDF8" stroke-width="1.5" opacity="0.8" />
+    <line x1="78" y1="125" x2="100" y2="148" stroke="#06B6D4" stroke-width="1.5" opacity="0.8" />
+    <line x1="122" y1="125" x2="100" y2="148" stroke="#06B6D4" stroke-width="1.5" opacity="0.8" />
+  </g>
+
+  <!-- Typography & Content -->
+  <g transform="translate(320, 115)">
+    <!-- Pre-Title Eyebrow Tag -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="-18" width="168" height="26" rx="4" fill="rgba(37, 99, 235, 0.15)" stroke="rgba(56, 189, 248, 0.3)" stroke-width="1" />
+      <text x="84" y="-1" fill="#38BDF8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.5" text-anchor="middle">ZERO-UI DAEMON</text>
+    </g>
+
+    <!-- Main Title -->
+    <text x="0" y="46" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="44" font-weight="800" letter-spacing="-1">
+      AEGIS<tspan fill="#38BDF8">BRAIN</tspan>
+    </text>
+
+    <!-- Subtitle -->
+    <text x="0" y="82" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" letter-spacing="0.2">
+      Local Neural Memory Bus &amp; Context Governor for Autonomous Agents
+    </text>
+
+    <!-- Spec Pill Tokens -->
+    <g transform="translate(0, 116)">
+      <!-- Pill 1: Storage -->
+      <g transform="translate(0, 0)">
+        <rect x="0" y="0" width="138" height="28" rx="6" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1" />
+        <text x="69" y="18" fill="#E2E8F0" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="11" font-weight="500" text-anchor="middle">SQLite WAL + FTS5</text>
+      </g>
+      <!-- Pill 2: Dependencies -->
+      <g transform="translate(148, 0)">
+        <rect x="0" y="0" width="132" height="28" rx="6" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1" />
+        <text x="66" y="18" fill="#E2E8F0" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="11" font-weight="500" text-anchor="middle">Zero Dependencies</text>
+      </g>
+      <!-- Pill 3: RAM -->
+      <g transform="translate(290, 0)">
+        <rect x="0" y="0" width="94" height="28" rx="6" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1" />
+        <text x="47" y="18" fill="#10B981" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="11" font-weight="600" text-anchor="middle">&lt; 25MB RAM</text>
+      </g>
+      <!-- Pill 4: Boot -->
+      <g transform="translate(394, 0)">
+        <rect x="0" y="0" width="102" height="28" rx="6" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1" />
+        <text x="51" y="18" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="11" font-weight="600" text-anchor="middle">&lt; 50ms Boot</text>
+      </g>
+    </g>
+  </g>
+</svg>

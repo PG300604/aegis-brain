@@ -22,6 +22,7 @@ from .service import (
     stop_daemon,
 )
 from .watchdog import sweep_tracked_prs
+from .media import generate_media
 
 
 def main() -> None:
@@ -76,6 +77,12 @@ def main() -> None:
     # autostart
     auto_parser = subparsers.add_parser("autostart", help="Manage system logon autostart")
     auto_parser.add_argument("state", nargs="?", choices=["on", "off", "status"], default="status", help="Enable, disable, or query autostart")
+
+    # media (OpenHiggsfield AI generation bridge)
+    media_parser = subparsers.add_parser("media", help="Generate AI image/video assets via OpenHiggsfield bridge")
+    media_parser.add_argument("--model", "-m", default="flux-2", help="Model name (e.g. flux-2, seedance-2.5, kling-3, wan-2.6)")
+    media_parser.add_argument("--prompt", "-p", required=True, help="Generation prompt description")
+    media_parser.add_argument("--ratio", "-r", default="16:9", choices=["16:9", "9:16", "1:1", "4:3"], help="Aspect ratio (default: 16:9)")
 
     args = parser.parse_args()
 
@@ -169,6 +176,24 @@ def main() -> None:
             running = is_daemon_running()
             print(f"Autostart: {'ENABLED' if enabled else 'DISABLED'}")
             print(f"Daemon:    {'RUNNING' if running else 'STOPPED'}")
+
+    elif args.command == "media":
+        print(f"[AegisBrain] Media generation dispatch (OpenHiggsfield)")
+        print(f"  Model:  {args.model}")
+        print(f"  Prompt: {args.prompt}")
+        print(f"  Ratio:  {args.ratio}")
+        res = generate_media(model=args.model, prompt=args.prompt, aspect_ratio=args.ratio)
+        status = res.get("status", "unknown")
+        print(f"  Status: {status.upper()}")
+        if "images" in res:
+            for img in res["images"]:
+                print(f"  Image:  {img.get('url')}")
+        if "video" in res:
+            print(f"  Video:  {res['video'].get('url')}")
+        if "message" in res:
+            print(f"  Note:   {res['message']}")
+        if "error" in res:
+            print(f"  Error:  {res['error']}")
 
     else:
         parser.print_help()

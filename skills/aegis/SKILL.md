@@ -1,9 +1,9 @@
 ---
 name: aegis
-description: Manage AegisBrain local neural memory bus, logon autostart, public/private modes, and architectural memory recall.
+description: Manage AegisBrain local neural memory bus, logon autostart, public/private modes, architectural memory recall, and OpenHiggsfield media generation.
 ---
 
-# AegisBrain Controller Skill 🧠⚡
+# AegisBrain Controller Skill
 
 Use this skill whenever the user asks to manage, query, or reconfigure AegisBrain, or uses any `/aegis` slash command.
 
@@ -17,6 +17,7 @@ Use this skill whenever the user asks to manage, query, or reconfigure AegisBrai
 - `/aegis search <query>`: Search architectural decisions and project knowledge instantly.
 - `/aegis bootstrap [path]`: Generate an ultra-compact active context block for any workspace.
 - `/aegis poll`: Sweep tracked GitHub pull requests (e.g. Spring AI PR #7308) for new comments/labels.
+- `/aegis media <prompt>`: Dispatch image/video generation to OpenHiggsfield and log to memory bus.
 - `/aegis stop`: Gracefully stop the background daemon.
 
 ## Operational Mapping
@@ -31,4 +32,5 @@ Use this skill whenever the user asks to manage, query, or reconfigure AegisBrai
 | Recall Knowledge | `aegis search "<query>"` |
 | Inspect Context | `aegis bootstrap` |
 | Check GitHub PRs | `aegis poll` |
+| Generate AI Media | `aegis media --prompt "<prompt>"` |
 | Stop Daemon | `aegis stop` |

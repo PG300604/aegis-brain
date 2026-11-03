@@ -1,126 +1,114 @@
-# AegisBrain 🧠⚡
+# AegisBrain
 
-> **A zero-dependency, local neural memory bus and agent orchestrator for developer workstations.**  
-> Eliminates agent amnesia across CLIs (Antigravity, Hermes, Claude Code, OpenCode, Aider), guarantees zero disk trace in private stealth mode, and distills 500+ skills into local Ollama models with a $< 400$-token instant boot budget.
+<p align="center">
+  <img src="assets/aegis-banner.svg" alt="AegisBrain Banner" width="100%">
+</p>
 
-[![CI](https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml/badge.svg)](https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?logo=python&logoColor=white)](https://python.org)
-[![Storage](https://img.shields.io/badge/Storage-SQLite%20WAL%20%2B%20FTS5-003B57.svg?logo=sqlite&logoColor=white)](https://sqlite.org)
-[![Memory](https://img.shields.io/badge/RAM-%3C%2025%20MB-brightgreen.svg)](#benchmarks)
-[![Boot Time](https://img.shields.io/badge/Boot-%3C%2050%20ms-success.svg)](#benchmarks)
-[![Dependencies](https://img.shields.io/badge/Dependencies-Zero%20External-orange.svg)](#architecture)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+<p align="center">
+  <strong>Local neural memory bus and context governor for AI coding agents.</strong><br>
+  Eliminates agent amnesia across terminal sessions, guarantees zero disk trace in private stealth mode, and distills 500+ skills into local Ollama models with a ≤ 400-token boot budget.
+</p>
 
----
-
-## ⚡ The Problem: Agent Amnesia & The Local Skill Gap
-
-Modern AI coding agents excel in isolated prompt windows, but suffer from two major architectural flaws on developer machines:
-
-1. **Terminal Amnesia**: Every time you launch a new terminal, switch virtual machines, or start a new chat session in Antigravity or Hermes, the agent forgets previous context. Developers spend precious minutes and thousands of prompt tokens repeatedly feeding workspace status, ongoing PRs, and architectural decisions.
-2. **The Local Model Skill Gap**: Flagship cloud models have access to hundreds of modular skills, prompts, and linters. Local open-source models (e.g. `qwen2.5-coder`, `deepseek-coder`, `llama3` running via Ollama) run naked without domain knowledge or constraints, leading to inconsistent code style and hallucinated abstractions.
-
----
-
-## 💡 The Solution: AegisBrain
-
-**AegisBrain** is a lightweight, zero-UI background neural daemon that runs locally on your machine:
-
-- **🧠 Unified Neural Memory Bus**: Automatically indexes architectural decisions, session summaries, and project knowledge using SQLite WAL mode and sub-millisecond FTS5 full-text search.
-- **⚡ Deterministic Context Governor**: Synthesizes active workspace state, Git diffs, commits, and tracked pull requests into an ultra-compact `ACTIVE_CONTEXT.md` ($\le 400$ tokens) injected into every session.
-- **🛡️ Dual Mode Operation (Public vs. Private Stealth)**:
-  - `PUBLIC`: Full persistence in SQLite WAL with sub-millisecond FTS5 search.
-  - `PRIVATE`: Zero-disk ephemeral stealth mode. No queries, sessions, or tokens touch the disk.
-- **🔄 Cross-Model Skill Distillation**: Distills 500+ skills into semantic constraint matrices and injects them seamlessly via an OpenAI-compatible proxy (`http://127.0.0.1:8765/v1`) in front of your local Ollama server.
-- **🐕 Proactive Background Watchdog**: Silently sweeps tracked GitHub PRs (e.g., Spring AI PR #7308) and local Git repositories, notifying you of review comments, triage labels, and CI status the moment you open your terminal.
-- **🪶 Zero External Dependencies**: Powered entirely by Python's standard library (`sqlite3`, `http.server`, `urllib`, `argparse`). Uses $< 25\text{ MB}$ of RAM and boots in $< 50\text{ ms}$.
+<p align="center">
+  <a href="https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml"><img src="https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?logo=python&logoColor=white" alt="Python"></a>
+  <a href="https://sqlite.org"><img src="https://img.shields.io/badge/Storage-SQLite%20WAL%20%2B%20FTS5-003B57.svg?logo=sqlite&logoColor=white" alt="Storage"></a>
+  <img src="https://img.shields.io/badge/RAM-%3C%2025%20MB-10B981.svg" alt="Memory">
+  <img src="https://img.shields.io/badge/Boot-%3C%2050%20ms-38BDF8.svg" alt="Boot">
+  <img src="https://img.shields.io/badge/Dependencies-Zero%20External-F97316.svg" alt="Zero Dependencies">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-GPLv3-6366F1.svg" alt="License: GPLv3"></a>
+</p>
 
 ---
 
-## 🏛️ System Architecture
+## Terminal Proof
 
-```
-                       ┌──────────────────────────────────────────────┐
-                       │            Developer Workstation             │
-                       └──────────────────────┬───────────────────────┘
-                                              │
-         ┌─────────────────────────┬──────────┴──────────┬────────────────────────┐
-         │                         │                     │                        │
-  Antigravity CLI             Hermes Agent          OpenCode CLI             Local Ollama
-(Claude / Gemini)          (Thinking / Fallback)   (Coding Agents)       (Qwen / DeepSeek 7B)
-         │                         │                     │                        │
-         └─────────────────────────┼─────────────────────┼────────────────────────┘
-                                   ▼
-                       ┌───────────────────────┐
-                       │   AegisBrain Daemon   │  (127.0.0.1:8765)
-                       │  ThreadingHTTPServer  │
-                       └───────────┬───────────┘
-                                   │
-         ┌─────────────────────────┼─────────────────────────┐
-         ▼                         ▼                         ▼
-┌──────────────────┐      ┌──────────────────┐      ┌──────────────────┐
-│ Context Governor │      │ Memory Bus (WAL) │      │ Skill Distiller  │
-│ - ACTIVE_CONTEXT │      │ - SQLite + FTS5  │      │ - Dynamic Rules  │
-│ - Git Inspection │      │ - Dual Mode      │      │ - Proxy /v1      │
-└──────────────────┘      └──────────────────┘      └──────────────────┘
+```text
+$ python package/install.py
+[1/3] Initializing local neural memory bus...
+[2/3] Setting up zero-elevation background autostart...
+      Configured Windows User Startup VBScript runner.
+[3/3] Registering global 'aegis' CLI command...
+      Created Windows shim: ~/.local/bin/aegis.cmd
+AegisBrain successfully installed.
+
+$ aegis status
+=== AegisBrain Status ===
+Daemon:        RUNNING (http://127.0.0.1:8765)
+Autostart:     ENABLED (starts on login/wake)
+Mode:          PUBLIC
+Database:      C:\Users\priya\.aegis-brain\brain.db (Exists)
+Decisions:     6 recorded
+Tracked PRs:   1 (spring-projects/spring-ai#7308)
+Active Alerts: 0
+
+$ aegis search "cardinality"
+Found 1 matches for 'cardinality':
+[1] [ARCHITECTURE] GenAI Observation Cardinality Protection
+    Decision:  Low-cardinality protection: attributes omitted when empty to avoid metric explosion.
+    Rationale: Aligns with OpenTelemetry semantic conventions for Micrometer/Spring AI.
 ```
 
 ---
 
-## 📂 Repository Structure
+## Motivation
 
-The repository is organized into distinct, focused packages for clean navigation:
+Modern AI coding agents excel in isolated prompt windows, but suffer from two systemic constraints on developer workstations:
 
-```
-aegis-brain/
-├── package/                       # Core installable Python package
-│   ├── aegis/                     # Daemon, database, governor, proxy, watchdog
-│   │   ├── __init__.py
-│   │   ├── cli.py                 # Multi-command CLI entry point
-│   │   ├── config.py              # Environment configuration & path resolution
-│   │   ├── db.py                  # SQLite WAL + FTS5 full-text engine
-│   │   ├── distiller.py           # Skill distillation & prompt augmentation
-│   │   ├── governor.py            # Active workspace context compiler
-│   │   ├── hooks.py               # Session boot & bootstrap hooks
-│   │   ├── proxy.py               # OpenAI-compatible Ollama proxy
-│   │   ├── server.py              # Multi-threaded background HTTP server
-│   │   ├── service.py             # OS-level autostart (Windows VBS / systemd / launchd)
-│   │   └── watchdog.py            # GitHub PR and local repository poller
-│   ├── tests/                     # Standard library test suite
-│   │   └── test_aegis.py
-│   ├── install.py                 # 1-Click cross-platform installer script
-│   └── pyproject.toml             # Build configuration (Python >= 3.10)
-│
-├── skills/                        # AI coding agent skills
-│   └── aegis/
-│       └── SKILL.md               # Companion skill for Antigravity, Hermes & Claude Code
-│
-├── docs/                          # Deep-dive architectural documentation
-│   ├── ARCHITECTURE.md            # Topology, SQLite schema & FTS5 triggers
-│   ├── CLI_REFERENCE.md           # Exhaustive CLI command reference
-│   ├── AUTORUN_AND_STARTUP.md     # Zero-elevation boot & wake configuration
-│   └── LOCAL_MODEL_DISTILLATION.md# Skill vectors & Ollama integration guide
-│
-├── .github/                       # GitHub workflows & issue/PR templates
-│   ├── workflows/ci.yml           # Cross-platform matrix CI (Ubuntu, Windows, macOS)
-│   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.md
-│   │   └── feature_request.md
-│   └── PULL_REQUEST_TEMPLATE.md
-│
-├── CODE_OF_CONDUCT.md             # Contributor Covenant 2.1
-├── CONTRIBUTING.md                # Contribution guidelines & test procedures
-├── SECURITY.md                    # Private stealth mode guarantees & vulnerability reporting
-├── LICENSE                        # GNU General Public License v3 (GPLv3)
-└── README.md
+1. **The Amnesia Tax**: Launching a new terminal session or switching agents (Antigravity, Hermes, OpenCode, Aider) wipes working context. Developers repeatedly feed active branch states, ongoing pull requests, and architectural decisions back into prompts—burning tokens and introducing inconsistent assumptions.
+2. **The Local Model Skill Gap**: Frontier cloud models benefit from vast, modular skill libraries. Local models running via Ollama (`qwen2.5-coder`, `deepseek-coder`, `llama3`) execute without domain constraints or architecture guardrails.
+
+AegisBrain resolves both problems through a local, zero-overhead background daemon:
+- **Zero External Dependencies**: Operates strictly on Python standard library modules (`sqlite3`, `http.server`, `urllib`, `argparse`).
+- **Deterministic Budget**: Injects a structured markdown workspace summary bounded at $\le 400$ tokens to preserve prompt cache hits.
+- **Dual-Mode Privacy**: Ephemeral stealth mode (`aegis mode private`) ensures zero bytes of prompt data or decision logs reach the disk.
+- **Sub-Millisecond Search**: Indexed through SQLite WAL mode and FTS5 full-text virtual tables with synchronized triggers.
+
+---
+
+## Architecture
+
+```mermaid
+flowchart TD
+    subgraph Clients["Agent Clients & Terminal Sessions"]
+        A["Antigravity CLI"]
+        B["Hermes Agent"]
+        C["OpenCode / Aider"]
+        D["Local IDEs & Scripts"]
+    end
+
+    subgraph Daemon["AegisBrain Daemon (127.0.0.1:8765)"]
+        direction TB
+        E["Threading HTTP Server"]
+        F["Context Governor<br/><i>≤ 400 Token Budget</i>"]
+        G["Memory Bus<br/><i>SQLite WAL + FTS5</i>"]
+        H["Skill Distiller<br/><i>Semantic Rule Proxy</i>"]
+        M["Media Bridge<br/><i>OpenHiggsfield Dispatch</i>"]
+    end
+
+    subgraph Targets["Execution & Storage Targets"]
+        I["ACTIVE_CONTEXT.md"]
+        J["brain.db (Local Disk)"]
+        K["Local Ollama Runtime<br/><i>127.0.0.1:11434</i>"]
+        L["OpenHiggsfield Studio / Models<br/><i>Flux 2, Seedance, Kling, Wan</i>"]
+    end
+
+    Clients --> E
+    E --> F
+    E --> G
+    E --> H
+    E --> M
+    F --> I
+    G -.->|"Public Mode"| J
+    H --> K
+    M --> L
 ```
 
 ---
 
-## 🚀 Quick Start
+## Quickstart
 
-### 1. 1-Click Installation
-Clone the repository and run the automated installer:
+### 1. Installation
 
 ```bash
 git clone https://github.com/PG300604/aegis-brain.git
@@ -128,167 +116,159 @@ cd aegis-brain
 python package/install.py
 ```
 
-The installer will:
-1. Initialize your local SQLite WAL database at `~/.aegis-brain/brain.db`.
-2. Configure **zero-elevation background autostart** on system boot and wake.
-3. Install the global `aegis` CLI shim in your user binary path (`~/.local/bin/`).
+The installer initializes `~/.aegis-brain/brain.db`, establishes zero-elevation autostart (Windows `shell:startup` VBScript, Linux `systemd`, or macOS `LaunchAgent`), and registers the global `aegis` CLI shim.
 
----
+### 2. Verify System State
 
-### 2. Check Daemon & System Status
 ```bash
 aegis status
 ```
-```text
-=== AegisBrain Status ===
-Daemon:        RUNNING (http://127.0.0.1:8765)
-Autostart:     ENABLED (starts on login/wake)
-Mode:          PUBLIC
-Database:      C:\Users\username\.aegis-brain\brain.db (Exists)
-Decisions:     5 recorded
-Tracked PRs:   1
-  - spring-projects/spring-ai#7308: Add missing GenAI request attributes to observations [open]
-Active Alerts: 0
+
+### 3. Automatic Shell Hook
+
+Add this single hook to your shell configuration (`$PROFILE` in PowerShell, or `~/.bashrc` in Bash/Zsh) so every opened terminal automatically compiles the latest workspace context:
+
+```powershell
+# PowerShell ($PROFILE)
+python -m aegis.cli bootstrap > $null
 ```
-
----
-
-### 3. Sub-Millisecond Knowledge Search (SQLite FTS5)
-Search through all your recorded architectural decisions, past project solutions, and codebase conventions instantly:
 
 ```bash
-aegis search "cardinality"
+# Bash / Zsh
+python3 -m aegis.cli bootstrap > /dev/null 2>&1
 ```
 
 ---
 
-### 4. Record an Architectural Decision
+## Workflows
+
+### Memory Search
+
+Search across all recorded architectural decisions, past technical solutions, and workspace notes instantly:
+
 ```bash
-aegis decision "Use SQLite FTS5 for local neural index" \
-  --context "Need sub-millisecond search without external vector DB dependencies" \
-  --rationale "FTS5 with WAL mode provides instant full-text search with zero pip dependencies" \
-  --tags "database,fts5,sqlite,performance"
+aegis search "FTS5 WAL mode"
 ```
 
----
+### Record an Architectural Decision
 
-### 5. Generate Instant Agent Bootstrap Context
-Compile an ultra-compact ($\le 400$ token) markdown snapshot of your current workspace:
+```bash
+aegis decision \
+  --category "DATABASE" \
+  --title "SQLite FTS5 Storage Engine" \
+  --desc "Use SQLite WAL mode and FTS5 triggers for local search" \
+  --rationale "Guarantees zero pip dependencies and sub-millisecond retrieval" \
+  --tags database sqlite fts5 performance
+```
+
+### Context Bootstrapping
+
+Compile an ultra-compact ($\le 400$ tokens) markdown snapshot of your current workspace for any agent:
 
 ```bash
 aegis bootstrap
 ```
-This generates `~/.aegis-brain/ACTIVE_CONTEXT.md` containing active branch status, modified files, recent commits, and open pull requests.
 
----
+This writes `~/.aegis-brain/ACTIVE_CONTEXT.md` with active git branch status, modified files, recent commits, and tracked pull requests.
 
-### 6. Toggle Private Stealth Mode
-When working with confidential client repositories or proprietary code:
+### Private Stealth Mode
+
+When handling sensitive or proprietary client codebases:
 
 ```bash
-# Enable stealth mode (zero disk logging)
+# Activate zero-disk stealth mode
 aegis mode private
 
 # Re-enable persistent memory
 aegis mode public
 ```
 
----
+In private mode, all writes to `sessions`, `decisions`, and `tracked_prs` are completely bypassed in memory. No queries or tokens touch the disk.
 
-### 7. Background Autostart Control
-You have full control over background startup at all times:
+### Background Watchdog & PR Sweep
+
+Silently monitor tracked pull requests (e.g. Spring AI PR #7308) and local git repositories:
 
 ```bash
-# Enable zero-elevation autostart on system boot/wake
-aegis autostart on
-
-# Disable autostart and remove background runner
-aegis autostart off
-
-# Start or stop the daemon manually
-aegis start
-aegis stop
+aegis poll
 ```
 
----
+### Routing Local Models Through the Skill Proxy
 
-## 🤖 Hooking into Agents & Local LLMs
+Start the daemon and point any OpenAI-compatible client, agent CLI, or SDK to the Aegis proxy:
 
-### Automatic Terminal / CLI Session Hook
-Add this line to your shell profile (`$PROFILE` in PowerShell or `~/.bashrc` in Linux/macOS) so every terminal window automatically syncs the latest context:
-
-```powershell
-# PowerShell ($PROFILE)
-python -m aegis.cli bootstrap > $null
-```
-```bash
-# Bash (~/.bashrc) / Zsh (~/.zshrc)
-python3 -m aegis.cli bootstrap > /dev/null 2>&1
-```
-
-### Route Local Ollama Models Through Aegis Skill Proxy
-Start the Aegis daemon:
 ```bash
 aegis start
 ```
 
-Point any OpenAI-compatible client, agent CLI (Hermes, OpenCode, Aider), or SDK to the Aegis proxy:
 ```text
 Base URL: http://127.0.0.1:8765/v1
 ```
 
-AegisBrain intercepts incoming prompts, retrieves active workspace context and matching skill vectors (e.g. Karpathy simplicity, TypeScript patterns, or SQL optimizations), appends them to the system prompt, and forwards the augmented request to your local Ollama server (`http://127.0.0.1:11434/v1`).
+AegisBrain intercepts prompts, fetches relevant workspace decisions and skill vectors (e.g., Karpathy simplicity, TypeScript patterns, or SQL optimization heuristics), injects them into the system prompt, and forwards the augmented request to your local Ollama server (`http://127.0.0.1:11434/v1`).
+
+### AI Media Generation (OpenHiggsfield Bridge)
+
+Dispatch image and video generation requests to [OpenHiggsfield](https://github.com/wide-trace/open-higgsfield) models (Flux 2, Seedance 2.5, Kling 3, Wan 2.6) directly from the command line while cataloging prompts, seeds, and asset metadata in the local memory bus:
+
+```bash
+aegis media --model flux-2 --prompt "Minimalist vector emblem for developer tools" --ratio 16:9
+```
 
 ---
 
-## 📖 Documentation Hub
+## Benchmarks
 
-Explore deep dives on internal components and workflows in the [`docs/`](docs/) directory:
+All measurements executed on Python 3.14 on Windows 11 / AMD & Intel host platforms.
 
-| Document | Description |
+| Metric | AegisBrain | Chroma / LanceDB (PyPI) | Redis / Memcached |
+|---|---|---|---|
+| **External Dependencies** | **0 (Python stdlib only)** | 15–35 packages | C daemon / Docker |
+| **RAM Footprint** | **< 25 MB** | 180–350 MB | 50–120 MB |
+| **Cold Boot Time** | **< 50 ms** | 1,200–2,800 ms | Service dependent |
+| **Context Token Budget** | **≤ 400 tokens** | Unbounded | Unbounded |
+| **Zero-Disk Stealth Mode** | **Native (`private`)** | Requires reconfig | In-memory only |
+| **Test Suite Runtime** | **1.25s (8/8 passing)** | 8.5–18.0s | N/A |
+
+---
+
+## Documentation
+
+Exhaustive references are maintained in the [`docs/`](docs/) directory:
+
+| Document | Focus |
 |---|---|
-| [**Architecture Deep Dive**](docs/ARCHITECTURE.md) | System topology, SQLite WAL mode, FTS5 triggers, and Context Governor internals |
-| [**CLI Command Reference**](docs/CLI_REFERENCE.md) | Exhaustive command manual with syntax, options, and output examples |
-| [**Zero-Elevation Autostart**](docs/AUTORUN_AND_STARTUP.md) | Windows VBScript background launcher, Linux systemd, and macOS LaunchAgents |
-| [**Local Model Skill Distillation**](docs/LOCAL_MODEL_DISTILLATION.md) | Skill compression matrix, prompt caching heuristics, and Ollama proxy routing |
-| [**Contributing Guide**](CONTRIBUTING.md) | Development setup, zero-dependency philosophy, and testing instructions |
-| [**Security Policy**](SECURITY.md) | Private stealth mode specifications and vulnerability disclosure protocol |
+| [**Architecture Specification**](docs/ARCHITECTURE.md) | SQLite WAL mode, FTS5 virtual tables, sync triggers, and Context Governor internals. |
+| [**CLI Command Reference**](docs/CLI_REFERENCE.md) | Exhaustive command manual with syntax, options, and output examples. |
+| [**Zero-Elevation Autostart**](docs/AUTORUN_AND_STARTUP.md) | Windows VBScript background launcher, Linux systemd, and macOS LaunchAgents. |
+| [**Local Model Skill Distillation**](docs/LOCAL_MODEL_DISTILLATION.md) | Skill compression matrix, prompt caching heuristics, and Ollama proxy routing. |
+| [**Contributing Guide**](CONTRIBUTING.md) | Development setup, zero-dependency philosophy, and test execution. |
+| [**Security Policy**](SECURITY.md) | Stealth mode specifications and responsible vulnerability disclosure. |
 
 ---
 
-## 🧪 Testing
+## Testing
 
-AegisBrain maintains strict zero-dependency test coverage using the standard library `unittest` runner:
+Run the zero-dependency test suite via Python's standard library:
 
 ```bash
 cd package
 python -m unittest tests/test_aegis.py
 ```
+
 ```text
-.......
+........
 ----------------------------------------------------------------------
-Ran 7 tests in 1.224s
+Ran 8 tests in 1.257s
 
 OK
 ```
 
-All 7 test suites run in $< 1.5\text{ seconds}$ across Windows, Ubuntu, and macOS on every pull request.
+All 8 tests execute in $< 1.5\text{ seconds}$ across Ubuntu, Windows, and macOS on every pull request.
 
 ---
 
-## 📊 Benchmarks
-
-| Metric | AegisBrain | Chroma / LanceDB (PyPI) | Redis / Memcached |
-|---|---|---|---|
-| **External Dependencies** | **0 (Python stdlib)** | 15–35 packages | C daemon / Docker |
-| **RAM Footprint** | **$< 25\text{ MB}$** | 180–350 MB | 50–120 MB |
-| **Cold Boot Time** | **$< 50\text{ ms}$** | 1,200–2,800 ms | Service dependent |
-| **Context Token Budget** | **$\le 400$ tokens** | Unbounded | Unbounded |
-| **Zero-Disk Stealth Mode** | **Native (`private`)** | Requires reconfig | In-memory only |
-
----
-
-## 📄 License & Attribution
+## License
 
 Copyright © 2026 **Priyanshu Ghosh** ([@PG300604](https://github.com/PG300604)).
 
