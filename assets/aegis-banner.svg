@@ -1,138 +1,108 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="100%" height="100%">
   <defs>
-    <!-- Background Gradients -->
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#090A0F" />
-      <stop offset="50%" stop-color="#0E1118" />
-      <stop offset="100%" stop-color="#07080C" />
+    <!-- Dark Matter Gradient -->
+    <linearGradient id="bgPlate" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090B0E" />
+      <stop offset="100%" stop-color="#0E1217" />
     </linearGradient>
 
-    <!-- Neural Glow Gradients -->
-    <radialGradient id="glowCobalt" cx="30%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#2563EB" stop-opacity="0.25" />
-      <stop offset="60%" stop-color="#1D4ED8" stop-opacity="0.05" />
-      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
-    </radialGradient>
-    <radialGradient id="glowCyan" cx="80%" cy="30%" r="50%">
-      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.18" />
-      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
-    </radialGradient>
-
-    <!-- Shield & Accent Gradient -->
-    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#38BDF8" />
-      <stop offset="50%" stop-color="#2563EB" />
-      <stop offset="100%" stop-color="#1E40AF" />
-    </linearGradient>
-    <linearGradient id="shieldBorder" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#60A5FA" stop-opacity="0.8" />
-      <stop offset="100%" stop-color="#1E3A8A" stop-opacity="0.2" />
+    <!-- Technical Terminal Fill -->
+    <linearGradient id="terminalBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#12161F" />
+      <stop offset="100%" stop-color="#0B0E14" />
     </linearGradient>
 
-    <!-- Grid Pattern -->
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1" />
+    <!-- Precision Dot Grid -->
+    <pattern id="dotGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="rgba(255, 255, 255, 0.05)" />
     </pattern>
   </defs>
 
-  <!-- Background Layer -->
-  <rect width="1200" height="360" fill="url(#bgGrad)" />
-  <rect width="1200" height="360" fill="url(#grid)" />
-  <rect width="1200" height="360" fill="url(#glowCobalt)" />
-  <rect width="1200" height="360" fill="url(#glowCyan)" />
+  <!-- Background Base -->
+  <rect width="1200" height="340" fill="url(#bgPlate)" />
+  <rect width="1200" height="340" fill="url(#dotGrid)" />
 
-  <!-- Outer Hairline Border -->
-  <rect x="0.5" y="0.5" width="1199" height="359" fill="none" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" rx="0" />
+  <!-- Outer Technical Drafting Frame -->
+  <rect x="18" y="18" width="1164" height="304" fill="none" stroke="rgba(255, 255, 255, 0.09)" stroke-width="1" />
+  
+  <!-- Precision Corner Crosshairs (+) -->
+  <!-- Top Left -->
+  <path d="M 12 18 L 24 18 M 18 12 L 18 24" stroke="#38BDF8" stroke-width="1.5" />
+  <!-- Top Right -->
+  <path d="M 1176 18 L 1188 18 M 1182 12 L 1182 24" stroke="#38BDF8" stroke-width="1.5" />
+  <!-- Bottom Left -->
+  <path d="M 12 322 L 24 322 M 18 316 L 18 328" stroke="#38BDF8" stroke-width="1.5" />
+  <!-- Bottom Right -->
+  <path d="M 1176 322 L 1188 322 M 1182 316 L 1182 328" stroke="#38BDF8" stroke-width="1.5" />
 
-  <!-- Abstract Neural Circuit Accents (Right Side) -->
-  <g opacity="0.35" transform="translate(760, 40)">
-    <!-- Circuit Lines -->
-    <path d="M 50 140 L 140 140 L 190 90 L 290 90" fill="none" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="4,4" />
-    <path d="M 90 200 L 170 200 L 230 260 L 320 260" fill="none" stroke="#2563EB" stroke-width="1.5" />
-    <path d="M 140 140 L 170 200" fill="none" stroke="rgba(255, 255, 255, 0.2)" stroke-width="1" />
-    <path d="M 230 40 L 290 90 L 350 90" fill="none" stroke="#06B6D4" stroke-width="1.5" />
-
-    <!-- Circuit Nodes -->
-    <circle cx="50" cy="140" r="4" fill="#38BDF8" />
-    <circle cx="140" cy="140" r="3" fill="#60A5FA" />
-    <circle cx="190" cy="90" r="5" fill="#38BDF8" />
-    <circle cx="290" cy="90" r="3" fill="#93C5FD" />
-    <circle cx="90" cy="200" r="4" fill="#2563EB" />
-    <circle cx="170" cy="200" r="5" fill="#38BDF8" />
-    <circle cx="230" cy="260" r="3" fill="#2563EB" />
-    <circle cx="320" cy="260" r="4" fill="#60A5FA" />
-    <circle cx="230" cy="40" r="4" fill="#06B6D4" />
-    <circle cx="350" cy="90" r="3" fill="#38BDF8" />
+  <!-- Top Telemetry Ribbon -->
+  <g transform="translate(36, 42)">
+    <circle cx="4" cy="4" r="3" fill="#10B981" />
+    <text x="14" y="7" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" font-weight="600" letter-spacing="1.5">
+      CORE_DAEMON: <tspan fill="#E2E8F0">127.0.0.1:8765</tspan> | STORAGE: <tspan fill="#10B981">SQLITE-WAL</tspan> | MEMORY: <tspan fill="#38BDF8">&lt;25MB</tspan> | TOKEN_GOVERNOR: <tspan fill="#F59E0B">≤400t</tspan>
+    </text>
   </g>
 
-  <!-- Left Shield & Neural Emblem (Vector Mark) -->
-  <g transform="translate(100, 80)">
-    <!-- Ambient Shield Glow -->
-    <circle cx="100" cy="100" r="85" fill="#2563EB" opacity="0.12" filter="blur(20px)" />
+  <!-- Left Hero Typography -->
+  <g transform="translate(46, 100)">
+    <!-- Primary Logotype -->
+    <text x="0" y="44" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="52" font-weight="900" letter-spacing="-1.5">
+      AEGIS<tspan fill="#94A3B8">BRAIN</tspan>
+    </text>
 
-    <!-- Outer Aegis Shield -->
-    <path d="M 100 20 L 165 48 L 165 110 C 165 152 135 182 100 195 C 65 182 35 152 35 110 L 35 48 Z"
-          fill="rgba(14, 21, 37, 0.75)" stroke="url(#shieldBorder)" stroke-width="2" />
+    <!-- Subtitle Definition -->
+    <text x="2" y="78" fill="#CBD5E1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="500" letter-spacing="0.2">
+      Local Neural Memory Bus &amp; Context Governor
+    </text>
+    <text x="2" y="100" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="400">
+      Universal drop-in for Antigravity, Claude Code, Codex, Cursor &amp; Hermes
+    </text>
 
-    <!-- Inner Core Geometry (Neural Nexus) -->
-    <path d="M 100 45 L 145 66 L 145 112 C 145 142 124 164 100 174 C 76 164 55 142 55 112 L 55 66 Z"
-          fill="none" stroke="rgba(56, 189, 248, 0.4)" stroke-width="1.2" stroke-dasharray="3,3" />
+    <!-- Spec Token Badges -->
+    <g transform="translate(0, 134)">
+      <!-- Token 1 -->
+      <rect x="0" y="0" width="134" height="28" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.12)" stroke-width="1" />
+      <text x="67" y="18" fill="#F1F5F9" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle">Python 3 Stdlib</text>
 
-    <!-- Central Neural Node Hierarchy -->
-    <circle cx="100" cy="85" r="8" fill="url(#accentGrad)" />
-    <circle cx="100" cy="85" r="14" fill="none" stroke="#38BDF8" stroke-width="1" opacity="0.5" />
+      <!-- Token 2 -->
+      <rect x="142" y="0" width="134" height="28" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.12)" stroke-width="1" />
+      <text x="209" y="18" fill="#10B981" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle">Sub-ms FTS5</text>
 
-    <circle cx="78" cy="125" r="6" fill="#1D4ED8" />
-    <circle cx="122" cy="125" r="6" fill="#1D4ED8" />
-    <circle cx="100" cy="148" r="5" fill="#06B6D4" />
-
-    <!-- Node Connectors -->
-    <line x1="100" y1="93" x2="78" y2="125" stroke="#38BDF8" stroke-width="1.5" opacity="0.8" />
-    <line x1="100" y1="93" x2="122" y2="125" stroke="#38BDF8" stroke-width="1.5" opacity="0.8" />
-    <line x1="78" y1="125" x2="100" y2="148" stroke="#06B6D4" stroke-width="1.5" opacity="0.8" />
-    <line x1="122" y1="125" x2="100" y2="148" stroke="#06B6D4" stroke-width="1.5" opacity="0.8" />
-  </g>
-
-  <!-- Typography & Content -->
-  <g transform="translate(320, 115)">
-    <!-- Pre-Title Eyebrow Tag -->
-    <g transform="translate(0, 0)">
-      <rect x="0" y="-18" width="168" height="26" rx="4" fill="rgba(37, 99, 235, 0.15)" stroke="rgba(56, 189, 248, 0.3)" stroke-width="1" />
-      <text x="84" y="-1" fill="#38BDF8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.5" text-anchor="middle">ZERO-UI DAEMON</text>
+      <!-- Token 3 -->
+      <rect x="284" y="0" width="134" height="28" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.12)" stroke-width="1" />
+      <text x="351" y="18" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle">GPLv3 Copyleft</text>
     </g>
+  </g>
 
-    <!-- Main Title -->
-    <text x="0" y="46" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="44" font-weight="800" letter-spacing="-1">
-      AEGIS<tspan fill="#38BDF8">BRAIN</tspan>
-    </text>
+  <!-- Right Hero Terminal Panel (Real Terminal Session) -->
+  <g transform="translate(680, 56)">
+    <!-- Terminal Chassis -->
+    <rect x="0" y="0" width="480" height="230" rx="6" fill="url(#terminalBg)" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1" />
+    
+    <!-- Window Header -->
+    <rect x="0" y="0" width="480" height="30" rx="6" fill="#161B24" />
+    <circle cx="16" cy="15" r="4.5" fill="#EF4444" opacity="0.8" />
+    <circle cx="32" cy="15" r="4.5" fill="#F59E0B" opacity="0.8" />
+    <circle cx="48" cy="15" r="4.5" fill="#10B981" opacity="0.8" />
+    <text x="240" y="19" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="500" text-anchor="middle">bash // session_boot.sh</text>
 
-    <!-- Subtitle -->
-    <text x="0" y="82" fill="#94A3B8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="400" letter-spacing="0.2">
-      Local Neural Memory Bus &amp; Context Governor for Autonomous Agents
-    </text>
+    <!-- Terminal Code Body -->
+    <g transform="translate(18, 54)">
+      <!-- Command 1 -->
+      <text x="0" y="0" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">$ <tspan fill="#F8FAFC" font-weight="600">aegis bootstrap</tspan></text>
+      <text x="0" y="18" fill="#10B981" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">✓ Compiled ACTIVE_CONTEXT.md (382 tokens, 0.04s)</text>
 
-    <!-- Spec Pill Tokens -->
-    <g transform="translate(0, 116)">
-      <!-- Pill 1: Storage -->
-      <g transform="translate(0, 0)">
-        <rect x="0" y="0" width="138" height="28" rx="6" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1" />
-        <text x="69" y="18" fill="#E2E8F0" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="11" font-weight="500" text-anchor="middle">SQLite WAL + FTS5</text>
-      </g>
-      <!-- Pill 2: Dependencies -->
-      <g transform="translate(148, 0)">
-        <rect x="0" y="0" width="132" height="28" rx="6" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1" />
-        <text x="66" y="18" fill="#E2E8F0" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="11" font-weight="500" text-anchor="middle">Zero Dependencies</text>
-      </g>
-      <!-- Pill 3: RAM -->
-      <g transform="translate(290, 0)">
-        <rect x="0" y="0" width="94" height="28" rx="6" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1" />
-        <text x="47" y="18" fill="#10B981" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="11" font-weight="600" text-anchor="middle">&lt; 25MB RAM</text>
-      </g>
-      <!-- Pill 4: Boot -->
-      <g transform="translate(394, 0)">
-        <rect x="0" y="0" width="102" height="28" rx="6" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.1)" stroke-width="1" />
-        <text x="51" y="18" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" font-size="11" font-weight="600" text-anchor="middle">&lt; 50ms Boot</text>
-      </g>
+      <!-- Command 2 -->
+      <text x="0" y="44" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">$ <tspan fill="#F8FAFC" font-weight="600">aegis search "cardinality"</tspan></text>
+      <text x="0" y="62" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">→ [ARCHITECTURE] GenAI Observation Cardinality (0.4ms)</text>
+
+      <!-- Command 3 -->
+      <text x="0" y="88" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">$ <tspan fill="#F8FAFC" font-weight="600">aegis mode private</tspan></text>
+      <text x="0" y="106" fill="#F59E0B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">⚡ Ephemeral stealth active: 0 bytes written to disk</text>
+
+      <!-- Command 4 -->
+      <text x="0" y="132" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">$ <tspan fill="#F8FAFC" font-weight="600">aegis media --model flux-2 --prompt "..."</tspan></text>
+      <text x="0" y="150" fill="#A78BFA" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">✓ OpenHiggsfield dispatch: asset metadata indexed</text>
     </g>
   </g>
 </svg>

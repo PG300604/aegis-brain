@@ -1,36 +1,58 @@
 ---
 name: aegis
-description: Manage AegisBrain local neural memory bus, logon autostart, public/private modes, architectural memory recall, and OpenHiggsfield media generation.
+description: "Universal local neural memory bus, context governor, and cross-model skill proxy for Antigravity, Claude Code, Codex, Hermes, Cursor, and OpenCode."
+tools: [claude-code, codex, gemini-cli, antigravity, hermes, cursor, opencode, aider]
+category: memory
+risk: safe
+tags: [agent-memory, context-governor, ollama, local-ai, fts5, sqlite, prompt-caching, open-higgsfield]
 ---
 
-# AegisBrain Controller Skill
+# AegisBrain Universal Controller Skill
 
-Use this skill whenever the user asks to manage, query, or reconfigure AegisBrain, or uses any `/aegis` slash command.
+AegisBrain provides deterministic workspace memory, active context compiling ($\le 400$ tokens), and skill proxying for all major autonomous AI coding agents:
+- **Google Antigravity CLI**
+- **Anthropic Claude Code**
+- **OpenAI Codex CLI**
+- **Nous Research Hermes Agent**
+- **Cursor / Windsurf / Continue / Cline**
+- **OpenCode CLI & Aider**
 
-## Available Slash Commands
+## Slash Commands
 
-- `/aegis status`: Check background daemon state, autostart status, tracked PRs, and decisions.
-- `/aegis autostart on`: Enable automatic background launch on Windows logon and system wake.
-- `/aegis autostart off`: Disable startup automation and stop the background daemon.
-- `/aegis mode public`: Enable SQLite WAL persistence and sub-millisecond FTS5 search.
-- `/aegis mode private`: Activate zero-disk stealth mode (no sessions or memories touch disk).
-- `/aegis search <query>`: Search architectural decisions and project knowledge instantly.
-- `/aegis bootstrap [path]`: Generate an ultra-compact active context block for any workspace.
-- `/aegis poll`: Sweep tracked GitHub pull requests (e.g. Spring AI PR #7308) for new comments/labels.
-- `/aegis media <prompt>`: Dispatch image/video generation to OpenHiggsfield and log to memory bus.
-- `/aegis stop`: Gracefully stop the background daemon.
+Whenever invoked via `/aegis` or asked to recall project decisions:
 
-## Operational Mapping
+| Command | Action | Output / Behavior |
+|---|---|---|
+| `/aegis status` | Inspect system health | Daemon state, autostart runner, tracked PRs, recorded decisions |
+| `/aegis bootstrap` | Compile workspace context | Generates `~/.aegis-brain/ACTIVE_CONTEXT.md` ($\le 400$ tokens) |
+| `/aegis search <q>` | Query memory bus | Sub-millisecond SQLite FTS5 search across architectural records |
+| `/aegis decision` | Record technical decision | Persists decision, rationale, and tags to SQLite WAL index |
+| `/aegis mode private` | Ephemeral stealth mode | Zero-disk logging; completely bypasses disk writes |
+| `/aegis mode public` | Persistent memory mode | Enables SQLite WAL storage and automatic full-text indexing |
+| `/aegis poll` | Sweep GitHub pull requests | Checks CI checks, triage labels, and review comments |
+| `/aegis media <p>` | OpenHiggsfield generation | Dispatches prompt to Flux/Seedance and logs output metadata |
+| `/aegis autostart [on/off]`| Control system boot runner | Configures zero-elevation logon/wake background execution |
+| `/aegis stop` | Stop background daemon | Gracefully closes HTTP server and releases WAL locks |
 
-| User Intent | Execution Command |
-|---|---|
-| View Status | `aegis status` |
-| Enable Autostart | `aegis autostart on` |
-| Disable Autostart | `aegis autostart off` |
-| Private Stealth Mode | `aegis mode private` |
-| Public Memory Mode | `aegis mode public` |
-| Recall Knowledge | `aegis search "<query>"` |
-| Inspect Context | `aegis bootstrap` |
-| Check GitHub PRs | `aegis poll` |
-| Generate AI Media | `aegis media --prompt "<prompt>"` |
-| Stop Daemon | `aegis stop` |
+## Universal Agent Integration Rules
+
+### 1. In Anthropic Claude Code
+Place this skill file in `~/.claude/skills/aegis/SKILL.md` or `.claude/skills/aegis/SKILL.md` in your repository.
+Claude Code automatically activates `/aegis` slash commands and executes `aegis` CLI commands natively.
+
+### 2. In Google Antigravity
+Registered at `~/.gemini/config/skills/aegis/SKILL.md`. Antigravity reads the active context on session launch and coordinates local Ollama models through the Aegis proxy (`127.0.0.1:8765/v1`).
+
+### 3. In OpenAI Codex CLI & Aider
+Codex and Aider consume `~/.aegis-brain/ACTIVE_CONTEXT.md` on startup. Configure `.aider.conf.yml` or Codex prompt hooks:
+```yaml
+# In .aider.conf.yml
+read: ~/.aegis-brain/ACTIVE_CONTEXT.md
+```
+
+### 4. In Cursor / Windsurf / VS Code
+Add to your project's `.cursorrules` or `.windsurfrules`:
+```markdown
+Always inspect ~/.aegis-brain/ACTIVE_CONTEXT.md before proposing architectural changes.
+Query past architectural decisions with `aegis search "<topic>"`.
+```
