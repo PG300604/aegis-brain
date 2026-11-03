@@ -26,6 +26,9 @@ from .caffeinate import (
     get_caffeinate_status,
     remote_suspend_pc,
     remote_shutdown_pc,
+    remote_lock_workstation,
+    remote_block_input,
+    remote_trigger_alarm,
 )
 from .db import search_memories, get_recent_decisions, get_tracked_prs
 
@@ -258,6 +261,184 @@ def get_latest_artifacts() -> str:
     return "\n".join(lines)
 
 
+
+def copy_to_desktop_clipboard(text: str) -> bool:
+    """Copy text directly to the workstation system clipboard."""
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            from ctypes import wintypes, c_void_p, c_size_t
+
+            user32 = ctypes.windll.user32
+            kernel32 = ctypes.windll.kernel32
+
+            user32.OpenClipboard.argtypes = [wintypes.HWND]
+            user32.OpenClipboard.restype = wintypes.BOOL
+            user32.EmptyClipboard.argtypes = []
+            user32.EmptyClipboard.restype = wintypes.BOOL
+            user32.SetClipboardData.argtypes = [wintypes.UINT, wintypes.HANDLE]
+            user32.SetClipboardData.restype = wintypes.HANDLE
+            user32.CloseClipboard.argtypes = []
+            user32.CloseClipboard.restype = wintypes.BOOL
+
+            kernel32.GlobalAlloc.argtypes = [wintypes.UINT, c_size_t]
+            kernel32.GlobalAlloc.restype = wintypes.HGLOBAL
+            kernel32.GlobalLock.argtypes = [wintypes.HGLOBAL]
+            kernel32.GlobalLock.restype = c_void_p
+            kernel32.GlobalUnlock.argtypes = [wintypes.HGLOBAL]
+            kernel32.GlobalUnlock.restype = wintypes.BOOL
+
+            GMEM_MOVEABLE = 0x0002
+            CF_UNICODETEXT = 13
+            data = text.encode("utf-16le") + b"\x00\x00"
+            h_mem = kernel32.GlobalAlloc(GMEM_MOVEABLE, len(data))
+            if not h_mem:
+                return False
+            ptr = kernel32.GlobalLock(h_mem)
+            if not ptr:
+                return False
+            ctypes.memmove(ptr, data, len(data))
+            kernel32.GlobalUnlock(h_mem)
+
+            for _ in range(5):
+                if user32.OpenClipboard(None):
+                    try:
+                        user32.EmptyClipboard()
+                        user32.SetClipboardData(CF_UNICODETEXT, h_mem)
+                        return True
+                    finally:
+                        user32.CloseClipboard()
+                time.sleep(0.05)
+            return False
+        except Exception:
+            return False
+    elif sys.platform == "darwin":
+        try:
+            p = subprocess.Popen(["pbcopy"], stdin=subprocess.PIPE)
+            p.communicate(text.encode("utf-8"))
+            return p.returncode == 0
+        except Exception:
+            return False
+    else:
+        try:
+            p = subprocess.Popen(["xclip", "-selection", "clipboard"], stdin=subprocess.PIPE)
+            p.communicate(text.encode("utf-8"))
+            return p.returncode == 0
+        except Exception:
+            return False
+
+
+def get_desktop_clipboard() -> str:
+    """Retrieve current text contents of the workstation clipboard."""
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            from ctypes import wintypes, c_void_p
+
+            user32 = ctypes.windll.user32
+            kernel32 = ctypes.windll.kernel32
+
+            user32.OpenClipboard.argtypes = [wintypes.HWND]
+            user32.OpenClipboard.restype = wintypes.BOOL
+            user32.CloseClipboard.argtypes = []
+            user32.CloseClipboard.restype = wintypes.BOOL
+            user32.GetClipboardData.argtypes = [wintypes.UINT]
+            user32.GetClipboardData.restype = wintypes.HANDLE
+            kernel32.GlobalLock.argtypes = [wintypes.HGLOBAL]
+            kernel32.GlobalLock.restype = c_void_p
+            kernel32.GlobalUnlock.argtypes = [wintypes.HGLOBAL]
+            kernel32.GlobalUnlock.restype = wintypes.BOOL
+
+            CF_UNICODETEXT = 13
+            for _ in range(5):
+                if user32.OpenClipboard(None):
+                    try:
+                        h_mem = user32.GetClipboardData(CF_UNICODETEXT)
+                        if not h_mem:
+                            return ""
+                        ptr = kernel32.GlobalLock(h_mem)
+                        if not ptr:
+                            return ""
+                        val = ctypes.wstring_at(ptr)
+                        kernel32.GlobalUnlock(h_mem)
+                        return val
+                    finally:
+                        user32.CloseClipboard()
+                time.sleep(0.05)
+            return ""
+        except Exception:
+            return ""
+    elif sys.platform == "darwin":
+        try:
+            res = subprocess.run(["pbpaste"], capture_output=True, text=True)
+            return res.stdout
+        except Exception:
+            return ""
+    else:
+        try:
+            res = subprocess.run(["xclip", "-selection", "clipboard", "-o"], capture_output=True, text=True)
+            return res.stdout
+        except Exception:
+            return ""
+
+
+def type_to_desktop(text: str, press_enter: bool = True) -> Tuple[bool, str]:
+    """Copy text to clipboard and simulate Ctrl+V and optional Enter into the active IDE or terminal."""
+    if not text.strip():
+        return False, "No text provided to type."
+
+    ok = copy_to_desktop_clipboard(text)
+    if not ok:
+        return False, "Failed to copy text to system clipboard."
+
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            user32 = ctypes.windll.user32
+            VK_CONTROL = 0x11
+            VK_V = 0x56
+            VK_RETURN = 0x0D
+            KEYEVENTF_KEYUP = 0x0002
+
+            time.sleep(0.1)
+            # Press Ctrl+V
+            user32.keybd_event(VK_CONTROL, 0, 0, 0)
+            user32.keybd_event(VK_V, 0, 0, 0)
+            time.sleep(0.05)
+            user32.keybd_event(VK_V, 0, KEYEVENTF_KEYUP, 0)
+            user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
+
+            if press_enter:
+                time.sleep(0.1)
+                user32.keybd_event(VK_RETURN, 0, 0, 0)
+                time.sleep(0.05)
+                user32.keybd_event(VK_RETURN, 0, KEYEVENTF_KEYUP, 0)
+
+            action_str = "Typed and submitted into active window" if press_enter else "Pasted into active window"
+            preview = (text[:80] + "...") if len(text) > 80 else text
+            return True, f"{action_str}:\n\"{preview}\""
+        except Exception as e:
+            return True, f"Copied to clipboard, but keystroke simulation failed: {e}"
+    elif sys.platform == "darwin":
+        try:
+            osa = 'tell application "System Events" to keystroke "v" using command down'
+            if press_enter:
+                osa += '\ntell application "System Events" to key code 36'
+            subprocess.run(["osascript", "-e", osa], timeout=3)
+            return True, "Pasted into active desktop window on macOS."
+        except Exception as e:
+            return True, f"Copied to macOS clipboard: {e}"
+    else:
+        try:
+            args = ["xdotool", "key", "ctrl+v"]
+            if press_enter:
+                args += ["Return"]
+            subprocess.run(args, timeout=3)
+            return True, "Pasted into active desktop window via xdotool."
+        except Exception:
+            return True, "Copied to Linux clipboard."
+
+
 def handle_remote_command(from_number: str, text: str) -> str:
     """Process incoming WhatsApp message and dispatch actions."""
     cfg = load_remote_config()
@@ -294,18 +475,26 @@ def handle_remote_command(from_number: str, text: str) -> str:
 
     elif cmd in ("/help", "help", "/start", "/commands"):
         return (
-            "🛡️ *AegisBrain Remote Commands:*\n"
-            "• */status* - Workstation status, RAM, caffeinate\n"
+            "🛡️ *AegisBrain Remote Commands:*\n\n"
+            "⌨️ *Input and Voice Bridge:*\n"
+            "• */type <text>* - Type text into active IDE chat and hit Enter\n"
+            "• */prompt <text>* - Alias for /type (use with phone voice dictation)\n"
+            "• */paste <text>* - Paste text without pressing Enter\n"
+            "• */clip [text]* - Read or copy to workstation clipboard\n"
+            "• */mode <chat|exec>* - Switch default behavior for plain text\n\n"
+            "🔒 *Workstation Security:*\n"
+            "• */lock* - Instantly lock screen (agents and caffeinate keep running!)\n"
+            "• */blockinput <on|off>* - Freeze/unfreeze desk keyboard and mouse\n"
+            "• */alarm* - Sound warning alarm chimes on PC speakers\n"
+            "• */sleep* - Turn off caffeinate and suspend PC\n"
+            "• */shutdown* - Safely power off PC (15s countdown)\n\n"
+            "💻 *Agent and Workspace:*\n"
+            "• */status* - Workstation status, RAM, mode, caffeinate\n"
             "• */caffeinate <on|off>* - Toggle anti-sleep wake-lock\n"
             "• */recall <query>* - Search memory and decisions\n"
-            "• */git status* - Git repository status\n"
-            "• */git diff* - View unstaged code changes\n"
-            "• */git commit -m \"msg\"* - Stage and commit code\n"
-            "• */git push* - Push commits to remote\n"
+            "• */git <status|diff|commit|push>* - Remote git operations\n"
             "• */artifacts* - View latest generated artifacts\n"
-            "• */exec <command>* - Run any shell command\n"
-            "• */sleep* - Turn off caffeinate and sleep PC\n"
-            "• */shutdown* - Safely power off PC"
+            "• */exec <command>* - Run any shell command"
         )
 
     elif cmd == "/status":
@@ -382,6 +571,57 @@ def handle_remote_command(from_number: str, text: str) -> str:
         res = execute_shell(arg)
         return f"⚡ *Command Output (`{arg}`):*\n```\n{res}\n```"
 
+    elif cmd in ("/type", "/prompt", "/say"):
+        if not arg:
+            return "Usage: `/type <text or prompt>` (types into active IDE/agent chat and submits)"
+        ok, msg = type_to_desktop(arg, press_enter=True)
+        return f"✍️ *Agent Input:* {msg}"
+
+    elif cmd == "/paste":
+        if not arg:
+            return "Usage: `/paste <text>` (pastes into active window without pressing Enter)"
+        ok, msg = type_to_desktop(arg, press_enter=False)
+        return f"📋 *Desktop Paste:* {msg}"
+
+    elif cmd == "/clip":
+        if arg:
+            ok = copy_to_desktop_clipboard(arg)
+            state = "Copied to" if ok else "Failed to copy to"
+            return f"📋 *Clipboard:* {state} workstation clipboard."
+        else:
+            content = get_desktop_clipboard().strip()
+            if not content:
+                return "📋 *PC Clipboard:* (Empty)"
+            preview = (content[:1000] + "\n... [truncated]") if len(content) > 1000 else content
+            return f"📋 *PC Clipboard Contents:*\n```\n{preview}\n```"
+
+    elif cmd == "/lock":
+        ok, msg = remote_lock_workstation()
+        return f"🔒 *Workstation Lock:*\n{msg}\nCaffeinate and background AI tasks remain 100% active."
+
+    elif cmd == "/blockinput":
+        state = arg.lower() in ("on", "true", "1", "lock", "enable")
+        ok, msg = remote_block_input(state)
+        return f"🛡️ *Physical Input Protection:*\n{msg}"
+
+    elif cmd == "/alarm":
+        ok, msg = remote_trigger_alarm()
+        return f"🚨 *Alert Triggered:*\n{msg}"
+
+    elif cmd == "/mode":
+        target = arg.lower().strip()
+        if target in ("chat", "prompt", "voice", "type"):
+            cfg["default_mode"] = "chat"
+            save_remote_config(cfg)
+            return "💬 *Input Mode Switched to CHAT*\nAll regular messages and phone voice dictations will now type directly into the active IDE window and submit!"
+        elif target in ("exec", "shell", "cmd"):
+            cfg["default_mode"] = "exec"
+            save_remote_config(cfg)
+            return "⚡ *Input Mode Switched to EXEC*\nUnprefixed messages will execute as shell commands."
+        else:
+            cur = cfg.get("default_mode", "exec").upper()
+            return f"🔄 *Current Input Mode:* `{cur}`\nUsage: `/mode <chat|exec>`\n• `chat`: Voice and messages type into IDE\n• `exec`: Messages run as shell commands"
+
     elif cmd == "/sleep":
         ok, msg = remote_suspend_pc()
         return f"🌙 *System Standby:* {msg}"
@@ -391,9 +631,13 @@ def handle_remote_command(from_number: str, text: str) -> str:
         return f"🔌 *Workstation Shutdown:* {msg}\nTo cancel from PC: `shutdown /a`"
 
     else:
-        # Default fallback: If clean_text looks like a shell command, execute it directly
-        res = execute_shell(clean_text)
-        return f"⚡ *Output (`{clean_text}`):*\n```\n{res}\n```"
+        def_mode = cfg.get("default_mode", "exec").lower()
+        if def_mode in ("chat", "prompt", "voice", "type"):
+            ok, msg = type_to_desktop(clean_text, press_enter=True)
+            return f"✍️ *Agent Input (Chat Mode):* {msg}"
+        else:
+            res = execute_shell(clean_text)
+            return f"⚡ *Output (`{clean_text}`):*\n```\n{res}\n```"
 
 
 def format_twiml_response(reply_text: str) -> str:

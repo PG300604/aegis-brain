@@ -1,6 +1,6 @@
-# AegisBrain Mobile Remote Control & Command Reference
+# AegisBrain Mobile Remote Control & Security Reference
 
-AegisBrain includes a zero-dependency remote management bridge that allows developers to supervise local AI coding agents, execute terminal commands, view generated artifacts, and prevent machine sleep via **Telegram** or **WhatsApp** from anywhere.
+AegisBrain includes a zero-dependency remote management bridge that allows developers to supervise local AI coding agents, execute terminal commands, type ideas via voice dictation into the active IDE chat, view generated artifacts, and physically lock the workstation against tampering via **Telegram** or **WhatsApp** from anywhere.
 
 ---
 
@@ -8,9 +8,9 @@ AegisBrain includes a zero-dependency remote management bridge that allows devel
 
 AegisBrain connects to Telegram via an outbound **HTTPS long-polling daemon**. This requires:
 * **Zero inbound open ports**
-* **Zero public IP / DDNS**
-* **Zero webhook infrastructure or tunnels (no ngrok / Cloudflare needed)**
-* **Works seamlessly behind NAT and home Wi-Fi**
+* **Zero public IP or dynamic DNS**
+* **Zero webhook infrastructure or tunnels (no ngrok or Cloudflare needed)**
+* **Works seamlessly behind firewalls, NAT, and mobile hotspots**
 
 ### Step-by-Step Setup
 
@@ -40,57 +40,89 @@ AegisBrain connects to Telegram via an outbound **HTTPS long-polling daemon**. T
      ```text
      /auth 8765
      ```
-   * AegisBrain will authenticate your phone, whitelist your unique Chat ID, activate the **Caffeinate** sleep-prevention lock, and grant interactive shell access.
+   * AegisBrain will authenticate your phone, whitelist your unique Chat ID, activate the **Caffeinate** sleep-prevention lock, and grant interactive access.
 
 ---
 
-## 2. Interactive Shell vs. Silent Idle Mode
+## 2. Interactive Voice Mode & IDE Chat Typing
 
-A common question is whether the bot continuously prints every background terminal log to your phone. 
+When away from your desk, you can prompt your AI agents (Antigravity, Cursor, VS Code, Windsurf) by typing or speaking from your phone:
 
-AegisBrain uses an **Explicit On-Demand Architecture**:
+### How Phone Voice Mode Works
+1. Open your Telegram bot on your phone.
+2. Tap the **Microphone** icon on your smartphone keyboard (Gboard on Android, Apple Dictation on iOS) to dictate your idea or prompt hands-free.
+3. Send it as:
+   ```text
+   /type Refactor the authentication service to use JWT RS256 with key rotation
+   ```
+   or switch to auto-typing mode:
+   ```text
+   /mode chat
+   ```
+4. AegisBrain instantly places your prompt onto the workstation clipboard and injects `Ctrl+V` followed by `Enter` into the desktop window. The AI agent immediately receives your thought and begins coding!
 
-| State | Behavior |
-| :--- | :--- |
-| **Idle State (Default)** | The bot remains **100% quiet and idle**. It consumes zero CPU cycles and will **never** spam your chat with unprompted logs or terminal dumps. |
-| **Command Execution** | When you send a command (e.g., `git status`, `dir`, `pytest`, `cargo build`), AegisBrain runs it inside your active workspace directory and streams the real-time stdout/stderr response directly to your phone. |
-| **Artifact Inspection** | If your AI coding agent (Antigravity, Claude Code, Cursor, Aider) generates new plans, architectural blueprints, or markdown diffs, send `/artifacts` to inspect recent files, timestamps, and disk locations. |
-| **Autonomous Watchdog** | If you enable PR tracking via `aegis track <PR_URL>`, the background watchdog monitors CI check runs and review approvals. Only critical status shifts trigger an autonomous mobile alert. |
+### Chat Commands
+
+| Command | Action | Behavior |
+| :--- | :--- | :--- |
+| `/type <prompt>` | Direct Chat Injection | Copies prompt to system clipboard and simulates `Ctrl+V` + `Enter` in the active desktop window |
+| `/prompt <prompt>` | Voice Mode Alias | Exact alias for `/type`, designed for mobile speech-to-text workflows |
+| `/paste <text>` | Paste Without Submit | Copies text and pastes (`Ctrl+V`) into desktop without pressing Enter |
+| `/clip [text]` | Clipboard Sync | Sets workstation clipboard if text provided, or replies with current PC clipboard contents |
+| `/mode <chat\|exec>` | Mode Switch | `chat`: all unprefixed messages/dictations type into desktop chat; `exec`: run as shell commands |
 
 ---
 
-## 3. Remote Command Catalog
+## 3. Physical Device Security & Anti-Tamper Lockdown
+
+When leaving your workstation unattended in a shared office, coffee shop, or home desk, AegisBrain protects your physical hardware:
+
+### Security Matrix
+
+| Threat | Command | Action Taken |
+| :--- | :--- | :--- |
+| **Passersby watching or touching screen** | `/lock` | Instantly switches Windows to the Lock Screen (`user32.LockWorkStation`). Passersby see only the Windows login screen. Background AI agents, compilation tasks, Caffeinate AwayMode, and Telegram bot remain **100% active at full speed**. |
+| **Physical keyboard or mouse tampering** | `/blockinput on` | Disables physical keyboard and mouse hardware input (`user32.BlockInput`). Send `/blockinput off` to restore hardware controls. |
+| **Suspicious activity detected near desk** | `/alarm` | Plays urgent audible warning tones on the workstation speakers to alert and deter intruders. |
+| **Emergency remote standby** | `/sleep` | Disengages Caffeinate and puts the PC into system standby mode. |
+| **Emergency remote power off** | `/shutdown` | Safely closes sessions and initiates PC shutdown with a 15-second abort countdown (`shutdown /a` on PC to cancel). |
+
+---
+
+## 4. Complete Remote Command Catalog
 
 Send any of the following commands directly to your Telegram bot:
 
-### System & Power Management
+### Input & Voice Bridge
+* `/type <text>` - Type text into active IDE chat & submit (`Ctrl+V` + `Enter`)
+* `/prompt <text>` - Voice mode alias for `/type`
+* `/paste <text>` - Paste text without pressing Enter
+* `/clip [text]` - Read or set workstation clipboard contents
+* `/mode <chat|exec>` - Switch default behavior for plain text
 
-| Command | Description | Example Response |
-| :--- | :--- | :--- |
-| `/status` | Displays workstation health, RAM, git branch, and caffeinate state | `💻 AegisBrain Workstation: Online (Caffeinate: Active, Branch: main)` |
-| `/caffeinate on` | Activates OS-level wake lock (Win32 AwayMode pulse thread) | `☕ Caffeinate ON: System sleep and screen timeout suspended.` |
-| `/caffeinate off` | Releases wake lock, allowing normal OS power management | `💤 Caffeinate OFF: Normal system sleep restored.` |
-| `/sleep` | Disengages caffeinate and puts the PC into system sleep | `💤 Putting PC into sleep mode now. Goodbye!` |
-| `/shutdown` | Gracefully terminates open sessions and shuts down the PC | `🛑 Initiating system shutdown in 5 seconds.` |
-| `/help` or `/start` | Displays interactive command menu and usage guide | Lists all available commands with usage tips. |
+### Workstation Physical Security
+* `/lock` - Instantly lock screen (AI agents keep running in background)
+* `/blockinput <on|off>` - Freeze or unfreeze desk keyboard and mouse
+* `/alarm` - Sound warning alert chimes on PC speakers
+* `/sleep` - Turn off caffeinate and suspend PC
+* `/shutdown` - Safely power off PC (15-second abort delay)
 
-### AI Agents & Workspace Supervision
-
-| Command | Description | Example Usage |
-| :--- | :--- | :--- |
-| `/artifacts` | Scans session directory and returns the 4 newest generated reports | `/artifacts` |
-| `/recall <query>` | Performs sub-50ms SQLite FTS5 neural memory retrieval | `/recall rate limiting bug fix` |
-| `/git status` | Inspects working tree, staged files, and untracked changes | `/git status` |
-| `/git diff` | Shows unstaged git diff lines directly in chat | `/git diff` |
-| `/git commit -m "..."` | Stages and commits local changes with verified message | `/git commit -m "fix: rate limit leak"` |
-| `/git push` | Pushes current branch commits to origin remote | `/git push` |
-| `<any CLI command>` | Executes arbitrary terminal command in the workspace directory | `dir`, `git log -n 3`, `pytest`, `npm test` |
+### Agent & Workspace Supervision
+* `/status` - Workstation status, RAM, branch, mode, caffeinate uptime
+* `/caffeinate <on|off>` - Toggle anti-sleep wake-lock
+* `/recall <query>` - Sub-50ms SQLite FTS5 search across memories and decisions
+* `/artifacts` - View the 4 newest generated artifacts and reports
+* `/git status` - Inspect working tree, staged files, and untracked changes
+* `/git diff` - View unstaged code changes directly in chat
+* `/git commit -m "..."` - Stage and commit local code changes
+* `/git push` - Push commits to remote git repository
+* `/exec <command>` - Execute arbitrary shell command in workspace
 
 ---
 
-## 4. Workstation CLI Commands
+## 5. Workstation CLI Commands
 
-You can also control the remote subsystem directly from your PC terminal using the `aegis` CLI:
+You can also control the remote subsystem directly from your PC terminal:
 
 ```bash
 # Setup remote bridge (Telegram or WhatsApp)
@@ -105,15 +137,22 @@ aegis remote test
 # Start the background remote listener and daemon
 aegis remote start
 
+# Instantly lock screen while keeping AI agents active
+aegis lock
+
+# Type text into active desktop window from CLI
+aegis type "Run full test suite and build release"
+
 # Manage Caffeinate independently
 aegis caffeinate on
 aegis caffeinate off
 aegis caffeinate status
+aegis caffeinate lock
 ```
 
 ---
 
-## 5. Security & Isolation Model
+## 6. Security & Isolation Model
 
 * **Pairing PIN**: First-time connections must pass `/auth <PIN>`. Unauthenticated messages are rejected immediately.
 * **ID Whitelisting**: Upon successful authentication, your unique Telegram Chat ID or phone number is persisted to `~/.aegis-brain/remote.json`. Messages from any other account are ignored.

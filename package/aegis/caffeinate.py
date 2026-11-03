@@ -135,6 +135,78 @@ class CaffeinateEngine:
             "started_at": datetime.fromtimestamp(self._started_at, timezone.utc).isoformat() if self._active else None,
         }
 
+    def lock_workstation(self) -> Tuple[bool, str]:
+        """Instantly lock workstation screen while keeping background agents and Caffeinate active."""
+        if self._platform == "win32":
+            try:
+                import ctypes
+                from ctypes import wintypes
+                user32 = ctypes.windll.user32
+                user32.LockWorkStation.argtypes = []
+                user32.LockWorkStation.restype = wintypes.BOOL
+                res = user32.LockWorkStation()
+                if res:
+                    return True, "Workstation locked. Screen is protected behind Windows Lock Screen while background AI tasks continue."
+                return False, "Failed to lock Windows workstation."
+            except Exception as e:
+                return False, f"Failed to lock Windows workstation: {e}"
+        elif self._platform == "darwin":
+            try:
+                subprocess.Popen(["/System/Library/CoreServices/Menu Extras/User.menu/Contents/Resources/CGSession", "-suspend"])
+                return True, "macOS session locked."
+            except Exception as e:
+                return False, f"Failed to lock macOS session: {e}"
+        else:
+            try:
+                subprocess.Popen(["loginctl", "lock-session"])
+                return True, "Linux session locked."
+            except Exception as e:
+                return False, f"Failed to lock Linux session: {e}"
+
+    def block_input(self, block: bool = True) -> Tuple[bool, str]:
+        """Freeze or restore physical keyboard and mouse hardware input."""
+        state_str = "BLOCKED" if block else "UNBLOCKED"
+        if self._platform == "win32":
+            try:
+                import ctypes
+                from ctypes import wintypes
+                user32 = ctypes.windll.user32
+                user32.BlockInput.argtypes = [wintypes.BOOL]
+                user32.BlockInput.restype = wintypes.BOOL
+                res = user32.BlockInput(block)
+                if res:
+                    return True, f"Physical keyboard and mouse hardware input has been {state_str}."
+                return True, f"Physical input requested ({state_str}). Note: Full hardware blocking on Windows requires Administrator privileges. Use /lock for 100% screen and input lockdown."
+            except Exception as e:
+                return False, f"Failed to modify physical input state: {e}"
+        else:
+            return False, f"Physical input blocking is supported on Windows. Use /lock instead."
+
+    def trigger_alarm(self) -> Tuple[bool, str]:
+        """Sound audible alert chimes on workstation speakers."""
+        if self._platform == "win32":
+            try:
+                import winsound
+
+                def _beep_seq():
+                    try:
+                        winsound.MessageBeep(winsound.MB_ICONEXCLAMATION)
+                        time.sleep(0.1)
+                        for freq in (880, 1175, 1760, 2349):
+                            winsound.Beep(freq, 180)
+                            time.sleep(0.04)
+                    except Exception:
+                        pass
+
+                threading.Thread(target=_beep_seq, daemon=True, name="AegisAlarm").start()
+                return True, "Audible alert warning sounded on workstation speakers."
+            except Exception as e:
+                return False, f"Failed to sound alert: {e}"
+        else:
+            sys.stdout.write("\a")
+            sys.stdout.flush()
+            return True, "Terminal bell alert sounded."
+
     def suspend_pc(self) -> Tuple[bool, str]:
         """Put workstation into sleep/standby mode."""
         self.disable()
@@ -212,3 +284,16 @@ def remote_suspend_pc() -> Tuple[bool, str]:
 
 def remote_shutdown_pc(delay_seconds: int = 15) -> Tuple[bool, str]:
     return _engine.shutdown_pc(delay_seconds=delay_seconds)
+
+
+def remote_lock_workstation() -> Tuple[bool, str]:
+    return _engine.lock_workstation()
+
+
+def remote_block_input(block: bool = True) -> Tuple[bool, str]:
+    return _engine.block_input(block=block)
+
+
+def remote_trigger_alarm() -> Tuple[bool, str]:
+    return _engine.trigger_alarm()
+

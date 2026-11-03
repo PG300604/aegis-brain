@@ -29,7 +29,11 @@ from .caffeinate import (
     get_caffeinate_status,
     remote_suspend_pc,
     remote_shutdown_pc,
+    remote_lock_workstation,
+    remote_block_input,
+    remote_trigger_alarm,
 )
+from .remote import type_to_desktop
 from .remote import (
     run_remote_setup_wizard,
     show_remote_status,
@@ -98,8 +102,16 @@ def main() -> None:
 
     # caffeinate (anti-sleep wake-lock)
     caff_parser = subparsers.add_parser("caffeinate", help="Prevent system sleep while agents run")
-    caff_parser.add_argument("state", nargs="?", choices=["on", "off", "status", "sleep", "shutdown"], default="status", help="Turn caffeinate on/off, inspect status, or trigger sleep/shutdown")
+    caff_parser.add_argument("state", nargs="?", choices=["on", "off", "status", "sleep", "shutdown", "lock"], default="status", help="Turn caffeinate on/off, inspect status, or trigger lock/sleep/shutdown")
     caff_parser.add_argument("--display", "-d", action="store_true", help="Also prevent display from turning off")
+
+    # lock
+    subparsers.add_parser("lock", help="Instantly lock screen (AI agents keep running in background)")
+
+    # type (type into active desktop window)
+    type_parser = subparsers.add_parser("type", help="Type text into active IDE window and submit")
+    type_parser.add_argument("text", help="Text or prompt to type")
+    type_parser.add_argument("--no-enter", action="store_true", help="Do not press Enter after typing")
 
     # remote (WhatsApp remote bridge)
     rem_parser = subparsers.add_parser("remote", help="Manage WhatsApp remote control and agent execution bridge")
@@ -245,6 +257,9 @@ def main() -> None:
         elif args.state == "shutdown":
             ok, msg = remote_shutdown_pc(delay_seconds=10)
             print(f"[AegisBrain] {msg}")
+        elif args.state == "lock":
+            ok, msg = remote_lock_workstation()
+            print(f"[AegisBrain] {msg}")
         else:
             st = get_caffeinate_status()
             active_str = f"ACTIVE ({st['uptime_seconds']}s)" if st["active"] else "INACTIVE"
@@ -281,6 +296,14 @@ def main() -> None:
             print(f"  Note:   {res['message']}")
         if "error" in res:
             print(f"  Error:  {res['error']}")
+
+    elif args.command == "lock":
+        ok, msg = remote_lock_workstation()
+        print(f"[AegisBrain] {msg}")
+
+    elif args.command == "type":
+        ok, msg = type_to_desktop(args.text, press_enter=not args.no_enter)
+        print(f"[AegisBrain] {msg}")
 
     else:
         parser.print_help()

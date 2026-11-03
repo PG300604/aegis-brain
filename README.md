@@ -276,53 +276,39 @@ aegis caffeinate off
 
 ### Mobile Remote Agent Bridge (Telegram & WhatsApp)
 
-Control your AI coding agents, run terminal commands, and inspect generated artifacts remotely from your phone. AegisBrain supports **Telegram** (default & recommended — zero open ports, zero webhooks, works behind any NAT/Wi-Fi via outbound HTTPS long-polling) and **WhatsApp** (via Twilio REST API).
+Control your AI coding agents, type ideas via voice dictation into the desktop chat, run terminal commands, inspect generated artifacts, and lock your workstation hardware remotely from your smartphone. AegisBrain supports **Telegram** (recommended: zero open ports, zero webhooks, outbound HTTPS long-polling) and **WhatsApp** (via Twilio REST API).
 
-For complete command tables, security isolation, and advanced workflows, see [**Mobile Remote & Command Catalog (docs/REMOTE_COMMANDS.md)**](docs/REMOTE_COMMANDS.md).
+For complete onboarding, voice typing guides, and physical security architecture, see [**Mobile Remote & Command Reference (docs/REMOTE_COMMANDS.md)**](docs/REMOTE_COMMANDS.md).
 
-`ash
+```bash
 # 1. Run interactive setup wizard (choose Telegram or WhatsApp)
 aegis remote setup
 
-# 2. View current remote bridge configuration and active wake-lock
+# 2. View current bridge configuration, token, and pairing state
 aegis remote status
 
 # 3. Start remote session (activates Caffeinate, launches daemon, begins listening)
 aegis remote start
-`
 
-Control your AI coding agent remotely from your mobile device via Twilio WhatsApp Sandbox:
-
-```bash
-# 1. Run interactive setup wizard (configures Twilio credentials & PIN)
-aegis remote setup
-
-# 2. View current remote bridge status
-aegis remote status
-
-# 3. Start remote session (activates Caffeinate, starts daemon, sends WhatsApp ping)
-aegis remote start
+# 4. Instantly lock screen while keeping AI agents active
+aegis lock
 ```
 
-#### Available Remote WhatsApp Commands
+#### Remote Command Highlights
 
-Send any of the following commands in your WhatsApp conversation:
-
-| WhatsApp Command | Description |
-|---|---|
-| `/status` | View CPU, memory, daemon status, and active wake-lock uptime |
-| `/caffeinate on` / `off` | Toggle anti-sleep wake-lock remotely |
-| `/recall <query>` | Sub-millisecond memory search across past architectural decisions |
-| `/artifacts` | Inspect and read the latest generated artifacts and outputs |
-| `/git status` / `diff` / `commit` / `push` | Inspect repo status or trigger version control actions |
-| `/exec <cmd>` | Execute a sandboxed shell command inside your workspace |
-| `/sleep` | Put the workstation to sleep remotely |
-| `/shutdown` | Gracefully shut down the PC with a safety delay |
-
-#### Security & Authentication
-- **PIN Protected**: Commands require authorization via a secret pairing PIN (`/auth <PIN>`).
-- **Sender Verification**: Incoming webhooks verify the caller's phone number against the configured allowlist.
-- **Zero PIP Dependencies**: Implemented strictly with standard library `http.server`, `urllib.request`, and `xml.sax`.
+| Category | Mobile Command | Behavior |
+| :--- | :--- | :--- |
+| **Input & Voice Bridge** | `/type <prompt>` or `/prompt` | Copies text to clipboard and simulates `Ctrl+V` + `Enter` in the active IDE typing box |
+| | `/mode <chat\|exec>` | Toggle whether unprefixed messages & phone voice dictations type into IDE or run in shell |
+| | `/clip [text]` | Read or set workstation clipboard contents directly from your phone |
+| **Physical Security** | `/lock` | Locks screen immediately (`LockWorkStation`). Passersby see only Windows Lock Screen while agents run |
+| | `/blockinput <on\|off>` | Freezes physical keyboard and mouse hardware against desk tampering |
+| | `/alarm` | Sounds audible alert chimes on PC speakers if suspicious activity is detected |
+| | `/sleep` / `/shutdown` | Remote standby or graceful workstation shutdown with 15-second abort countdown |
+| **Supervision & Git** | `/status` | View CPU, memory, daemon status, git branch, and active wake-lock uptime |
+| | `/artifacts` | Scan session directory and inspect the newest generated reports and plans |
+| | `/git <status\|diff\|commit\|push>` | Remote version control operations inside your active workspace |
+| | `/caffeinate <on\|off>` | Toggle OS-level anti-sleep wake-lock remotely |
 
 ---
 

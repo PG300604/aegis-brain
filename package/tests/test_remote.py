@@ -100,5 +100,50 @@ class TestCaffeinateAndRemote(unittest.TestCase):
         self.assertIn("not configured", msg)
 
 
+    def test_remote_type_and_clip(self):
+        # Test /clip with text
+        res_clip_set = handle_remote_command("whatsapp:+1234567890", "/clip Hello Aegis Test")
+        self.assertIn("Clipboard", res_clip_set)
+
+        # Test /clip inspection
+        res_clip_get = handle_remote_command("whatsapp:+1234567890", "/clip")
+        self.assertIn("PC Clipboard Contents", res_clip_get)
+        self.assertIn("Hello Aegis Test", res_clip_get)
+
+        # Test /type command
+        res_type = handle_remote_command("whatsapp:+1234567890", "/type Test Prompt Injection")
+        self.assertIn("Agent Input", res_type)
+
+    def test_remote_mode_toggle(self):
+        # Switch to chat mode
+        res_chat = handle_remote_command("whatsapp:+1234567890", "/mode chat")
+        self.assertIn("Switched to CHAT", res_chat)
+
+        # Unprefixed message should now type into desktop rather than execute shell
+        res_msg = handle_remote_command("whatsapp:+1234567890", "Analyze my code architecture")
+        self.assertIn("Chat Mode", res_msg)
+
+        # Switch back to exec mode
+        res_exec = handle_remote_command("whatsapp:+1234567890", "/mode exec")
+        self.assertIn("Switched to EXEC", res_exec)
+
+    def test_remote_security_commands(self):
+        from unittest.mock import patch
+        
+        # Test /blockinput
+        res_block = handle_remote_command("whatsapp:+1234567890", "/blockinput on")
+        self.assertIn("Physical Input Protection", res_block)
+
+        # Test /alarm
+        res_alarm = handle_remote_command("whatsapp:+1234567890", "/alarm")
+        self.assertIn("Alert Triggered", res_alarm)
+
+        # Test /lock with mock to avoid locking physical screen during test run
+        with patch("aegis.remote.remote_lock_workstation", return_value=(True, "Workstation locked for test")):
+            res_lock = handle_remote_command("whatsapp:+1234567890", "/lock")
+            self.assertIn("Workstation Lock", res_lock)
+            self.assertIn("Workstation locked for test", res_lock)
+
+
 if __name__ == "__main__":
     unittest.main()
