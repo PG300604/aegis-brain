@@ -11,6 +11,7 @@ AegisBrain provides an intuitive, high-speed command line interface.
 | `aegis start` | None | Launches the background daemon server detached from current terminal. |
 | `aegis stop` | None | Gracefully shuts down the background daemon via remote `/shutdown` endpoint. |
 | `aegis mode` | `public` / `private` | Toggles storage persistence mode. Private mode writes zero disk logs. |
+| `aegis recall` | `[query] [-n LIMIT]` | Instantly recalls recent workflows, decisions, or performs FTS5 keyword match (<50ms, <100 tokens). |
 | `aegis search` | `<query> [-n LIMIT]` | Sub-millisecond FTS5 search across all decisions and architectural memories. |
 | `aegis bootstrap` | `[-w WORKSPACE]` | Compiles active context markdown for current or specified workspace. |
 | `aegis decision` | `-t TITLE -d DESC [-c CAT] [-r RAT] [--tags TAGS]` | Records a new architectural or design decision. |
@@ -27,12 +28,24 @@ AegisBrain provides an intuitive, high-speed command line interface.
 aegis status
 ```
 
-### 2. Search Memories Instantly
+### 2. Instantly Recall Past Tasks & Workflows
+```bash
+# Recall the last 5 tasks and decisions
+aegis recall
+
+# Recall the single most recent completed task
+aegis recall -n 1
+
+# Search memory by keyword or topic
+aegis recall "banner"
+```
+
+### 3. Search Memories Instantly
 ```bash
 aegis search "low cardinality"
 ```
 
-### 3. Record an Architectural Decision
+### 4. Record an Architectural Decision
 ```bash
 aegis decision \
   -c "BACKEND" \
@@ -42,7 +55,7 @@ aegis decision \
   --tags "payments" "stripe" "redis"
 ```
 
-### 4. Switch to Private Stealth Mode
+### 5. Switch to Private Stealth Mode
 ```bash
 aegis mode private
 # When done with sensitive work:
