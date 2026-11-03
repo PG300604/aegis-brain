@@ -187,7 +187,16 @@ def handle_remote_command(from_number: str, text: str) -> str:
     cmd = parts[0].lower() if parts else ""
     arg = parts[1].strip() if len(parts) > 1 else ""
 
-    if cmd in ("/help", "help"):
+    if cmd == "/auth":
+        if arg == auth_pin:
+            if from_number not in allowed_numbers:
+                allowed_numbers.append(from_number)
+                cfg["allowed_numbers"] = allowed_numbers
+                save_remote_config(cfg)
+            return "✅ *Authentication Successful!*\nYour phone number is paired with AegisBrain.\nType `/help` to see available commands."
+        return "❌ *Incorrect PIN.* Usage: `/auth <PIN>`"
+
+    elif cmd in ("/help", "help"):
         return (
             "🛡️ *AegisBrain Remote Commands:*\n"
             "• */status* - Workstation status, RAM, caffeinate\n"
