@@ -42,6 +42,14 @@ AegisBrain connects to Telegram via an outbound **HTTPS long-polling daemon**. T
      ```
    * AegisBrain will authenticate your phone, whitelist your unique Chat ID, activate the **Caffeinate** sleep-prevention lock, and grant interactive access.
 
+### Do You Have to Reconnect Every Session or After Reboots?
+
+**No.** Pairing is strictly a one-time step.
+
+* **Persistent Identity**: Once you send `/auth <PIN>`, AegisBrain writes your unique Telegram Chat ID to `~/.aegis-brain/remote.json`. It remembers your phone permanently across all future sessions.
+* **Auto-Start Across Reboots**: Run `aegis autostart on` once on your machine. On Windows, this places a silent VBS launcher into your user Startup folder (`aegis-brain-startup.vbs`); on Linux, it registers a user systemd service.
+* **Zero Maintenance**: Whenever your machine powers on or wakes up, the background daemon starts automatically and resumes polling. You can pick up your phone at any time and send commands immediately without touching your PC.
+
 ---
 
 ## 2. Interactive Voice Mode & IDE Chat Typing

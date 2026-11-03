@@ -310,6 +310,23 @@ aegis lock
 | | `/git <status\|diff\|commit\|push>` | Remote version control operations inside your active workspace |
 | | `/caffeinate <on\|off>` | Toggle OS-level anti-sleep wake-lock remotely |
 
+#### Do You Have to Reconnect Every Session or After Reboots?
+
+**No.** Pairing is strictly a one-time step.
+
+When you configure your bot and send `/auth <PIN>`, AegisBrain saves your bot token, unique chat ID, and allowed numbers to `~/.aegis-brain/remote.json`. You never need to run setup or type your pairing PIN again.
+
+To make sure your bot is always waiting for commands even after your PC restarts or wakes from sleep, enable system autostart:
+
+```bash
+aegis autostart on
+```
+
+Here is what happens under the hood:
+- **Windows**: Places a lightweight runner (`aegis-brain-startup.vbs`) into your user Startup folder. When you log in, Windows spins up the daemon silently in the background with zero terminal popups.
+- **Linux**: Configures and enables a user-level systemd service (`~/.config/systemd/user/aegis-brain.service`).
+- **Persistence**: As soon as your PC boots and connects to the network, the background listener picks up your saved Telegram token and resumes polling. You can pull out your phone, text your bot, and execute commands or lock your workstation immediately without touching your keyboard.
+
 ---
 
 ## Benchmarks
