@@ -1,10 +1,29 @@
 import json
+import os
+import sys
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from socketserver import ThreadingMixIn
 from typing import Any, Dict
-from .config import DEFAULT_HOST, DEFAULT_PORT, get_current_mode, set_current_mode
+from .config import (
+    DEFAULT_HOST,
+    DEFAULT_PORT,
+    get_aegis_dir,
+    get_current_mode,
+    set_current_mode,
+)
+
+# Under pythonw.exe, stdout/stderr are None. Redirect to daemon.log (line-buffered)
+if sys.stdout is None or sys.stderr is None:
+    try:
+        log_f = open(get_aegis_dir() / "daemon.log", "a", encoding="utf-8", buffering=1)
+        if sys.stdout is None:
+            sys.stdout = log_f
+        if sys.stderr is None:
+            sys.stderr = log_f
+    except Exception:
+        pass
 from .db import (
     get_active_alerts,
     get_recent_decisions,
@@ -22,6 +41,7 @@ from .watchdog import WatchdogRunner, sweep_tracked_prs
 
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
     daemon_threads = True
+    allow_reuse_address = True
 
 
 class AegisRequestHandler(BaseHTTPRequestHandler):
@@ -149,6 +169,14 @@ class AegisRequestHandler(BaseHTTPRequestHandler):
         elif path == "/v1/chat/completions":
             status_code, resp_payload = forward_chat_completion(body)
             self._send_json(status_code, resp_payload)
+        elif path == "/shutdown":
+            self._send_json(200, {"status": "shutting_down", "service": "aegis-brain"})
+            import time
+            def _kill():
+                time.sleep(0.2)
+                self.server.shutdown()
+            import threading
+            threading.Thread(target=_kill, daemon=True).start()
         else:
             self._send_json(404, {"error": "Not Found", "path": self.path})
 
@@ -178,3 +206,7 @@ def run_daemon(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT, watchdog_inte
         watchdog.stop()
         server.server_close()
         print("[AegisBrain] Daemon shut down cleanly.")
+
+
+if __name__ == "__main__":
+    run_daemon()

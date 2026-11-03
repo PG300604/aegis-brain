@@ -13,6 +13,14 @@ from .db import (
 from .governor import generate_active_context
 from .hooks import seed_initial_knowledge
 from .server import run_daemon
+from .service import (
+    disable_autostart,
+    enable_autostart,
+    is_autostart_enabled,
+    is_daemon_running,
+    start_daemon,
+    stop_daemon,
+)
 from .watchdog import sweep_tracked_prs
 
 
@@ -59,6 +67,16 @@ def main() -> None:
     # poll
     subparsers.add_parser("poll", help="Run immediate watchdog sweep on tracked PRs")
 
+    # start (detached daemon)
+    subparsers.add_parser("start", help="Start background AegisBrain daemon")
+
+    # stop (stop background daemon)
+    subparsers.add_parser("stop", help="Stop running background AegisBrain daemon")
+
+    # autostart
+    auto_parser = subparsers.add_parser("autostart", help="Manage system logon autostart")
+    auto_parser.add_argument("state", nargs="?", choices=["on", "off", "status"], default="status", help="Enable, disable, or query autostart")
+
     args = parser.parse_args()
 
     if args.command == "daemon":
@@ -70,8 +88,12 @@ def main() -> None:
         prs = get_tracked_prs()
         alerts = get_active_alerts()
         decisions = get_recent_decisions(limit=100)
+        running = is_daemon_running()
+        auto_enabled = is_autostart_enabled()
 
         print("=== AegisBrain Status ===")
+        print(f"Daemon:        {'RUNNING (http://127.0.0.1:8765)' if running else 'STOPPED'}")
+        print(f"Autostart:     {'ENABLED (starts on login/wake)' if auto_enabled else 'DISABLED'}")
         print(f"Mode:          {mode.upper()}")
         db_p = get_db_path()
         print(f"Database:      {db_p} ({'Exists' if db_p.exists() else 'Not initialized'})")
@@ -126,6 +148,27 @@ def main() -> None:
         print(f"[AegisBrain] Watchdog sweep complete. New alerts: {len(alerts)}")
         for a in alerts:
             print(f"  - {a}")
+
+    elif args.command == "start":
+        ok, msg = start_daemon()
+        print(f"[AegisBrain] {msg}")
+
+    elif args.command == "stop":
+        ok, msg = stop_daemon()
+        print(f"[AegisBrain] {msg}")
+
+    elif args.command == "autostart":
+        if args.state == "on":
+            ok, msg = enable_autostart()
+            print(f"[AegisBrain] {msg}")
+        elif args.state == "off":
+            ok, msg = disable_autostart()
+            print(f"[AegisBrain] {msg}")
+        else:
+            enabled = is_autostart_enabled()
+            running = is_daemon_running()
+            print(f"Autostart: {'ENABLED' if enabled else 'DISABLED'}")
+            print(f"Daemon:    {'RUNNING' if running else 'STOPPED'}")
 
     else:
         parser.print_help()

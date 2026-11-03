@@ -66,16 +66,29 @@ cd P:/open-source/aegis-brain
 python -m aegis.cli seed
 ```
 
-### 3. Check System Status
+### 3. Check System Status & Control Daemon
 ```bash
-python -m aegis.cli status
+# View real-time status
+aegis status
+
+# Enable zero-elevation autostart on system boot/wake
+aegis autostart on
+
+# Disable autostart anytime
+aegis autostart off
+
+# Start or stop background daemon manually
+aegis start
+aegis stop
 ```
 Output:
 ```text
 === AegisBrain Status ===
+Daemon:        RUNNING (http://127.0.0.1:8765)
+Autostart:     ENABLED (starts on login/wake)
 Mode:          PUBLIC
 Database:      C:\Users\priya\.aegis-brain\brain.db (Exists)
-Decisions:     3 recorded
+Decisions:     5 recorded
 Tracked PRs:   1
   - spring-projects/spring-ai#7308: Add missing GenAI request attributes to observations [open]
 Active Alerts: 0
@@ -83,19 +96,19 @@ Active Alerts: 0
 
 ### 4. Sub-Millisecond Memory Search (SQLite FTS5)
 ```bash
-python -m aegis.cli search "cardinality"
+aegis search "cardinality"
 ```
 
 ### 5. Generate Instant Agent Bootstrap Context
 ```bash
-python -m aegis.cli bootstrap -w P:/open-source/spring-ai
+aegis bootstrap -w P:/open-source/spring-ai
 ```
 
 ### 6. Toggle Private Stealth Mode
 ```bash
-python -m aegis.cli mode private
+aegis mode private
 # To return to public recording:
-python -m aegis.cli mode public
+aegis mode public
 ```
 
 ---
