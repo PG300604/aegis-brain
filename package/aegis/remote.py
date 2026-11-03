@@ -55,6 +55,7 @@ def load_remote_config() -> Dict[str, Any]:
         "auth_pin": os.environ.get("AEGIS_REMOTE_PIN", "8765"),
         "workspace_dir": os.environ.get("AEGIS_WORKSPACE_DIR", str(Path.cwd())),
         "auto_caffeinate": True,
+        "default_mode": os.environ.get("AEGIS_REMOTE_MODE", "chat"),
     }
 
 
@@ -183,6 +184,7 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
                         cfg["telegram_chat_id"] = chat_id
                         save_remote_config(cfg)
 
+                    attach_to_input_desktop()
                     reply = handle_remote_command(chat_id, text)
                     send_telegram_message(chat_id, reply, config=cfg)
 
@@ -262,10 +264,26 @@ def get_latest_artifacts() -> str:
 
 
 
+def attach_to_input_desktop() -> bool:
+    """Attach current thread to the interactive user desktop (WinSta0\\Default)."""
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            user32 = ctypes.windll.user32
+            h_input = user32.OpenInputDesktop(0, False, 0x01FF)
+            if h_input:
+                user32.SetThreadDesktop(h_input)
+                return True
+        except Exception:
+            pass
+    return False
+
+
 def copy_to_desktop_clipboard(text: str) -> bool:
     """Copy text directly to the workstation system clipboard."""
     if sys.platform == "win32":
         try:
+            attach_to_input_desktop()
             import ctypes
             from ctypes import wintypes, c_void_p, c_size_t
 
@@ -332,6 +350,7 @@ def get_desktop_clipboard() -> str:
     """Retrieve current text contents of the workstation clipboard."""
     if sys.platform == "win32":
         try:
+            attach_to_input_desktop()
             import ctypes
             from ctypes import wintypes, c_void_p
 
@@ -382,11 +401,61 @@ def get_desktop_clipboard() -> str:
             return ""
 
 
+def get_desktop_windows() -> List[Dict[str, Any]]:
+    """Return list of open desktop windows and their active status."""
+    if sys.platform != "win32":
+        return []
+    attach_to_input_desktop()
+    import ctypes
+    from ctypes import wintypes
+
+    user32 = ctypes.windll.user32
+    user32.GetForegroundWindow.restype = wintypes.HWND
+    active_hwnd = user32.GetForegroundWindow()
+    EnumWindowsProc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+    user32.EnumWindows.argtypes = [EnumWindowsProc, wintypes.LPARAM]
+    user32.EnumWindows.restype = wintypes.BOOL
+
+    windows = []
+    def cb(hwnd, lparam):
+        if user32.IsWindowVisible(hwnd):
+            length = user32.GetWindowTextLengthW(hwnd)
+            if length > 0:
+                buff = ctypes.create_unicode_buffer(length + 1)
+                user32.GetWindowTextW(hwnd, buff, length + 1)
+                val = buff.value.strip()
+                ignore = ("Program Manager", "Default IME", "MSCTFIME UI", "Windows Input Experience")
+                if val and not any(ig in val for ig in ignore) and not val.startswith("komoborder") and len(val) > 2:
+                    windows.append({"hwnd": hwnd, "title": val, "is_active": (hwnd == active_hwnd)})
+        return True
+
+    user32.EnumWindows(EnumWindowsProc(cb), 0)
+    return windows
+
+
+def focus_desktop_window(keyword: str) -> Tuple[bool, str]:
+    """Find and bring an open window matching keyword to the foreground."""
+    if sys.platform != "win32":
+        return False, "Focus switching is supported on Windows."
+    attach_to_input_desktop()
+    import ctypes
+    user32 = ctypes.windll.user32
+    windows = get_desktop_windows()
+    for w in windows:
+        if keyword.lower() in w["title"].lower():
+            hwnd = w["hwnd"]
+            user32.ShowWindow(hwnd, 9)  # SW_RESTORE
+            user32.SetForegroundWindow(hwnd)
+            return True, f'Activated window: "{w["title"]}"'
+    return False, f'No open window found matching "{keyword}".'
+
+
 def type_to_desktop(text: str, press_enter: bool = True) -> Tuple[bool, str]:
-    """Copy text to clipboard and simulate Ctrl+V and optional Enter into the active IDE or terminal."""
+    """Copy text to clipboard and simulate Ctrl+V and optional Enter into the active desktop window."""
     if not text.strip():
         return False, "No text provided to type."
 
+    attach_to_input_desktop()
     ok = copy_to_desktop_clipboard(text)
     if not ok:
         return False, "Failed to copy text to system clipboard."
@@ -394,29 +463,46 @@ def type_to_desktop(text: str, press_enter: bool = True) -> Tuple[bool, str]:
     if sys.platform == "win32":
         try:
             import ctypes
+            from ctypes import wintypes
             user32 = ctypes.windll.user32
-            VK_CONTROL = 0x11
-            VK_V = 0x56
-            VK_RETURN = 0x0D
-            KEYEVENTF_KEYUP = 0x0002
+            user32.GetForegroundWindow.restype = wintypes.HWND
+            user32.GetWindowTextLengthW.argtypes = [wintypes.HWND]
+            user32.GetWindowTextLengthW.restype = ctypes.c_int
+            user32.GetWindowTextW.argtypes = [wintypes.HWND, wintypes.LPWSTR, ctypes.c_int]
+            user32.GetWindowTextW.restype = ctypes.c_int
 
-            time.sleep(0.1)
-            # Press Ctrl+V
-            user32.keybd_event(VK_CONTROL, 0, 0, 0)
-            user32.keybd_event(VK_V, 0, 0, 0)
+            hwnd = user32.GetForegroundWindow()
+            win_title = "Active Window"
+            if hwnd:
+                length = user32.GetWindowTextLengthW(hwnd)
+                if length > 0:
+                    buff = ctypes.create_unicode_buffer(length + 1)
+                    user32.GetWindowTextW(hwnd, buff, length + 1)
+                    win_title = buff.value or win_title
+
+            # Compute hardware scan codes for Chromium/Electron & Windows Terminal compatibility
+            scan_ctrl = user32.MapVirtualKeyW(0x11, 0)
+            scan_v = user32.MapVirtualKeyW(0x56, 0)
+            scan_enter = user32.MapVirtualKeyW(0x0D, 0)
+
+            time.sleep(0.08)
+            # Press Ctrl+V with scan codes
+            user32.keybd_event(0x11, scan_ctrl, 0, 0)
+            user32.keybd_event(0x56, scan_v, 0, 0)
             time.sleep(0.05)
-            user32.keybd_event(VK_V, 0, KEYEVENTF_KEYUP, 0)
-            user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
+            user32.keybd_event(0x56, scan_v, 0x0002, 0)
+            user32.keybd_event(0x11, scan_ctrl, 0x0002, 0)
 
             if press_enter:
-                time.sleep(0.1)
-                user32.keybd_event(VK_RETURN, 0, 0, 0)
+                time.sleep(0.08)
+                user32.keybd_event(0x0D, scan_enter, 0, 0)
                 time.sleep(0.05)
-                user32.keybd_event(VK_RETURN, 0, KEYEVENTF_KEYUP, 0)
+                user32.keybd_event(0x0D, scan_enter, 0x0002, 0)
 
-            action_str = "Typed and submitted into active window" if press_enter else "Pasted into active window"
+            action_str = "Typed and submitted" if press_enter else "Pasted"
             preview = (text[:80] + "...") if len(text) > 80 else text
-            return True, f"{action_str}:\n\"{preview}\""
+            clean_title = (win_title[:45] + "...") if len(win_title) > 45 else win_title
+            return True, f'{action_str} into "{clean_title}":\n\"{preview}\"'
         except Exception as e:
             return True, f"Copied to clipboard, but keystroke simulation failed: {e}"
     elif sys.platform == "darwin":
@@ -570,6 +656,24 @@ def handle_remote_command(from_number: str, text: str) -> str:
             return "Usage: `/exec <command>` (e.g. `/exec npm test`)"
         res = execute_shell(arg)
         return f"⚡ *Command Output (`{arg}`):*\n```\n{res}\n```"
+
+    elif cmd in ("/windows", "/apps"):
+        wins = get_desktop_windows()
+        if not wins:
+            return "🖥️ *Open Windows:* No visible desktop application windows found."
+        lines = ["🖥️ *Open Desktop Windows:*"]
+        for idx, w in enumerate(wins[:10], 1):
+            tag = " 🟢 *[ACTIVE]*" if w["is_active"] else ""
+            lines.append(f"{idx}. `{w['title']}`{tag}")
+        lines.append("\nSend `/focus <name>` to bring any window to front.")
+        return "\n".join(lines)
+
+    elif cmd == "/focus":
+        if not arg:
+            return "Usage: `/focus <app or window name>` (e.g. `/focus powershell`, `/focus brave`)"
+        ok, msg = focus_desktop_window(arg)
+        icon = "🎯" if ok else "⚠️"
+        return f"{icon} *Window Focus:* {msg}"
 
     elif cmd in ("/type", "/prompt", "/say"):
         if not arg:
