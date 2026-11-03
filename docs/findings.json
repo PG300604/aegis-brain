@@ -1,0 +1,57 @@
+[
+  {
+    "id": "AEGIS-SEC-01",
+    "title": "Permissive CORS on Local Daemon Enables Browser-Based Workstation Takeover",
+    "severity": "HIGH",
+    "cvss_score": 8.1,
+    "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H",
+    "component": "package/aegis/server.py",
+    "status": "confirmed",
+    "description": "The daemon binds to 127.0.0.1:8765 and returns Access-Control-Allow-Origin: * on all endpoints. Malicious websites can execute cross-origin requests to shutdown the PC, exfiltrate memories, or poison decisions.",
+    "remediation": "Remove Access-Control-Allow-Origin: * and enforce Host header validation or local token authorization."
+  },
+  {
+    "id": "AEGIS-SEC-02",
+    "title": "Default-Allow Logic When Allowed Numbers List is Empty Leaves Daemon Unprotected",
+    "severity": "HIGH",
+    "cvss_score": 7.5,
+    "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "component": "package/aegis/remote.py",
+    "status": "confirmed",
+    "description": "If allowed_numbers is empty, incoming remote messages skip the authentication gate, allowing any Telegram user to execute arbitrary commands before pairing.",
+    "remediation": "Enforce default-deny pairing: require /auth PIN whenever allowed_numbers is empty or sender is unrecognized."
+  },
+  {
+    "id": "AEGIS-SEC-03",
+    "title": "Partial PIN Exposure in Remote Rejection Message Enables Rapid Brute-Force",
+    "severity": "MEDIUM",
+    "cvss_score": 5.3,
+    "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+    "component": "package/aegis/remote.py",
+    "status": "confirmed",
+    "description": "Unauthenticated access rejections leak the first two digits of the secret PIN, reducing search complexity from 10,000 to 100 attempts.",
+    "remediation": "Omit PIN digits in rejection messages and implement rate limiting."
+  },
+  {
+    "id": "AEGIS-SEC-04",
+    "title": "Indirect Prompt Injection via Untrusted Workspace Git Metadata in LLM System Prompt",
+    "severity": "MEDIUM",
+    "cvss_score": 6.5,
+    "cvss_vector": "CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N",
+    "component": "package/aegis/governor.py",
+    "status": "confirmed",
+    "description": "Active workspace context ingests commit messages, branch names, and PR titles directly into the system prompt without boundary encapsulation.",
+    "remediation": "Wrap external metadata inside <untrusted_workspace_metadata> tags with instructions to ignore embedded directives."
+  },
+  {
+    "id": "AEGIS-SEC-05",
+    "title": "Unsanitized Subcommand Concatenation in Remote /git Command Dispatch",
+    "severity": "LOW",
+    "cvss_score": 3.8,
+    "cvss_vector": "CVSS:3.1/AV:A/AC:L/PR:H/UI:N/S:U/C:L/I:L/A:L",
+    "component": "package/aegis/remote.py",
+    "status": "hardening",
+    "description": "The /git command uses string interpolation into shell=True, enabling accidental or intentional shell operator chaining.",
+    "remediation": "Tokenize git arguments and execute with shell=False."
+  }
+]

@@ -1,3 +1,4 @@
+_clipboard_memory_buffer = ""
 """Remote WhatsApp & Shell Command Bridge for AegisBrain.
 
 Enables secure remote control of AI coding agents, shell execution,
@@ -281,6 +282,8 @@ def attach_to_input_desktop() -> bool:
 
 def copy_to_desktop_clipboard(text: str) -> bool:
     """Copy text directly to the workstation system clipboard."""
+    global _clipboard_memory_buffer
+    _clipboard_memory_buffer = text
     if sys.platform == "win32":
         try:
             attach_to_input_desktop()
@@ -327,9 +330,9 @@ def copy_to_desktop_clipboard(text: str) -> bool:
                     finally:
                         user32.CloseClipboard()
                 time.sleep(0.05)
-            return False
+            return bool(_clipboard_memory_buffer)
         except Exception:
-            return False
+            return bool(_clipboard_memory_buffer)
     elif sys.platform == "darwin":
         try:
             p = subprocess.Popen(["pbcopy"], stdin=subprocess.PIPE)
@@ -348,6 +351,7 @@ def copy_to_desktop_clipboard(text: str) -> bool:
 
 def get_desktop_clipboard() -> str:
     """Retrieve current text contents of the workstation clipboard."""
+    global _clipboard_memory_buffer
     if sys.platform == "win32":
         try:
             attach_to_input_desktop()
@@ -374,19 +378,19 @@ def get_desktop_clipboard() -> str:
                     try:
                         h_mem = user32.GetClipboardData(CF_UNICODETEXT)
                         if not h_mem:
-                            return ""
+                            return _clipboard_memory_buffer
                         ptr = kernel32.GlobalLock(h_mem)
                         if not ptr:
-                            return ""
+                            return _clipboard_memory_buffer
                         val = ctypes.wstring_at(ptr)
                         kernel32.GlobalUnlock(h_mem)
-                        return val
+                        return val or _clipboard_memory_buffer
                     finally:
                         user32.CloseClipboard()
                 time.sleep(0.05)
-            return ""
+            return _clipboard_memory_buffer
         except Exception:
-            return ""
+            return _clipboard_memory_buffer
     elif sys.platform == "darwin":
         try:
             res = subprocess.run(["pbpaste"], capture_output=True, text=True)
@@ -532,8 +536,8 @@ def handle_remote_command(from_number: str, text: str) -> str:
     allowed_numbers = cfg.get("allowed_numbers", [])
     auth_pin = cfg.get("auth_pin", "8765")
 
-    # 1. Pairing & Authentication
-    if allowed_numbers and from_number not in allowed_numbers:
+    # 1. Pairing & Authentication (Enforce Default-Deny & Zero PIN Leakage)
+    if not allowed_numbers or from_number not in allowed_numbers:
         # Check if user is authenticating with PIN
         if clean_text.startswith("/auth"):
             parts = clean_text.split()
@@ -543,7 +547,7 @@ def handle_remote_command(from_number: str, text: str) -> str:
                 save_remote_config(cfg)
                 return "✅ *Authentication Successful!*\nYour phone number is now paired with AegisBrain.\nType `/help` to see available commands."
             return "❌ *Incorrect PIN.* Usage: `/auth <PIN>`"
-        return f"🔒 *AegisBrain Access Restricted*\nYour number is not paired.\nSend `/auth {auth_pin[:2]}**` with your secret PIN to unlock."
+        return "🔒 *AegisBrain Access Restricted*\nYour number is not paired.\nSend `/auth <PIN>` with your secret PIN to unlock."
 
     # 2. Command Dispatch
     parts = clean_text.split(maxsplit=1)
