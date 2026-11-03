@@ -1,108 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="100%" height="100%">
   <defs>
-    <!-- Dark Matter Gradient -->
-    <linearGradient id="bgPlate" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#090B0E" />
-      <stop offset="100%" stop-color="#0E1217" />
-    </linearGradient>
+    <style>
+      .bg { fill: #FAFAFA; }
+      .brand-text { fill: #111827; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-weight: 800; font-size: 82px; letter-spacing: -2px; }
+      .tagline-text { fill: #4B5563; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 500; font-size: 22px; letter-spacing: -0.3px; }
+      .sketch-purple { stroke: #6366F1; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .sketch-blue { stroke: #3B82F6; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .sketch-coral { stroke: #FB923C; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; fill: none; }
 
-    <!-- Technical Terminal Fill -->
-    <linearGradient id="terminalBg" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#12161F" />
-      <stop offset="100%" stop-color="#0B0E14" />
-    </linearGradient>
-
-    <!-- Precision Dot Grid -->
-    <pattern id="dotGrid" width="24" height="24" patternUnits="userSpaceOnUse">
-      <circle cx="2" cy="2" r="1" fill="rgba(255, 255, 255, 0.05)" />
-    </pattern>
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #0B0D11; }
+        .brand-text { fill: #F9FAFB; }
+        .tagline-text { fill: #9CA3AF; }
+        .sketch-purple { stroke: #818CF8; }
+        .sketch-blue { stroke: #60A5FA; }
+        .sketch-coral { stroke: #FDBA74; }
+      }
+    </style>
   </defs>
 
-  <!-- Background Base -->
-  <rect width="1200" height="340" fill="url(#bgPlate)" />
-  <rect width="1200" height="340" fill="url(#dotGrid)" />
+  <!-- Clean Minimal Canvas Background -->
+  <rect width="1200" height="320" class="bg" />
 
-  <!-- Outer Technical Drafting Frame -->
-  <rect x="18" y="18" width="1164" height="304" fill="none" stroke="rgba(255, 255, 255, 0.09)" stroke-width="1" />
-  
-  <!-- Precision Corner Crosshairs (+) -->
-  <!-- Top Left -->
-  <path d="M 12 18 L 24 18 M 18 12 L 18 24" stroke="#38BDF8" stroke-width="1.5" />
-  <!-- Top Right -->
-  <path d="M 1176 18 L 1188 18 M 1182 12 L 1182 24" stroke="#38BDF8" stroke-width="1.5" />
-  <!-- Bottom Left -->
-  <path d="M 12 322 L 24 322 M 18 316 L 18 328" stroke="#38BDF8" stroke-width="1.5" />
-  <!-- Bottom Right -->
-  <path d="M 1176 322 L 1188 322 M 1182 316 L 1182 328" stroke="#38BDF8" stroke-width="1.5" />
-
-  <!-- Top Telemetry Ribbon -->
-  <g transform="translate(36, 42)">
-    <circle cx="4" cy="4" r="3" fill="#10B981" />
-    <text x="14" y="7" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="10.5" font-weight="600" letter-spacing="1.5">
-      CORE_DAEMON: <tspan fill="#E2E8F0">127.0.0.1:8765</tspan> | STORAGE: <tspan fill="#10B981">SQLITE-WAL</tspan> | MEMORY: <tspan fill="#38BDF8">&lt;25MB</tspan> | TOKEN_GOVERNOR: <tspan fill="#F59E0B">≤400t</tspan>
-    </text>
-  </g>
-
-  <!-- Left Hero Typography -->
-  <g transform="translate(46, 100)">
-    <!-- Primary Logotype -->
-    <text x="0" y="44" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="52" font-weight="900" letter-spacing="-1.5">
-      AEGIS<tspan fill="#94A3B8">BRAIN</tspan>
+  <!-- Main Composition Center Group -->
+  <g transform="translate(600, 145)">
+    <!-- Brand Wordmark: AegisBrain. -->
+    <text x="0" y="0" text-anchor="middle" class="brand-text">
+      Aegis<tspan id="brain-part">Brain.</tspan>
     </text>
 
-    <!-- Subtitle Definition -->
-    <text x="2" y="78" fill="#CBD5E1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="500" letter-spacing="0.2">
-      Local Neural Memory Bus &amp; Context Governor
+    <!-- Hand-Drawn Sketch Accents matching the Pinterest Reference -->
+    <!-- 1. Purple double underline under "Aegis" (x: -240 to -50, y: 14 to 22) -->
+    <path class="sketch-purple" d="M -235,16 C -190,14 -130,18 -55,15" />
+    <path class="sketch-purple" d="M -225,23 C -175,20 -115,24 -65,22" opacity="0.75" />
+
+    <!-- 2. Blue organic scribble loop circled around "Brain." (x: -30 to 240, y: -80 to 25) -->
+    <!-- Drawn twice in an imperfect loop like a ballpoint/felt pen gesture -->
+    <path class="sketch-blue" d="M 90,-78 C 170,-76 250,-55 255,-22 C 262,22 195,34 95,30 C -15,26 -40,10 -35,-25 C -30,-62 30,-80 110,-78 C 185,-75 252,-48 245,-15 C 238,20 170,28 75,26 C -5,24 -30,8 -25,-20" />
+
+    <!-- 3. Short Tagline below -->
+    <text x="0" y="78" text-anchor="middle" class="tagline-text">
+      Deterministic local memory bus &amp; context governor for autonomous AI agents.
     </text>
-    <text x="2" y="100" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" font-weight="400">
-      Universal drop-in for Antigravity, Claude Code, Codex, Cursor &amp; Hermes
-    </text>
 
-    <!-- Spec Token Badges -->
-    <g transform="translate(0, 134)">
-      <!-- Token 1 -->
-      <rect x="0" y="0" width="134" height="28" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.12)" stroke-width="1" />
-      <text x="67" y="18" fill="#F1F5F9" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle">Python 3 Stdlib</text>
-
-      <!-- Token 2 -->
-      <rect x="142" y="0" width="134" height="28" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.12)" stroke-width="1" />
-      <text x="209" y="18" fill="#10B981" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle">Sub-ms FTS5</text>
-
-      <!-- Token 3 -->
-      <rect x="284" y="0" width="134" height="28" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.12)" stroke-width="1" />
-      <text x="351" y="18" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="600" text-anchor="middle">GPLv3 Copyleft</text>
-    </g>
-  </g>
-
-  <!-- Right Hero Terminal Panel (Real Terminal Session) -->
-  <g transform="translate(680, 56)">
-    <!-- Terminal Chassis -->
-    <rect x="0" y="0" width="480" height="230" rx="6" fill="url(#terminalBg)" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1" />
-    
-    <!-- Window Header -->
-    <rect x="0" y="0" width="480" height="30" rx="6" fill="#161B24" />
-    <circle cx="16" cy="15" r="4.5" fill="#EF4444" opacity="0.8" />
-    <circle cx="32" cy="15" r="4.5" fill="#F59E0B" opacity="0.8" />
-    <circle cx="48" cy="15" r="4.5" fill="#10B981" opacity="0.8" />
-    <text x="240" y="19" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" font-weight="500" text-anchor="middle">bash // session_boot.sh</text>
-
-    <!-- Terminal Code Body -->
-    <g transform="translate(18, 54)">
-      <!-- Command 1 -->
-      <text x="0" y="0" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">$ <tspan fill="#F8FAFC" font-weight="600">aegis bootstrap</tspan></text>
-      <text x="0" y="18" fill="#10B981" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">✓ Compiled ACTIVE_CONTEXT.md (382 tokens, 0.04s)</text>
-
-      <!-- Command 2 -->
-      <text x="0" y="44" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">$ <tspan fill="#F8FAFC" font-weight="600">aegis search "cardinality"</tspan></text>
-      <text x="0" y="62" fill="#38BDF8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">→ [ARCHITECTURE] GenAI Observation Cardinality (0.4ms)</text>
-
-      <!-- Command 3 -->
-      <text x="0" y="88" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">$ <tspan fill="#F8FAFC" font-weight="600">aegis mode private</tspan></text>
-      <text x="0" y="106" fill="#F59E0B" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">⚡ Ephemeral stealth active: 0 bytes written to disk</text>
-
-      <!-- Command 4 -->
-      <text x="0" y="132" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">$ <tspan fill="#F8FAFC" font-weight="600">aegis media --model flux-2 --prompt "..."</tspan></text>
-      <text x="0" y="150" fill="#A78BFA" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11.5">✓ OpenHiggsfield dispatch: asset metadata indexed</text>
-    </g>
+    <!-- 4. Coral organic wavy line accent under the tagline -->
+    <path class="sketch-coral" d="M -180,98 Q -150,90 -120,98 T -60,98 T 0,98 T 60,98 T 120,98 T 180,98" />
   </g>
 </svg>

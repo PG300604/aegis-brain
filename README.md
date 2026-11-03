@@ -1,12 +1,5 @@
-# AegisBrain
-
 <p align="center">
-  <img src="assets/aegis-banner.svg" alt="AegisBrain Banner" width="100%">
-</p>
-
-<p align="center">
-  <strong>Universal neural memory bus and context governor for autonomous AI coding agents.</strong><br>
-  Eliminates agent amnesia across sessions, guarantees zero disk trace in private stealth mode, and distills 500+ skills into local Ollama models with a ≤ 400-token boot budget.
+  <img src="assets/aegis-banner.svg" alt="AegisBrain" width="100%">
 </p>
 
 <p align="center">
@@ -20,50 +13,16 @@
 </p>
 
 <p align="center">
-  <a href="#overview">Overview</a> •
-  <a href="#universal-agent-compatibility">Universal Agents</a> •
-  <a href="#quickstart">Quickstart</a> •
-  <a href="#system-architecture">3D Architecture</a> •
-  <a href="#workflows">Workflows</a> •
-  <a href="#ai-media-generation-openhiggsfield-bridge">Media Bridge</a> •
-  <a href="#benchmarks">Benchmarks</a> •
-  <a href="#documentation">Docs</a> •
+  <a href="#overview">Overview</a> &bull;
+  <a href="#universal-agent-compatibility">Universal Agents</a> &bull;
+  <a href="#architecture">Architecture</a> &bull;
+  <a href="#quickstart">Quickstart</a> &bull;
+  <a href="#workflows">Workflows</a> &bull;
+  <a href="#openhiggsfield-media-bridge">Media Bridge</a> &bull;
+  <a href="#benchmarks">Benchmarks</a> &bull;
+  <a href="#documentation">Docs</a> &bull;
   <a href="#license">License</a>
 </p>
-
----
-
-## Terminal Proof
-
-```text
-$ python package/install.py
-[1/4] Initializing local neural memory bus...
-[2/4] Setting up zero-elevation background autostart...
-      Windows autostart enabled via VBScript background runner.
-[3/4] Registering global 'aegis' CLI command...
-      Created Windows shim: ~/.local/bin/aegis.cmd
-[4/4] Auto-linking companion skills across agent platforms...
-      [OK] Installed skill for Google Antigravity -> ~/.gemini/config/skills/aegis
-      [OK] Installed skill for Anthropic Claude Code -> ~/.claude/skills/aegis
-      [OK] Installed skill for OpenAI Codex CLI -> ~/.codex/skills/aegis
-AegisBrain successfully installed across all agent environments.
-
-$ aegis status
-=== AegisBrain Status ===
-Daemon:        RUNNING (http://127.0.0.1:8765)
-Autostart:     ENABLED (starts on login/wake)
-Mode:          PUBLIC
-Database:      C:\Users\priya\.aegis-brain\brain.db (Exists)
-Decisions:     7 recorded
-Tracked PRs:   1 (spring-projects/spring-ai#7308)
-Active Alerts: 0
-
-$ aegis search "cardinality"
-Found 1 matches for 'cardinality':
-[1] [ARCHITECTURE] GenAI Observation Cardinality Protection
-    Decision:  Low-cardinality protection: attributes omitted when empty to avoid metric explosion.
-    Rationale: Aligns with OpenTelemetry semantic conventions for Micrometer/Spring AI.
-```
 
 ---
 
@@ -71,7 +30,7 @@ Found 1 matches for 'cardinality':
 
 Modern AI coding agents excel in isolated prompt windows, but suffer from two systemic constraints on developer workstations:
 
-1. **The Amnesia Tax**: Launching a new terminal window or switching agent tools (Antigravity, Claude Code, Codex, Hermes, Cursor) clears working context. Developers repeatedly feed active branch states, ongoing pull requests, and architectural decisions back into prompts—burning tokens and causing conflicting implementations.
+1. **The Amnesia Tax**: Launching a new terminal window or switching agent environments (Antigravity, Claude Code, OpenAI Codex, Hermes, Cursor) clears working context. Developers repeatedly feed active branch states, ongoing pull requests, and architectural decisions back into prompts—burning tokens and causing conflicting implementations.
 2. **The Local Model Skill Gap**: Frontier cloud models benefit from vast, modular skill libraries. Local models running via Ollama (`qwen2.5-coder`, `deepseek-coder`, `llama3`) execute without domain constraints or architecture guardrails.
 
 AegisBrain resolves both problems through a local, zero-overhead background daemon:
@@ -97,6 +56,30 @@ AegisBrain installs as a universal, drop-in memory bus compatible across all mai
 
 ---
 
+## Architecture
+
+The diagram below outlines the system topology—bridging agent clients, the core zero-dependency daemon, local persistence, and model runtimes:
+
+<p align="center">
+  <img src="assets/architecture-excalidraw.svg" alt="AegisBrain Architecture Diagram" width="100%">
+</p>
+
+<p align="center">
+  <small><em>Editable Excalidraw source available at <a href="assets/architecture.excalidraw">assets/architecture.excalidraw</a>.</em></small>
+</p>
+
+### System Components
+
+1. **Client Ingress Layer (Left)**: Antigravity, Claude Code, Codex, Hermes, and Cursor communicate with AegisBrain via the global CLI, slash commands, or local HTTP.
+2. **AegisBrain Daemon Chassis (Center, :8765)**:
+   - **Context Governor**: Dynamically inspects git branch, diffs, commits, and tracked PRs, pruning context to $\le 400$ tokens.
+   - **Neural Memory Bus**: Multi-threaded SQLite engine in WAL mode with auto-synchronizing FTS5 virtual tables.
+   - **Skill Distiller**: OpenAI-compatible reverse proxy (`127.0.0.1:8765/v1`) augmenting prompts with domain heuristics before forwarding to Ollama.
+   - **Media Bridge**: Standard library dispatch to OpenHiggsfield image/video generation models.
+3. **Execution & Storage Floor (Right)**: Local `brain.db` database, deterministic `ACTIVE_CONTEXT.md`, local Ollama runtime (`127.0.0.1:11434`), and OpenHiggsfield Studio.
+
+---
+
 ## Quickstart
 
 ### 1. 1-Click Universal Installation
@@ -117,6 +100,17 @@ The installer initializes `~/.aegis-brain/brain.db`, establishes zero-elevation 
 aegis status
 ```
 
+```text
+=== AegisBrain Status ===
+Daemon:        RUNNING (http://127.0.0.1:8765)
+Autostart:     ENABLED (starts on login/wake)
+Mode:          PUBLIC
+Database:      C:\Users\priya\.aegis-brain\brain.db (Exists)
+Decisions:     7 recorded
+Tracked PRs:   1 (spring-projects/spring-ai#7308)
+Active Alerts: 0
+```
+
 ### 3. Automatic Shell Hook
 
 Add this single hook to your shell configuration (`$PROFILE` in PowerShell, or `~/.bashrc` in Bash/Zsh) so every opened terminal automatically compiles the latest workspace context:
@@ -133,26 +127,6 @@ python3 -m aegis.cli bootstrap > /dev/null 2>&1
 
 ---
 
-## System Architecture
-
-The diagram below illustrates the 3D dimetric topology of AegisBrain—bridging agent clients, the core zero-dependency daemon, local persistence, and model runtimes:
-
-<p align="center">
-  <img src="assets/architecture-3d.svg" alt="AegisBrain 3D Axonometric Architecture" width="100%">
-</p>
-
-### Architectural Layers
-
-1. **Client Ingress Layer (Top)**: Antigravity, Claude Code, Codex, Hermes, and Cursor communicate with AegisBrain via the global CLI, slash commands, or HTTP.
-2. **AegisBrain Daemon Chassis (Middle, :8765)**:
-   - **Context Governor**: Dynamically inspects git branch, diffs, commits, and tracked PRs, pruning context to $\le 400$ tokens.
-   - **Neural Memory Bus**: Multi-threaded SQLite engine in WAL mode with auto-synchronizing FTS5 virtual tables.
-   - **Skill Distiller**: OpenAI-compatible reverse proxy (`127.0.0.1:8765/v1`) augmenting prompts with domain heuristics before forwarding to Ollama.
-   - **Media Bridge**: Standard library dispatch to OpenHiggsfield image/video generation models.
-3. **Execution & Storage Floor (Bottom)**: Local `brain.db` database, deterministic `ACTIVE_CONTEXT.md`, local Ollama runtime (`127.0.0.1:11434`), and OpenHiggsfield Studio.
-
----
-
 ## Workflows
 
 ### Memory Search
@@ -161,6 +135,13 @@ Search across all recorded architectural decisions, past technical solutions, an
 
 ```bash
 aegis search "FTS5 WAL mode"
+```
+
+```text
+Found 1 matches for 'FTS5 WAL mode':
+[1] [DATABASE] SQLite FTS5 Storage Engine
+    Decision:  Use SQLite WAL mode and FTS5 triggers for local search.
+    Rationale: Guarantees zero pip dependencies and sub-millisecond retrieval.
 ```
 
 ### Record an Architectural Decision
@@ -222,7 +203,7 @@ AegisBrain intercepts prompts, fetches relevant workspace decisions and skill ve
 
 ---
 
-## AI Media Generation (OpenHiggsfield Bridge)
+## OpenHiggsfield Media Bridge
 
 AegisBrain includes a native bridge to [OpenHiggsfield](https://github.com/wide-trace/open-higgsfield) to generate repository media, diagram renders, and demo videos while cataloging prompts, seeds, and asset metadata in the local memory bus.
 
@@ -234,7 +215,7 @@ To ensure generated assets adhere to tactile industrial design rather than gener
 python scripts/generate_hero_asset.py --preset hero_hardware --model flux-2
 ```
 
-Available anti-slop presets:
+Available presets:
 - `hero_hardware`: Studio photography of CNC anodized matte black aluminum hardware with monochrome e-ink readouts.
 - `hud_telemetry`: High-contrast dark monospace OLED display showing real database telemetry.
 - `demo_video`: Cinematic slow camera pan with edge lighting across precision-milled hardware.
