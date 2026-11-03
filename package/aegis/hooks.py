@@ -6,7 +6,7 @@ from .governor import generate_active_context
 
 
 def seed_initial_knowledge() -> None:
-    """Seed initial project memory with Spring AI contribution & architectural decisions."""
+    """Seed initial project memory with Spring AI contribution, marketing playbook, & architectural decisions."""
     init_db()
 
     # Track Spring AI PR #7308
@@ -42,6 +42,23 @@ def seed_initial_knowledge() -> None:
         decision="Host all open-source repositories and development workspaces under P:\\open-source\\.",
         rationale="Preserves Drive C system storage and centralizes multi-agent development projects.",
         tags=["storage", "workspace", "windows"],
+    )
+
+    # Marketing & Launch Playbook Decisions
+    record_decision(
+        category="MARKETING",
+        title="AegisBrain Open-Source Marketing & Star Growth Playbook",
+        decision="Multi-channel launch strategy covering Show HN, Reddit r/LocalLLaMA, Twitter/X viral thread, and awesome-list PRs to maximize GitHub stars.",
+        rationale="Focuses on solving terminal amnesia, zero-pip stdlib architecture (<25MB RAM, <50ms boot), and closing the local Ollama skill gap.",
+        tags=["marketing", "launch", "show-hn", "reddit", "growth", "stars", "aegis"],
+    )
+
+    record_decision(
+        category="MARKETING",
+        title="Show HN and Reddit r/LocalLLaMA Viral Positioning",
+        decision="Position AegisBrain as the zero-dependency (<25MB RAM, <50ms cold boot) antidote to agent amnesia and token burn. Proxy local Ollama models (:8765/v1) to give smaller models frontier agent capabilities.",
+        rationale="Documented with ready-to-publish copy in docs/MARKETING_AND_LAUNCH_PLAYBOOK.md.",
+        tags=["marketing", "positioning", "show-hn", "reddit", "twitter", "viral", "aegis"],
     )
 
 
