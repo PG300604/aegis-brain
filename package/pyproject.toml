@@ -8,14 +8,14 @@ version = "0.1.0"
 description = "Local Neural Memory Bus, Agent Orchestrator & Cross-Model Skill Distillation System"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = { text = "GPL-3.0-or-later" }
 authors = [
     { name = "Priyanshu Ghosh", email = "priyanshughosh97@gmail.com" }
 ]
 keywords = ["ai-agents", "memory", "orchestration", "ollama", "antigravity", "hermes"]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Operating System :: OS Independent",
 ]
 
