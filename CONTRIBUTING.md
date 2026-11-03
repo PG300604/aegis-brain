@@ -23,7 +23,7 @@ Thank you for your interest in contributing to AegisBrain! We welcome pull reque
 
 ## 📐 Guidelines
 
-- **Simplicity First**: Adhere to Karpathy simplicity principles — write surgical changes with minimal diffs and zero speculative complexity.
+- **Simplicity First**: Follow Karpathy simplicity principles: write surgical changes with minimal diffs and zero speculative complexity.
 - **Zero External Runtime Dependencies**: Core AegisBrain runtime must run on standard Python 3.10+ without requiring `pip install`.
 - **Pass All Tests**: Verify that unit tests pass in $< 2\text{ seconds}$ before submitting a pull request.
 - **License Compliance**: All contributions are licensed under the GNU General Public License v3 (GPLv3).

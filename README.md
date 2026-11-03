@@ -30,16 +30,16 @@
 
 Modern AI coding agents excel in isolated prompt windows, but suffer from three systemic constraints on developer workstations:
 
-1. **The Amnesia Tax & Token Burn**: Launching a new terminal window or switching agent environments (Antigravity, Claude Code, OpenAI Codex, Hermes, Cursor) clears working context. When developers ask *"What was the last task we did?"* or *"Recall our architecture decision"*, traditional agents crawl multi-megabyte `transcript.jsonl` files and project directories—burning 25,000–60,000 tokens and taking 15–30 seconds.
+1. **The Amnesia Tax & Token Burn**: Launching a new terminal window or switching agent environments (Antigravity, Claude Code, OpenAI Codex, Hermes, Cursor) clears working context. When developers ask *"What was the last task we did?"* or *"Recall our architecture decision"*, traditional agents crawl huge `transcript.jsonl` files and project directories. That burns 25,000 to 60,000 tokens and takes 15 to 30 seconds just to find a single answer.
 2. **The Local Model Skill Gap**: Frontier cloud models benefit from vast, modular skill libraries. Local models running via Ollama (`qwen2.5-coder`, `deepseek-coder`, `llama3`) execute without domain constraints or architecture guardrails.
 3. **Fragmented Agent Silos**: Decisions made in Claude Code are invisible to Antigravity, and patterns learned in Cursor cannot be accessed by Codex or Aider.
 
-AegisBrain resolves these through a local, zero-overhead neural memory bus and background daemon:
+AegisBrain fixes this with a lightweight background daemon and local memory bus:
 - **Instant Sub-Second Recall (`aegis recall`)**: Replaces heavy transcript crawls with sub-millisecond SQLite FTS5 queries, answering recall queries in **<50ms** with **<100 tokens** (95%+ token savings).
 - **Zero External Dependencies**: Operates strictly on Python standard library modules (`sqlite3`, `http.server`, `urllib`, `argparse`).
 - **Deterministic Budget**: Injects a structured markdown workspace summary bounded at $\le 400$ tokens to preserve prompt cache hits.
 - **Dual-Mode Privacy**: Ephemeral stealth mode (`aegis mode private`) ensures zero bytes of prompt data or decision logs reach the disk.
-- **Continuous Cross-Agent Sync**: Automatically indexes workflows, tasks, and conventions across Antigravity, Claude Code, Codex, and Cursor into a unified SQLite WAL index.
+- **Continuous Cross-Agent Sync**: Indexes workflows, tasks, and conventions across Antigravity, Claude Code, Codex, and Cursor into a single SQLite database in WAL mode.
 
 ---
 
@@ -60,7 +60,7 @@ AegisBrain installs as a universal, drop-in memory bus compatible across all mai
 
 ## Architecture
 
-The diagram below outlines the system topology—bridging agent clients, the core zero-dependency daemon, local persistence, and model runtimes:
+The diagram below outlines the system topology, connecting agent clients, the zero-dependency daemon, local storage, and model runtimes:
 
 <p align="center">
   <img src="assets/architecture-unified.svg" alt="AegisBrain Unified Architecture Diagram" width="100%">
@@ -72,7 +72,7 @@ The diagram below outlines the system topology—bridging agent clients, the cor
 
 ### System Components
 
-1. **Unified AI Agent Client Layer (Left)**: All AI coding agents—irrespective of whether you use Google Antigravity, Anthropic Claude Code, OpenAI Codex, Cursor, Windsurf, Nous Hermes, or Aider—connect through **one common unified bus** (`127.0.0.1:8765`, CLI `aegis recall`, or companion skills). Every single feature in the daemon is universally accessible to all connected agents.
+1. **Unified AI Agent Client Layer (Left)**: Every coding agent (Google Antigravity, Anthropic Claude Code, OpenAI Codex, Cursor, Windsurf, Nous Hermes, Aider, and OpenCode) connects through **one common unified bus** (`127.0.0.1:8765`, CLI `aegis recall`, or companion skills). Every single feature in the daemon is universally accessible to all connected agents.
 2. **AegisBrain Daemon Chassis (Center, :8765)**:
    - **Internal Dispatcher**: Routes requests from any agent across all core co-processor engines.
    - **Deterministic Context Governor**: Dynamically inspects git branch, diffs, commits, and tracked PRs, pruning context to $\le 400$ tokens.
@@ -95,12 +95,12 @@ cd aegis-brain
 python package/install.py
 ```
 
-The installer autonomously:
+The installer automatically:
 1. Initializes `~/.aegis-brain/brain.db` and seeds essential architectural conventions into SQLite WAL mode.
 2. Establishes zero-elevation background autostart (Windows User Startup VBScript, Linux `systemd`, or macOS `LaunchAgent`).
 3. Registers the global `aegis` CLI command across your system path.
 4. Auto-links companion skills across **Antigravity**, **Claude Code**, and **Codex**.
-5. Injects **zero-token-waste recall directives** into agent instructions (`GEMINI.md`, `CLAUDE.md`) and hooks background memory engines so past tasks and decisions are recalled in <50ms without log crawling.
+5. Adds instant recall instructions into agent prompt files (`GEMINI.md`, `CLAUDE.md`) and hooks background memory engines so past tasks and decisions return in under 50ms without scanning old logs.
 
 ### 2. Verify System State
 
@@ -229,7 +229,7 @@ AegisBrain includes a native bridge to [OpenHiggsfield](https://github.com/wide-
 
 ### Anti-Slop Visual Generation
 
-To ensure generated assets adhere to tactile industrial design rather than generic AI tropes (neon glow, floating holograms, purple blobs), use the calibrated asset generator:
+To generate clean, production-ready assets instead of generic AI graphics with purple glows and floating cubes, use the calibrated asset generator:
 
 ```bash
 python scripts/generate_hero_asset.py --preset hero_hardware --model flux-2
@@ -253,9 +253,9 @@ aegis media --model flux-2 --prompt "Minimalist industrial CAD diagram of a neur
 
 | Performance Dimension | Traditional Agent (Raw Log Crawl) | AegisBrain (`aegis recall`) | Improvement |
 |---|---|---|---|
-| **Retrieval Latency** | 12.0 – 30.0 seconds | **< 50 milliseconds** | **99.7% faster** |
-| **Context Tokens Consumed** | 25,000 – 60,000 tokens | **< 100 tokens** | **99.6% token savings** |
-| **Exploratory Tool Calls** | 4 – 8 shell / file operations | **1 direct SQLite FTS5 lookup** | **85% fewer steps** |
+| **Retrieval Latency** | 12 to 30 seconds | **< 50 milliseconds** | **99.7% faster** |
+| **Context Tokens Consumed** | 25,000 to 60,000 tokens | **< 100 tokens** | **99.6% token savings** |
+| **Exploratory Tool Calls** | 4 to 8 shell or file operations | **1 direct SQLite FTS5 lookup** | **85% fewer steps** |
 | **Prompt Context Health** | Pollutes conversation window | **Zero pollution (clean markdown)** | **Preserves attention** |
 
 ### System Overhead Comparison
@@ -264,27 +264,27 @@ All measurements executed on Python 3.14 on Windows 11 / AMD & Intel host platfo
 
 | Metric | AegisBrain | Chroma / LanceDB (PyPI) | Redis / Memcached |
 |---|---|---|---|
-| **External Dependencies** | **0 (Python stdlib only)** | 15–35 packages | C daemon / Docker |
-| **RAM Footprint** | **< 25 MB** | 180–350 MB | 50–120 MB |
-| **Cold Boot Time** | **< 50 ms** | 1,200–2,800 ms | Service dependent |
+| **External Dependencies** | **0 (Python stdlib only)** | 15 to 35 packages | C daemon / Docker |
+| **RAM Footprint** | **< 25 MB** | 180 to 350 MB | 50 to 120 MB |
+| **Cold Boot Time** | **< 50 ms** | 1.2 to 2.8s | Service dependent |
 | **Context Token Budget** | **≤ 400 tokens** | Unbounded | Unbounded |
 | **Zero-Disk Stealth Mode** | **Native (`private`)** | Requires reconfig | In-memory only |
 | **Universal Agent Support** | **Antigravity, Claude, Codex, Cursor** | Isolated SDK only | Generic key-value |
-| **Test Suite Runtime** | **1.21s (8/8 passing)** | 8.5–18.0s | N/A |
+| **Test Suite Runtime** | **1.21s (8/8 passing)** | 8.5 to 18s | N/A |
 
 ---
 
 ## Documentation
 
-Exhaustive technical manuals and guides:
+Technical manuals and architecture guides:
 
 | Document | Focus |
 |---|---|
 | [**Architecture Specification**](docs/ARCHITECTURE.md) | SQLite WAL mode, FTS5 virtual tables, sync triggers, and Context Governor internals. |
-| [**CLI Command Reference**](docs/CLI_REFERENCE.md) | Exhaustive command manual with syntax, options, and output examples. |
+| [**CLI Command Reference**](docs/CLI_REFERENCE.md) | Complete command manual with syntax, options, and output examples. |
 | [**Zero-Elevation Autostart**](docs/AUTORUN_AND_STARTUP.md) | Windows VBScript background launcher, Linux systemd, and macOS LaunchAgents. |
 | [**Local Model Skill Distillation**](docs/LOCAL_MODEL_DISTILLATION.md) | Skill compression matrix, prompt caching heuristics, and Ollama proxy routing. |
-| [**Marketing & Launch Playbook**](docs/MARKETING_AND_LAUNCH_PLAYBOOK.md) | Tactical launch blueprints for Show HN, Reddit r/LocalLLaMA, Twitter/X, and Awesome Lists. |
+| [**Marketing & Launch Playbook**](docs/MARKETING_AND_LAUNCH_PLAYBOOK.md) | Practical launch blueprints for Show HN, Reddit r/LocalLLaMA, Twitter/X, and Awesome Lists. |
 | [**Contributing Guide**](CONTRIBUTING.md) | Development setup, zero-dependency philosophy, and test execution. |
 | [**Security Policy**](SECURITY.md) | Stealth mode specifications and responsible vulnerability disclosure. |
 
