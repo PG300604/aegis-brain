@@ -248,7 +248,7 @@ aegis media --model flux-2 --prompt "Minimalist industrial CAD diagram of a neur
 
 ---
 
-## Caffeinate & WhatsApp Remote Control
+## Caffeinate & Mobile Remote Control (Telegram & WhatsApp)
 
 Long-running agent workflows often get interrupted when the workstation goes into system sleep or idle standby while the developer is away. AegisBrain provides a cross-platform wake-lock engine (Caffeinate) combined with a secure WhatsApp Remote Bridge. Developers can monitor tasks, dispatch commands, inspect generated artifacts, and safely shut down their workstation right from their phone.
 
@@ -274,7 +274,22 @@ aegis caffeinate off
 - **macOS**: Spawns native `caffeinate -i` process.
 - **Linux**: Integrates with `systemd-inhibit` fallback.
 
-### WhatsApp Remote Agent Bridge
+### Mobile Remote Agent Bridge (Telegram & WhatsApp)
+
+Control your AI coding agents, run terminal commands, and inspect generated artifacts remotely from your phone. AegisBrain supports **Telegram** (default & recommended — zero open ports, zero webhooks, works behind any NAT/Wi-Fi via outbound HTTPS long-polling) and **WhatsApp** (via Twilio REST API).
+
+For complete command tables, security isolation, and advanced workflows, see [**Mobile Remote & Command Catalog (docs/REMOTE_COMMANDS.md)**](docs/REMOTE_COMMANDS.md).
+
+`ash
+# 1. Run interactive setup wizard (choose Telegram or WhatsApp)
+aegis remote setup
+
+# 2. View current remote bridge configuration and active wake-lock
+aegis remote status
+
+# 3. Start remote session (activates Caffeinate, launches daemon, begins listening)
+aegis remote start
+`
 
 Control your AI coding agent remotely from your mobile device via Twilio WhatsApp Sandbox:
 
@@ -346,6 +361,7 @@ Technical manuals and architecture guides:
 |---|---|
 | [**Architecture Specification**](docs/ARCHITECTURE.md) | SQLite WAL mode, FTS5 virtual tables, sync triggers, and Context Governor internals. |
 | [**CLI Command Reference**](docs/CLI_REFERENCE.md) | Complete command manual with syntax, options, and output examples. |
+| [**Mobile Remote & Command Catalog**](docs/REMOTE_COMMANDS.md) | Full Telegram & WhatsApp command reference, 60-second onboarding, and Caffeinate manual. |
 | [**Zero-Elevation Autostart**](docs/AUTORUN_AND_STARTUP.md) | Windows VBScript background launcher, Linux systemd, and macOS LaunchAgents. |
 | [**Local Model Skill Distillation**](docs/LOCAL_MODEL_DISTILLATION.md) | Skill compression matrix, prompt caching heuristics, and Ollama proxy routing. |
 | [**Marketing & Launch Playbook**](docs/MARKETING_AND_LAUNCH_PLAYBOOK.md) | Practical launch blueprints for Show HN, Reddit r/LocalLLaMA, Twitter/X, and Awesome Lists. |

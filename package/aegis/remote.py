@@ -292,7 +292,7 @@ def handle_remote_command(from_number: str, text: str) -> str:
             return "✅ *Authentication Successful!*\nYour phone number is paired with AegisBrain.\nType `/help` to see available commands."
         return "❌ *Incorrect PIN.* Usage: `/auth <PIN>`"
 
-    elif cmd in ("/help", "help"):
+    elif cmd in ("/help", "help", "/start", "/commands"):
         return (
             "🛡️ *AegisBrain Remote Commands:*\n"
             "• */status* - Workstation status, RAM, caffeinate\n"

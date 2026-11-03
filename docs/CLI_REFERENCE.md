@@ -83,7 +83,12 @@ aegis caffeinate sleep
 aegis caffeinate shutdown
 ```
 
-### 7. Remote WhatsApp Agent Bridge
+### 7. Remote Mobile Bridge (Telegram & WhatsApp)
+
+AegisBrain supports direct mobile remote control via **Telegram** (default, recommended; zero open ports/tunnels) or **WhatsApp** (Twilio REST API).
+
+See the dedicated [docs/REMOTE_COMMANDS.md](REMOTE_COMMANDS.md) for full reference.
+
 ```bash
 # 1. Run interactive setup wizard (Twilio credentials & phone pairing)
 aegis remote setup
