@@ -63,7 +63,7 @@ AegisBrain installs as a universal, drop-in memory bus compatible across all mai
 The diagram below outlines the system topology—bridging agent clients, the core zero-dependency daemon, local persistence, and model runtimes:
 
 <p align="center">
-  <img src="assets/architecture-excalidraw.svg" alt="AegisBrain Architecture Diagram" width="100%">
+  <img src="assets/architecture-unified.svg" alt="AegisBrain Unified Architecture Diagram" width="100%">
 </p>
 
 <p align="center">
