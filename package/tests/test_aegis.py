@@ -4,9 +4,14 @@ import shutil
 import tempfile
 import threading
 import time
+import sys
 import unittest
 import urllib.request
 from pathlib import Path
+
+PACKAGE_DIR = Path(__file__).resolve().parent.parent
+if str(PACKAGE_DIR) not in sys.path:
+    sys.path.insert(0, str(PACKAGE_DIR))
 
 # Override environment BEFORE any aegis module is loaded
 TEST_TMP = Path(tempfile.mkdtemp(prefix="aegis_test_"))
