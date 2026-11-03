@@ -252,6 +252,17 @@ def run_daemon(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT, watchdog_inte
     watchdog = WatchdogRunner(interval_seconds=watchdog_interval)
     watchdog.start()
 
+    # Auto-spawn Telegram long-polling thread if configured
+    try:
+        from .remote import load_remote_config, poll_telegram_updates
+        import threading
+        cfg = load_remote_config()
+        if cfg.get("provider", "telegram").lower() == "telegram" and cfg.get("telegram_token"):
+            telegram_thread = threading.Thread(target=poll_telegram_updates, daemon=True, name="AegisTelegramPoller")
+            telegram_thread.start()
+    except Exception:
+        pass
+
     server = create_server(host, port)
     print(f"[AegisBrain] Neural memory daemon running on http://{host}:{port}")
     try:

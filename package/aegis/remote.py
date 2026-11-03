@@ -9,9 +9,12 @@ import base64
 import json
 import os
 import sys
+import time
+import threading
 import subprocess
 import urllib.parse
 import urllib.request
+import urllib.error
 import xml.sax.saxutils
 from pathlib import Path
 from typing import Dict, Any, Tuple, Optional, List
@@ -39,7 +42,9 @@ def load_remote_config() -> Dict[str, Any]:
         except Exception:
             pass
     return {
-        "provider": "twilio",
+        "provider": os.environ.get("AEGIS_REMOTE_PROVIDER", "telegram"),
+        "telegram_token": os.environ.get("TELEGRAM_BOT_TOKEN", ""),
+        "telegram_chat_id": os.environ.get("TELEGRAM_CHAT_ID", ""),
         "account_sid": os.environ.get("TWILIO_ACCOUNT_SID", ""),
         "auth_token": os.environ.get("TWILIO_AUTH_TOKEN", ""),
         "twilio_number": os.environ.get("TWILIO_WHATSAPP_NUMBER", "whatsapp:+14155238886"),
@@ -99,6 +104,97 @@ def send_whatsapp_message(to_number: str, body: str, config: Optional[Dict[str, 
         return False, f"HTTP Error {e.code}: {err}"
     except Exception as e:
         return False, f"Request failed: {str(e)}"
+
+
+def send_telegram_message(chat_id: str, body: str, config: Optional[Dict[str, Any]] = None) -> Tuple[bool, str]:
+    """Send an outbound Telegram message via Telegram Bot API using standard library urllib."""
+    cfg = config or load_remote_config()
+    token = cfg.get("telegram_token", "")
+    if not token:
+        return False, "Telegram Bot Token not configured in ~/.aegis-brain/remote.json"
+
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    payload = json.dumps({
+        "chat_id": chat_id,
+        "text": body[:4000],
+        "parse_mode": "Markdown",
+        "disable_web_page_preview": True,
+    }).encode("utf-8")
+
+    req = urllib.request.Request(
+        url,
+        data=payload,
+        headers={"Content-Type": "application/json", "User-Agent": "AegisBrain-Remote/1.0"},
+        method="POST"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            if data.get("ok"):
+                return True, "Message delivered"
+            return False, data.get("description", "Unknown Telegram error")
+    except urllib.error.HTTPError as e:
+        err = e.read().decode("utf-8", errors="replace")
+        return False, f"Telegram HTTP {e.code}: {err}"
+    except Exception as e:
+        return False, f"Telegram network error: {e}"
+
+
+def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready_callback: Optional[Any] = None) -> None:
+    """Long-polling daemon for Telegram Bot API. Requires zero public IP, tunnel, or webhook!"""
+    cfg = load_remote_config()
+    token = cfg.get("telegram_token", "")
+    if not token:
+        print("[Telegram] Bot token not set. Run 'aegis remote setup' to configure Telegram.")
+        return
+
+    offset = 0
+    print("[Telegram] Bot polling listener active. Ready for commands from your phone!")
+    if on_ready_callback:
+        try:
+            on_ready_callback()
+        except Exception:
+            pass
+
+    while stop_event is None or not stop_event.is_set():
+        try:
+            url = f"https://api.telegram.org/bot{token}/getUpdates?offset={offset}&timeout=20"
+            req = urllib.request.Request(url, headers={"User-Agent": "AegisBrain-Remote/1.0"})
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                if not data.get("ok"):
+                    time.sleep(2)
+                    continue
+
+                for update in data.get("result", []):
+                    offset = max(offset, update["update_id"] + 1)
+                    msg = update.get("message", {})
+                    chat = msg.get("chat", {})
+                    chat_id = str(chat.get("id", ""))
+                    text = msg.get("text", "")
+                    if not text or not chat_id:
+                        continue
+
+                    # If telegram_chat_id was not set, automatically pair on first interaction
+                    if not cfg.get("telegram_chat_id"):
+                        cfg["telegram_chat_id"] = chat_id
+                        save_remote_config(cfg)
+
+                    reply = handle_remote_command(chat_id, text)
+                    send_telegram_message(chat_id, reply, config=cfg)
+
+        except Exception as e:
+            time.sleep(3)
+
+
+def send_remote_message(dest: str, body: str, config: Optional[Dict[str, Any]] = None) -> Tuple[bool, str]:
+    """Generic dispatcher routing to either Telegram or WhatsApp based on configuration."""
+    cfg = config or load_remote_config()
+    provider = cfg.get("provider", "telegram").lower()
+    if provider == "telegram":
+        chat_id = dest or cfg.get("telegram_chat_id", "")
+        return send_telegram_message(chat_id, body, config=cfg)
+    return send_whatsapp_message(dest, body, config=cfg)
 
 
 def execute_shell(cmd: str, cwd: Optional[Path] = None, timeout: int = 60) -> str:
@@ -323,83 +419,137 @@ def handle_twilio_webhook(post_params: Dict[str, Any]) -> str:
 
 
 def run_remote_setup_wizard() -> None:
-    """Interactive CLI wizard to configure Twilio WhatsApp credentials."""
-    print("=== AegisBrain WhatsApp Remote Setup ===")
-    print("Configure Twilio WhatsApp Sandbox for zero-friction remote control.\n")
+    """Interactive CLI wizard to configure Telegram or WhatsApp bridge."""
     cfg = load_remote_config()
+    print("=== AegisBrain Mobile Remote Bridge Setup ===")
+    print("Choose your preferred messaging channel:")
+    print("  [1] Telegram (Recommended: 30-second setup, zero verification, no public URL/tunnel needed)")
+    print("  [2] WhatsApp (via Twilio Sandbox - requires Account SID & Auth Token)")
+    choice = input("Select channel [1/2, default: 1]: ").strip() or "1"
 
-    cur_sid = cfg.get("account_sid", "")
-    cur_token = cfg.get("auth_token", "")
-    cur_tw_num = cfg.get("twilio_number", "whatsapp:+14155238886")
     cur_pin = cfg.get("auth_pin", "8765")
     cur_ws = cfg.get("workspace_dir", str(Path.cwd()))
 
-    sid = input(f"Twilio Account SID [{cur_sid[:6] + '...' if len(cur_sid) > 6 else cur_sid}]: ").strip() or cur_sid
-    token = input(f"Twilio Auth Token [{cur_token[:4] + '...' if len(cur_token) > 4 else cur_token}]: ").strip() or cur_token
-    tw_num = input(f"Twilio WhatsApp Number [{cur_tw_num}]: ").strip() or cur_tw_num
-    my_num = input("Your Personal WhatsApp Number (e.g. +919876543210): ").strip()
-    pin = input(f"Secret Pairing PIN [{cur_pin}]: ").strip() or cur_pin
-    ws = input(f"Default Workspace Directory [{cur_ws}]: ").strip() or cur_ws
+    if choice == "2":
+        # Twilio WhatsApp Setup
+        print("\n--- Twilio WhatsApp Setup ---")
+        sid = input(f"Twilio Account SID [{cfg.get('account_sid', '')}]: ").strip() or cfg.get("account_sid", "")
+        token = input("Twilio Auth Token: ").strip() or cfg.get("auth_token", "")
+        tw_num = input(f"Twilio WhatsApp Number [{cfg.get('twilio_number', 'whatsapp:+14155238886')}]: ").strip() or cfg.get("twilio_number", "whatsapp:+14155238886")
+        my_num = input("Your Personal WhatsApp Number (e.g. +919876543210): ").strip()
+        pin = input(f"Secret Pairing PIN [{cur_pin}]: ").strip() or cur_pin
+        ws = input(f"Default Workspace Directory [{cur_ws}]: ").strip() or cur_ws
 
-    allowed = cfg.get("allowed_numbers", [])
-    if my_num:
-        if not my_num.startswith("whatsapp:"):
-            my_num = f"whatsapp:{my_num}"
-        if my_num not in allowed:
-            allowed.append(my_num)
+        allowed = cfg.get("allowed_numbers", [])
+        if my_num:
+            if not my_num.startswith("whatsapp:"):
+                my_num = f"whatsapp:{my_num}"
+            if my_num not in allowed:
+                allowed.append(my_num)
 
-    cfg["account_sid"] = sid
-    cfg["auth_token"] = token
-    cfg["twilio_number"] = tw_num
-    cfg["allowed_numbers"] = allowed
-    cfg["auth_pin"] = pin
-    cfg["workspace_dir"] = ws
+        cfg["provider"] = "twilio"
+        cfg["account_sid"] = sid
+        cfg["auth_token"] = token
+        cfg["twilio_number"] = tw_num
+        cfg["allowed_numbers"] = allowed
+        cfg["auth_pin"] = pin
+        cfg["workspace_dir"] = ws
+        save_remote_config(cfg)
 
-    save_remote_config(cfg)
-    print("\n[SUCCESS] Remote configuration saved to:", get_remote_config_path())
-    print("Next step: Set your Twilio Sandbox Webhook URL to:")
-    print("  http://<your-host-or-tunnel>:8765/webhook/whatsapp (HTTP POST)")
+        print("\n[SUCCESS] Twilio configuration saved to:", get_remote_config_path())
+        print("Next step: Set your Twilio Sandbox Webhook URL to:")
+        print("  http://<your-host-or-tunnel>:8765/webhook/whatsapp (HTTP POST)")
+
+    else:
+        # Telegram Setup
+        print("\n--- Telegram Bot Setup (Recommended) ---")
+        print("Instructions:")
+        print("  1. Open Telegram on your phone and search for: @BotFather")
+        print("  2. Send '/newbot' to BotFather, then enter a Name and a Username (e.g. MyAegis_bot)")
+        print("  3. BotFather will reply with an HTTP API token (e.g. 7123456789:ABCdefGHI...)")
+        print()
+        token = input("Paste your Telegram Bot Token: ").strip() or cfg.get("telegram_token", "")
+        chat_id = input(f"Your Telegram Chat ID (optional, or message your bot and send /auth {cur_pin}): ").strip() or cfg.get("telegram_chat_id", "")
+        pin = input(f"Secret Pairing PIN [{cur_pin}]: ").strip() or cur_pin
+        ws = input(f"Default Workspace Directory [{cur_ws}]: ").strip() or cur_ws
+
+        cfg["provider"] = "telegram"
+        cfg["telegram_token"] = token
+        if chat_id:
+            cfg["telegram_chat_id"] = chat_id
+        cfg["auth_pin"] = pin
+        cfg["workspace_dir"] = ws
+        save_remote_config(cfg)
+
+        print("\n[SUCCESS] Telegram Bot configuration saved to:", get_remote_config_path())
+        print("Your bot is ready! No webhooks, ngrok, or public URLs required.")
+        print("To start the mobile bridge: aegis remote start")
 
 
 def show_remote_status() -> None:
     """Display current remote bridge configuration."""
     cfg = load_remote_config()
     caff = get_caffeinate_status()
-    sid = cfg.get("account_sid", "")
-    masked_sid = f"{sid[:6]}...{sid[-4:]}" if len(sid) > 10 else "(not set)"
-    allowed = cfg.get("allowed_numbers", [])
+    provider = cfg.get("provider", "telegram").upper()
+    caff_str = f"ACTIVE ({caff['uptime_seconds']}s)" if caff["active"] else "INACTIVE"
 
-    print("=== AegisBrain Remote WhatsApp Bridge ===")
-    print(f"Provider:        {cfg.get('provider', 'twilio').upper()}")
-    print(f"Account SID:     {masked_sid}")
-    print(f"Twilio Number:   {cfg.get('twilio_number', '(not set)')}")
-    print(f"Allowed Numbers: {', '.join(allowed) if allowed else 'Any (protected by PIN)'}")
+    print("=== AegisBrain Mobile Remote Bridge ===")
+    print(f"Provider:        {provider}")
+    if provider == "TELEGRAM":
+        tok = cfg.get("telegram_token", "")
+        masked_tok = f"{tok[:8]}...{tok[-4:]}" if len(tok) > 12 else "(not set)"
+        print(f"Bot Token:       {masked_tok}")
+        print(f"Chat ID:         {cfg.get('telegram_chat_id') or 'Auto-pairs on first message'}")
+        print(f"Transport:       Direct Long-Polling (No public IP / webhook required)")
+    else:
+        sid = cfg.get("account_sid", "")
+        masked_sid = f"{sid[:6]}...{sid[-4:]}" if len(sid) > 10 else "(not set)"
+        allowed = cfg.get("allowed_numbers", [])
+        print(f"Account SID:     {masked_sid}")
+        print(f"Twilio Number:   {cfg.get('twilio_number', '(not set)')}")
+        print(f"Allowed Numbers: {', '.join(allowed) if allowed else 'Any (protected by PIN)'}")
+        print("Webhook URL:     http://127.0.0.1:8765/webhook/whatsapp")
+
     print(f"Pairing PIN:     {cfg.get('auth_pin', '8765')}")
     print(f"Workspace Dir:   {cfg.get('workspace_dir', str(Path.cwd()))}")
-    caff_str = f"ACTIVE ({caff['uptime_seconds']}s)" if caff["active"] else "INACTIVE"
     print(f"Caffeinate:      {caff_str}")
-    print("Webhook URL:     http://127.0.0.1:8765/webhook/whatsapp")
 
 
 def run_remote_test(msg: str = "🟢 AegisBrain Remote Test Ping!") -> None:
-    """Send a test message to the configured WhatsApp number."""
+    """Send a test message to the configured phone channel."""
     cfg = load_remote_config()
-    allowed = cfg.get("allowed_numbers", [])
-    if not allowed:
-        print("[ERROR] No destination WhatsApp number configured. Run 'aegis remote setup' first.")
-        return
-    to_number = allowed[0]
-    print(f"[AegisBrain] Sending test ping to {to_number}...")
-    ok, resp = send_whatsapp_message(to_number, msg, config=cfg)
-    if ok:
-        print("[SUCCESS] Message dispatched! Check your WhatsApp window.")
+    provider = cfg.get("provider", "telegram").lower()
+
+    if provider == "telegram":
+        chat_id = cfg.get("telegram_chat_id", "")
+        if not chat_id:
+            print("[INFO] No Telegram chat ID saved yet.")
+            print("Message your Telegram bot from your phone first (send /auth <PIN>), then run this test again.")
+            return
+        print(f"[AegisBrain] Sending test ping via Telegram to Chat ID {chat_id}...")
+        ok, resp = send_telegram_message(chat_id, msg, config=cfg)
+        if ok:
+            print("[SUCCESS] Telegram message dispatched! Check your phone.")
+        else:
+            print(f"[ERROR] Failed to send Telegram message: {resp}")
     else:
-        print(f"[ERROR] Failed to send message: {resp}")
+        allowed = cfg.get("allowed_numbers", [])
+        if not allowed:
+            print("[ERROR] No destination WhatsApp number configured. Run 'aegis remote setup' first.")
+            return
+        to_number = allowed[0]
+        print(f"[AegisBrain] Sending test ping to {to_number}...")
+        ok, resp = send_whatsapp_message(to_number, msg, config=cfg)
+        if ok:
+            print("[SUCCESS] WhatsApp message dispatched! Check your phone.")
+        else:
+            print(f"[ERROR] Failed to send WhatsApp message: {resp}")
 
 
-def start_remote_session() -> None:
-    """Activate Caffeinate, ensure daemon is running, and send WhatsApp ready ping."""
+def start_remote_session(foreground_poll: bool = False) -> None:
+    """Activate Caffeinate, ensure daemon is running, and begin remote listener."""
     cfg = load_remote_config()
+    provider = cfg.get("provider", "telegram").lower()
     print("=== Starting AegisBrain Remote Session ===")
 
     # 1. Enable Caffeinate
@@ -412,21 +562,38 @@ def start_remote_session() -> None:
         print("[Daemon] Starting background Aegis daemon on :8765...")
         start_daemon()
     else:
-        print("[Daemon] Aegis daemon is already active on http://127.0.0.1:8765")
+        print("[Daemon] Aegis daemon is active on http://127.0.0.1:8765")
 
-    # 3. Send WhatsApp notification if numbers configured
-    allowed = cfg.get("allowed_numbers", [])
-    if allowed and cfg.get("account_sid") and cfg.get("auth_token"):
-        ws_name = Path(cfg.get("workspace_dir", str(Path.cwd()))).name
-        greeting = (
-            "🟢 *AegisBrain Remote Session Started!*\n"
-            "• *Caffeinate:* Active (System sleep prevented)\n"
-            f"• *Workspace:* `{ws_name}`\n"
-            "Send `/help` for list of remote commands."
-        )
-        send_whatsapp_message(allowed[0], greeting, config=cfg)
-        print(f"[WhatsApp] Notification sent to {allowed[0]}")
+    # 3. Send ready notification
+    ws_name = Path(cfg.get("workspace_dir", str(Path.cwd()))).name
+    greeting = (
+        "🟢 *AegisBrain Remote Session Active!*\n"
+        "• *Caffeinate:* Active (System sleep prevented)\n"
+        f"• *Workspace:* `{ws_name}`\n"
+        "Send `/help` to view available commands."
+    )
 
-    print("\n[READY] You can now safely leave your workstation!")
-    print("All commands, commits, and terminal outputs can be operated via WhatsApp.")
-    print("To stop remote session from this PC: aegis caffeinate off")
+    if provider == "telegram":
+        chat_id = cfg.get("telegram_chat_id", "")
+        if chat_id:
+            send_telegram_message(chat_id, greeting, config=cfg)
+            print(f"[Telegram] Notification sent to chat ID {chat_id}")
+
+        print("\n[READY] Telegram Remote Listener is active!")
+        print("You can safely leave your workstation. Send commands from your phone via Telegram.")
+        print("To stop remote session from this PC: aegis caffeinate off")
+
+        if foreground_poll:
+            poll_telegram_updates()
+        else:
+            # Run in daemon thread if not already running
+            t = threading.Thread(target=poll_telegram_updates, daemon=True, name="AegisTelegramPoll")
+            t.start()
+    else:
+        allowed = cfg.get("allowed_numbers", [])
+        if allowed and cfg.get("account_sid") and cfg.get("auth_token"):
+            send_whatsapp_message(allowed[0], greeting, config=cfg)
+            print(f"[WhatsApp] Notification sent to {allowed[0]}")
+        print("\n[READY] You can now safely leave your workstation!")
+        print("All commands, commits, and terminal outputs can be operated via WhatsApp.")
+        print("To stop remote session from this PC: aegis caffeinate off")
