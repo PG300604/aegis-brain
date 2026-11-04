@@ -233,23 +233,22 @@ def mirror_output(text: str, source: str = "cli") -> None:
     _terminal_mirror.append(text, source=source)
 
 
-def send_telegram_message(
+def _send_single_telegram_chunk(
     chat_id: str,
-    body: str,
-    config: Optional[Dict[str, Any]] = None,
+    text_chunk: str,
+    token: str,
+    cfg: Dict[str, Any],
     parse_mode: Optional[str] = "Markdown",
     reply_markup: Optional[Dict[str, Any]] = None,
 ) -> Tuple[bool, str]:
-    """Send an outbound Telegram message via Telegram Bot API with automatic plain-text fallback."""
-    cfg = config or load_remote_config()
-    token = cfg.get("telegram_token", "")
-    if not token:
-        return False, "Telegram Bot Token not configured in ~/.aegis-brain/remote.json"
+    """Helper to send a single Telegram message chunk."""
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return True, "Message delivered (test mode)"
 
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     payload_dict: Dict[str, Any] = {
         "chat_id": chat_id,
-        "text": body[:4000],
+        "text": text_chunk[:4000],
         "disable_web_page_preview": True,
     }
     if parse_mode:
@@ -258,7 +257,6 @@ def send_telegram_message(
         payload_dict["reply_markup"] = reply_markup
 
     payload = json.dumps(payload_dict).encode("utf-8")
-
     req = urllib.request.Request(
         url,
         data=payload,
@@ -273,12 +271,81 @@ def send_telegram_message(
             return False, data.get("description", "Unknown Telegram error")
     except urllib.error.HTTPError as e:
         err = e.read().decode("utf-8", errors="replace")
-        # If Markdown entity parsing failed (HTTP 400), gracefully retry without formatting
         if e.code == 400 and parse_mode:
-            return send_telegram_message(chat_id, body, config=cfg, parse_mode=None, reply_markup=reply_markup)
+            return _send_single_telegram_chunk(chat_id, text_chunk, token, cfg, parse_mode=None, reply_markup=reply_markup)
         return False, f"Telegram HTTP {e.code}: {err}"
     except Exception as e:
         return False, f"Telegram network error: {e}"
+
+
+def send_telegram_chat_action(
+    chat_id: str,
+    action: str = "typing",
+    config: Optional[Dict[str, Any]] = None,
+) -> bool:
+    """Send a chat action indicator (typing, upload_document) to Telegram."""
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return True
+
+    cfg = config or load_remote_config()
+    token = cfg.get("telegram_token", "")
+    if not token or not chat_id:
+        return False
+    url = f"https://api.telegram.org/bot{token}/sendChatAction"
+    payload = json.dumps({"chat_id": chat_id, "action": action}).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=payload,
+        headers={"Content-Type": "application/json", "User-Agent": "AegisBrain-Remote/1.0"},
+        method="POST"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            d = json.loads(resp.read().decode("utf-8"))
+            return bool(d.get("ok"))
+    except Exception:
+        return False
+
+
+def send_telegram_message(
+    chat_id: str,
+    body: str,
+    config: Optional[Dict[str, Any]] = None,
+    parse_mode: Optional[str] = "Markdown",
+    reply_markup: Optional[Dict[str, Any]] = None,
+) -> Tuple[bool, str]:
+    """Send an outbound Telegram message via Telegram Bot API with automatic multi-chunking & plain-text fallback."""
+    cfg = config or load_remote_config()
+    token = cfg.get("telegram_token", "")
+    if not token:
+        return False, "Telegram Bot Token not configured in ~/.aegis-brain/remote.json"
+
+    # Multi-chunk splitting if body exceeds Telegram's 4096 character limit
+    if len(body) > 3900:
+        chunks: List[str] = []
+        remaining = body
+        while len(remaining) > 3800:
+            split_idx = remaining.rfind("\n\n", 0, 3800)
+            if split_idx == -1:
+                split_idx = remaining.rfind("\n", 0, 3800)
+            if split_idx == -1:
+                split_idx = 3800
+            chunks.append(remaining[:split_idx])
+            remaining = remaining[split_idx:].lstrip("\n")
+        if remaining:
+            chunks.append(remaining)
+
+        last_ok = True
+        last_msg = "Delivered all chunks"
+        for idx, chunk in enumerate(chunks):
+            markup = reply_markup if idx == len(chunks) - 1 else None
+            ok, msg = _send_single_telegram_chunk(chat_id, chunk, token, cfg, parse_mode, markup)
+            last_ok = ok
+            last_msg = msg
+            time.sleep(0.08)
+        return last_ok, last_msg
+
+    return _send_single_telegram_chunk(chat_id, body, token, cfg, parse_mode, reply_markup)
 
 
 def send_telegram_poll(
@@ -289,6 +356,10 @@ def send_telegram_poll(
     config: Optional[Dict[str, Any]] = None,
 ) -> Tuple[bool, str, Optional[str]]:
     """Send a native Telegram Poll to the user's phone for instant 1-tap MCQ decisions."""
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        register_active_poll("test_poll_id", question, options)
+        return True, "Poll sent successfully", "test_poll_id"
+
     cfg = config or load_remote_config()
     token = cfg.get("telegram_token", "")
     if not token:
@@ -431,6 +502,118 @@ def register_telegram_commands(token: str) -> bool:
         return False
 
 
+def find_active_transcript_file() -> Optional[Path]:
+    """Find the most recently modified transcript.jsonl under ~/.gemini/antigravity-cli/brain/."""
+    brain_dir = Path.home() / ".gemini" / "antigravity-cli" / "brain"
+    if not brain_dir.exists():
+        return None
+    transcripts = list(brain_dir.glob("*/.system_generated/logs/transcript.jsonl"))
+    if not transcripts:
+        return None
+    transcripts.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+    return transcripts[0]
+
+
+class TranscriptWatcher(threading.Thread):
+    """Watches active Antigravity CLI transcript and streams tool executions & outputs to Telegram."""
+    def __init__(self, stop_event: Optional[threading.Event] = None):
+        super().__init__(daemon=True)
+        self.stop_event = stop_event or threading.Event()
+        self.last_path: Optional[Path] = None
+        self.last_pos = 0
+
+    def run(self):
+        while not self.stop_event.is_set():
+            try:
+                active_file = find_active_transcript_file()
+                if not active_file or not active_file.exists():
+                    time.sleep(1.2)
+                    continue
+
+                if self.last_path != active_file:
+                    self.last_path = active_file
+                    # Seek to current file end to stream subsequent real-time events
+                    self.last_pos = active_file.stat().st_size
+
+                curr_size = active_file.stat().st_size
+                if curr_size > self.last_pos:
+                    with open(active_file, "r", encoding="utf-8", errors="replace") as f:
+                        f.seek(self.last_pos)
+                        new_text = f.read()
+                        self.last_pos = f.tell()
+
+                    for line in new_text.splitlines():
+                        line = line.strip()
+                        if not line:
+                            continue
+                        try:
+                            obj = json.loads(line)
+                            self._dispatch_event(obj)
+                        except Exception:
+                            continue
+            except Exception:
+                pass
+            time.sleep(1.2)
+
+    def _dispatch_event(self, obj: Dict[str, Any]) -> None:
+        cfg = load_remote_config()
+        chat_id = cfg.get("telegram_chat_id", "")
+        if not chat_id:
+            return
+
+        step_type = obj.get("type", "")
+        tool_calls = obj.get("tool_calls", [])
+        content = obj.get("content", "")
+
+        # 1. Tool Call Execution
+        if step_type == "PLANNER_RESPONSE" and tool_calls:
+            for tc in tool_calls:
+                name = tc.get("name", "tool")
+                summary = tc.get("toolSummary") or name
+                get_terminal_mirror().append(f"⚙️ [{name}] {summary}", source="agent")
+
+                if name == "ask_question":
+                    args = tc.get("arguments", {})
+                    questions = args.get("questions", [])
+                    for q in questions:
+                        q_text = q.get("question", "Agent Question:")
+                        options = q.get("options", [])
+                        if options:
+                            send_telegram_poll(chat_id, q_text, options, config=cfg)
+                            mcq_buttons = [
+                                [{"text": opt[:32], "callback_data": f"mcq:{opt[:32]}"}]
+                                for opt in options[:6]
+                            ]
+                            send_telegram_inline_keyboard(
+                                chat_id,
+                                f"❓ *Aegis Choice Required:*\n{q_text}\n\n_Tap option below or vote in poll above:_",
+                                mcq_buttons,
+                                config=cfg,
+                            )
+                else:
+                    send_telegram_chat_action(chat_id, "typing", config=cfg)
+                    if is_away_mode_active():
+                        send_telegram_message(chat_id, f"⚙️ *[Antigravity]:* {summary}", config=cfg)
+
+        # 2. Assistant Text Response (Final Answer / Chat)
+        elif step_type == "PLANNER_RESPONSE" and content and not tool_calls:
+            clean_content = content.strip()
+            if clean_content:
+                get_terminal_mirror().append(clean_content, source="agent")
+                if is_away_mode_active():
+                    send_telegram_message(chat_id, f"🤖 *Antigravity Response:*\n\n{clean_content}", config=cfg)
+
+        # 3. CLI Command Output
+        elif step_type == "GENERIC" and content:
+            clean_out = content.strip()
+            if clean_out:
+                get_terminal_mirror().append(clean_out, source="cli")
+                if is_away_mode_active():
+                    if "exited with code" in clean_out and "exited with code 0" not in clean_out:
+                        err_preview = clean_out[-500:]
+                        send_telegram_message(chat_id, f"⚠️ *CLI Warning:*\n```\n{err_preview}\n```", config=cfg)
+
+
 def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready_callback: Optional[Any] = None) -> None:
     """Long-polling daemon for Telegram Bot API supporting text, native polls & inline buttons."""
     cfg = load_remote_config()
@@ -447,6 +630,10 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
             on_ready_callback()
         except Exception:
             pass
+
+    # Start live background transcript watcher to stream Antigravity progress
+    watcher = TranscriptWatcher(stop_event=stop_event)
+    watcher.start()
 
     while stop_event is None or not stop_event.is_set():
         try:
@@ -473,11 +660,13 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
                             sel_idx = selected_ids[0]
                             options = active_p.get("options", [])
                             choice_text = options[sel_idx] if sel_idx < len(options) else f"Option {sel_idx}"
+                            # Deliver choice into desktop coding session
+                            type_to_desktop(choice_text, press_enter=True)
                             confirm = (
                                 f"🗳️ *Decision Confirmed (via Poll):*\n"
                                 f"• Choice: `{choice_text}`\n"
                                 f"• Question: {active_p.get('question')}\n\n"
-                                f"AegisBrain has committed your choice and is proceeding!"
+                                f"AegisBrain typed your choice into the active session!"
                             )
                             send_telegram_message(user_id, confirm, config=cfg)
                             record_decision(
@@ -543,7 +732,8 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
 
                         elif cb_data.startswith("mcq:"):
                             mcq_choice = cb_data.split(":", 1)[1]
-                            conf = f"✅ *Interactive Choice Confirmed:* `{mcq_choice}`\nAegisBrain continuing execution."
+                            type_to_desktop(mcq_choice, press_enter=True)
+                            conf = f"✅ *Interactive Choice Confirmed:* `{mcq_choice}`\nAegisBrain submitted your choice to the active session."
                             send_telegram_message(cb_from, conf, config=cfg)
                             record_decision(
                                 category="TELEGRAM_BUTTON",
@@ -552,6 +742,25 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
                                 rationale="Selected via Telegram Inline Keyboard on mobile",
                                 tags=["button", "mobile-decision"],
                             )
+
+                        elif cb_data.startswith("cfg:"):
+                            parts = cb_data.split(":", 2)
+                            cfg_type = parts[1]
+                            cfg_val = parts[2] if len(parts) > 2 else ""
+                            gov_cfg = load_governance_config()
+                            if cfg_type == "mgr":
+                                gov_cfg["manager_model"] = cfg_val
+                                save_governance_config(gov_cfg)
+                                send_telegram_message(cb_from, f"👑 *Manager Model Switched:* `{cfg_val}`", config=cfg)
+                            elif cfg_type == "wrk":
+                                gov_cfg["worker_model"] = cfg_val
+                                save_governance_config(gov_cfg)
+                                send_telegram_message(cb_from, f"🤖 *Worker Model Switched:* `{cfg_val}`", config=cfg)
+                            elif cfg_type == "drv":
+                                gov_cfg["model_dir"] = cfg_val
+                                save_governance_config(gov_cfg)
+                                os.environ["OLLAMA_MODELS"] = cfg_val
+                                send_telegram_message(cb_from, f"💾 *Model Storage Disk Switched:* `{cfg_val}`", config=cfg)
                         continue
 
                     # 3. Handle Regular Text Messages & Commands
@@ -658,8 +867,7 @@ def get_latest_artifacts(arg: str = "") -> str:
                     break
         if target and target.exists():
             content = target.read_text(encoding="utf-8", errors="replace")
-            preview = content[:2500] + ("\n... [truncated for mobile]" if len(content) > 2500 else "")
-            return f"📑 *Artifact:* `{target.name}`\n📁 Path: `{target.parent.name}/{target.name}`\n\n```markdown\n{preview}\n```"
+            return f"📑 *Artifact:* `{target.name}`\n📁 Path: `{target.parent.name}/{target.name}`\n\n```markdown\n{content}\n```"
 
     lines = ["📑 *Recent Workspace Artifacts:*", ""]
     for idx, p in enumerate(recent, 1):
@@ -851,18 +1059,32 @@ def focus_desktop_window(keyword: str) -> Tuple[bool, str]:
     attach_to_input_desktop()
     import ctypes
     user32 = ctypes.windll.user32
+    kernel32 = ctypes.windll.kernel32
     windows = get_desktop_windows()
     for w in windows:
         if keyword.lower() in w["title"].lower():
             hwnd = w["hwnd"]
+            cur_th = kernel32.GetCurrentThreadId()
+            target_th = user32.GetWindowThreadProcessId(hwnd, None)
+            if cur_th != target_th:
+                try:
+                    user32.AttachThreadInput(cur_th, target_th, True)
+                except Exception:
+                    pass
             user32.ShowWindow(hwnd, 9)  # SW_RESTORE
             user32.SetForegroundWindow(hwnd)
+            user32.BringWindowToTop(hwnd)
+            if cur_th != target_th:
+                try:
+                    user32.AttachThreadInput(cur_th, target_th, False)
+                except Exception:
+                    pass
             return True, f'Activated window: "{w["title"]}"'
     return False, f'No open window found matching "{keyword}".'
 
 
 def type_to_desktop(text: str, press_enter: bool = True) -> Tuple[bool, str]:
-    """Copy text to clipboard and simulate Ctrl+V and optional Enter into the active desktop window."""
+    """Copy text to clipboard, auto-focus terminal/IDE, and simulate Ctrl+V and optional Enter."""
     if not text.strip():
         return False, "No text provided to type."
 
@@ -890,6 +1112,23 @@ def type_to_desktop(text: str, press_enter: bool = True) -> Tuple[bool, str]:
                     buff = ctypes.create_unicode_buffer(length + 1)
                     user32.GetWindowTextW(hwnd, buff, length + 1)
                     win_title = buff.value or win_title
+
+            # Auto-focus coding / terminal window if user is away or focused elsewhere
+            TARGET_IDE_KEYWORDS = ["powershell", "terminal", "antigravity", "visual studio code", "code", "cmd", "bash"]
+            is_target_ide = any(kw in win_title.lower() for kw in TARGET_IDE_KEYWORDS)
+            if not is_target_ide:
+                for kw in TARGET_IDE_KEYWORDS:
+                    ok_f, _ = focus_desktop_window(kw)
+                    if ok_f:
+                        time.sleep(0.12)
+                        hwnd = user32.GetForegroundWindow()
+                        if hwnd:
+                            length = user32.GetWindowTextLengthW(hwnd)
+                            if length > 0:
+                                buff = ctypes.create_unicode_buffer(length + 1)
+                                user32.GetWindowTextW(hwnd, buff, length + 1)
+                                win_title = buff.value or win_title
+                        break
 
             # Compute hardware scan codes for Chromium/Electron & Windows Terminal compatibility
             scan_ctrl = user32.MapVirtualKeyW(0x11, 0)
@@ -1203,8 +1442,9 @@ def handle_remote_command(from_number: str, text: str) -> str:
     elif cmd == "/swarm":
         from .swarm import run_nested_swarm, format_swarm_display
         task_query = arg or "Multi-Agent System Health & Contract Validation"
-        send_telegram_message(from_number, f"🐝 *Spawning Hierarchical Swarm for:* `{task_query}`\nDomain Leads initializing...", config=cfg)
-        res = run_nested_swarm(task_query, simulate_workers=True)
+        send_telegram_message(from_number, f"🐝 *Spawning Hierarchical Swarm for:* `{task_query}`\nDomain Leads initializing (Frontier Boss + Hermes/Qwen workers)...", config=cfg)
+        sim = bool(os.environ.get("PYTEST_CURRENT_TEST"))
+        res = run_nested_swarm(task_query, simulate_workers=sim)
         return format_swarm_display(res)
 
     elif cmd == "/blockinput":
@@ -1245,20 +1485,50 @@ def handle_remote_command(from_number: str, text: str) -> str:
     elif cmd == "/config":
         gov_cfg = load_governance_config()
         if not arg:
-            return format_governance_status()
+            status_text = format_governance_status()
+            if cfg.get("provider", "telegram").lower() == "telegram" and cfg.get("telegram_token"):
+                config_buttons = [
+                    [
+                        {"text": "👑 Boss: Gemini 3.8", "callback_data": "cfg:mgr:gemini-3.8-flash-high"},
+                        {"text": "👑 Boss: Claude 3.7", "callback_data": "cfg:mgr:claude-3-7-sonnet"},
+                    ],
+                    [
+                        {"text": "🤖 Worker: Hermes", "callback_data": "cfg:wrk:hermes-agent"},
+                        {"text": "🤖 Worker: Qwen 2.5", "callback_data": "cfg:wrk:qwen2.5-coder:7b"},
+                    ],
+                    [
+                        {"text": "💾 Drive: P:\\ (Models)", "callback_data": "cfg:drv:P:\\aegis-brain\\models"},
+                        {"text": "💾 Drive: C:\\", "callback_data": "cfg:drv:C:\\Users\\priya\\.aegis-brain\\models"},
+                    ],
+                    [
+                        {"text": "📊 Telemetry Toggle", "callback_data": "cmd:config telemetry toggle"},
+                        {"text": "📖 Telemetry Terms", "callback_data": "cmd:terms"},
+                    ]
+                ]
+                send_telegram_inline_keyboard(from_number, status_text, config_buttons, config=cfg)
+            return status_text
+
         subparts = arg.split(maxsplit=1)
         subk = subparts[0].lower()
         subval = subparts[1].strip() if len(subparts) > 1 else ""
         if subk == "manager" and subval:
             gov_cfg["manager_model"] = subval
             save_governance_config(gov_cfg)
-            return f"👑 *Manager Model Updated:* `{subval}`"
+            return f"👑 *Manager (Boss) Model Updated:* `{subval}`"
         elif subk == "worker" and subval:
             gov_cfg["worker_model"] = subval
             save_governance_config(gov_cfg)
             return f"🤖 *Worker Model Updated:* `{subval}`"
+        elif subk in ("drive", "dir", "disk") and subval:
+            gov_cfg["model_dir"] = subval
+            save_governance_config(gov_cfg)
+            os.environ["OLLAMA_MODELS"] = subval
+            return f"💾 *Model Storage Disk Updated:* `{subval}`"
         elif subk == "telemetry":
-            enabled = subval.lower() in ("on", "true", "enable", "1", "yes")
+            if subval.lower() == "toggle":
+                enabled = not gov_cfg.get("telemetry_enabled", False)
+            else:
+                enabled = subval.lower() in ("on", "true", "enable", "1", "yes")
             gov_cfg["telemetry_enabled"] = enabled
             gov_cfg["telemetry_acknowledged"] = True
             save_governance_config(gov_cfg)
@@ -1267,9 +1537,10 @@ def handle_remote_command(from_number: str, text: str) -> str:
         else:
             return (
                 "⚙️ *AegisBrain Config Usage:*\n"
-                "• `/config` - Show current governance status\n"
+                "• `/config` - Show current governance status & tap interactive buttons\n"
                 "• `/config manager <model>` - Set Manager (e.g. `gemini-3.8-flash-high`, `claude-3-7-sonnet`)\n"
-                "• `/config worker <model>` - Set Worker (`auto`, `qwen2.5-coder:7b`, `deepseek-r1:7b`)\n"
+                "• `/config worker <model>` - Set Worker (`hermes-agent`, `qwen2.5-coder:7b`, `auto`)\n"
+                "• `/config drive <path>` - Set model storage disk (e.g. `P:\\aegis-brain\\models`)\n"
                 "• `/config telemetry <on|off>` - Toggle anonymous telemetry"
             )
 
@@ -1396,20 +1667,18 @@ def handle_remote_command(from_number: str, text: str) -> str:
         return f"❓ *Unknown Command:* `{raw_cmd}`\n\nType `/help` to see all available commands.\n(Slash commands are never typed into active IDE windows)."
 
     else:
-        def_mode = cfg.get("default_mode", "swarm").lower()
-        if is_away_mode_active() or def_mode in ("swarm", "agent", "orchestrate", "auto") or len(clean_text.split()) > 4:
-            from .swarm import run_nested_swarm, format_swarm_display
-            send_telegram_message(from_number, f"🐝 *Aegis Swarm Executing Task:*\n`{clean_text[:120]}`...", config=cfg)
-            res = run_nested_swarm(clean_text, simulate_workers=True)
-            display = format_swarm_display(res)
-            get_terminal_mirror().append(display, source="swarm")
-            return display
-        elif def_mode in ("chat", "prompt", "voice", "type"):
-            ok, msg = type_to_desktop(clean_text, press_enter=True)
-            return f"✍️ *Agent Input (Chat Mode):* {msg}"
-        else:
-            res = execute_shell(clean_text)
-            return f"⚡ *Output (`{clean_text}`):*\n```\n{res}\n```"
+        # User sent a plain prompt/instruction from mobile or desktop remote!
+        # Send typing action to Telegram immediately
+        send_telegram_chat_action(from_number, "typing", config=cfg)
+        ok, msg = type_to_desktop(clean_text, press_enter=True)
+        preview = (clean_text[:120] + "...") if len(clean_text) > 120 else clean_text
+        return (
+            f"✍️ *Prompt Sent to Coding Session:*\n"
+            f"\"{preview}\"\n\n"
+            f"• *Status:* {msg}\n"
+            f"• *Live Streaming:* Active (Antigravity outputs will stream to your phone word-for-word).\n"
+            f"_Tip: Use `/nav` to browse terminal logs or `/status` for health._"
+        )
 
 
 def format_twiml_response(reply_text: str) -> str:

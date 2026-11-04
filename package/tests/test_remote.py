@@ -121,7 +121,7 @@ class TestCaffeinateAndRemote(unittest.TestCase):
 
         # Unprefixed message should now type into desktop rather than execute shell
         res_msg = handle_remote_command("whatsapp:+1234567890", "Analyze my code architecture")
-        self.assertIn("Chat Mode", res_msg)
+        self.assertIn("Prompt Sent", res_msg)
 
         # Switch back to exec mode
         res_exec = handle_remote_command("whatsapp:+1234567890", "/mode exec")

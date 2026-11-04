@@ -141,6 +141,10 @@ def test_remote_artifacts_and_prompt_execution():
     res = handle_remote_command("2119188945", "/artifacts")
     assert "Artifacts" in res or "No recent artifacts" in res
 
-    # Verify natural language prompt executes via swarm
+    # Verify natural language prompt submits to active coding session
     prompt_res = handle_remote_command("2119188945", "Please design and implement a distributed event queue")
-    assert "Hierarchical Swarm Execution" in prompt_res or "Task:" in prompt_res
+    assert "Prompt Sent" in prompt_res or "Typed and submitted" in prompt_res
+
+    # Verify explicit /swarm command triggers swarm
+    swarm_res = handle_remote_command("2119188945", "/swarm Design event queue")
+    assert "Hierarchical Swarm Execution" in swarm_res or "Task:" in swarm_res

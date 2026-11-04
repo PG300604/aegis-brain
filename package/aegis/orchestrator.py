@@ -10,9 +10,14 @@ Implements the Boss-Worker hierarchical agent architecture:
 """
 
 import json
+import os
+import shutil
 import sqlite3
+import subprocess
+import threading
 import urllib.request
 import urllib.error
+from pathlib import Path
 from typing import Dict, Any, Optional, Tuple
 
 from .config import get_db_path
@@ -44,29 +49,113 @@ def init_distillation_table() -> None:
         conn.commit()
 
 
+def find_hermes_executable() -> Optional[str]:
+    """Locate the Hermes Agent executable on disk."""
+    default_path = Path.home() / "AppData" / "Local" / "hermes" / "hermes-agent" / "bin" / "hermes.exe"
+    if default_path.exists():
+        return str(default_path)
+    found = shutil.which("hermes") or shutil.which("hermes.exe")
+    return found
+
+
+def find_opencode_executable() -> Optional[str]:
+    """Locate the OpenCode executable on disk."""
+    default_path = Path.home() / "AppData" / "Roaming" / "npm" / "opencode.ps1"
+    if default_path.exists():
+        return str(default_path)
+    found = shutil.which("opencode") or shutil.which("opencode.cmd")
+    return found
+
+
+_worker_lock = threading.Lock()
+
+
 def call_local_worker(prompt: str, model: str = "qwen2.5-coder:7b", endpoint: str = "http://127.0.0.1:11434/api/generate") -> Tuple[bool, str]:
-    """Call local Ollama or FreeToken worker to synthesize code draft."""
-    payload = json.dumps({
-        "model": model,
-        "prompt": prompt,
-        "stream": False,
-    }).encode("utf-8")
-
-    req = urllib.request.Request(
-        endpoint,
-        data=payload,
-        headers={"Content-Type": "application/json", "User-Agent": "AegisBrain-Orchestrator/1.0"},
-        method="POST"
-    )
-
+    """Call local Ollama, Hermes Agent, or OpenCode worker to synthesize real code draft."""
+    # 1. Try local Ollama / FreeToken endpoint if online
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
+        payload = json.dumps({
+            "model": model,
+            "prompt": prompt,
+            "stream": False,
+        }).encode("utf-8")
+
+        req = urllib.request.Request(
+            endpoint,
+            data=payload,
+            headers={"Content-Type": "application/json", "User-Agent": "AegisBrain-Orchestrator/1.0"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
             data = json.loads(resp.read().decode("utf-8"))
-            return True, data.get("response", "")
-    except urllib.error.URLError:
-        return False, "Local worker endpoint unreachable (Ollama service offline). Using fallback synthesizer."
-    except Exception as e:
-        return False, f"Worker generation failed: {e}"
+            resp_text = data.get("response", "").strip()
+            if resp_text:
+                return True, resp_text
+    except Exception:
+        pass
+
+    # 2. Try Hermes Agent CLI (fast local/fallback agent with tool capabilities)
+    hermes_bin = find_hermes_executable()
+    if hermes_bin:
+        if _worker_lock.acquire(timeout=1.0):
+            try:
+                cmd = [hermes_bin, "chat", "-q", prompt]
+                res = subprocess.run(
+                    cmd,
+                    stdin=subprocess.DEVNULL,
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    timeout=5,
+                )
+                if res.returncode == 0 and res.stdout.strip():
+                    raw_out = res.stdout.strip()
+                    lines = raw_out.splitlines()
+                    clean_lines = []
+                    for line in lines:
+                        if "Query:" in line or "Initializing agent" in line or "Switched to fallback" in line or "╭─" in line or "╰─" in line:
+                            continue
+                        if "Resume this session with" in line:
+                            break
+                        clean_lines.append(line)
+                    clean_resp = "\n".join(clean_lines).strip()
+                    if clean_resp:
+                        return True, clean_resp
+            except Exception:
+                pass
+            finally:
+                try:
+                    _worker_lock.release()
+                except RuntimeError:
+                    pass
+
+    # 3. Try OpenCode CLI if installed
+    opencode_bin = find_opencode_executable()
+    if opencode_bin:
+        if _worker_lock.acquire(timeout=1.0):
+            try:
+                cmd = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", opencode_bin, "--prompt", prompt]
+                res = subprocess.run(
+                    cmd,
+                    stdin=subprocess.DEVNULL,
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    timeout=5,
+                )
+                if res.returncode == 0 and res.stdout.strip():
+                    return True, res.stdout.strip()
+            except Exception:
+                pass
+            finally:
+                try:
+                    _worker_lock.release()
+                except RuntimeError:
+                    pass
+
+    return False, "Local worker endpoint unreachable (Ollama service offline and CLI workers unavailable)."
 
 
 def run_manager_worker_pipeline(
