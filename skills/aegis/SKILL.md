@@ -33,6 +33,9 @@ Whenever invoked via `/aegis` or asked to operate in an AegisBrain-managed works
 | `/aegis pipeline <target>` | **4-Stage Quality Gates** | Unslop/TurnItOut -> Security Audit -> GitGuardian Secrets -> Sandbox Test |
 | `/aegis dashboard [--open/--tui]` | **Web GUI & Benchmarks** | Dark-mode Web GUI on `http://127.0.0.1:8765/dashboard` or ANSI terminal TUI |
 | `/aegis feedback <comment>` | **Continuous Evolution** | Persists user critique, ratings, and suggestions to drive future model evolution |
+| `/aegis ceo <idea>` | **YC CEO Stress-Test** | Evaluates hair-on-fire pain, inflection, moat, fatal failure modes & 24h MVP |
+| `/aegis challenge <target>` | **Anti-Sycophancy Audit** | Devil's advocate audit: flags false passes, NTFS path bugs, unverified claims |
+| `/aegis mistakes [recall/list]`| **Mistake Ledger & Traps** | Pre-flight error recall preventing repeat mistakes across workspaces |
 | `/aegis caffeinate [on/off]` | Anti-sleep wake-lock | Prevents PC sleep during long agent workflows (`--display` optional) |
 | `/aegis remote start` | WhatsApp remote session | Activates Caffeinate, ensures daemon runs, and pings WhatsApp/Telegram |
 | `/aegis bootstrap` | Compile workspace context | Generates `~/.aegis-brain/ACTIVE_CONTEXT.md` ($\le 400$ tokens) |
