@@ -70,7 +70,7 @@ class CodebaseGraph:
     def index_workspace(self, root_dir: Optional[Path] = None, max_files: int = 300) -> Dict[str, Any]:
         """Scan and index all source files in workspace into AST graph nodes."""
         init_graph_db()
-        root = (root_dir or self.workspace_path).resolve()
+        root = (Path(root_dir) if root_dir else self.workspace_path).resolve()
         indexed_count = 0
 
         IGNORE_DIRS = {

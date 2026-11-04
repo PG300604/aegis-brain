@@ -284,6 +284,10 @@ def main() -> None:
     m_recall = mist_sub.add_parser("recall", help="Recall relevant mistakes for a task or topic")
     m_recall.add_argument("query", help="Task or technology keyword (e.g. windows, git, python)")
 
+    # act / nlp / do (Zero-Command Natural Language Intent Router)
+    act_parser = subparsers.add_parser("act", aliases=["nlp", "do"], help="Execute any natural language instruction via NLP Intent Router")
+    act_parser.add_argument("query", nargs="+", help="Natural language request or conversation text")
+
     m_record = mist_sub.add_parser("record", help="Record a verified mistake and fix into ledger")
     m_record.add_argument("--task", required=True, help="Task during which mistake occurred")
     m_record.add_argument("--desc", required=True, help="Description of mistake")
@@ -843,6 +847,11 @@ def main() -> None:
                 tags=args.tags
             )
             print(f"[AegisBrain] Recorded mistake into ledger (ID: {entry.id}). Agents will avoid this pattern.")
+
+    elif args.command in ("act", "nlp", "do"):
+        from .nlp_router import route_and_execute
+        query_str = " ".join(args.query) if isinstance(args.query, list) else str(args.query)
+        print(route_and_execute(query_str))
 
     else:
         parser.print_help()
