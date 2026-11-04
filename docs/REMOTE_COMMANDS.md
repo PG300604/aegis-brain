@@ -18,7 +18,7 @@ AegisBrain connects to Telegram via an outbound **HTTPS long-polling daemon**. T
    * Open Telegram and search for `@BotFather`.
    * Send `/newbot`.
    * Follow the prompt to provide a bot display name and username ending in `bot` (e.g., `MyAegisBrainBot`).
-   * BotFather will output your **HTTP API Token** (e.g., `1234567890:FakeBotToken`).
+   * BotFather will output your **HTTP API Token** (e.g., `123456789:ABCdef-ghIJKlmnoPQRstuvwxyz1234567`).
 
 2. **Configure AegisBrain**:
    Run the interactive setup wizard in your terminal:

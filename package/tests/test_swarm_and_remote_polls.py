@@ -134,3 +134,13 @@ def test_remote_command_nav_and_away():
     res_nav = handle_remote_command("2119188945", "/nav")
     # Sends inline buttons or pager text
     assert res_nav == "" or "Terminal Output" in res_nav
+
+
+def test_remote_artifacts_and_prompt_execution():
+    """Verify /artifacts and natural language swarm dispatch."""
+    res = handle_remote_command("2119188945", "/artifacts")
+    assert "Artifacts" in res or "No recent artifacts" in res
+
+    # Verify natural language prompt executes via swarm
+    prompt_res = handle_remote_command("2119188945", "Please design and implement a distributed event queue")
+    assert "Hierarchical Swarm Execution" in prompt_res or "Task:" in prompt_res

@@ -28,7 +28,7 @@ with open('../../Windows/System32/drivers/etc/hosts', 'w') as f:
 def test_redteam_command_injection_and_credentials_audit():
     malicious_code = """
 import subprocess
-token = "0000000000:FakeBotTokenForSandboxTesting123456"
+token = "000000000:FakeBotTokenForSandboxTesting123456"
 subprocess.run("dir", shell=True)
 """
     audit = RedTeamAuditor.audit_code(malicious_code)

@@ -18,6 +18,7 @@ import urllib.parse
 import urllib.request
 import urllib.error
 import xml.sax.saxutils
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Any, Tuple, Optional, List
 
@@ -408,7 +409,24 @@ def register_telegram_commands(token: str) -> bool:
     try:
         with urllib.request.urlopen(req, timeout=10) as resp:
             data = json.loads(resp.read().decode("utf-8"))
-            return bool(data.get("ok"))
+            ok = bool(data.get("ok"))
+
+        # Also configure the Telegram chat menu button to show commands drawer
+        menu_url = f"https://api.telegram.org/bot{token}/setChatMenuButton"
+        menu_payload = json.dumps({"menu_button": {"type": "commands"}}).encode("utf-8")
+        menu_req = urllib.request.Request(
+            menu_url,
+            data=menu_payload,
+            headers={"Content-Type": "application/json", "User-Agent": "AegisBrain-Remote/1.0"},
+            method="POST"
+        )
+        try:
+            with urllib.request.urlopen(menu_req, timeout=5):
+                pass
+        except Exception:
+            pass
+
+        return ok
     except Exception:
         return False
 
@@ -512,6 +530,11 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
                             set_away_mode(False)
                             send_telegram_message(cb_from, "👋 *Away Mode Deactivated!*\nWelcome back to your desk. Terminal output streaming paused.", config=cfg)
 
+                        elif cb_data.startswith("artifact:"):
+                            art_idx = cb_data.split(":", 1)[1]
+                            art_content = get_latest_artifacts(art_idx)
+                            send_telegram_message(cb_from, art_content, config=cfg)
+
                         elif cb_data.startswith("cmd:"):
                             sub_cmd = "/" + cb_data.split(":", 1)[1]
                             res_text = handle_remote_command(cb_from, sub_cmd)
@@ -546,8 +569,10 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
 
                     attach_to_input_desktop()
                     reply = handle_remote_command(chat_id, text)
-                    if reply and not any(reply.startswith(p) for p in ("🔒 *Workstation Lock", "❓ *Unknown Command:", "📟 *Terminal Output Pager")):
-                        send_telegram_message(chat_id, reply, config=cfg)
+                    if reply:
+                        get_terminal_mirror().append(reply, source=f"cmd:{text[:25]}")
+                        if not any(reply.startswith(p) for p in ("🔒 *Workstation Lock", "❓ *Unknown Command:", "📟 *Terminal Output Pager")):
+                            send_telegram_message(chat_id, reply, config=cfg)
 
         except Exception as e:
             time.sleep(3)
@@ -591,7 +616,10 @@ def execute_shell(cmd: str, cwd: Optional[Path] = None, timeout: int = 60) -> st
         if proc.returncode != 0:
             res = f"⚠️ [Exit code {proc.returncode}]\n{res}"
 
-        # WhatsApp truncation limit
+        # Mirror output to terminal ring buffer & stream to phone if Away Mode is ON
+        get_terminal_mirror().append(res, source=f"shell:{cmd[:35]}")
+
+        # Telegram/WhatsApp truncation limit
         if len(res) > 1300:
             res = res[:1300] + "\n... [output truncated]"
         return res
@@ -601,8 +629,8 @@ def execute_shell(cmd: str, cwd: Optional[Path] = None, timeout: int = 60) -> st
         return f"❌ Command execution failed: {str(e)}"
 
 
-def get_latest_artifacts() -> str:
-    """Scan for recently generated brain artifacts and reports."""
+def get_latest_artifacts(arg: str = "") -> str:
+    """Scan for recently generated brain artifacts and reports, or display an artifact's content."""
     # Check Antigravity / Gemini brain directory
     gemini_brain = Path.home() / ".gemini" / "antigravity-cli" / "brain"
     artifacts: List[Path] = []
@@ -615,12 +643,29 @@ def get_latest_artifacts() -> str:
 
     # Sort by modification time
     artifacts.sort(key=lambda p: p.stat().st_mtime, reverse=True)
-    recent = artifacts[:4]
+    recent = artifacts[:6]
 
-    lines = ["📑 *Recent Workspace Artifacts:*"]
+    # If arg specifies an artifact number (e.g. "1") or name
+    clean_arg = arg.strip()
+    if clean_arg:
+        target: Optional[Path] = None
+        if clean_arg.isdigit() and 1 <= int(clean_arg) <= len(recent):
+            target = recent[int(clean_arg) - 1]
+        else:
+            for p in recent:
+                if clean_arg.lower() in p.name.lower():
+                    target = p
+                    break
+        if target and target.exists():
+            content = target.read_text(encoding="utf-8", errors="replace")
+            preview = content[:2500] + ("\n... [truncated for mobile]" if len(content) > 2500 else "")
+            return f"📑 *Artifact:* `{target.name}`\n📁 Path: `{target.parent.name}/{target.name}`\n\n```markdown\n{preview}\n```"
+
+    lines = ["📑 *Recent Workspace Artifacts:*", ""]
     for idx, p in enumerate(recent, 1):
         mtime = datetime.fromtimestamp(p.stat().st_mtime, timezone.utc).strftime("%H:%M UTC")
         lines.append(f"{idx}. *{p.name}* ({mtime})\n   Path: `{p.parent.name}/{p.name}`")
+    lines.append("\n_Send `/artifacts <number>` to view full contents on phone._")
     return "\n".join(lines)
 
 
@@ -1018,7 +1063,19 @@ def handle_remote_command(from_number: str, text: str) -> str:
         return "\n\n".join(lines)
 
     elif cmd == "/artifacts":
-        return get_latest_artifacts()
+        res_text = get_latest_artifacts(arg)
+        if not arg and cfg.get("provider", "telegram").lower() == "telegram" and cfg.get("telegram_token"):
+            gemini_brain = Path.home() / ".gemini" / "antigravity-cli" / "brain"
+            artifacts = list(gemini_brain.glob("*/*.md")) if gemini_brain.exists() else []
+            artifacts.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+            recent_artifacts = artifacts[:4]
+            if recent_artifacts:
+                art_buttons = [
+                    [{"text": f"📖 Read #{idx}: {p.name[:20]}", "callback_data": f"artifact:{idx}"}]
+                    for idx, p in enumerate(recent_artifacts, 1)
+                ]
+                send_telegram_inline_keyboard(from_number, res_text, art_buttons, config=cfg)
+        return res_text
 
     elif cmd == "/git":
         subcmd = arg.strip()
@@ -1161,7 +1218,11 @@ def handle_remote_command(from_number: str, text: str) -> str:
 
     elif cmd == "/mode":
         target = arg.lower().strip()
-        if target in ("chat", "prompt", "voice", "type"):
+        if target in ("swarm", "agent", "orchestrate", "auto"):
+            cfg["default_mode"] = "swarm"
+            save_remote_config(cfg)
+            return "🐝 *Input Mode Switched to SWARM*\nAll regular prompts from phone will execute directly through the 4-tier autonomous agent swarm!"
+        elif target in ("chat", "prompt", "voice", "type"):
             cfg["default_mode"] = "chat"
             save_remote_config(cfg)
             return "💬 *Input Mode Switched to CHAT*\nAll regular messages and phone voice dictations will now type directly into the active IDE window and submit!"
@@ -1170,8 +1231,8 @@ def handle_remote_command(from_number: str, text: str) -> str:
             save_remote_config(cfg)
             return "⚡ *Input Mode Switched to EXEC*\nUnprefixed messages will execute as shell commands."
         else:
-            cur = cfg.get("default_mode", "exec").upper()
-            return f"🔄 *Current Input Mode:* `{cur}`\nUsage: `/mode <chat|exec>`\n• `chat`: Voice and messages type into IDE\n• `exec`: Messages run as shell commands"
+            cur = cfg.get("default_mode", "swarm").upper()
+            return f"🔄 *Current Input Mode:* `{cur}`\nUsage: `/mode <swarm|chat|exec>`\n• `swarm`: Prompts execute via multi-agent swarm\n• `chat`: Voice and messages type into IDE\n• `exec`: Messages run as shell commands"
 
     elif cmd == "/sleep":
         ok, msg = remote_suspend_pc()
@@ -1335,8 +1396,15 @@ def handle_remote_command(from_number: str, text: str) -> str:
         return f"❓ *Unknown Command:* `{raw_cmd}`\n\nType `/help` to see all available commands.\n(Slash commands are never typed into active IDE windows)."
 
     else:
-        def_mode = cfg.get("default_mode", "chat").lower()
-        if def_mode in ("chat", "prompt", "voice", "type"):
+        def_mode = cfg.get("default_mode", "swarm").lower()
+        if is_away_mode_active() or def_mode in ("swarm", "agent", "orchestrate", "auto") or len(clean_text.split()) > 4:
+            from .swarm import run_nested_swarm, format_swarm_display
+            send_telegram_message(from_number, f"🐝 *Aegis Swarm Executing Task:*\n`{clean_text[:120]}`...", config=cfg)
+            res = run_nested_swarm(clean_text, simulate_workers=True)
+            display = format_swarm_display(res)
+            get_terminal_mirror().append(display, source="swarm")
+            return display
+        elif def_mode in ("chat", "prompt", "voice", "type"):
             ok, msg = type_to_desktop(clean_text, press_enter=True)
             return f"✍️ *Agent Input (Chat Mode):* {msg}"
         else:

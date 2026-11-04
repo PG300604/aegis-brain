@@ -72,6 +72,11 @@ class HierarchicalSwarmOrchestrator:
 
     def _emit(self, msg: str) -> None:
         self.on_progress(msg)
+        try:
+            from .remote import get_terminal_mirror
+            get_terminal_mirror().append(msg, source="swarm")
+        except Exception:
+            pass
 
     def _decompose_task_into_domains(self, task: str) -> List[SwarmDomainTask]:
         """Level 0 Boss decomposition into 3 architectural sub-manager domains."""
