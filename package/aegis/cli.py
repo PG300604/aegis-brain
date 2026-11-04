@@ -206,6 +206,19 @@ def main() -> None:
     sb_parser.add_argument("target", help="Code string or path to python file")
     sb_parser.add_argument("--audit-only", "-a", action="store_true", help="Perform static Red-Team vulnerability audit only")
 
+    # swarm (Hierarchical Nested Multi-Agent Swarm)
+    swarm_parser = subparsers.add_parser("swarm", help="Execute nested 4-tier multi-agent swarm across domain leads")
+    swarm_parser.add_argument("task", help="Macro objective or task specification")
+    swarm_parser.add_argument("--simulate", "-s", action="store_true", help="Simulate local worker outputs")
+
+    # away (Toggle remote away mode & terminal streaming)
+    away_parser = subparsers.add_parser("away", help="Toggle Away Mode & terminal output streaming to mobile")
+    away_parser.add_argument("state", nargs="?", choices=["on", "off", "status"], default="status", help="Toggle state (on/off)")
+
+    # nav (Navigate terminal logs)
+    nav_parser = subparsers.add_parser("nav", help="Browse terminal output pages from desktop or mobile mirror")
+    nav_parser.add_argument("page", nargs="?", type=int, default=1, help="Page number to inspect (default: 1)")
+
     args = parser.parse_args()
 
     if args.command == "daemon":
@@ -564,6 +577,34 @@ def main() -> None:
                 print(f"STDOUT:\n{res['stdout']}")
             if res["stderr"]:
                 print(f"STDERR:\n{res['stderr']}")
+
+    elif args.command == "swarm":
+        from .swarm import run_nested_swarm, format_swarm_display
+        print(f"[AegisBrain] Initializing 4-Tier Swarm for: {args.task}...")
+        res = run_nested_swarm(args.task, simulate_workers=args.simulate, on_progress=print)
+        print("\n" + format_swarm_display(res))
+
+    elif args.command == "away":
+        from .remote import is_away_mode_active, set_away_mode
+        if args.state == "on":
+            set_away_mode(True)
+            print("[AegisBrain] Away Mode ACTIVATED. All terminal outputs and agent milestones are streaming to your phone.")
+        elif args.state == "off":
+            set_away_mode(False)
+            print("[AegisBrain] Away Mode DEACTIVATED. Output streaming paused.")
+        else:
+            state = "ACTIVE" if is_away_mode_active() else "INACTIVE"
+            print(f"[AegisBrain] Away Mode: {state}")
+
+    elif args.command == "nav":
+        from .remote import get_terminal_mirror
+        mirror = get_terminal_mirror()
+        items, page, total_pages = mirror.get_page(page=args.page, page_size=5)
+        print(f"=== AegisBrain Terminal Mirror Buffer (Page {page}/{total_pages}) ===")
+        if not items:
+            print("(No logs captured yet)")
+        for it in items:
+            print(f"[{it['time_str']} {it['source'].upper()}] {it['text']}")
 
     else:
         parser.print_help()

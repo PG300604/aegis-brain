@@ -124,20 +124,139 @@ def send_whatsapp_message(to_number: str, body: str, config: Optional[Dict[str, 
         return False, f"Request failed: {str(e)}"
 
 
-def send_telegram_message(chat_id: str, body: str, config: Optional[Dict[str, Any]] = None) -> Tuple[bool, str]:
-    """Send an outbound Telegram message via Telegram Bot API using standard library urllib."""
+_active_polls: Dict[str, Dict[str, Any]] = {}
+_active_polls_lock = threading.Lock()
+_is_away_mode: bool = False
+_away_lock = threading.Lock()
+
+
+def is_away_mode_active() -> bool:
+    """Return whether workstation is currently in Away / Remote Mirroring mode."""
+    global _is_away_mode
+    if _is_away_mode:
+        return True
+    try:
+        cfg = load_remote_config()
+        return bool(cfg.get("away_mode", False))
+    except Exception:
+        return _is_away_mode
+
+
+def set_away_mode(enabled: bool) -> Tuple[bool, str]:
+    """Toggle Away Mode and persist state in remote config."""
+    global _is_away_mode
+    with _away_lock:
+        _is_away_mode = enabled
+    cfg = load_remote_config()
+    cfg["away_mode"] = enabled
+    save_remote_config(cfg)
+    state_str = "ACTIVATED" if enabled else "DEACTIVATED"
+    return True, f"Away Mode {state_str}"
+
+
+def register_active_poll(poll_id: str, question: str, options: List[str]) -> None:
+    """Register active Telegram poll in memory to correlate user vote answers."""
+    with _active_polls_lock:
+        _active_polls[poll_id] = {
+            "question": question,
+            "options": options,
+            "created_at": time.time(),
+        }
+
+
+def get_active_poll(poll_id: str) -> Optional[Dict[str, Any]]:
+    """Retrieve registered poll details."""
+    with _active_polls_lock:
+        return _active_polls.get(poll_id)
+
+
+class TerminalMirror:
+    """Thread-safe ring buffer capturing terminal and agent output for remote streaming."""
+    def __init__(self, capacity: int = 200) -> None:
+        self.capacity = capacity
+        self.buffer: List[Dict[str, Any]] = []
+        self.lock = threading.Lock()
+
+    def append(self, text: str, source: str = "cli") -> None:
+        if not text:
+            return
+        clean = text.strip()
+        if not clean:
+            return
+        with self.lock:
+            entry = {
+                "timestamp": time.time(),
+                "time_str": time.strftime("%H:%M:%S"),
+                "source": source,
+                "text": clean,
+            }
+            self.buffer.append(entry)
+            if len(self.buffer) > self.capacity:
+                self.buffer.pop(0)
+
+        # Stream chunk to phone immediately if away mode is active
+        if is_away_mode_active():
+            self._stream_to_remote(entry)
+
+    def _stream_to_remote(self, entry: Dict[str, Any]) -> None:
+        try:
+            cfg = load_remote_config()
+            chat_id = cfg.get("telegram_chat_id")
+            if not chat_id:
+                return
+            msg = f"📟 *[{entry['time_str']} {entry['source'].upper()}]*\n```\n{entry['text'][:1200]}\n```"
+            send_telegram_message(chat_id, msg, config=cfg)
+        except Exception:
+            pass
+
+    def get_page(self, page: int = 1, page_size: int = 4) -> Tuple[List[Dict[str, Any]], int, int]:
+        with self.lock:
+            total_items = len(self.buffer)
+            total_pages = max(1, (total_items + page_size - 1) // page_size)
+            page = max(1, min(page, total_pages))
+            start_idx = max(0, total_items - page * page_size)
+            end_idx = total_items - (page - 1) * page_size
+            items = self.buffer[start_idx:end_idx]
+            return items, page, total_pages
+
+
+_terminal_mirror = TerminalMirror()
+
+
+def get_terminal_mirror() -> TerminalMirror:
+    return _terminal_mirror
+
+
+def mirror_output(text: str, source: str = "cli") -> None:
+    """Public helper to mirror terminal or agent output chunk."""
+    _terminal_mirror.append(text, source=source)
+
+
+def send_telegram_message(
+    chat_id: str,
+    body: str,
+    config: Optional[Dict[str, Any]] = None,
+    parse_mode: Optional[str] = "Markdown",
+    reply_markup: Optional[Dict[str, Any]] = None,
+) -> Tuple[bool, str]:
+    """Send an outbound Telegram message via Telegram Bot API with automatic plain-text fallback."""
     cfg = config or load_remote_config()
     token = cfg.get("telegram_token", "")
     if not token:
         return False, "Telegram Bot Token not configured in ~/.aegis-brain/remote.json"
 
     url = f"https://api.telegram.org/bot{token}/sendMessage"
-    payload = json.dumps({
+    payload_dict: Dict[str, Any] = {
         "chat_id": chat_id,
         "text": body[:4000],
-        "parse_mode": "Markdown",
         "disable_web_page_preview": True,
-    }).encode("utf-8")
+    }
+    if parse_mode:
+        payload_dict["parse_mode"] = parse_mode
+    if reply_markup:
+        payload_dict["reply_markup"] = reply_markup
+
+    payload = json.dumps(payload_dict).encode("utf-8")
 
     req = urllib.request.Request(
         url,
@@ -153,11 +272,90 @@ def send_telegram_message(chat_id: str, body: str, config: Optional[Dict[str, An
             return False, data.get("description", "Unknown Telegram error")
     except urllib.error.HTTPError as e:
         err = e.read().decode("utf-8", errors="replace")
+        # If Markdown entity parsing failed (HTTP 400), gracefully retry without formatting
+        if e.code == 400 and parse_mode:
+            return send_telegram_message(chat_id, body, config=cfg, parse_mode=None, reply_markup=reply_markup)
         return False, f"Telegram HTTP {e.code}: {err}"
     except Exception as e:
         return False, f"Telegram network error: {e}"
 
 
+def send_telegram_poll(
+    chat_id: str,
+    question: str,
+    options: List[str],
+    allows_multiple_answers: bool = False,
+    config: Optional[Dict[str, Any]] = None,
+) -> Tuple[bool, str, Optional[str]]:
+    """Send a native Telegram Poll to the user's phone for instant 1-tap MCQ decisions."""
+    cfg = config or load_remote_config()
+    token = cfg.get("telegram_token", "")
+    if not token:
+        return False, "Telegram Bot Token not configured", None
+
+    # Telegram poll limits: question <= 300 chars, 2-10 options, each <= 100 chars
+    q = question[:290]
+    opts = [o[:95] for o in options[:10]]
+    if len(opts) < 2:
+        opts.append("Continue standard execution")
+
+    url = f"https://api.telegram.org/bot{token}/sendPoll"
+    payload = json.dumps({
+        "chat_id": chat_id,
+        "question": q,
+        "options": opts,
+        "is_anonymous": False,
+        "allows_multiple_answers": allows_multiple_answers,
+    }).encode("utf-8")
+
+    req = urllib.request.Request(
+        url,
+        data=payload,
+        headers={"Content-Type": "application/json", "User-Agent": "AegisBrain-Remote/1.0"},
+        method="POST"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            if data.get("ok"):
+                poll_info = data.get("result", {}).get("poll", {})
+                poll_id = str(poll_info.get("id", ""))
+                register_active_poll(poll_id, q, opts)
+                return True, "Poll sent successfully", poll_id
+            return False, data.get("description", "Unknown Telegram error"), None
+    except Exception as e:
+        return False, f"Telegram poll failed: {e}", None
+
+
+def send_telegram_inline_keyboard(
+    chat_id: str,
+    text: str,
+    buttons: List[List[Dict[str, str]]],
+    config: Optional[Dict[str, Any]] = None,
+) -> Tuple[bool, str]:
+    """Send interactive buttons (InlineKeyboardMarkup) for quick thumb-tap navigation and choices."""
+    reply_markup = {"inline_keyboard": buttons}
+    return send_telegram_message(chat_id, text, config=config, reply_markup=reply_markup)
+
+
+def answer_telegram_callback(
+    callback_query_id: str,
+    text: str = "Aegis registered!",
+    config: Optional[Dict[str, Any]] = None,
+) -> bool:
+    """Acknowledge Telegram callback query so client loading spinner dismisses."""
+    cfg = config or load_remote_config()
+    token = cfg.get("telegram_token", "")
+    if not token or not callback_query_id:
+        return False
+    url = f"https://api.telegram.org/bot{token}/answerCallbackQuery"
+    payload = json.dumps({"callback_query_id": callback_query_id, "text": text}).encode("utf-8")
+    req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"}, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            return bool(json.loads(resp.read().decode("utf-8")).get("ok"))
+    except Exception:
+        return False
 
 
 def register_telegram_commands(token: str) -> bool:
@@ -167,6 +365,9 @@ def register_telegram_commands(token: str) -> bool:
     commands = [
         {"command": "help", "description": "Show available commands & help guide"},
         {"command": "status", "description": "System status, RAM, caffeinate & tracked PRs"},
+        {"command": "away", "description": "Toggle Away Mode & terminal mirroring (on/off)"},
+        {"command": "nav", "description": "Navigate terminal logs page-by-page from phone"},
+        {"command": "swarm", "description": "Execute nested 4-tier multi-agent swarm"},
         {"command": "config", "description": "Model governance (Manager/Worker/Telemetry)"},
         {"command": "env", "description": "Workstation tools, Ollama, OpenCode & pending queues"},
         {"command": "taste", "description": "User aesthetic taste, persona & coding doctrine"},
@@ -186,7 +387,7 @@ def register_telegram_commands(token: str) -> bool:
         {"command": "prompt", "description": "Alias for /type (voice dictation bridge)"},
         {"command": "paste", "description": "Paste text into active window without Enter"},
         {"command": "clip", "description": "Read or write to workstation clipboard"},
-        {"command": "lock", "description": "Instantly lock workstation screen"},
+        {"command": "lock", "description": "Instantly lock workstation screen & activate Away Mode"},
         {"command": "recall", "description": "Search architectural memories & decisions"},
         {"command": "git", "description": "Remote git status, diff, commit, push"},
         {"command": "artifacts", "description": "View recent generated artifacts"},
@@ -211,8 +412,9 @@ def register_telegram_commands(token: str) -> bool:
     except Exception:
         return False
 
+
 def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready_callback: Optional[Any] = None) -> None:
-    """Long-polling daemon for Telegram Bot API. Requires zero public IP, tunnel, or webhook!"""
+    """Long-polling daemon for Telegram Bot API supporting text, native polls & inline buttons."""
     cfg = load_remote_config()
     token = cfg.get("telegram_token", "")
     if not token:
@@ -240,6 +442,96 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
 
                 for update in data.get("result", []):
                     offset = max(offset, update["update_id"] + 1)
+
+                    # 1. Handle Native Poll Answers (User 1-tap MCQ decision)
+                    poll_ans = update.get("poll_answer")
+                    if poll_ans:
+                        poll_id = str(poll_ans.get("poll_id", ""))
+                        user_info = poll_ans.get("user", {})
+                        user_id = str(user_info.get("id", ""))
+                        selected_ids = poll_ans.get("option_ids", [])
+                        active_p = get_active_poll(poll_id)
+                        if active_p and selected_ids:
+                            sel_idx = selected_ids[0]
+                            options = active_p.get("options", [])
+                            choice_text = options[sel_idx] if sel_idx < len(options) else f"Option {sel_idx}"
+                            confirm = (
+                                f"🗳️ *Decision Confirmed (via Poll):*\n"
+                                f"• Choice: `{choice_text}`\n"
+                                f"• Question: {active_p.get('question')}\n\n"
+                                f"AegisBrain has committed your choice and is proceeding!"
+                            )
+                            send_telegram_message(user_id, confirm, config=cfg)
+                            record_decision(
+                                category="TELEGRAM_POLL",
+                                title=active_p.get("question", "Telegram Poll Decision"),
+                                decision=choice_text,
+                                rationale=f"Voted by {user_info.get('first_name', 'user')} from phone",
+                                tags=["poll", "mobile-decision"],
+                            )
+                        continue
+
+                    # 2. Handle Inline Button Callback Queries
+                    cb_query = update.get("callback_query")
+                    if cb_query:
+                        cb_id = str(cb_query.get("id", ""))
+                        cb_from = str(cb_query.get("from", {}).get("id", ""))
+                        cb_data = str(cb_query.get("data", ""))
+                        answer_telegram_callback(cb_id, text="Aegis registered!", config=cfg)
+
+                        if cb_data.startswith("nav:"):
+                            page_str = cb_data.split(":", 1)[1]
+                            p_num = int(page_str) if page_str.isdigit() else 1
+                            mirror = get_terminal_mirror()
+                            items, page, total_pages = mirror.get_page(page=p_num, page_size=4)
+                            if items:
+                                lines = [f"📟 *Terminal Output Pager (Page {page}/{total_pages}):*", ""]
+                                for it in items:
+                                    lines.append(f"⏱️ `[{it['time_str']} {it['source'].upper()}]`")
+                                    p_txt = it["text"][:300] + ("..." if len(it["text"]) > 300 else "")
+                                    lines.append(f"```\n{p_txt}\n```")
+                                btns = [
+                                    [
+                                        {"text": "⬅️ Prev", "callback_data": f"nav:{page+1}"},
+                                        {"text": "🔄 Refresh", "callback_data": f"nav:{page}"},
+                                        {"text": "➡️ Next", "callback_data": f"nav:{max(1, page-1)}"},
+                                    ],
+                                    [
+                                        {"text": "📋 Latest", "callback_data": "nav:1"},
+                                        {"text": "📊 Status", "callback_data": "cmd:status"},
+                                    ]
+                                ]
+                                send_telegram_inline_keyboard(cb_from, "\n".join(lines), btns, config=cfg)
+                            else:
+                                send_telegram_message(cb_from, "📟 *Terminal Output Buffer:* (No logs recorded yet)", config=cfg)
+
+                        elif cb_data == "lock:now":
+                            handle_remote_command(cb_from, "/lock")
+
+                        elif cb_data == "away:off":
+                            set_away_mode(False)
+                            send_telegram_message(cb_from, "👋 *Away Mode Deactivated!*\nWelcome back to your desk. Terminal output streaming paused.", config=cfg)
+
+                        elif cb_data.startswith("cmd:"):
+                            sub_cmd = "/" + cb_data.split(":", 1)[1]
+                            res_text = handle_remote_command(cb_from, sub_cmd)
+                            if res_text:
+                                send_telegram_message(cb_from, res_text, config=cfg)
+
+                        elif cb_data.startswith("mcq:"):
+                            mcq_choice = cb_data.split(":", 1)[1]
+                            conf = f"✅ *Interactive Choice Confirmed:* `{mcq_choice}`\nAegisBrain continuing execution."
+                            send_telegram_message(cb_from, conf, config=cfg)
+                            record_decision(
+                                category="TELEGRAM_BUTTON",
+                                title="Mobile Inline Button Decision",
+                                decision=mcq_choice,
+                                rationale="Selected via Telegram Inline Keyboard on mobile",
+                                tags=["button", "mobile-decision"],
+                            )
+                        continue
+
+                    # 3. Handle Regular Text Messages & Commands
                     msg = update.get("message", {})
                     chat = msg.get("chat", {})
                     chat_id = str(chat.get("id", ""))
@@ -254,7 +546,8 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
 
                     attach_to_input_desktop()
                     reply = handle_remote_command(chat_id, text)
-                    send_telegram_message(chat_id, reply, config=cfg)
+                    if reply and not any(reply.startswith(p) for p in ("🔒 *Workstation Lock", "❓ *Unknown Command:", "📟 *Terminal Output Pager")):
+                        send_telegram_message(chat_id, reply, config=cfg)
 
         except Exception as e:
             time.sleep(3)
@@ -620,7 +913,9 @@ def handle_remote_command(from_number: str, text: str) -> str:
 
     # 2. Command Dispatch
     parts = clean_text.split(maxsplit=1)
-    cmd = parts[0].lower() if parts else ""
+    raw_cmd = parts[0].lower() if parts else ""
+    # Strip @bot_username if clicked from Telegram menu or autocomplete
+    cmd = raw_cmd.split("@")[0] if "@" in raw_cmd else raw_cmd
     arg = parts[1].strip() if len(parts) > 1 else ""
 
     if cmd == "/auth":
@@ -635,6 +930,10 @@ def handle_remote_command(from_number: str, text: str) -> str:
     elif cmd in ("/help", "help", "/start", "/commands"):
         return (
             "🛡️ *AegisBrain Remote Commands:*\n\n"
+            "📱 *Remote Navigation & Away Mode:*\n"
+            "• */away <on|off>* - Toggle Away Mode & output streaming to phone\n"
+            "• */nav [page]* - Browse terminal logs & outputs from phone\n"
+            "• */swarm <task>* - Execute nested 4-tier multi-agent swarm\n\n"
             "⌨️ *Input and Voice Bridge:*\n"
             "• */type <text>* - Type text into active IDE chat and hit Enter\n"
             "• */prompt <text>* - Alias for /type (use with phone voice dictation)\n"
@@ -642,13 +941,19 @@ def handle_remote_command(from_number: str, text: str) -> str:
             "• */clip [text]* - Read or copy to workstation clipboard\n"
             "• */mode <chat|exec>* - Switch default behavior for plain text\n\n"
             "🔒 *Workstation Security:*\n"
-            "• */lock* - Instantly lock screen (agents and caffeinate keep running!)\n"
+            "• */lock* - Instantly lock screen & activate Away Mode streaming\n"
             "• */blockinput <on|off>* - Freeze/unfreeze desk keyboard and mouse\n"
             "• */alarm* - Sound warning alarm chimes on PC speakers\n"
             "• */sleep* - Turn off caffeinate and suspend PC\n"
             "• */shutdown* - Safely power off PC (15s countdown)\n\n"
             "💻 *Agent and Workspace:*\n"
             "• */status* - Workstation status, RAM, mode, caffeinate\n"
+            "• */plan [task]* - Suggestion panel with 1-tap Telegram Poll\n"
+            "• */orchestrate [task]* - Manager-Worker code pipeline\n"
+            "• */moe* - FreeToken dynamic MoE latency scheduler & 7.5GB cap\n"
+            "• */graph [symbol]* - AST Codebase Graph search\n"
+            "• */task [add|done|history]* - Task memory lifecycle\n"
+            "• */sandbox [code]* - Run isolated security audit\n"
             "• */caffeinate <on|off>* - Toggle anti-sleep wake-lock\n"
             "• */recall <query>* - Search memory and decisions\n"
             "• */git <status|diff|commit|push>* - Remote git operations\n"
@@ -774,7 +1079,76 @@ def handle_remote_command(from_number: str, text: str) -> str:
 
     elif cmd == "/lock":
         ok, msg = remote_lock_workstation()
-        return f"🔒 *Workstation Lock:*\n{msg}\nCaffeinate and background AI tasks remain 100% active."
+        set_away_mode(True)
+        nav_buttons = [
+            [
+                {"text": "📟 View Terminal Logs", "callback_data": "nav:1"},
+                {"text": "📊 Status", "callback_data": "cmd:status"},
+            ],
+            [
+                {"text": "🐝 Swarm Health", "callback_data": "cmd:swarm"},
+                {"text": "🔓 End Away Mode", "callback_data": "away:off"}
+            ]
+        ]
+        lock_msg = (
+            f"🔒 *Workstation Lock — Away Mode ACTIVATED!*\n\n"
+            f"• *Desktop:* {msg}\n"
+            "• *Away Mode:* Active (All terminal outputs & agent milestones will stream directly to your phone!)\n"
+            "• *Navigation:* Tap buttons below or send `/nav` to browse output history.\n"
+            "• Send `/away off` when returning to desk."
+        )
+        if cfg.get("provider", "telegram").lower() == "telegram" and cfg.get("telegram_token"):
+            send_telegram_inline_keyboard(from_number, lock_msg, nav_buttons, config=cfg)
+        return lock_msg
+
+    elif cmd == "/away":
+        subcmd = arg.lower().strip()
+        if subcmd in ("on", "start", "enable"):
+            set_away_mode(True)
+            return "🔒 *Away Mode ON:*\nTerminal output streaming to phone is active. Send `/away off` when returning to desk."
+        elif subcmd in ("off", "stop", "disable"):
+            set_away_mode(False)
+            return "👋 *Away Mode OFF:*\nWelcome back to your desk! Terminal output streaming paused."
+        else:
+            state = "ACTIVE" if is_away_mode_active() else "INACTIVE"
+            return f"📱 *Away Mode:* `{state}`\nUsage: `/away <on|off>`"
+
+    elif cmd == "/nav":
+        mirror = get_terminal_mirror()
+        arg_l = arg.lower().strip()
+        page_num = int(arg_l) if arg_l.isdigit() else 1
+        items, page, total_pages = mirror.get_page(page=page_num, page_size=4)
+        if not items:
+            return "📟 *Terminal Output Buffer:* (No logs recorded yet)\nRun commands or execute tasks to view live streams."
+
+        lines = [f"📟 *Terminal Output Pager (Page {page}/{total_pages}):*", ""]
+        for it in items:
+            lines.append(f"⏱️ `[{it['time_str']} {it['source'].upper()}]`")
+            p_txt = it["text"][:300] + ("..." if len(it["text"]) > 300 else "")
+            lines.append(f"```\n{p_txt}\n```")
+
+        buttons = [
+            [
+                {"text": "⬅️ Prev", "callback_data": f"nav:{page+1}"},
+                {"text": "🔄 Refresh", "callback_data": f"nav:{page}"},
+                {"text": "➡️ Next", "callback_data": f"nav:{max(1, page-1)}"},
+            ],
+            [
+                {"text": "📋 Latest", "callback_data": "nav:1"},
+                {"text": "📊 Status", "callback_data": "cmd:status"},
+            ]
+        ]
+        pager_text = "\n".join(lines)
+        if cfg.get("provider", "telegram").lower() == "telegram" and cfg.get("telegram_token"):
+            send_telegram_inline_keyboard(from_number, pager_text, buttons, config=cfg)
+        return pager_text
+
+    elif cmd == "/swarm":
+        from .swarm import run_nested_swarm, format_swarm_display
+        task_query = arg or "Multi-Agent System Health & Contract Validation"
+        send_telegram_message(from_number, f"🐝 *Spawning Hierarchical Swarm for:* `{task_query}`\nDomain Leads initializing...", config=cfg)
+        res = run_nested_swarm(task_query, simulate_workers=True)
+        return format_swarm_display(res)
 
     elif cmd == "/blockinput":
         state = arg.lower() in ("on", "true", "1", "lock", "enable")
@@ -862,7 +1236,11 @@ def handle_remote_command(from_number: str, text: str) -> str:
     elif cmd == "/plan":
         task_query = arg or "Next Development Milestone"
         suggs = create_default_suggestions_for_task(task_query)
-        return format_suggestion_panel(task_query, suggs, recommended_index=0)
+        panel_text = format_suggestion_panel(task_query, suggs, recommended_index=0)
+        # Dispatch native Telegram poll for 1-tap thumb vote
+        poll_opts = [s["label"] for s in suggs]
+        send_telegram_poll(from_number, f"Decision: {task_query[:250]}", poll_opts, config=cfg)
+        return panel_text
 
     elif cmd == "/orchestrate":
         if not arg or arg.lower() in ("stats", "summary"):
@@ -933,7 +1311,7 @@ def handle_remote_command(from_number: str, text: str) -> str:
     elif clean_text.startswith("/"):
         KNOWN_COMMANDS = [
             "/help", "/status", "/config", "/hardware", "/report", "/terms", "/env", "/taste", "/plan", "/orchestrate",
-            "/scout", "/moe", "/graph", "/task", "/sandbox",
+            "/scout", "/moe", "/graph", "/task", "/sandbox", "/away", "/nav", "/swarm",
             "/caffeinate", "/mode", "/type", "/prompt", "/paste", "/clip",
             "/lock", "/recall", "/git", "/artifacts", "/windows", "/apps",
             "/focus", "/blockinput", "/alarm", "/sleep", "/shutdown", "/exec",
@@ -941,12 +1319,20 @@ def handle_remote_command(from_number: str, text: str) -> str:
         ]
         matches = difflib.get_close_matches(cmd, KNOWN_COMMANDS, n=2, cutoff=0.4)
         if matches:
-            return (
-                f"❓ *Unknown Command:* `{cmd}`\n\n"
-                f"💡 *Did you mean:* `{matches[0]}`?\n\n"
-                f"Type `/help` to see all available commands."
+            suggested = matches[0]
+            buttons = [
+                [{"text": f"▶️ Run {suggested}", "callback_data": f"cmd:{suggested.lstrip('/')}"}],
+                [{"text": "📖 Show /help", "callback_data": "cmd:help"}]
+            ]
+            msg = (
+                f"❓ *Unknown Command:* `{raw_cmd}`\n\n"
+                f"💡 *Did you mean:* `{suggested}`?\n\n"
+                f"Tap below to run `{suggested}` or type `/help`."
             )
-        return f"❓ *Unknown Command:* `{cmd}`\n\nType `/help` to see all available commands.\n(Slash commands are never typed into active IDE windows)."
+            if cfg.get("provider", "telegram").lower() == "telegram" and cfg.get("telegram_token"):
+                send_telegram_inline_keyboard(from_number, msg, buttons, config=cfg)
+            return msg
+        return f"❓ *Unknown Command:* `{raw_cmd}`\n\nType `/help` to see all available commands.\n(Slash commands are never typed into active IDE windows)."
 
     else:
         def_mode = cfg.get("default_mode", "chat").lower()
