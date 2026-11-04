@@ -10,6 +10,7 @@ Implements the 2-Stage User-Agent Alignment Protocol:
 """
 
 from typing import Any, Dict, List, Optional
+from .ceo_stress_test import YCCEOStressTester, CEOCritique
 
 
 CURATED_TECH_RESOURCES = {
@@ -53,6 +54,11 @@ CURATED_TECH_RESOURCES = {
 
 class AlignmentEngine:
     """Orchestrates concept awareness, architecture visualization, and Grill-Me interviews."""
+
+    @classmethod
+    def stress_test_concept(cls, idea: str, context: Optional[str] = None) -> CEOCritique:
+        """Run Y-Combinator CEO stress test against an idea or technical approach."""
+        return YCCEOStressTester.evaluate(idea, context)
 
     @classmethod
     def find_relevant_education(cls, prompt_or_tech: str) -> Optional[Dict[str, Any]]:

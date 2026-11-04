@@ -258,6 +258,31 @@ def main() -> None:
     feed_parser.add_argument("--cat", "-c", default="general", help="Category (e.g. code_quality, speed, security)")
     feed_parser.add_argument("--rating", "-r", type=int, default=5, choices=[1, 2, 3, 4, 5], help="Rating 1-5 stars")
 
+    # ceo (YC CEO Ideation & Stress-Testing)
+    ceo_parser = subparsers.add_parser("ceo", help="YC CEO ideation stress-test & feasibility critique")
+    ceo_parser.add_argument("idea", help="Product concept or architectural proposal to stress-test")
+
+    # challenge (Anti-Sycophancy & Skeptical Truth-Seeking)
+    chal_parser = subparsers.add_parser("challenge", help="Anti-sycophancy and skeptical truth-seeking audit")
+    chal_parser.add_argument("target", help="Code snippet, file path, or plan to challenge")
+
+    # mistakes (Mistake Ledger & Environment Trap Recall)
+    mist_parser = subparsers.add_parser("mistakes", help="Mistake ledger for agent learning and avoiding past traps")
+    mist_sub = mist_parser.add_subparsers(dest="mistake_action", help="Mistake action")
+    
+    m_list = mist_sub.add_parser("list", help="List recorded mistakes")
+    m_list.add_argument("--limit", "-n", type=int, default=10, help="Max entries to return")
+
+    m_recall = mist_sub.add_parser("recall", help="Recall relevant mistakes for a task or topic")
+    m_recall.add_argument("query", help="Task or technology keyword (e.g. windows, git, python)")
+
+    m_record = mist_sub.add_parser("record", help="Record a verified mistake and fix into ledger")
+    m_record.add_argument("--task", required=True, help="Task during which mistake occurred")
+    m_record.add_argument("--desc", required=True, help="Description of mistake")
+    m_record.add_argument("--cause", required=True, help="Root cause")
+    m_record.add_argument("--fix", required=True, help="Corrective action / solution")
+    m_record.add_argument("--tags", nargs="*", default=[], help="Tags (e.g. windows ntfs git)")
+
     args = parser.parse_args()
 
     if args.command == "daemon":
@@ -738,6 +763,57 @@ def main() -> None:
         from .dashboard import record_feedback
         row_id = record_feedback(category=args.cat, rating=args.rating, comment=args.comment)
         print(f"[AegisBrain] Feedback recorded (ID #{row_id}) into neural memory. Thank you!")
+
+    elif args.command == "ceo":
+        from .ceo_stress_test import YCCEOStressTester
+        critique = YCCEOStressTester.evaluate(args.idea)
+        print(critique.to_markdown())
+
+    elif args.command == "challenge":
+        from .truth_seeking import SkepticalTruthReviewer
+        target = args.target
+        p = Path(target)
+        if p.exists() and p.is_file():
+            text = p.read_text(encoding="utf-8", errors="replace")
+        else:
+            text = target
+        audit = SkepticalTruthReviewer.audit_proposal_or_code(text)
+        print(audit.to_markdown())
+
+    elif args.command == "mistakes":
+        from .truth_seeking import MistakeLedger
+        ledger = MistakeLedger()
+        action = args.mistake_action or "list"
+        
+        if action == "list":
+            entries = ledger.get_all()[:args.limit]
+            print(f"=== AegisBrain Mistake Ledger ({len(entries)} recorded) ===")
+            for e in entries:
+                print(f"[{e.id}] Task: {e.task}")
+                print(f"  Mistake: {e.mistake_description}")
+                print(f"  Cause:   {e.root_cause}")
+                print(f"  Fix:     {e.corrective_action}")
+                print(f"  Tags:    {', '.join(e.tags)}\n")
+
+        elif action == "recall":
+            matches = ledger.query_mistakes(args.query, limit=5)
+            print(f"=== AegisBrain Mistake Recall for '{args.query}' ({len(matches)} matches) ===")
+            if not matches:
+                print("No matching past mistakes recorded. Proceed with standard caution.")
+            for e in matches:
+                print(f"⚠️ [{e.id}] {e.task}")
+                print(f"   Mistake: {e.mistake_description}")
+                print(f"   Fix:     {e.corrective_action}\n")
+
+        elif action == "record":
+            entry = ledger.record_mistake(
+                task=args.task,
+                mistake_description=args.desc,
+                root_cause=args.cause,
+                corrective_action=args.fix,
+                tags=args.tags
+            )
+            print(f"[AegisBrain] Recorded mistake into ledger (ID: {entry.id}). Agents will avoid this pattern.")
 
     else:
         parser.print_help()
