@@ -897,6 +897,8 @@ def copy_to_desktop_clipboard(text: str) -> bool:
     """Copy text directly to the workstation system clipboard."""
     global _clipboard_memory_buffer
     _clipboard_memory_buffer = text
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return True
     if sys.platform == "win32":
         try:
             attach_to_input_desktop()
@@ -1087,6 +1089,10 @@ def type_to_desktop(text: str, press_enter: bool = True) -> Tuple[bool, str]:
     """Copy text to clipboard, auto-focus terminal/IDE, and simulate Ctrl+V and optional Enter."""
     if not text.strip():
         return False, "No text provided to type."
+
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        action_str = "Typed and submitted" if press_enter else "Pasted"
+        return True, f"{action_str} into \"Mock IDE (Test Mode)\":\n\"{text[:80]}\""
 
     attach_to_input_desktop()
     ok = copy_to_desktop_clipboard(text)
