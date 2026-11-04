@@ -45,6 +45,8 @@ from .caffeinate import (
     remote_shutdown_pc,
 )
 from .remote import handle_twilio_webhook
+from .dashboard import render_dashboard_html, get_dashboard_summary, record_feedback
+from .snapshot import restore_snapshot, list_snapshots
 
 
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
@@ -81,6 +83,17 @@ class AegisRequestHandler(BaseHTTPRequestHandler):
         payload = xml_text.encode("utf-8")
         self.send_response(status_code)
         self.send_header("Content-Type", "application/xml; charset=utf-8")
+        self.send_header("Content-Length", str(len(payload)))
+        origin = self.headers.get("Origin", "")
+        if origin and (origin.startswith("http://localhost:") or origin.startswith("http://127.0.0.1:")):
+            self.send_header("Access-Control-Allow-Origin", origin)
+        self.end_headers()
+        self.wfile.write(payload)
+
+    def _send_html(self, status_code: int, html_str: str) -> None:
+        payload = html_str.encode("utf-8")
+        self.send_response(status_code)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(payload)))
         origin = self.headers.get("Origin", "")
         if origin and (origin.startswith("http://localhost:") or origin.startswith("http://127.0.0.1:")):
@@ -139,6 +152,10 @@ class AegisRequestHandler(BaseHTTPRequestHandler):
             self._send_json(200, alerts)
         elif path == "/caffeinate":
             self._send_json(200, get_caffeinate_status())
+        elif path == "/dashboard":
+            self._send_html(200, render_dashboard_html())
+        elif path == "/api/dashboard":
+            self._send_json(200, get_dashboard_summary())
         else:
             self._send_json(404, {"error": "Not Found", "path": self.path})
 
@@ -187,6 +204,26 @@ class AegisRequestHandler(BaseHTTPRequestHandler):
             delay = int(body.get("delay", 15))
             ok, msg = remote_shutdown_pc(delay_seconds=delay)
             self._send_json(200, {"status": "shutdown_scheduled" if ok else "error", "message": msg})
+            return
+        elif path == "/api/feedback":
+            data = form_params if form_params else body
+            cat = data.get("category", ["general"])[0] if isinstance(data.get("category"), list) else data.get("category", "general")
+            rating_val = data.get("rating", [5])[0] if isinstance(data.get("rating"), list) else data.get("rating", 5)
+            comment_val = data.get("comment", [""])[0] if isinstance(data.get("comment"), list) else data.get("comment", "")
+            task_ref = data.get("task_ref", [""])[0] if isinstance(data.get("task_ref"), list) else data.get("task_ref", "")
+            fb_id = record_feedback(category=str(cat), rating=int(rating_val), comment=str(comment_val), task_ref=str(task_ref))
+            if "application/x-www-form-urlencoded" in content_type:
+                self.send_response(303)
+                self.send_header("Location", "/dashboard")
+                self.end_headers()
+            else:
+                self._send_json(201, {"status": "recorded", "id": fb_id})
+            return
+        elif path == "/api/restore":
+            snap_id = parsed.query.split("id=")[-1] if "id=" in parsed.query else body.get("id", "")
+            snap_id = urllib.parse.unquote(snap_id)
+            ok, msg = restore_snapshot(snap_id)
+            self._send_json(200 if ok else 400, {"success": ok, "message": msg})
             return
 
         if path == "/decision":

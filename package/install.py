@@ -18,22 +18,43 @@ REPO_ROOT = PACKAGE_DIR.parent
 SKILL_SOURCE = REPO_ROOT / "skills" / "aegis" / "SKILL.md"
 
 ANTIGRAVITY_DIRECTIVE = """
-- **Instant Recall Protocol via AegisBrain (Sub-Second Latency & Low Token Cost)**:
-  Whenever the user asks to recall past work, previous sessions, decisions, architectural patterns, conventions, or tracked tasks:
-  1. **Primary Reflex**: If `aegis` is installed / available on the system:
-     - Run `aegis recall` (or `aegis recall -n 5`) to recall recent tasks, workflows, and decisions instantly.
-     - Run `aegis recall "<topic>"` or `aegis search "<query>"` for specific keyword lookups across SQLite FTS5 records.
-     - Run `aegis bootstrap` to compile compact active workspace context (<= 400 tokens).
-     - **NEVER** parse multi-megabyte transcript files or crawl raw session logs when AegisBrain is present.
-  2. **Fallback**: Only if AegisBrain yields no results or is uninstalled, consult `~/.gemini/config/skills/memory/WORKFLOW_MEMORY.md`.
+- **AegisBrain Autonomous Engineering & Memory Protocol**:
+  Whenever operating within an AegisBrain-managed workspace:
+  1. **Restore Point Safety Reflex**:
+     - Before mutating major configurations, rules, or system files, verify or create a restore point: `aegis snapshot create --reason "pre-change"`. Rollback anytime with `aegis restore`.
+  2. **Sub-Second Memory & Context Bootstrapping**:
+     - Use `aegis recall` (or `aegis recall "<topic>"`) for instant FTS5 memories. Never crawl raw multi-megabyte session logs. Run `aegis bootstrap` for active context (<= 400 tokens).
+  3. **Autonomous Ingestion & Deep Research**:
+     - Check skills. If missing domain capabilities, run `aegis research "<query>"` or discover skills via `aegis scout`. Use `aegis browse "<url>"` for lightweight, ad-free, token-efficient extraction (< 1,500 tokens).
+  4. **Interactive Alignment & Concept Education (Grill-Me)**:
+     - If the task is underspecified or exploring new frameworks, invoke `aegis align "<task>"`. Provide Archify architectural blueprints and curated video links. Run Matt Pocock's 3-question diagnostic interview to lock deliverables and boundaries before coding.
+  5. **Manager-Worker Severity Triage & Transparent Observer**:
+     - Critical/Confidential tasks: Manager model executes with zero secret leakage.
+     - Routine tasks: Local worker generates code drafts with manager review.
+     - Always provide live progress transparency: Emit step-by-step progress micro-updates so the user can steer, pause, or comment early.
+  6. **Multi-Choice Aesthetic & Layout Dials**:
+     - For frontend/UI tasks, provide interactive style choices (UI UX Pro Max, Impeccable, Taste, Modern, Minimalist, Cyberpunk, Neo-brutalism) before writing boilerplate.
+  7. **4-Stage Post-Processing & Quality Gates Pipeline**:
+     - All candidate code must pass:
+       1) `turnitout` / `unslop` (remove AI conversational watermarks and slop).
+       2) `Red-Team & Cloudflare security audit` (block shell=True, injections, traversals).
+       3) `GitGuardian Secret Scanner` (block API keys, private keys, database credentials).
+       4) `Dual-Environment Verification` (isolated sandbox test first -> local test second -> git push third).
+  8. **AST Graph Token Optimization**:
+     - Use `aegis graph --query <symbol>` for sub-millisecond symbol and dependency retrieval. Fallback to conventional grep only if AST indexing fails.
+  9. **Feedback & Benchmarking**:
+     - Record tool performance and fallbacks. Review dashboard via `aegis dashboard` or submit feedback via `aegis feedback "<critique>"`.
 """
 
 CLAUDE_DIRECTIVE = """
-## AegisBrain Instant Recall & Memory Protocol (Sub-Second Latency)
-When asked to recall past work, previous decisions, architectural conventions, or project status:
-- **Primary Reflex**: Run `aegis recall` (or `aegis recall "<topic>"`) to retrieve instant SQLite FTS5 memories.
-- Run `aegis bootstrap` to compile active workspace conventions in <= 400 tokens.
-- Never crawl raw session directories or read large JSONL logs when AegisBrain is active.
+## AegisBrain Autonomous Engineering & Memory Protocol
+1. **Restore Point Safety**: Create snapshots before system changes (`aegis snapshot create`). Rollback anytime (`aegis restore`).
+2. **Sub-Second Memory Reflex**: Run `aegis recall "<topic>"` to query SQLite FTS5 records. Run `aegis bootstrap` for active workspace context. Never crawl raw JSONL logs.
+3. **Autonomous Research & Lightweight Browser**: Use `aegis research "<topic>"` and `aegis browse "<url>"` for clean, token-efficient web research.
+4. **Concept Awareness & Grill-Me**: Run `aegis align "<task>"` for Archify blueprints and Matt Pocock diagnostic questions.
+5. **Quality Gates Pipeline**: Verify output passes `aegis pipeline "<file>"` (Unslop, Security Audit, GitGuardian Secret Scanning, Sandbox test).
+6. **AST Graph Traversal**: Query `aegis graph --query <symbol>` for code relationships without file dumping.
+7. **Transparent Updates**: Maintain step-by-step progress transparency for user steering.
 """
 
 
@@ -42,23 +63,33 @@ def install() -> None:
     print(" Installing AegisBrain Universal Agent Memory Bus")
     print("=" * 65)
 
-    # 1. Initialize DB and seed
+    # 1. Create automated pre-install snapshot restore point
     sys.path.insert(0, str(PACKAGE_DIR))
+    from aegis.snapshot import create_snapshot
     from aegis.db import init_db
     from aegis.hooks import seed_initial_knowledge
     from aegis.service import enable_autostart
 
-    print("[1/5] Initializing local neural memory bus...")
+    print("[1/6] Creating automated pre-install restore point snapshot...")
+    try:
+        snap = create_snapshot(name="pre_install", reason="Automated pre-install restore point")
+        print(f"      [OK] Snapshot saved: {snap['snapshot_id']} ({snap['file_count']} files archived)")
+        print(f"      Rollback anytime with: `aegis restore {snap['snapshot_id']}`")
+    except Exception as exc:
+        print(f"      [WARN] Failed to create snapshot: {exc}")
+
+    # 2. Initialize DB and seed
+    print("[2/6] Initializing local neural memory bus...")
     init_db()
     seed_initial_knowledge()
 
-    # 2. Configure background autostart
-    print("[2/5] Setting up zero-elevation background autostart...")
+    # 3. Configure background autostart
+    print("[3/6] Setting up zero-elevation background autostart...")
     ok, msg = enable_autostart()
     print(f"      {msg}")
 
-    # 3. Create global CLI shim
-    print("[3/5] Registering global 'aegis' CLI command...")
+    # 4. Create global CLI shim
+    print("[4/6] Registering global 'aegis' CLI command...")
     home_bin = Path.home() / ".local" / "bin"
     home_bin.mkdir(parents=True, exist_ok=True)
 
@@ -86,8 +117,8 @@ exec python3 -m aegis.cli "$@"
         sh_path.chmod(0o755)
         print(f"      Created POSIX shim: {sh_path}")
 
-    # 4. Distribute Universal Skills to AI Agent Platforms
-    print("[4/5] Auto-linking companion skills across agent platforms...")
+    # 5. Distribute Universal Skills to AI Agent Platforms
+    print("[5/6] Auto-linking companion skills across agent platforms...")
     skill_text = SKILL_SOURCE.read_text(encoding="utf-8") if SKILL_SOURCE.exists() else ""
 
     agent_skill_targets = [
@@ -104,26 +135,33 @@ exec python3 -m aegis.cli "$@"
         except Exception as exc:
             print(f"      [SKIP] {agent_name}: {exc}")
 
-    # 5. Inject Zero-Token-Waste Recall Directives & Hooks
-    print("[5/5] Injecting autonomous instant recall directives & memory hooks...")
+    # 6. Inject Autonomous Engineering Directives & Hooks
+    print("[6/6] Injecting autonomous engineering directives & memory hooks...")
 
     # A. Google Antigravity GEMINI.md
     antigravity_md = Path.home() / ".gemini" / "config" / "GEMINI.md"
     if antigravity_md.exists():
         try:
             content = antigravity_md.read_text(encoding="utf-8")
-            if "Instant Recall Protocol via AegisBrain" not in content:
-                # Append under Section 4 or end of file
-                if "## 4. Persistent Workflow Memory" in content:
+            if "AegisBrain Autonomous Engineering & Memory Protocol" not in content:
+                # Replace old directive or append
+                if "- **Instant Recall Protocol via AegisBrain" in content:
+                    idx = content.find("- **Instant Recall Protocol via AegisBrain")
+                    end_idx = content.find("## 2. Unified Arsenal Triad", idx)
+                    if end_idx != -1:
+                        content = content[:idx] + ANTIGRAVITY_DIRECTIVE.strip() + "\n\n---\n\n" + content[end_idx:]
+                    else:
+                        content = content[:idx] + ANTIGRAVITY_DIRECTIVE.strip() + "\n"
+                elif "## 4. Persistent Workflow Memory" in content:
                     idx = content.find("## 4. Persistent Workflow Memory")
                     next_nl = content.find("\n", idx)
                     content = content[:next_nl + 1] + ANTIGRAVITY_DIRECTIVE + content[next_nl + 1:]
                 else:
                     content += "\n" + ANTIGRAVITY_DIRECTIVE
                 antigravity_md.write_text(content, encoding="utf-8")
-                print("      [OK] Injected AegisBrain instant recall directive into Antigravity GEMINI.md")
+                print("      [OK] Injected AegisBrain autonomous engineering protocol into Antigravity GEMINI.md")
             else:
-                print("      [OK] Antigravity GEMINI.md already configured for AegisBrain recall")
+                print("      [OK] Antigravity GEMINI.md already configured for AegisBrain protocol")
         except Exception as exc:
             print(f"      [SKIP] Antigravity GEMINI.md: {exc}")
 

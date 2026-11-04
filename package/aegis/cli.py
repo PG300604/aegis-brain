@@ -219,6 +219,45 @@ def main() -> None:
     nav_parser = subparsers.add_parser("nav", help="Browse terminal output pages from desktop or mobile mirror")
     nav_parser.add_argument("page", nargs="?", type=int, default=1, help="Page number to inspect (default: 1)")
 
+    # snapshot (Restore point creation & inspection)
+    snap_parser = subparsers.add_parser("snapshot", help="Create or list agent configuration restore points")
+    snap_parser.add_argument("action", nargs="?", choices=["create", "list"], default="list", help="Action (create/list)")
+    snap_parser.add_argument("--name", "-n", default=None, help="Optional friendly name for the snapshot")
+    snap_parser.add_argument("--reason", "-r", default="manual", help="Reason for creating snapshot")
+
+    # restore / rollback
+    restore_parser = subparsers.add_parser("restore", help="Rollback agent configuration and rules to a previous restore point")
+    restore_parser.add_argument("snapshot_id", nargs="?", default="latest", help="Snapshot ID or partial name to restore")
+
+    # browse (Lightweight AI Browser)
+    browse_parser = subparsers.add_parser("browse", help="Fetch and distill web content into token-efficient markdown (Jev-compatible)")
+    browse_parser.add_argument("url", help="URL to browse and distill")
+    browse_parser.add_argument("--chars", "-c", type=int, default=4000, help="Max characters to return (default: 4000)")
+
+    # research (Autonomous Skill Sourcing & Web Exploration)
+    res_parser = subparsers.add_parser("research", help="Autonomous domain research and skill scraper")
+    res_parser.add_argument("query", help="Topic or research objective")
+
+    # align (Educational Concept Briefing & Matt Pocock Grill-Me Interview)
+    align_parser = subparsers.add_parser("align", help="Run interactive concept education and Grill-Me diagnostic interview")
+    align_parser.add_argument("task", help="Macro objective or technology to align on")
+
+    # pipeline (4-Stage Quality Gates: Unslop, Red-Team, GitGuardian, Sandbox)
+    pipe_parser = subparsers.add_parser("pipeline", help="Execute 4-stage post-processing quality gates on code output")
+    pipe_parser.add_argument("target", help="Code string or file path to evaluate")
+    pipe_parser.add_argument("--sandbox", "-s", action="store_true", help="Execute candidate in ephemeral sandbox")
+
+    # dashboard (Feedback, Benchmarks & GUI Dashboard)
+    dash_parser = subparsers.add_parser("dashboard", help="Display AegisBrain benchmarks, feedbacks, and Web GUI")
+    dash_parser.add_argument("--tui", action="store_true", help="Render ANSI terminal UI")
+    dash_parser.add_argument("--open", "-o", action="store_true", help="Open Web GUI in default browser")
+
+    # feedback (Submit critique and ratings to memory)
+    feed_parser = subparsers.add_parser("feedback", help="Submit rating and critique to Aegis memory for continuous evolution")
+    feed_parser.add_argument("comment", help="Feedback text")
+    feed_parser.add_argument("--cat", "-c", default="general", help="Category (e.g. code_quality, speed, security)")
+    feed_parser.add_argument("--rating", "-r", type=int, default=5, choices=[1, 2, 3, 4, 5], help="Rating 1-5 stars")
+
     args = parser.parse_args()
 
     if args.command == "daemon":
@@ -605,6 +644,100 @@ def main() -> None:
             print("(No logs captured yet)")
         for it in items:
             print(f"[{it['time_str']} {it['source'].upper()}] {it['text']}")
+
+    elif args.command == "snapshot":
+        from .snapshot import create_snapshot, list_snapshots
+        if args.action == "create":
+            res = create_snapshot(name=args.name, reason=args.reason)
+            print(f"[AegisBrain] Snapshot created: {res['snapshot_id']} ({res['file_count']} files archived)")
+        else:
+            snaps = list_snapshots()
+            print("=== AegisBrain Configuration Restore Points ===")
+            if not snaps:
+                print("  No snapshots found. Run `aegis snapshot create` to create a restore point.")
+            for s in snaps:
+                print(f"  • [{s.get('snapshot_id')}] {s.get('name')} - {s.get('reason')} ({s.get('created_at')})")
+
+    elif args.command == "restore":
+        from .snapshot import restore_snapshot, list_snapshots
+        snap_id = args.snapshot_id
+        if snap_id == "latest":
+            snaps = list_snapshots()
+            if not snaps:
+                print("[AegisBrain] No snapshots available to restore.")
+                return
+            snap_id = snaps[0]["snapshot_id"]
+        ok, msg = restore_snapshot(snap_id)
+        status_lbl = "[OK]" if ok else "[ERROR]"
+        print(f"[AegisBrain] {status_lbl} {msg}")
+
+    elif args.command == "browse":
+        from .browser import fetch_url_content
+        print(f"[AegisBrain Browser] Fetching and distilling: {args.url}...")
+        ok, content = fetch_url_content(args.url, max_chars=args.chars)
+        if ok:
+            print(content)
+        else:
+            print(f"[AegisBrain Browser Error] {content}")
+
+    elif args.command == "research":
+        from .browser import search_web_duckduckgo
+        from .skill_scout import discover_skills
+        print(f"[AegisBrain Research] Exploring web and skill arsenal for: {args.query}...")
+        results = search_web_duckduckgo(args.query, max_results=4)
+        skills = discover_skills(limit=3)
+        print("\n--- High-Signal Search Insights ---")
+        for r in results:
+            print(f"• {r.get('title')}: {r.get('url')}\n  ↪ {r.get('snippet')}\n")
+        print("--- Curated Domain Skills ---")
+        for s in skills:
+            print(f"• {s.name} ({s.niche}): {s.summary}")
+
+    elif args.command == "align":
+        from .alignment import AlignmentEngine
+        print(f"[AegisBrain Alignment] Aligning on task: {args.task}...")
+        edu = AlignmentEngine.generate_educational_blueprint(args.task)
+        print("\n" + edu)
+        questions = AlignmentEngine.generate_grill_me_interview(args.task)
+        print("\n### ❓ Matt Pocock 'Grill Me' Diagnostic Interview")
+        for i, q in enumerate(questions, 1):
+            print(f"\n{i}. {q['question']}")
+            for opt in q['options']:
+                print(f"   - {opt}")
+
+    elif args.command == "pipeline":
+        from .pipeline import QualityGatesPipeline
+        target = args.target
+        p = Path(target)
+        if p.exists() and p.is_file():
+            raw_text = p.read_text(encoding="utf-8", errors="replace")
+        else:
+            raw_text = target
+        res = QualityGatesPipeline.run_pipeline(raw_text, run_sandbox=args.sandbox)
+        print(f"=== AegisBrain Quality Gates Certification ===")
+        print(f"Passed:            {'YES' if res.passed else 'NO'}")
+        print(f"Security Score:    {res.security_score}%")
+        print(f"Unslop Applied:    {'Yes' if res.unslop_applied else 'No'}")
+        print(f"GitGuardian Alert: {len(res.secret_findings)} secrets flagged")
+        print(f"Summary:           {res.summary}")
+        if res.secret_findings:
+            print("\n[CRITICAL BLOCKED SECRETS]:")
+            for sf in res.secret_findings:
+                print(f"  • {sf['detail']} (preview: {sf['preview']})")
+
+    elif args.command == "dashboard":
+        from .dashboard import format_dashboard_tui
+        if args.open:
+            import webbrowser
+            webbrowser.open("http://127.0.0.1:8765/dashboard")
+            print("[AegisBrain] Opened http://127.0.0.1:8765/dashboard in browser.")
+        else:
+            print(format_dashboard_tui())
+
+    elif args.command == "feedback":
+        from .dashboard import record_feedback
+        row_id = record_feedback(category=args.cat, rating=args.rating, comment=args.comment)
+        print(f"[AegisBrain] Feedback recorded (ID #{row_id}) into neural memory. Thank you!")
 
     else:
         parser.print_help()

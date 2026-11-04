@@ -1,15 +1,15 @@
 ---
 name: aegis
-description: "Universal local neural memory bus, instant memory recall, wake-lock caffeinate, WhatsApp remote agent bridge, and context governor for Antigravity, Claude Code, Codex, Cursor, Windsurf, and OpenCode."
+description: "Universal local neural memory bus, snapshot restore points, 4-stage quality gates pipeline, lightweight web browser, and live transparent agent orchestrator for Antigravity, Claude Code, Codex, Cursor, Windsurf, and OpenCode."
 tools: [claude-code, codex, gemini-cli, antigravity, hermes, cursor, opencode, aider]
 category: memory
 risk: safe
-tags: [agent-memory, context-governor, ollama, local-ai, fts5, sqlite, prompt-caching, open-higgsfield, instant-recall, caffeinate, remote-whatsapp]
+tags: [agent-memory, snapshot-restore, quality-gates, gitguardian, unslop, lightweight-browser, fts5, sqlite, prompt-caching, open-higgsfield, instant-recall, caffeinate, remote-whatsapp]
 ---
 
 # AegisBrain Universal Controller Skill
 
-AegisBrain provides deterministic workspace memory, sub-second instant recall, active context compiling ($\le 400$ tokens), wake-lock caffeinate, WhatsApp remote agent bridge, and skill proxying for all major autonomous AI coding agents:
+AegisBrain provides deterministic workspace memory, automated snapshot restore points, 4-stage post-processing quality gates, lightweight browser research, active context compiling ($\le 400$ tokens), wake-lock caffeinate, WhatsApp remote agent bridge, and skill proxying for all major autonomous AI coding agents:
 - **Google Antigravity CLI**
 - **Anthropic Claude Code**
 - **OpenAI Codex CLI**
@@ -17,78 +17,62 @@ AegisBrain provides deterministic workspace memory, sub-second instant recall, a
 - **Cursor / Windsurf / Continue / Cline**
 - **OpenCode CLI & Aider**
 
-## Slash Commands
+## Slash Commands & CLI Reference
 
-Whenever invoked via `/aegis` or asked to recall project decisions:
+Whenever invoked via `/aegis` or asked to operate in an AegisBrain-managed workspace:
 
 | Command | Action | Output / Behavior |
 |---|---|---|
 | `/aegis recall [q]` | **Instant memory recall** | Sub-second recall of recent tasks, workflows, or FTS5 keyword match |
 | `/aegis search <q>` | Query memory bus | Sub-millisecond SQLite FTS5 search across architectural records |
+| `/aegis snapshot [create/list]` | **Restore Point Safety** | Captures snapshot of agent configs, prompts, and rules before mutations |
+| `/aegis restore [id]` | **Rollback System** | Reverts agent configs, prompts, and rules back to previous restore point |
+| `/aegis browse <url>` | **Lightweight Browser** | Distills web pages into token-efficient, ad-free Markdown (< 1,500 tokens) |
+| `/aegis research <q>` | **Deep Research & Scout** | Explores web + scrapes matching Arsenal skills for domain gaps |
+| `/aegis align <task>` | **Concept Education & Grill-Me**| Archify architectural blueprints, curated video links & Matt Pocock interview |
+| `/aegis pipeline <target>` | **4-Stage Quality Gates** | Unslop/TurnItOut -> Security Audit -> GitGuardian Secrets -> Sandbox Test |
+| `/aegis dashboard [--open/--tui]` | **Web GUI & Benchmarks** | Dark-mode Web GUI on `http://127.0.0.1:8765/dashboard` or ANSI terminal TUI |
+| `/aegis feedback <comment>` | **Continuous Evolution** | Persists user critique, ratings, and suggestions to drive future model evolution |
 | `/aegis caffeinate [on/off]` | Anti-sleep wake-lock | Prevents PC sleep during long agent workflows (`--display` optional) |
-| `/aegis remote start` | WhatsApp remote session | Activates Caffeinate, ensures daemon runs, and pings WhatsApp |
-| `/aegis remote setup` | Twilio & pairing setup | Interactive configuration wizard for WhatsApp remote bridge |
+| `/aegis remote start` | WhatsApp remote session | Activates Caffeinate, ensures daemon runs, and pings WhatsApp/Telegram |
 | `/aegis bootstrap` | Compile workspace context | Generates `~/.aegis-brain/ACTIVE_CONTEXT.md` ($\le 400$ tokens) |
 | `/aegis status` | Inspect system health | Daemon state, autostart runner, Caffeinate state, tracked PRs, recorded decisions |
 | `/aegis decision` | Record technical decision | Persists decision, rationale, and tags to SQLite WAL index |
-| `/aegis mode private` | Ephemeral stealth mode | Zero-disk logging; completely bypasses disk writes |
-| `/aegis mode public` | Persistent memory mode | Enables SQLite WAL storage and automatic full-text indexing |
-| `/aegis poll` | Sweep GitHub pull requests | Checks CI checks, triage labels, and review comments |
-| `/aegis media <p>` | OpenHiggsfield generation | Dispatches prompt to Flux/Seedance and logs output metadata |
-| `/aegis autostart [on/off]`| Control system boot runner | Configures zero-elevation logon/wake background execution |
-| `/aegis stop` | Stop background daemon | Gracefully closes HTTP server and releases WAL locks |
+| `/aegis mode [public/private]`| Ephemeral stealth mode | `private` = zero-disk logging; `public` = persistent WAL storage |
+| `/aegis graph --query <q>` | AST Code Graph | Locates symbols, callers, and dependencies via AST without file dumping |
 
 ---
 
-## Autonomous Instant Recall Protocol (Zero-Token-Waste Heuristic)
+## Autonomous Agent Operational Directives
 
-Whenever a user asks any question involving:
-- *"What was the last task we done / did?"*
-- *"Recall past decisions / conventions / architecture"*
-- *"What did we do previously on [topic]?"*
-- *"Check current project context / status"*
+### 1. Mandatory Restore Point Safety
+- Before mutating major system configurations, rules, or system files, verify or create a restore point: `aegis snapshot create --reason "pre-change"`.
+- If an agent configuration or prompt modification creates unwanted side-effects, rollback cleanly with: `aegis restore [snapshot_id]`.
 
-### 1. Mandatory Reflex (Zero-Token-Waste)
-- **DO NOT** crawl through multi-megabyte `transcript.jsonl` files, history directories, or raw shell output.
-- **DO NOT** make multiple exploratory filesystem searches.
-- **IMMEDIATELY** run:
-  ```bash
-  # For latest tasks & decisions:
-  aegis recall -n 5
+### 2. Autonomous Ingestion & Lightweight Browser
+- Assess required domain skills. If missing, query `aegis research "<query>"` to locate or scrape required skills.
+- Use `aegis browse "<url>"` for dense, token-efficient extraction from GitHub, Stack Overflow, Reddit, and documentation without rendering bloat.
 
-  # For specific keyword or topic lookups:
-  aegis recall "<topic>"
-  ```
-- Retrieval takes **<50ms** via SQLite FTS5 in WAL mode and returns structured records in **<100 tokens** (95%+ token savings).
+### 3. Interactive Alignment & Concept Education
+- If the task is underspecified or exploring unfamiliar technologies, run `aegis align "<task>"`.
+- Review the generated Archify architectural blueprint and educational video links.
+- Answer Matt Pocock's 3-question diagnostic interview to lock deliverables, constraints, and error boundaries before writing code.
 
-### 2. Context Bootstrapping
-Before beginning large multi-step architectural changes or when launching a new session, run:
-```bash
-aegis bootstrap
-```
-This loads active conventions, tracked PRs, and recent architectural rules in $\le 400$ tokens.
+### 4. Manager-Worker Triage & Live Transparent Observer
+- High-severity / confidential tasks are executed directly by the frontier Manager.
+- Routine / boilerplate tasks can be drafted by local Workers, with strict Manager review.
+- Companion Observer emits step-by-step progress micro-updates (`[Aegis Observer] 🔍 Step 1/5...`) so the user can steer or comment early.
 
----
+### 5. Multi-Choice Aesthetic & Layout Dials
+- For frontend/UI tasks, present the user with interactive layout & style options (UI-UX Pro Max, Impeccable, Taste, Modern, Cyberpunk, Neo-brutalism, Minimalist) before scaffolding components.
 
-## Universal Agent Integration Rules
+### 6. Mandatory 4-Stage Post-Processing Quality Gates
+Every generated output must pass:
+1. `turnitout` / `unslop` / `deslop`: Remove conversational watermarks ("Certainly!", "Here is the code:"), filler disclaimers, and redundant comments.
+2. `Red-Team & Cloudflare security audit`: Block `shell=True`, unsanitized `eval`, path traversals, and destructive disk commands.
+3. `GitGuardian Secret Scanner`: Scan for API keys, tokens, and credentials. **Never allow secrets into Git commits.**
+4. `Dual-Environment Verification`: Execute in ephemeral sandbox first -> verify on local workstation second -> push to Git third.
 
-### 1. In Google Antigravity
-Registered at `~/.gemini/config/skills/aegis/SKILL.md`. Antigravity's global operating directives (`GEMINI.md`) designate `aegis recall` as the primary reflex for memory lookup, completely eliminating session log crawling.
-
-### 2. In Anthropic Claude Code
-Place this skill file in `~/.claude/skills/aegis/SKILL.md` or `.claude/skills/aegis/SKILL.md` in your repository.
-Claude Code automatically activates `/aegis` commands and invokes `aegis recall` during memory queries.
-
-### 3. In OpenAI Codex CLI & Aider
-Codex and Aider consume `~/.aegis-brain/ACTIVE_CONTEXT.md` on startup. Configure `.aider.conf.yml` or Codex prompt hooks:
-```yaml
-# In .aider.conf.yml
-read: ~/.aegis-brain/ACTIVE_CONTEXT.md
-```
-
-### 4. In Cursor / Windsurf / VS Code
-Add to your project's `.cursorrules` or `.windsurfrules`:
-```markdown
-Always inspect ~/.aegis-brain/ACTIVE_CONTEXT.md before proposing architectural changes.
-Instantly recall past decisions with `aegis recall "<topic>"`.
-```
+### 7. AST Graph Token Optimization
+- Use `aegis graph --query <symbol>` for sub-millisecond symbol and dependency retrieval.
+- Fall back to conventional full-file reads only if AST indexing fails.
