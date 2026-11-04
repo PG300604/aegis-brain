@@ -258,13 +258,21 @@ def main() -> None:
     feed_parser.add_argument("--cat", "-c", default="general", help="Category (e.g. code_quality, speed, security)")
     feed_parser.add_argument("--rating", "-r", type=int, default=5, choices=[1, 2, 3, 4, 5], help="Rating 1-5 stars")
 
+    # briefing / hi (Greeting & Offline Task Synchronization)
+    brief_parser = subparsers.add_parser("briefing", aliases=["hi", "greeting"], help="Greet user, synchronize offline PRs/alerts, and review pending tasks")
+    brief_parser.add_argument("--name", "-n", default="Priyanshu", help="User name to greet")
+
+    # optimize (Proactive Arsenal Skill & Web Research Recommendations)
+    opt_parser = subparsers.add_parser("optimize", help="Proactively recommend highest-scoring Arsenal skills and web research vectors")
+    opt_parser.add_argument("task", nargs="+", help="Target task, technology, or feature prompt")
+
     # ceo (YC CEO Ideation & Stress-Testing)
     ceo_parser = subparsers.add_parser("ceo", help="YC CEO ideation stress-test & feasibility critique")
-    ceo_parser.add_argument("idea", help="Product concept or architectural proposal to stress-test")
+    ceo_parser.add_argument("idea", nargs="+", help="Product concept or architectural proposal to stress-test")
 
     # challenge (Anti-Sycophancy & Skeptical Truth-Seeking)
     chal_parser = subparsers.add_parser("challenge", help="Anti-sycophancy and skeptical truth-seeking audit")
-    chal_parser.add_argument("target", help="Code snippet, file path, or plan to challenge")
+    chal_parser.add_argument("target", nargs="+", help="Code snippet, file path, or plan to challenge")
 
     # mistakes (Mistake Ledger & Environment Trap Recall)
     mist_parser = subparsers.add_parser("mistakes", help="Mistake ledger for agent learning and avoiding past traps")
@@ -752,12 +760,31 @@ def main() -> None:
 
     elif args.command == "dashboard":
         from .dashboard import format_dashboard_tui
+        from .service import is_daemon_running, start_daemon
         if args.open:
+            if not is_daemon_running():
+                print("[AegisBrain] Daemon is not active. Auto-starting in background...")
+                start_daemon()
+                import time
+                for _ in range(15):
+                    if is_daemon_running():
+                        break
+                    time.sleep(0.2)
             import webbrowser
             webbrowser.open("http://127.0.0.1:8765/dashboard")
-            print("[AegisBrain] Opened http://127.0.0.1:8765/dashboard in browser.")
+            print("[AegisBrain] Dashboard opened at http://127.0.0.1:8765/dashboard")
         else:
             print(format_dashboard_tui())
+
+    elif args.command in ["briefing", "hi", "greeting"]:
+        from .briefing import OfflineBriefingEngine
+        print(OfflineBriefingEngine.generate_briefing(user_name=args.name))
+
+    elif args.command == "optimize":
+        from .arsenal_optimizer import ArsenalOptimizer
+        task_str = " ".join(args.task) if isinstance(args.task, list) else str(args.task)
+        plan = ArsenalOptimizer.analyze_and_optimize(task_str)
+        print(plan.to_markdown())
 
     elif args.command == "feedback":
         from .dashboard import record_feedback
@@ -766,12 +793,14 @@ def main() -> None:
 
     elif args.command == "ceo":
         from .ceo_stress_test import YCCEOStressTester
-        critique = YCCEOStressTester.evaluate(args.idea)
+        idea_str = " ".join(args.idea) if isinstance(args.idea, list) else str(args.idea)
+        critique = YCCEOStressTester.evaluate(idea_str)
         print(critique.to_markdown())
 
     elif args.command == "challenge":
         from .truth_seeking import SkepticalTruthReviewer
-        target = args.target
+        target_str = " ".join(args.target) if isinstance(args.target, list) else str(args.target)
+        target = target_str
         p = Path(target)
         if p.exists() and p.is_file():
             text = p.read_text(encoding="utf-8", errors="replace")

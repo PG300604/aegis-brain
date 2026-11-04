@@ -1,6 +1,10 @@
 """Unit tests for Hierarchical Nested Multi-Agent Swarm, Away Mode & Mobile Polls."""
 
-import pytest
+try:
+    import pytest
+    fixture_decorator = pytest.fixture(autouse=True)
+except ImportError:
+    fixture_decorator = lambda fn: fn
 from aegis.swarm import run_nested_swarm, format_swarm_display
 from aegis.remote import (
     is_away_mode_active,
@@ -14,7 +18,7 @@ from aegis.remote import (
 )
 
 
-@pytest.fixture(autouse=True)
+@fixture_decorator
 def ensure_authorized_number():
     cfg = load_remote_config()
     allowed = cfg.get("allowed_numbers", [])

@@ -1,4 +1,3 @@
-import pytest
 from aegis.skill_scout import (
     init_skill_scout_db,
     run_skill_scout,

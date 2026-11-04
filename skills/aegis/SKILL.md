@@ -25,6 +25,8 @@ Whenever invoked via `/aegis` or asked to operate in an AegisBrain-managed works
 |---|---|---|
 | `/aegis recall [q]` | **Instant memory recall** | Sub-second recall of recent tasks, workflows, or FTS5 keyword match |
 | `/aegis search <q>` | Query memory bus | Sub-millisecond SQLite FTS5 search across architectural records |
+| `/aegis briefing` (or `hi`) | **Greeting & Offline Sync** | Greet user, check tracked PR reviews/alerts, and steer next actions |
+| `/aegis optimize <task>` | **Proactive Arsenal Skills** | Recommend and activate highest-scoring Arsenal skills and web search vectors |
 | `/aegis snapshot [create/list]` | **Restore Point Safety** | Captures snapshot of agent configs, prompts, and rules before mutations |
 | `/aegis restore [id]` | **Rollback System** | Reverts agent configs, prompts, and rules back to previous restore point |
 | `/aegis browse <url>` | **Lightweight Browser** | Distills web pages into token-efficient, ad-free Markdown (< 1,500 tokens) |
@@ -79,3 +81,16 @@ Every generated output must pass:
 ### 7. AST Graph Token Optimization
 - Use `aegis graph --query <symbol>` for sub-millisecond symbol and dependency retrieval.
 - Fall back to conventional full-file reads only if AST indexing fails.
+
+### 8. Zero-Prompt Autonomous Invocation Protocol
+The user simply chats naturally. All AI CLI agents (Antigravity, Claude Code, Cursor, OpenCode, Hermes) MUST autonomously execute AegisBrain tools behind the scenes without waiting for explicit commands:
+- **Session Start / Greeting**: On "hi", "hello", or new sessions, immediately run `aegis briefing` to sync offline PR reviews and active alerts.
+- **Ideation & Concept Proposals**: Proactively run `aegis ceo "<idea>"` to evaluate PMF, inflection points, and failure modes.
+- **Code & Test Review**: Proactively run `aegis challenge "<target>"` to eliminate false positives and check `aegis mistakes recall`.
+- **Domain Auto-Optimization**: Run `aegis optimize "<task>"` to dynamically activate the best Arsenal skills and targeted web documentation vectors.
+- **Safety Restore Point**: Run `aegis snapshot create --reason "pre-change"` before any major refactor or config change.
+- **Quality Gates**: Pipe all candidate code through `aegis pipeline "<file>"` before presenting to the user.
+
+### 9. Subagent & Local Model Token Arbitrage
+- To prevent main conversation context bloat and save tokens, aggressively delegate parallel tasks (independent research, deep test execution, large document scans) to subagents (`invoke_subagent`).
+- Delegate routine boilerplate to local models (Nous Hermes CLI, local Ollama) via `call_local_worker` while the Frontier Manager handles critical architectural reviews and security gating.

@@ -1,4 +1,3 @@
-import pytest
 from aegis.sandbox import RedTeamAuditor, run_in_sandbox, format_sandbox_report
 
 
