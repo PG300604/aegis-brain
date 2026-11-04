@@ -12,9 +12,10 @@ from .config import DEFAULT_OPEN_SOURCE_ROOT, get_current_mode
 from .db import add_alert, get_tracked_prs, track_pr
 
 
-def fetch_github_pr(repo: str, pr_number: int) -> Optional[Dict[str, Any]]:
-    """Fetch pull request status from GitHub API using standard library urllib."""
-    url = f"https://api.github.com/repos/{repo}/pulls/{pr_number}"
+def fetch_github_endpoint(path: str) -> Optional[Any]:
+    """Fetch GitHub REST API endpoint using standard library urllib."""
+    clean_path = path.lstrip("/")
+    url = f"https://api.github.com/{clean_path}"
     headers = {
         "User-Agent": "AegisBrain/1.0",
         "Accept": "application/vnd.github.v3+json",
@@ -25,13 +26,32 @@ def fetch_github_pr(repo: str, pr_number: int) -> Optional[Dict[str, Any]]:
 
     req = urllib.request.Request(url, headers=headers)
     try:
-        with urllib.request.urlopen(req, timeout=5) as response:
+        with urllib.request.urlopen(req, timeout=10) as response:
             if response.status == 200:
                 return json.loads(response.read().decode("utf-8"))
-    except Exception as e:
-        # Ignore network/rate limit hiccups gracefully
+    except Exception:
+        # Ignore network / rate limit hiccups gracefully
         pass
     return None
+
+
+def fetch_github_pr(repo: str, pr_number: int) -> Optional[Dict[str, Any]]:
+    """Fetch pull request status from GitHub API using standard library urllib."""
+    return fetch_github_endpoint(f"repos/{repo}/pulls/{pr_number}")
+
+
+def notify_remote_alert(category: str, message: str) -> None:
+    """Record alert in SQLite and dispatch immediate Telegram/WhatsApp push notification."""
+    add_alert(category, message)
+    try:
+        from .remote import load_remote_config, send_remote_message
+        cfg = load_remote_config()
+        chat_id = cfg.get("telegram_chat_id")
+        if chat_id:
+            telegram_body = f"🛡️ *AegisBrain Sentinel Alert*\n\n{message}"
+            send_remote_message(chat_id, telegram_body, config=cfg)
+    except Exception:
+        pass
 
 
 def inspect_git_repo_status(repo_dir: Path) -> Optional[Dict[str, Any]]:
@@ -48,7 +68,6 @@ def inspect_git_repo_status(repo_dir: Path) -> Optional[Dict[str, Any]]:
     }
 
     try:
-        # Branch
         b_res = subprocess.run(
             ["git", "-C", str(repo_dir), "rev-parse", "--abbrev-ref", "HEAD"],
             capture_output=True,
@@ -58,7 +77,6 @@ def inspect_git_repo_status(repo_dir: Path) -> Optional[Dict[str, Any]]:
         if b_res.returncode == 0:
             info["branch"] = b_res.stdout.strip()
 
-        # Status
         s_res = subprocess.run(
             ["git", "-C", str(repo_dir), "status", "--porcelain"],
             capture_output=True,
@@ -68,7 +86,6 @@ def inspect_git_repo_status(repo_dir: Path) -> Optional[Dict[str, Any]]:
         if s_res.returncode == 0:
             info["is_dirty"] = bool(s_res.stdout.strip())
 
-        # Unpushed commits compared to upstream
         u_res = subprocess.run(
             ["git", "-C", str(repo_dir), "rev-list", "@{u}..HEAD", "--count"],
             capture_output=True,
@@ -87,17 +104,19 @@ def inspect_git_repo_status(repo_dir: Path) -> Optional[Dict[str, Any]]:
 
 
 def sweep_tracked_prs() -> List[str]:
-    """Check all tracked PRs against GitHub API and update database + alerts."""
+    """Check all tracked PRs against GitHub API and update database + alerts + Telegram push."""
     if get_current_mode() == "private":
         return []
 
+    from .db import init_db
+    init_db()
     alerts: List[str] = []
     prs = get_tracked_prs()
 
     for item in prs:
         repo = item["repo"]
         pr_num = item["pr_number"]
-        old_status = item["status"]
+        old_status = item.get("status", "open")
 
         data = fetch_github_pr(repo, pr_num)
         if not data:
@@ -106,23 +125,94 @@ def sweep_tracked_prs() -> List[str]:
         raw_state = data.get("state", "open")
         is_merged = data.get("merged", False)
         labels = [l.get("name") for l in data.get("labels", []) if isinstance(l, dict) and "name" in l]
-        title = data.get("title", item["title"])
+        title = data.get("title", item.get("title", ""))
+        ci_status = data.get("mergeable_state", item.get("ci_status", "pending"))
+        pr_url = data.get("html_url", f"https://github.com/{repo}/pull/{pr_num}")
 
         new_status = "merged" if is_merged else raw_state
-        ci_status = data.get("mergeable_state", item.get("ci_status", "pending"))
+        current_comments = data.get("comments", 0)
+        current_review_comments = data.get("review_comments", 0)
+        current_updated_at = data.get("updated_at", "")
 
-        # Detect changes
+        old_comments = item.get("comments_count") or 0
+        old_review_comments = item.get("review_comments_count") or 0
+        old_review_state = item.get("latest_review_state") or ""
+        old_updated_at = item.get("updated_at") or ""
+
+        # 1. Detect PR Status / Merge transitions
         if new_status != old_status:
-            msg = f"PR {repo}#{pr_num} transitioned from '{old_status}' to '{new_status}'."
-            add_alert("PR_STATUS", msg)
+            if new_status == "merged":
+                msg = f"🎉 *PR MERGED!* [{repo}#{pr_num}]({pr_url})\n*{title}*\nYour contribution has been successfully merged into upstream!"
+            elif new_status == "closed":
+                msg = f"⛔ *PR CLOSED* [{repo}#{pr_num}]({pr_url})\n*{title}*\nPull request was closed."
+            else:
+                msg = f"📌 *PR Status Changed* [{repo}#{pr_num}]({pr_url})\nStatus: `{old_status}` ➔ `{new_status}`"
+            notify_remote_alert("PR_STATUS", msg)
             alerts.append(msg)
 
-        # Detect review comments or labels added
-        if labels and set(labels) != set(item.get("labels") or []):
-            msg = f"PR {repo}#{pr_num} labels updated: {', '.join(labels)}"
-            add_alert("PR_LABELS", msg)
+        # 2. Detect Labels update
+        old_labels = set(item.get("labels") or [])
+        new_labels = set(labels)
+        if labels and new_labels != old_labels:
+            msg = f"🏷️ *PR Labels Updated* [{repo}#{pr_num}]({pr_url})\nLabels: {', '.join(labels)}"
+            notify_remote_alert("PR_LABELS", msg)
             alerts.append(msg)
 
+        # 3. Detect Formal Reviews & Approvals
+        new_review_state = old_review_state
+        reviews_data = fetch_github_endpoint(f"repos/{repo}/pulls/{pr_num}/reviews")
+        if isinstance(reviews_data, list) and reviews_data:
+            # Filter out self-reviews by user to avoid self-notification noise
+            external_reviews = [
+                r for r in reviews_data
+                if r.get("state") not in ("DISMISSED", "PENDING")
+                and r.get("user", {}).get("login", "").lower() != "pg300604"
+            ]
+            if external_reviews:
+                latest_rev = external_reviews[-1]
+                rev_state = latest_rev.get("state", "").upper()
+                rev_user = latest_rev.get("user", {}).get("login", "maintainer")
+                rev_body = (latest_rev.get("body") or "").strip()
+
+                if rev_state and rev_state != old_review_state:
+                    new_review_state = rev_state
+                    if rev_state == "APPROVED":
+                        msg = f"✅ *PR APPROVED!* [{repo}#{pr_num}]({pr_url})\nReviewer: @{rev_user}\n{('> ' + rev_body[:250]) if rev_body else 'Approved for merge!'}"
+                    elif rev_state == "CHANGES_REQUESTED":
+                        msg = f"⚠️ *Changes Requested* [{repo}#{pr_num}]({pr_url})\nReviewer: @{rev_user}\n> {rev_body[:300] if rev_body else 'Maintainer requested revisions.'}"
+                    else:
+                        msg = f"📝 *Review Submitted ({rev_state})* [{repo}#{pr_num}]({pr_url})\nReviewer: @{rev_user}\n> {rev_body[:300] if rev_body else ''}"
+                    notify_remote_alert("PR_REVIEW", msg)
+                    alerts.append(msg)
+
+        # 4. Detect General Comments
+        if current_comments > old_comments:
+            diff_comments = current_comments - old_comments
+            comments_data = fetch_github_endpoint(f"repos/{repo}/issues/{pr_num}/comments?sort=created&direction=desc&per_page={max(1, diff_comments)}")
+            if isinstance(comments_data, list) and comments_data:
+                for c in comments_data[:diff_comments]:
+                    c_user = c.get("user", {}).get("login", "")
+                    c_body = (c.get("body") or "").strip()
+                    if c_user.lower() != "pg300604":
+                        msg = f"💬 *New Comment on PR* [{repo}#{pr_num}]({pr_url})\nFrom: @{c_user}\n> {c_body[:350]}"
+                        notify_remote_alert("PR_COMMENT", msg)
+                        alerts.append(msg)
+
+        # 5. Detect Code Review Inline Comments
+        if current_review_comments > old_review_comments:
+            diff_rc = current_review_comments - old_review_comments
+            rc_data = fetch_github_endpoint(f"repos/{repo}/pulls/{pr_num}/comments?sort=created&direction=desc&per_page={max(1, diff_rc)}")
+            if isinstance(rc_data, list) and rc_data:
+                for rc in rc_data[:diff_rc]:
+                    rc_user = rc.get("user", {}).get("login", "")
+                    rc_path = rc.get("path", "")
+                    rc_body = (rc.get("body") or "").strip()
+                    if rc_user.lower() != "pg300604":
+                        msg = f"🔍 *Code Review Comment* [{repo}#{pr_num}]({pr_url})\nFrom @{rc_user} on `{rc_path}`:\n> {rc_body[:350]}"
+                        notify_remote_alert("PR_INLINE_COMMENT", msg)
+                        alerts.append(msg)
+
+        # Persist updated state
         track_pr(
             repo=repo,
             pr_number=pr_num,
@@ -130,6 +220,10 @@ def sweep_tracked_prs() -> List[str]:
             status=new_status,
             labels=labels,
             ci_status=ci_status,
+            comments_count=current_comments,
+            review_comments_count=current_review_comments,
+            latest_review_state=new_review_state,
+            updated_at=current_updated_at,
         )
 
     return alerts

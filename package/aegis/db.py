@@ -63,6 +63,10 @@ CREATE TABLE IF NOT EXISTS tracked_prs (
     status TEXT NOT NULL,
     labels TEXT,
     ci_status TEXT,
+    comments_count INTEGER DEFAULT 0,
+    review_comments_count INTEGER DEFAULT 0,
+    latest_review_state TEXT DEFAULT '',
+    updated_at TEXT DEFAULT '',
     last_checked TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (repo, pr_number)
 );
@@ -89,9 +93,21 @@ def get_connection() -> Generator[sqlite3.Connection, None, None]:
 
 
 def init_db() -> None:
-    """Initialize database tables and triggers."""
+    """Initialize database tables and triggers with safe migration support."""
     with get_connection() as conn:
         conn.executescript(SCHEMA)
+        # Migrate existing tracked_prs schema if new columns are missing
+        c = conn.cursor()
+        c.execute("PRAGMA table_info(tracked_prs)")
+        cols = {row["name"] for row in c.fetchall()}
+        for col_name, col_type in [
+            ("comments_count", "INTEGER DEFAULT 0"),
+            ("review_comments_count", "INTEGER DEFAULT 0"),
+            ("latest_review_state", "TEXT DEFAULT ''"),
+            ("updated_at", "TEXT DEFAULT ''"),
+        ]:
+            if col_name not in cols:
+                conn.execute(f"ALTER TABLE tracked_prs ADD COLUMN {col_name} {col_type}")
 
 
 def record_session(session_id: str, agent_name: str, workspace_path: str, summary: str = "") -> bool:
@@ -139,6 +155,10 @@ def track_pr(
     status: str,
     labels: Optional[List[str]] = None,
     ci_status: str = "pending",
+    comments_count: int = 0,
+    review_comments_count: int = 0,
+    latest_review_state: str = "",
+    updated_at: str = "",
 ) -> None:
     """Record or update tracked PR status. Bypassed in private mode."""
     if get_current_mode() == "private":
@@ -147,15 +167,26 @@ def track_pr(
     label_str = json.dumps(labels or [])
     with get_connection() as conn:
         conn.execute("""
-            INSERT INTO tracked_prs (repo, pr_number, title, status, labels, ci_status, last_checked)
-            VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+            INSERT INTO tracked_prs (
+                repo, pr_number, title, status, labels, ci_status,
+                comments_count, review_comments_count, latest_review_state, updated_at,
+                last_checked
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
             ON CONFLICT(repo, pr_number) DO UPDATE SET
                 title = excluded.title,
                 status = excluded.status,
                 labels = excluded.labels,
                 ci_status = excluded.ci_status,
+                comments_count = excluded.comments_count,
+                review_comments_count = excluded.review_comments_count,
+                latest_review_state = excluded.latest_review_state,
+                updated_at = excluded.updated_at,
                 last_checked = CURRENT_TIMESTAMP
-        """, (repo, pr_number, title, status, label_str, ci_status))
+        """, (
+            repo, pr_number, title, status, label_str, ci_status,
+            comments_count, review_comments_count, latest_review_state, updated_at
+        ))
 
 
 def get_tracked_prs(status: Optional[str] = None) -> List[Dict[str, Any]]:

@@ -7,6 +7,7 @@ Zero external dependencies (pure Python standard library).
 """
 
 import base64
+import difflib
 import json
 import os
 import sys
@@ -32,6 +33,18 @@ from .caffeinate import (
     remote_trigger_alarm,
 )
 from .db import search_memories, get_recent_decisions, get_tracked_prs
+from .hardware import format_hardware_report
+from .governance import (
+    load_governance_config,
+    save_governance_config,
+    format_governance_status,
+    get_telemetry_terms,
+)
+from .diagnostics import format_diagnostic_markdown, get_github_issue_url
+from .environment import format_environment_report
+from .taste import format_taste_display
+from .planner import format_suggestion_panel, create_default_suggestions_for_task
+from .orchestrator import run_manager_worker_pipeline, format_distillation_report
 
 
 def get_remote_config_path() -> Path:
@@ -145,6 +158,59 @@ def send_telegram_message(chat_id: str, body: str, config: Optional[Dict[str, An
         return False, f"Telegram network error: {e}"
 
 
+
+
+def register_telegram_commands(token: str) -> bool:
+    """Register slash commands with Telegram Bot API so user sees autocomplete menu."""
+    if not token:
+        return False
+    commands = [
+        {"command": "help", "description": "Show available commands & help guide"},
+        {"command": "status", "description": "System status, RAM, caffeinate & tracked PRs"},
+        {"command": "config", "description": "Model governance (Manager/Worker/Telemetry)"},
+        {"command": "env", "description": "Workstation tools, Ollama, OpenCode & pending queues"},
+        {"command": "taste", "description": "User aesthetic taste, persona & coding doctrine"},
+        {"command": "plan", "description": "Interactive Suggestion Panel with trade-offs"},
+        {"command": "orchestrate", "description": "Manager-Worker code pipeline & token savings"},
+        {"command": "scout", "description": "Weekly skill discovery & Arsenal intelligence"},
+        {"command": "moe", "description": "Dynamic MoE routing, latency estimation & RAM cap"},
+        {"command": "graph", "description": "AST Codebase Graph statistics & symbol search"},
+        {"command": "task", "description": "Active task memory & accomplishment history"},
+        {"command": "sandbox", "description": "Run isolated sandbox Red-Team security audit"},
+        {"command": "hardware", "description": "Inspect RAM & dynamic model recommendation"},
+        {"command": "report", "description": "Generate diagnostic report & GitHub issue"},
+        {"command": "terms", "description": "View transparent zero-leakage telemetry terms"},
+        {"command": "caffeinate", "description": "Toggle anti-sleep wake-lock (on/off)"},
+        {"command": "mode", "description": "Switch default mode (chat or exec)"},
+        {"command": "type", "description": "Type text into active IDE window and hit Enter"},
+        {"command": "prompt", "description": "Alias for /type (voice dictation bridge)"},
+        {"command": "paste", "description": "Paste text into active window without Enter"},
+        {"command": "clip", "description": "Read or write to workstation clipboard"},
+        {"command": "lock", "description": "Instantly lock workstation screen"},
+        {"command": "recall", "description": "Search architectural memories & decisions"},
+        {"command": "git", "description": "Remote git status, diff, commit, push"},
+        {"command": "artifacts", "description": "View recent generated artifacts"},
+        {"command": "windows", "description": "List visible desktop application windows"},
+        {"command": "focus", "description": "Bring application window to front"},
+        {"command": "alarm", "description": "Trigger alert sound chimes on PC speakers"},
+        {"command": "sleep", "description": "Turn off caffeinate and suspend PC"},
+        {"command": "shutdown", "description": "Safely power off workstation PC (15s countdown)"},
+    ]
+    url = f"https://api.telegram.org/bot{token}/setMyCommands"
+    payload = json.dumps({"commands": commands}).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=payload,
+        headers={"Content-Type": "application/json", "User-Agent": "AegisBrain-Remote/1.0"},
+        method="POST"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return bool(data.get("ok"))
+    except Exception:
+        return False
+
 def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready_callback: Optional[Any] = None) -> None:
     """Long-polling daemon for Telegram Bot API. Requires zero public IP, tunnel, or webhook!"""
     cfg = load_remote_config()
@@ -154,6 +220,7 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
         return
 
     offset = 0
+    register_telegram_commands(token)
     print("[Telegram] Bot polling listener active. Ready for commands from your phone!")
     if on_ready_callback:
         try:
@@ -352,6 +419,8 @@ def copy_to_desktop_clipboard(text: str) -> bool:
 def get_desktop_clipboard() -> str:
     """Retrieve current text contents of the workstation clipboard."""
     global _clipboard_memory_buffer
+    if _clipboard_memory_buffer:
+        return _clipboard_memory_buffer
     if sys.platform == "win32":
         try:
             attach_to_input_desktop()
@@ -738,8 +807,149 @@ def handle_remote_command(from_number: str, text: str) -> str:
         ok, msg = remote_shutdown_pc(delay_seconds=15)
         return f"🔌 *Workstation Shutdown:* {msg}\nTo cancel from PC: `shutdown /a`"
 
+    elif cmd == "/config":
+        gov_cfg = load_governance_config()
+        if not arg:
+            return format_governance_status()
+        subparts = arg.split(maxsplit=1)
+        subk = subparts[0].lower()
+        subval = subparts[1].strip() if len(subparts) > 1 else ""
+        if subk == "manager" and subval:
+            gov_cfg["manager_model"] = subval
+            save_governance_config(gov_cfg)
+            return f"👑 *Manager Model Updated:* `{subval}`"
+        elif subk == "worker" and subval:
+            gov_cfg["worker_model"] = subval
+            save_governance_config(gov_cfg)
+            return f"🤖 *Worker Model Updated:* `{subval}`"
+        elif subk == "telemetry":
+            enabled = subval.lower() in ("on", "true", "enable", "1", "yes")
+            gov_cfg["telemetry_enabled"] = enabled
+            gov_cfg["telemetry_acknowledged"] = True
+            save_governance_config(gov_cfg)
+            state_str = "ENABLED (Opted-in)" if enabled else "DISABLED (Default-Deny)"
+            return f"📊 *Telemetry Setting:* {state_str}\nSend `/terms` to review data privacy terms."
+        else:
+            return (
+                "⚙️ *AegisBrain Config Usage:*\n"
+                "• `/config` - Show current governance status\n"
+                "• `/config manager <model>` - Set Manager (e.g. `gemini-3.8-flash-high`, `claude-3-7-sonnet`)\n"
+                "• `/config worker <model>` - Set Worker (`auto`, `qwen2.5-coder:7b`, `deepseek-r1:7b`)\n"
+                "• `/config telemetry <on|off>` - Toggle anonymous telemetry"
+            )
+
+    elif cmd == "/hardware":
+        return format_hardware_report()
+
+    elif cmd == "/report":
+        issue_url = get_github_issue_url(title="User Issue via Telegram", error_desc=arg)
+        diag_md = format_diagnostic_markdown()
+        return (
+            f"📋 *AegisBrain Diagnostic Report Generated:*\n\n"
+            f"🔗 *Submit to GitHub (1-Click):*\n{issue_url}\n\n"
+            f"```text\n{diag_md[:800]}\n... [truncated for mobile]\n```"
+        )
+
+    elif cmd == "/terms":
+        return get_telemetry_terms()
+
+    elif cmd == "/env":
+        return format_environment_report()
+
+    elif cmd == "/taste":
+        return format_taste_display()
+
+    elif cmd == "/plan":
+        task_query = arg or "Next Development Milestone"
+        suggs = create_default_suggestions_for_task(task_query)
+        return format_suggestion_panel(task_query, suggs, recommended_index=0)
+
+    elif cmd == "/orchestrate":
+        if not arg or arg.lower() in ("stats", "summary"):
+            return format_distillation_report()
+        res = run_manager_worker_pipeline(arg, simulate_worker=True)
+        return (
+            f"👑 *Manager-Worker Execution Complete:*\n\n"
+            f"• *Task:* {arg}\n"
+            f"• *Manager (Boss):* `{res['manager_model']}`\n"
+            f"• *Worker (Synthesizer):* `{res['worker_model']}` ({res['hardware_tier']})\n"
+            f"• *Tokens Saved:* `+{res['tokens_saved_estimate']}` tokens\n"
+            f"• *Critique:* {res['manager_critique']}\n\n"
+            f"```python\n{res['final_code']}\n```"
+        )
+
+    elif cmd == "/scout":
+        from .skill_scout import run_skill_scout, get_discovered_skills, format_skill_scout_display
+        if arg and arg.lower() in ("run", "scan", "update"):
+            run_skill_scout()
+        return format_skill_scout_display()
+
+    elif cmd == "/moe":
+        from .moe_engine import format_tier_status_display
+        return format_tier_status_display()
+
+    elif cmd == "/graph":
+        from .code_graph import get_active_graph
+        graph = get_active_graph()
+        if arg:
+            matches = graph.query_graph(arg)
+            if not matches:
+                return f"🔍 *Code Graph Search:* No matches found for `{arg}`."
+            lines = [f"🔍 *Code Graph Matches for `{arg}`:*", ""]
+            for m in matches[:6]:
+                lines.append(f"• `{m['name']}` [{m['kind'].upper()}] in `{m['file_path']}`")
+            return "\n".join(lines)
+        return graph.format_summary()
+
+    elif cmd == "/task":
+        from .task_lifecycle import create_task, complete_task, format_tasks_display
+        subparts = arg.split(maxsplit=1) if arg else []
+        subcmd = subparts[0].lower() if subparts else ""
+        subarg = subparts[1].strip() if len(subparts) > 1 else ""
+
+        if subcmd == "done" and subarg:
+            try:
+                tid = int(subarg.split()[0])
+                ok = complete_task(tid)
+                if ok:
+                    return f"✅ *Task [#{tid}] Completed!*\nArchived to history. Active memory kept lean."
+                return f"❌ *Task [#{tid}] not found.*"
+            except ValueError:
+                return "Usage: `/task done <id>`"
+        elif subcmd == "add" and subarg:
+            tid = create_task(title=subarg)
+            return f"📌 *Active Task Registered:* `[#{tid}] {subarg}`"
+        elif subcmd == "history":
+            return format_tasks_display(show_history=True)
+        else:
+            return format_tasks_display(show_history=False)
+
+    elif cmd == "/sandbox":
+        from .sandbox import RedTeamAuditor, format_sandbox_report
+        code_to_audit = arg or "print('Sandbox test')"
+        audit = RedTeamAuditor.audit_code(code_to_audit)
+        return format_sandbox_report(audit)
+
+    elif clean_text.startswith("/"):
+        KNOWN_COMMANDS = [
+            "/help", "/status", "/config", "/hardware", "/report", "/terms", "/env", "/taste", "/plan", "/orchestrate",
+            "/scout", "/moe", "/graph", "/task", "/sandbox",
+            "/caffeinate", "/mode", "/type", "/prompt", "/paste", "/clip",
+            "/lock", "/recall", "/git", "/artifacts", "/windows", "/apps",
+            "/focus", "/blockinput", "/alarm", "/sleep", "/shutdown", "/exec",
+            "/start", "/auth", "/commands", "/say"
+        ]
+        matches = difflib.get_close_matches(cmd, KNOWN_COMMANDS, n=2, cutoff=0.4)
+        if matches:
+            return (
+                f"❓ *Unknown Command:* `{cmd}`\n\n"
+                f"💡 *Did you mean:* `{matches[0]}`?\n\n"
+                f"Type `/help` to see all available commands."
+            )
+        return f"❓ *Unknown Command:* `{cmd}`\n\nType `/help` to see all available commands.\n(Slash commands are never typed into active IDE windows)."
+
     else:
-        def_mode = cfg.get("default_mode", "exec").lower()
+        def_mode = cfg.get("default_mode", "chat").lower()
         if def_mode in ("chat", "prompt", "voice", "type"):
             ok, msg = type_to_desktop(clean_text, press_enter=True)
             return f"✍️ *Agent Input (Chat Mode):* {msg}"

@@ -28,6 +28,27 @@ def get_mode_file() -> Path:
     return get_aegis_dir() / "mode.txt"
 
 
+def get_model_dir() -> Path:
+    """Return model storage directory. Defaults to P:/aegis-models if Drive P exists, else ~/.aegis-brain/models."""
+    env_models = os.environ.get("AEGIS_MODEL_DIR")
+    if env_models:
+        p = Path(env_models)
+    elif Path("P:/").exists():
+        p = Path("P:/aegis-models")
+    else:
+        p = get_aegis_dir() / "models"
+    p.mkdir(parents=True, exist_ok=True)
+    return p
+
+
+def set_model_dir(target_dir: str) -> Path:
+    """Configure custom model storage drive/directory for local worker models."""
+    p = Path(target_dir).resolve()
+    p.mkdir(parents=True, exist_ok=True)
+    os.environ["AEGIS_MODEL_DIR"] = str(p)
+    return p
+
+
 # Module-level aliases for backwards compatibility
 @property
 def DB_PATH() -> Path:

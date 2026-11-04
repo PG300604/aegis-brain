@@ -2,6 +2,18 @@
 
 __version__ = "0.1.0"
 
+import sys
+
+# Ensure UTF-8 output on Windows consoles and daemons to avoid cp1252 errors with emojis
+if sys.platform == "win32":
+    try:
+        if sys.stdout is not None:
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        if sys.stderr is not None:
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 from .config import (
     get_aegis_dir,
     get_db_path,

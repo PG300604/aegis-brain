@@ -95,6 +95,25 @@ class TestAegisBrain(unittest.TestCase):
         target = [p for p in prs if p["pr_number"] == 7308][0]
         self.assertEqual(target["ci_status"], "dco-passed")
 
+        # Test tracking with comments and review state
+        track_pr(
+            repo="spring-projects/spring-ai",
+            pr_number=7308,
+            title="Add missing GenAI request attributes to observations",
+            status="open",
+            labels=["status: waiting-for-triage"],
+            ci_status="dco-passed",
+            comments_count=2,
+            review_comments_count=1,
+            latest_review_state="APPROVED",
+            updated_at="2026-11-04T12:00:00Z",
+        )
+        updated_prs = get_tracked_prs()
+        updated_target = [p for p in updated_prs if p["pr_number"] == 7308][0]
+        self.assertEqual(updated_target["comments_count"], 2)
+        self.assertEqual(updated_target["review_comments_count"], 1)
+        self.assertEqual(updated_target["latest_review_state"], "APPROVED")
+
     def test_context_generation(self):
         ctx = generate_active_context(TEST_TMP)
         self.assertIn("# Aegis Brain Active Context", ctx)

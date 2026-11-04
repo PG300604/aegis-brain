@@ -50,6 +50,10 @@ def stop_daemon(port: int = DEFAULT_PORT) -> Tuple[bool, str]:
 
 def _get_python_runner() -> str:
     """Return python executable for background execution."""
+    if sys.platform == "win32":
+        py312 = Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Python" / "Python312" / "python.exe"
+        if py312.exists():
+            return str(py312)
     return sys.executable
 
 
@@ -72,7 +76,7 @@ def _enable_windows() -> Tuple[bool, str]:
     log_path = Path.home() / ".aegis-brain" / "daemon.log"
     # VBScript executes completely headlessly (0 = invisible window, False = don't wait)
     vbs_content = f'''Set WshShell = CreateObject("WScript.Shell")
-WshShell.Run "cmd /c set PYTHONPATH={repo_dir}&&cd /d ""{repo_dir}""&&""{runner}"" -m aegis.server >> ""{log_path}"" 2>&1", 0, False
+WshShell.Run "cmd /c set PYTHONIOENCODING=utf-8&&set PYTHONPATH={repo_dir}&&cd /d ""{repo_dir}""&&""{runner}"" -m aegis.server >> ""{log_path}"" 2>&1", 0, False
 '''
     vbs_path.write_text(vbs_content, encoding="utf-8")
     return True, f"Windows autostart enabled via {vbs_path}"
@@ -184,8 +188,7 @@ def start_daemon(port: int = DEFAULT_PORT) -> Tuple[bool, str]:
 
     if platform.system() == "Windows":
         vbs_path = _get_windows_startup_vbs()
-        if not vbs_path.exists():
-            _enable_windows()
+        _enable_windows()
         subprocess.Popen(["wscript.exe", str(vbs_path)], close_fds=True)
     else:
         subprocess.Popen(
