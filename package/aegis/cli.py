@@ -164,9 +164,10 @@ def main() -> None:
     # taste (User Taste Profile & Aesthetic Engine)
     subparsers.add_parser("taste", help="View user aesthetic preferences, coding doctrine, and persona alignment")
 
-    # plan (Matt Pocock Suggestion Panel)
-    plan_parser = subparsers.add_parser("plan", help="Generate an interactive Suggestion Panel with trade-offs and options")
+    # plan (Deep Planning & YC Feasibility Engine)
+    plan_parser = subparsers.add_parser("plan", help="Generate Deep Planning, YC Feasibility, and Clarification Interview")
     plan_parser.add_argument("task", help="Task or decision to analyze")
+    plan_parser.add_argument("--questions", "-q", type=int, default=6, help="Number of clarifying questions to generate (4-20)")
 
     # orchestrate (Manager-Worker Pipeline & Token Arbitrage)
     orch_parser = subparsers.add_parser("orchestrate", help="Run Manager-Worker task execution and record distillation trajectory")
@@ -581,9 +582,10 @@ def main() -> None:
         print(format_taste_display())
 
     elif args.command == "plan":
-        suggs = create_default_suggestions_for_task(args.task)
-        panel = format_suggestion_panel(args.task, suggs, recommended_index=0)
-        print(panel)
+        from .deep_planner import DeepPlanningEngine
+        q_count = getattr(args, "questions", 6) or 6
+        deep_plan = DeepPlanningEngine.create_plan(args.task, question_count=q_count)
+        print(deep_plan.to_markdown())
 
     elif args.command == "orchestrate":
         if args.stats or not args.task:

@@ -2094,13 +2094,29 @@ def handle_remote_command(from_number: str, text: str) -> str:
         return format_taste_display()
 
     elif cmd == "/plan":
+        from .deep_planner import DeepPlanningEngine
         task_query = arg or "Next Development Milestone"
-        suggs = create_default_suggestions_for_task(task_query)
-        panel_text = format_suggestion_panel(task_query, suggs, recommended_index=0)
-        # Dispatch native Telegram poll for 1-tap thumb vote
-        poll_opts = [s["label"] for s in suggs]
-        send_telegram_poll(from_number, f"Decision: {task_query[:250]}", poll_opts, config=cfg)
-        return panel_text
+        deep_plan = DeepPlanningEngine.create_plan(task_query, question_count=6)
+        
+        # Dispatch native Telegram poll for the first key decision
+        first_q = deep_plan.clarifying_questions[0] if deep_plan.clarifying_questions else None
+        if first_q:
+            send_telegram_poll(from_number, f"Q1 [{first_q.category}]: {first_q.question[:200]}", [o[:90] for o in first_q.options[:10]], config=cfg)
+        
+        options_summary = "\n".join(
+            f"{i+1}. *{o.name}* ({o.archetype}) — Score: `{o.feasibility_score}%` | Cost: `{o.token_cost_rating}`"
+            for i, o in enumerate(deep_plan.architecture_options)
+        )
+        return (
+            f"🧠 *AegisBrain Deep Planning & Feasibility Report*\n\n"
+            f"• *Target Task:* `{task_query}`\n"
+            f"• *Domain Niche:* `{deep_plan.niche}`\n"
+            f"• *YC Feasibility Score:* `{deep_plan.feasibility_score}/100`\n"
+            f"• *Matched Arsenal:* {', '.join(deep_plan.arsenal_tools_recommended[:4])}\n\n"
+            f"🏗️ *Architectural Options:*\n{options_summary}\n\n"
+            f"💡 *Recommended:* `{deep_plan.recommended_option}`\n\n"
+            f"🛑 *Clarification Gate Active:* {len(deep_plan.clarifying_questions)} questions prepared. Check poll above or reply with preferences before code execution starts."
+        )
 
     elif cmd == "/orchestrate":
         if not arg or arg.lower() in ("stats", "summary"):
