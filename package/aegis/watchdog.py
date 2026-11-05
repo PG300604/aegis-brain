@@ -280,11 +280,11 @@ class WatchdogRunner:
             except Exception:
                 pass
 
-            # Check and drain any pending desktop prompts if screen is unlocked
+            # Check and drain execution queue if terminal is idle/ready for next prompt
             try:
-                from .remote import is_workstation_locked, drain_pending_desktop_prompts
-                if not is_workstation_locked():
-                    drain_pending_desktop_prompts()
+                from .remote import is_terminal_busy, drain_execution_queue, get_execution_queue_count
+                if not is_terminal_busy() and get_execution_queue_count() > 0:
+                    drain_execution_queue()
             except Exception:
                 pass
 

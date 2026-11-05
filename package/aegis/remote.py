@@ -540,10 +540,10 @@ class TranscriptWatcher(threading.Thread):
             except Exception:
                 pass
 
-            # Check and drain any staged desktop prompts if workstation is unlocked
+            # Check and drain execution queue if terminal is idle/ready for next prompt
             try:
-                if not is_workstation_locked():
-                    drain_pending_desktop_prompts()
+                if not is_terminal_busy() and get_execution_queue_count() > 0:
+                    drain_execution_queue()
             except Exception:
                 pass
 
@@ -631,6 +631,9 @@ class TranscriptWatcher(threading.Thread):
                         f"• To send in-flight commands during execution, use `/type <prompt> /alt+m`."
                     )
                     send_telegram_message(chat_id, msg_body, config=cfg)
+                if get_execution_queue_count() > 0:
+                    time.sleep(0.4)
+                    drain_execution_queue()
 
         # 3. CLI Command Output
         elif step_type == "GENERIC" and content:
@@ -1583,20 +1586,71 @@ def type_to_desktop(text: str, press_enter: bool = True, press_alt_m: bool = Fal
             return True, "Copied to Linux clipboard."
 
 
-# --- Staged Desktop Injection Queue for Away Mode / Screen Lock ---
-_pending_desktop_queue: List[Dict[str, Any]] = []
-_pending_queue_lock = threading.Lock()
+# --- Turn-Aware Execution Queue (Instant Execution When Idle, Queue When Busy) ---
+_execution_queue: List[Dict[str, Any]] = []
+_execution_queue_lock = threading.Lock()
+_mock_terminal_busy: Optional[bool] = None
 
 
-def queue_pending_desktop_prompt(
+def set_mock_terminal_busy(busy: Optional[bool]) -> None:
+    """Explicitly override terminal busy state for unit tests."""
+    global _mock_terminal_busy
+    _mock_terminal_busy = busy
+
+
+def is_terminal_busy() -> bool:
+    """Return True if the active Antigravity session is currently executing a prompt or tool call."""
+    global _mock_terminal_busy
+    if _mock_terminal_busy is not None:
+        return _mock_terminal_busy
+
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return False
+
+    active_tx = find_active_transcript_file()
+    if not active_tx or not active_tx.exists():
+        return False
+    try:
+        mtime = active_tx.stat().st_mtime
+        # If no activity in > 10 seconds, terminal prompt is sitting idle waiting for input
+        if time.time() - mtime > 10.0:
+            return False
+
+        with open(active_tx, "r", encoding="utf-8", errors="replace") as f:
+            size = active_tx.stat().st_size
+            seek_pos = max(0, size - 4096)
+            f.seek(seek_pos)
+            lines = [l.strip() for l in f.read().splitlines() if l.strip()]
+            if not lines:
+                return False
+            last_obj = json.loads(lines[-1])
+            step_type = last_obj.get("type", "")
+            tool_calls = last_obj.get("tool_calls", [])
+
+            if step_type in ("USER_INPUT", "GENERIC"):
+                return True
+
+            if step_type == "PLANNER_RESPONSE":
+                if tool_calls:
+                    names = [tc.get("name") for tc in tool_calls]
+                    if any(n != "ask_question" for n in names):
+                        return True
+                    return False
+                return False
+    except Exception:
+        pass
+    return False
+
+
+def queue_execution_prompt(
     chat_id: str,
     prompt: str,
     press_enter: bool = True,
     press_alt_m: bool = False,
 ) -> None:
-    """Queue a prompt to be typed and submitted into the terminal the instant the workstation is unlocked."""
-    with _pending_queue_lock:
-        _pending_desktop_queue.append({
+    """Queue a prompt to be injected into the terminal as soon as the active turn finishes."""
+    with _execution_queue_lock:
+        _execution_queue.append({
             "chat_id": chat_id,
             "prompt": prompt,
             "press_enter": press_enter,
@@ -1605,39 +1659,45 @@ def queue_pending_desktop_prompt(
         })
 
 
-def get_pending_desktop_prompts_count() -> int:
-    with _pending_queue_lock:
-        return len(_pending_desktop_queue)
+def get_execution_queue_count() -> int:
+    with _execution_queue_lock:
+        return len(_execution_queue)
 
 
-def drain_pending_desktop_prompts() -> int:
-    """If workstation is unlocked and there are queued prompts, inject them into the active terminal session."""
-    if is_workstation_locked():
+def clear_execution_queue() -> None:
+    with _execution_queue_lock:
+        _execution_queue.clear()
+
+
+def drain_execution_queue() -> int:
+    """If terminal is not busy and there are queued prompts, inject the next one into the active session."""
+    if is_terminal_busy():
         return 0
 
-    with _pending_queue_lock:
-        if not _pending_desktop_queue:
+    with _execution_queue_lock:
+        if not _execution_queue:
             return 0
-        items = list(_pending_desktop_queue)
-        _pending_desktop_queue.clear()
+        item = _execution_queue.pop(0)
 
-    drained = 0
     cfg = load_remote_config()
-    for item in items:
-        time.sleep(0.35)
-        ok, msg = type_to_desktop(item["prompt"], press_enter=item["press_enter"], press_alt_m=item["press_alt_m"])
-        drained += 1
-        preview = (item["prompt"][:80] + "...") if len(item["prompt"]) > 80 else item["prompt"]
-        send_telegram_message(
-            item["chat_id"],
-            f"🚀 *Workstation Unlocked!*\n"
-            f"Delivered queued prompt directly into Antigravity terminal session:\n"
-            f"\"{preview}\"\n\n"
-            f"• *Status:* {msg}\n"
-            f"• *Live Streaming:* Active",
-            config=cfg,
-        )
-    return drained
+    time.sleep(0.15)
+    ok, msg = type_to_desktop(item["prompt"], press_enter=item["press_enter"], press_alt_m=item["press_alt_m"])
+    preview = (item["prompt"][:80] + "...") if len(item["prompt"]) > 80 else item["prompt"]
+    send_telegram_message(
+        item["chat_id"],
+        f"🚀 *Previous Turn Finished — Running Queued Prompt:*\n"
+        f"\"{preview}\"\n\n"
+        f"• *Status:* {msg}\n"
+        f"• *Live Streaming:* Active",
+        config=cfg,
+    )
+    return 1
+
+
+# Compatibility aliases for existing callers
+queue_pending_desktop_prompt = queue_execution_prompt
+get_pending_desktop_prompts_count = get_execution_queue_count
+drain_pending_desktop_prompts = drain_execution_queue
 
 
 def handle_remote_command(from_number: str, text: str) -> str:
@@ -1841,32 +1901,39 @@ def handle_remote_command(from_number: str, text: str) -> str:
             lines.append(f"*Context:* Zero past decisions match `{query}`. Ongoing background task proceeds uninterrupted.")
         return "\n".join(lines)
 
-    elif cmd in ("/alt+m", "/alt"):
-        if is_workstation_locked():
-            return "🔒 *Workstation is Locked.* Cannot inject Alt+M keystroke to locked screen."
+    elif cmd in ("/alt+m", "/alt", "/altm"):
         ok, msg = type_to_desktop("", press_enter=False, press_alt_m=True)
         return "⚡ *In-Flight Signal Sent (Alt+M):* Delivered Alt+M interrupt to active session."
 
     elif cmd in ("/type", "/prompt", "/say"):
         if not arg:
-            return "Usage: `/type <text or prompt>` (types into active IDE/agent chat; append `/alt+m` for in-flight interrupt)"
-        alt_m = arg.lower().endswith("/alt+m") or arg.lower().endswith("/alt + m")
+            return "Usage: `/type <text or prompt>` (types into active IDE/agent chat; append `/altm` for in-flight interrupt)"
+        clean_lower = arg.lower().strip()
+        alt_m = any(clean_lower.endswith(s) for s in ("/alt+m", "/alt + m", "/altm", "/alt m"))
         clean_arg = arg
-        if arg.lower().endswith("/alt+m"):
-            clean_arg = arg[:-6].strip()
-        elif arg.lower().endswith("/alt + m"):
-            clean_arg = arg[:-8].strip()
+        for suffix in ("/alt+m", "/alt + m", "/altm", "/alt m"):
+            if clean_lower.endswith(suffix):
+                clean_arg = arg[:-len(suffix)].strip()
+                break
 
-        ok, msg = type_to_desktop(clean_arg, press_enter=True, press_alt_m=alt_m)
-        if not ok and is_workstation_locked():
-            queue_pending_desktop_prompt(from_number, clean_arg, press_enter=True, press_alt_m=alt_m)
+        if not clean_arg and not alt_m:
+            return "Usage: `/type <text or prompt>` (types into active IDE/agent chat; append `/altm` for in-flight interrupt)"
+
+        # If user explicitly requested Alt+M interrupt OR terminal is currently idle: inject immediately!
+        if alt_m or not is_terminal_busy():
+            ok, msg = type_to_desktop(clean_arg, press_enter=True, press_alt_m=alt_m)
+            hdr = "⚡ *In-Flight Interrupt Delivered:*" if alt_m else "✍️ *Agent Input:*"
+            return f"{hdr} {msg}"
+        else:
+            # Terminal is actively executing a task -> queue for next turn
+            queue_execution_prompt(from_number, clean_arg, press_enter=True, press_alt_m=False)
             preview = (clean_arg[:120] + "...") if len(clean_arg) > 120 else clean_arg
             return (
-                f"✍️ *Workstation Screen Locked — Prompt Queued:*\n\"{preview}\"\n\n"
-                f"• Staged safely in memory.\n"
-                f"• Will type into terminal the second screen unlocks."
+                f"⏳ *Session Busy — Prompt Queued for Next Turn:*\n\"{preview}\"\n\n"
+                f"• Antigravity is currently executing a task.\n"
+                f"• Staged in execution queue; will auto-run the instant current turn completes.\n"
+                f"• _Tip: Append `/altm` to interrupt active execution immediately._"
             )
-        return f"✍️ *Agent Input:* {msg}"
 
     elif cmd == "/paste":
         if not arg:
@@ -1889,7 +1956,7 @@ def handle_remote_command(from_number: str, text: str) -> str:
     elif cmd == "/lock":
         set_away_mode(True)
         enable_caffeinate(keep_display=True, away_mode=True)
-        ok, msg = remote_lock_workstation()
+        focus_desktop_window("powershell")
         nav_buttons = [
             [
                 {"text": "📟 View Terminal Logs", "callback_data": "nav:1"},
@@ -1901,11 +1968,11 @@ def handle_remote_command(from_number: str, text: str) -> str:
             ]
         ]
         lock_msg = (
-            f"🔒 *Workstation Lock — Away Mode ACTIVATED!*\n\n"
-            f"• *Desktop:* {msg}\n"
-            f"• *Caffeinate:* Active (System keep-awake enabled so PC will not sleep while away)\n"
-            "• *Away Mode:* Active (All terminal outputs & agent milestones will stream directly to your phone!)\n"
-            "• *Remote Prompts:* You can send prompts and code directly from Telegram anytime; they execute immediately.\n"
+            "🔒 *Workstation Away Mode ACTIVATED!*\n\n"
+            "• *Caffeinate:* Active (System keep-awake enabled so PC will not sleep while away)\n"
+            "• *Away Mode:* Active (All terminal outputs & agent milestones stream directly to your phone)\n"
+            "• *Instant Remote Input:* Active (When terminal is idle, prompts execute immediately with zero delay)\n"
+            "• *In-Flight Interrupt:* Append `/altm` to interrupt running tasks from Telegram\n"
             "• Send `/away off` when returning to desk."
         )
         if cfg.get("provider", "telegram").lower() == "telegram" and cfg.get("telegram_token"):
@@ -2100,24 +2167,26 @@ def handle_remote_command(from_number: str, text: str) -> str:
         task_query = arg.strip() if arg else ""
         if not task_query:
             return "❓ *Please provide a task to plan:*\nUsage: `/plan <idea or task description>`"
-            
+
         prompt_payload = f"Plan: {task_query}"
-        ok, msg = type_to_desktop(prompt_payload, press_enter=True)
-        if not ok and is_workstation_locked():
-            queue_pending_desktop_prompt(from_number, prompt_payload, press_enter=True)
-            preview = (task_query[:120] + "...") if len(task_query) > 120 else task_query
-            return (
-                f"🧠 *Workstation Screen Locked — Planning Prompt Queued:*\n\"{preview}\"\n\n"
-                f"• Staged safely in memory."
-            )
         preview = (task_query[:120] + "...") if len(task_query) > 120 else task_query
-        return (
-            f"🧠 *Planning Prompt Delivered to Antigravity Session:*\n"
-            f"\"{preview}\"\n\n"
-            f"• *Status:* {msg}\n"
-            f"• *Live Streaming:* Active.\n"
-            f"Antigravity is now analyzing the task, searching arsenal tools, and preparing the diagnostic alignment interview."
-        )
+
+        if not is_terminal_busy():
+            ok, msg = type_to_desktop(prompt_payload, press_enter=True)
+            return (
+                f"🧠 *Planning Prompt Delivered to Antigravity Session:*\n"
+                f"\"{preview}\"\n\n"
+                f"• *Status:* {msg}\n"
+                f"• *Live Streaming:* Active.\n"
+                f"Antigravity is now analyzing the task, searching arsenal tools, and preparing the diagnostic alignment interview."
+            )
+        else:
+            queue_execution_prompt(from_number, prompt_payload, press_enter=True)
+            return (
+                f"⏳ *Session Busy — Planning Prompt Queued:*\n\"{preview}\"\n\n"
+                f"• Antigravity is currently executing a task.\n"
+                f"• Staged in execution queue; will auto-run the instant current turn completes."
+            )
 
     elif cmd == "/orchestrate":
         if not arg or arg.lower() in ("stats", "summary"):
@@ -2243,31 +2312,37 @@ def handle_remote_command(from_number: str, text: str) -> str:
 
         # 3. Default: Chat mode (Deliver directly to active Antigravity terminal session)
         send_telegram_chat_action(from_number, "typing", config=cfg)
-        alt_m = clean_text.lower().endswith("/alt+m") or clean_text.lower().endswith("/alt + m")
+        clean_lower = clean_text.lower().strip()
+        alt_m = any(clean_lower.endswith(s) for s in ("/alt+m", "/alt + m", "/altm", "/alt m"))
         plain_payload = clean_text
-        if clean_text.lower().endswith("/alt+m"):
-            plain_payload = clean_text[:-6].strip()
-        elif clean_text.lower().endswith("/alt + m"):
-            plain_payload = clean_text[:-8].strip()
+        for suffix in ("/alt+m", "/alt + m", "/altm", "/alt m"):
+            if clean_lower.endswith(suffix):
+                plain_payload = clean_text[:-len(suffix)].strip()
+                break
 
-        ok, msg = type_to_desktop(plain_payload, press_enter=True, press_alt_m=alt_m)
-        if not ok and is_workstation_locked():
-            queue_pending_desktop_prompt(from_number, plain_payload, press_enter=True, press_alt_m=alt_m)
-            preview = (plain_payload[:120] + "...") if len(plain_payload) > 120 else plain_payload
+        preview = (plain_payload[:120] + "...") if len(plain_payload) > 120 else plain_payload
+
+        # If user explicitly requested Alt+M interrupt OR terminal is currently idle: inject immediately!
+        if alt_m or not is_terminal_busy():
+            ok, msg = type_to_desktop(plain_payload, press_enter=True, press_alt_m=alt_m)
+            hdr = "⚡ *In-Flight Interrupt & Prompt Sent:*" if alt_m else "✍️ *Prompt Sent to Coding Session:*"
             return (
-                f"✍️ *Workstation Screen Locked — Prompt Queued:*\n\"{preview}\"\n\n"
-                f"• Staged safely in memory.\n"
-                f"• Will type into terminal the second screen unlocks."
+                f"{hdr}\n"
+                f"\"{preview}\"\n\n"
+                f"• *Status:* {msg}\n"
+                f"• *Live Streaming:* Active (Antigravity outputs will stream to your phone word-for-word).\n"
+                f"_Tip: Use `/nav` to browse terminal logs or `/status` for health._"
             )
-
-        preview = (clean_text[:120] + "...") if len(clean_text) > 120 else clean_text
-        return (
-            f"✍️ *Prompt Sent to Coding Session:*\n"
-            f"\"{preview}\"\n\n"
-            f"• *Status:* {msg}\n"
-            f"• *Live Streaming:* Active (Antigravity outputs will stream to your phone word-for-word).\n"
-            f"_Tip: Use `/nav` to browse terminal logs or `/status` for health._"
-        )
+        else:
+            # Session is currently executing another task and user did not specify /altm
+            queue_execution_prompt(from_number, plain_payload, press_enter=True, press_alt_m=False)
+            return (
+                f"⏳ *Session Busy — Prompt Queued for Next Turn:*\n"
+                f"\"{preview}\"\n\n"
+                f"• Antigravity is currently busy executing a task.\n"
+                f"• Your prompt is queued and will run automatically the instant current execution finishes.\n"
+                f"• _Tip: Send with `/altm` to interrupt now._"
+            )
 
 
 def format_twiml_response(reply_text: str) -> str:

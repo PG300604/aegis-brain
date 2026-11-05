@@ -147,28 +147,39 @@ class TestCaffeinateAndRemote(unittest.TestCase):
         self.assertIn("Alert Triggered", res_alarm)
 
         # Test /lock with mock to avoid locking physical screen during test run
-        with patch("aegis.remote.remote_lock_workstation", return_value=(True, "Workstation locked for test")):
-            res_lock = handle_remote_command("whatsapp:+1234567890", "/lock")
-            self.assertIn("Workstation Lock", res_lock)
-            self.assertIn("Workstation locked for test", res_lock)
+        res_lock = handle_remote_command("whatsapp:+1234567890", "/lock")
+        self.assertIn("Away Mode ACTIVATED", res_lock)
+        self.assertIn("Caffeinate", res_lock)
 
 
     def test_remote_away_mode_and_locked_execution(self):
-        from unittest.mock import patch
-        from aegis.remote import set_away_mode
+        from aegis.remote import set_away_mode, set_mock_terminal_busy
 
         # 1. Shell commands execute headlessly
         res_sh = handle_remote_command("whatsapp:+1234567890", "python -c \"print('remote_exec_test')\"")
         self.assertIn("Command Output", res_sh)
         self.assertIn("remote_exec_test", res_sh)
 
-        # 2. In locked state with blocked desktop, /type queues safely rather than crashing or dropping
-        with patch("aegis.remote.type_to_desktop", return_value=(False, "Workstation is locked")), \
-             patch("aegis.remote.is_workstation_locked", return_value=True):
-            res_type_locked = handle_remote_command("whatsapp:+1234567890", "/type echo locked_run")
-            self.assertIn("Workstation Screen Locked", res_type_locked)
+        # 2. When terminal is idle, /type delivers immediately without queuing
+        set_mock_terminal_busy(False)
+        res_type_idle = handle_remote_command("whatsapp:+1234567890", "/type echo idle_run")
+        self.assertIn("Agent Input", res_type_idle)
+        self.assertIn("idle_run", res_type_idle)
 
-        # 3. Clean away mode toggle
+        # 3. When terminal is busy, /type queues for next turn unless /altm is specified
+        set_mock_terminal_busy(True)
+        res_type_busy = handle_remote_command("whatsapp:+1234567890", "/type echo busy_run")
+        self.assertIn("Session Busy", res_type_busy)
+        self.assertIn("Prompt Queued for Next Turn", res_type_busy)
+
+        # 4. In busy state with /altm, it interrupts and delivers immediately
+        res_type_altm = handle_remote_command("whatsapp:+1234567890", "/type echo urgent_run /altm")
+        self.assertIn("In-Flight Interrupt Delivered", res_type_altm)
+        self.assertIn("urgent_run", res_type_altm)
+
+        set_mock_terminal_busy(None)
+
+        # 5. Clean away mode toggle
         set_away_mode(True)
         res_away_off = handle_remote_command("whatsapp:+1234567890", "/away off")
         self.assertIn("Away Mode OFF", res_away_off)
@@ -224,7 +235,7 @@ class TestCaffeinateAndRemote(unittest.TestCase):
         self.assertIn("In-Flight Signal Sent", res_alt)
 
         res_type_alt = handle_remote_command("whatsapp:+1234567890", "/type speed up build /alt+m")
-        self.assertIn("Agent Input", res_type_alt)
+        self.assertIn("In-Flight Interrupt Delivered", res_type_alt)
         self.assertIn("Alt+M in-flight", res_type_alt)
 
     def test_handle_incoming_document(self):
@@ -267,28 +278,34 @@ class TestCaffeinateAndRemote(unittest.TestCase):
 
     def test_staged_desktop_prompt_queue_and_drain(self):
         from aegis.remote import (
-            queue_pending_desktop_prompt,
-            get_pending_desktop_prompts_count,
-            drain_pending_desktop_prompts,
+            queue_execution_prompt,
+            get_execution_queue_count,
+            drain_execution_queue,
+            set_mock_terminal_busy,
+            clear_execution_queue,
         )
         from unittest.mock import patch
 
-        # Queue while locked
-        queue_pending_desktop_prompt("2119188945", "Fix button component", press_enter=True)
-        self.assertGreaterEqual(get_pending_desktop_prompts_count(), 1)
+        clear_execution_queue()
 
-        # While locked, drain returns 0
-        with patch("aegis.remote.is_workstation_locked", return_value=True):
-            drained_locked = drain_pending_desktop_prompts()
-            self.assertEqual(drained_locked, 0)
-            self.assertGreaterEqual(get_pending_desktop_prompts_count(), 1)
+        # Queue while busy
+        queue_execution_prompt("2119188945", "Fix button component", press_enter=True)
+        self.assertGreaterEqual(get_execution_queue_count(), 1)
 
-        # When unlocked, drain delivers and clears queue
-        with patch("aegis.remote.is_workstation_locked", return_value=False), \
-             patch("aegis.remote.send_telegram_message"):
-            drained_unlocked = drain_pending_desktop_prompts()
-            self.assertGreaterEqual(drained_unlocked, 1)
-            self.assertEqual(get_pending_desktop_prompts_count(), 0)
+        # While terminal is busy executing a task, drain returns 0
+        set_mock_terminal_busy(True)
+        drained_busy = drain_execution_queue()
+        self.assertEqual(drained_busy, 0)
+        self.assertGreaterEqual(get_execution_queue_count(), 1)
+
+        # When terminal finishes task and becomes idle, drain delivers prompt and clears queue
+        set_mock_terminal_busy(False)
+        with patch("aegis.remote.send_telegram_message"):
+            drained_idle = drain_execution_queue()
+            self.assertGreaterEqual(drained_idle, 1)
+            self.assertEqual(get_execution_queue_count(), 0)
+
+        set_mock_terminal_busy(None)
 
 
 if __name__ == "__main__":
