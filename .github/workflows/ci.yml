@@ -36,12 +36,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
+        working-directory: package
         run: |
           python -m pip install --upgrade pip
           python -m pip install pytest
-          python -m pip install -e ./package
+          python -m pip install -e .
 
       - name: Run tests
-        env:
-          PYTHONPATH: package
-        run: python -m pytest package/tests -v
+        working-directory: package
+        run: python -m pytest tests -v
