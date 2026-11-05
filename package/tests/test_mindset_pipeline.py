@@ -18,7 +18,8 @@ except ImportError:
 
         @staticmethod
         def skip(reason=""):
-            pass
+            import unittest
+            raise unittest.SkipTest(reason)
 
     pytest = _DummyPytest()
 
@@ -68,9 +69,13 @@ def test_powershell_mindset_override_and_restore(tmp_path):
     assert not aider_conf.exists()
     assert not aider_conv.exists()
 
+    ps_bin = shutil.which("powershell") or shutil.which("pwsh")
+    if not ps_bin:
+        pytest.skip("PowerShell executable (powershell or pwsh) not found on host")
+
     # 2. Run install.ps1 with isolated USERPROFILE
     cmd = [
-        "powershell",
+        ps_bin,
         "-NoProfile",
         "-ExecutionPolicy", "Bypass",
         "-File", str(INSTALL_PS1),
@@ -133,7 +138,7 @@ def test_powershell_mindset_override_and_restore(tmp_path):
 
     # 5. Run restore.ps1 with isolated USERPROFILE
     restore_cmd = [
-        "powershell",
+        ps_bin,
         "-NoProfile",
         "-ExecutionPolicy", "Bypass",
         "-File", str(RESTORE_PS1),
@@ -162,10 +167,16 @@ def test_powershell_mindset_override_and_restore(tmp_path):
 
 
 def test_bash_mindset_override_and_restore(tmp_path):
-    """Test POSIX bash implementation using Git Bash."""
-    git_bash = Path(r"C:\Program Files\Git\bin\bash.exe")
-    if not git_bash.exists():
-        pytest.skip("Git Bash not found on Windows host")
+    """Test POSIX bash implementation using Git Bash or host bash."""
+    import sys
+    if sys.platform == "win32":
+        git_bash = Path(r"C:\Program Files\Git\bin\bash.exe")
+        bash_bin = str(git_bash) if git_bash.exists() else shutil.which("bash")
+    else:
+        bash_bin = shutil.which("bash")
+
+    if not bash_bin:
+        pytest.skip("Bash executable not found on host")
 
     mock_home = tmp_path / "mock_bash_user"
     mock_home.mkdir(parents=True, exist_ok=True)
@@ -198,7 +209,7 @@ def test_bash_mindset_override_and_restore(tmp_path):
 
     # Run install.sh
     proc = subprocess.run(
-        [str(git_bash), install_sh_posix, "-f", "-w", ws_posix],
+        [bash_bin, install_sh_posix, "-f", "-w", ws_posix],
         env=env,
         capture_output=True,
         text=True,
@@ -217,7 +228,7 @@ def test_bash_mindset_override_and_restore(tmp_path):
 
     # Run restore.sh
     restore_proc = subprocess.run(
-        [str(git_bash), restore_sh_posix, "-f"],
+        [bash_bin, restore_sh_posix, "-f"],
         env=env,
         capture_output=True,
         text=True,
