@@ -182,14 +182,15 @@ def main() -> None:
     # hierarchy (3-Tier Multi-Agent Power & Quality Structure)
     hier_parser = subparsers.add_parser("hierarchy", help="Display 3-Tier Multi-Agent Hierarchy, bottleneck risk, and active tree")
     hier_parser.add_argument("task", nargs="?", default="", help="Optional task to plan hierarchy for")
+    hier_parser.add_argument("--plan", "-p", action="store_true", help="Generate full planning phase, research context, and implementation options with pros/cons")
     hier_parser.add_argument("--execute", "-e", action="store_true", help="Execute hierarchy with worker coaching loop")
     hier_parser.add_argument("--simulate", "-s", action="store_true", help="Simulate worker execution for testing")
-    hier_parser.add_argument("--worker", "-w", choices=["hermes", "moe", "gemini"], default=None, help="Execution worker model")
+    hier_parser.add_argument("--worker", "-w", choices=["hermes", "claude", "codex", "opencode", "moe", "gemini"], default=None, help="Execution worker model/tool")
 
     # coach (Junior Boss Subagent Supervised Coaching Loop)
-    coach_parser = subparsers.add_parser("coach", help="Junior Boss Subagent coaches execution workers (Hermes/MoE) through the 4 Quality Gates")
+    coach_parser = subparsers.add_parser("coach", help="Junior Boss Subagent coaches execution workers (Hermes/Claude/Codex/MoE) through the 4 Quality Gates")
     coach_parser.add_argument("task", help="Task specification for worker execution")
-    coach_parser.add_argument("--worker", "-w", choices=["hermes", "moe", "gemini"], default="hermes", help="Target execution worker")
+    coach_parser.add_argument("--worker", "-w", choices=["hermes", "claude", "codex", "opencode", "moe", "gemini"], default="hermes", help="Target execution worker")
     coach_parser.add_argument("--simulate", "-s", action="store_true", help="Simulate worker draft and coaching corrections")
     coach_parser.add_argument("--retries", "-r", type=int, default=3, help="Max coaching retries")
 

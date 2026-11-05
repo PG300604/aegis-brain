@@ -143,10 +143,20 @@ class CaffeinateEngine:
 
     def _suppress_dynamic_lock(self) -> None:
         """Temporarily disable Dynamic Lock during active agent sessions."""
-        if self._platform != "win32":
+        if self._platform != "win32" or os.environ.get("PYTEST_CURRENT_TEST") or os.environ.get("AEGIS_TEST_MODE"):
             return
         try:
             import winreg
+            if not hasattr(self, "_orig_dynamic_lock"):
+                try:
+                    qkey = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                        r"Software\Microsoft\Windows NT\CurrentVersion\Winlogon",
+                        0, winreg.KEY_QUERY_VALUE)
+                    val, _ = winreg.QueryValueEx(qkey, "EnableGoodbye")
+                    self._orig_dynamic_lock = int(val)
+                    winreg.CloseKey(qkey)
+                except Exception:
+                    self._orig_dynamic_lock = 1
             key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
                 r"Software\Microsoft\Windows NT\CurrentVersion\Winlogon",
                 0, winreg.KEY_SET_VALUE)
@@ -157,24 +167,35 @@ class CaffeinateEngine:
 
     def _restore_dynamic_lock(self) -> None:
         """Re-enable Dynamic Lock when agent session ends."""
-        if self._platform != "win32":
+        if self._platform != "win32" or os.environ.get("PYTEST_CURRENT_TEST") or os.environ.get("AEGIS_TEST_MODE"):
             return
         try:
             import winreg
+            orig_val = getattr(self, "_orig_dynamic_lock", 1)
             key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
                 r"Software\Microsoft\Windows NT\CurrentVersion\Winlogon",
                 0, winreg.KEY_SET_VALUE)
-            winreg.SetValueEx(key, "EnableGoodbye", 0, winreg.REG_DWORD, 1)
+            winreg.SetValueEx(key, "EnableGoodbye", 0, winreg.REG_DWORD, orig_val)
             winreg.CloseKey(key)
         except Exception:
             pass
 
     def _suppress_screensaver(self) -> None:
         """Temporarily disable Windows screensaver during active agent sessions."""
-        if self._platform != "win32":
+        if self._platform != "win32" or os.environ.get("PYTEST_CURRENT_TEST") or os.environ.get("AEGIS_TEST_MODE"):
             return
         try:
             import winreg
+            if not hasattr(self, "_orig_screensaver"):
+                try:
+                    qkey = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                        r"Control Panel\Desktop",
+                        0, winreg.KEY_QUERY_VALUE)
+                    val, _ = winreg.QueryValueEx(qkey, "ScreenSaveActive")
+                    self._orig_screensaver = str(val)
+                    winreg.CloseKey(qkey)
+                except Exception:
+                    self._orig_screensaver = "1"
             key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
                 r"Control Panel\Desktop",
                 0, winreg.KEY_SET_VALUE)
@@ -185,14 +206,15 @@ class CaffeinateEngine:
 
     def _restore_screensaver(self) -> None:
         """Re-enable Windows screensaver when agent session ends."""
-        if self._platform != "win32":
+        if self._platform != "win32" or os.environ.get("PYTEST_CURRENT_TEST") or os.environ.get("AEGIS_TEST_MODE"):
             return
         try:
             import winreg
+            orig_val = getattr(self, "_orig_screensaver", "1")
             key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
                 r"Control Panel\Desktop",
                 0, winreg.KEY_SET_VALUE)
-            winreg.SetValueEx(key, "ScreenSaveActive", 0, winreg.REG_SZ, "1")
+            winreg.SetValueEx(key, "ScreenSaveActive", 0, winreg.REG_SZ, orig_val)
             winreg.CloseKey(key)
         except Exception:
             pass
@@ -277,14 +299,14 @@ class CaffeinateEngine:
 
     def suspend_pc(self) -> Tuple[bool, str]:
         """Put workstation into sleep/standby mode."""
-        self.disable()
         if os.environ.get("PYTEST_CURRENT_TEST") or os.environ.get("AEGIS_TEST_MODE"):
             return True, "System entering sleep mode... (Test Mode)"
+        self.disable()
         if self._platform == "win32":
             try:
                 # Windows sleep via powrprof.dll SetSuspendState(0, 1, 0)
                 cmd = ["rundll32.exe", "powrprof.dll,SetSuspendState", "0,1,0"]
-                subprocess.Popen(cmd, shell=True)
+                subprocess.Popen(cmd, shell=False)
                 return True, "System entering sleep mode..."
             except Exception as e:
                 return False, f"Failed to suspend Windows system: {e}"
@@ -303,14 +325,14 @@ class CaffeinateEngine:
 
     def shutdown_pc(self, delay_seconds: int = 15) -> Tuple[bool, str]:
         """Shut down the workstation safely after a short delay."""
-        self.disable()
         if os.environ.get("PYTEST_CURRENT_TEST") or os.environ.get("AEGIS_TEST_MODE"):
             return True, f"Windows shutdown scheduled in {delay_seconds} seconds. (Test Mode)"
+        self.disable()
         if self._platform == "win32":
             try:
                 msg = "AegisBrain: Remote shutdown initiated via WhatsApp."
-                cmd = ["shutdown", "/s", "/t", str(delay_seconds), "/c", msg]
-                subprocess.Popen(cmd, shell=True)
+                cmd = ["shutdown.exe", "/s", "/t", str(delay_seconds), "/c", msg]
+                subprocess.Popen(cmd, shell=False)
                 return True, f"Windows shutdown scheduled in {delay_seconds} seconds."
             except Exception as e:
                 return False, f"Failed to trigger Windows shutdown: {e}"

@@ -8,6 +8,7 @@ Automatically triggered whenever the user says 'hi', 'hello', or begins a new se
 5. Asks what to prioritize next so the user can steer instantly.
 """
 
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -28,7 +29,8 @@ class OfflineBriefingEngine:
     """Compiles a high-signal briefing of offline events, reviews, and pending work."""
 
     @classmethod
-    def get_greeting_salutation(cls, user_name: str = "Priyanshu") -> str:
+    def get_greeting_salutation(cls, user_name: Optional[str] = None) -> str:
+        name = user_name or os.environ.get("AEGIS_USER_NAME") or os.environ.get("USERNAME") or os.environ.get("USER") or "Developer"
         hour = datetime.now().hour
         if 5 <= hour < 12:
             time_str = "Good morning"
@@ -38,10 +40,11 @@ class OfflineBriefingEngine:
             time_str = "Good evening"
         else:
             time_str = "Late night greetings"
-        return f"{time_str}, {user_name}!"
+        return f"{time_str}, {name}!"
 
     @classmethod
-    def generate_briefing(cls, user_name: str = "Priyanshu") -> str:
+    def generate_briefing(cls, user_name: Optional[str] = None) -> str:
+        name = user_name or os.environ.get("AEGIS_USER_NAME") or os.environ.get("USERNAME") or os.environ.get("USER") or "Developer"
         init_db()
 
         # Zero-prompt auto-resurrect of background AegisBrain daemon & Telegram listener
@@ -52,7 +55,7 @@ class OfflineBriefingEngine:
         except Exception:
             pass
 
-        salutation = cls.get_greeting_salutation(user_name)
+        salutation = cls.get_greeting_salutation(name)
         mode = get_current_mode()
         caff = get_caffeinate_status()
         tracked_prs = get_tracked_prs()

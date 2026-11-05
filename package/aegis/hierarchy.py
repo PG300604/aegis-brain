@@ -41,6 +41,9 @@ from .severity_triage import judge_task_severity, SeverityLevel
 
 class WorkerType(str, Enum):
     HERMES = "hermes"
+    CLAUDE = "claude"
+    CODEX = "codex"
+    OPENCODE = "opencode"
     MOE = "moe"
     GEMINI = "gemini"
     LOCAL_COMPILER = "local_compiler"
@@ -125,9 +128,14 @@ class SubagentNode:
                 issues.append(f"Security Alert: Blocked high-risk code pattern matching '{dpat}'.")
 
         # Gate 4: Dual-Environment Verification (Syntax check for Python snippets)
-        if "def " in clean or "class " in clean or "import " in clean:
+        code_to_check = clean
+        fenced_blocks = re.findall(r"```(?:python|py)?\s*\n(.*?)\n```", clean, re.DOTALL | re.IGNORECASE)
+        if fenced_blocks:
+            code_to_check = "\n\n".join(fenced_blocks)
+
+        if "def " in code_to_check or "class " in code_to_check or "import " in code_to_check:
             try:
-                compile(clean, "<string>", "exec")
+                compile(code_to_check, "<string>", "exec")
             except SyntaxError as syn_err:
                 gates["dual_env_verification"] = False
                 issues.append(f"Syntax validation failed in sandbox: {syn_err}")
@@ -226,7 +234,8 @@ class SubagentNode:
             f"Task: {task_spec}\n"
             f"Domain: {self.domain}\n"
             f"Invariants: Minimal lines of code, standard library first, zero over-engineering, zero conversational slop.\n"
-            f"Write clean, verifiable code."
+            f"Write clean, verifiable code.\n"
+            f"Return ONLY raw Python code. Do not create files, write to disk, or execute commands."
         )
 
         initial_errors = 0
@@ -306,7 +315,7 @@ class SubagentNode:
                 f"2. Never use shell=True or os.system; use safe standard library methods.\n"
                 f"3. Ensure strictly valid syntax and minimal Karpathy simplicity.\n"
                 f"Original Task: {task_spec}\n"
-                f"Return ONLY the corrected, minimal code."
+                f"Return ONLY the corrected, minimal code. Do not create files, write to disk, or execute commands."
             )
             current_prompt = coaching_prompt
 
@@ -572,13 +581,14 @@ class HierarchicalAgentOrchestrator:
         """
         self.plan_hierarchy(task)
         results = []
-        for sa in self.subagents:
+
+        def _run_subagent(sa: SubagentNode) -> Dict[str, Any]:
             ok, clean_code, audit_info = sa.execute_worker_with_coaching_loop(
                 task_spec=f"{task} [{sa.domain}]",
                 worker_type=worker_type,
                 simulate=simulate,
             )
-            results.append({
+            return {
                 "subagent_id": sa.subagent_id,
                 "name": sa.name,
                 "domain": sa.domain,
@@ -588,10 +598,178 @@ class HierarchicalAgentOrchestrator:
                 "final_errors": audit_info.get("final_errors", 0),
                 "coaching_history": audit_info.get("coaching_history", []),
                 "code": clean_code,
-            })
+            }
+
+        if len(self.subagents) > 1 and not self.capacity.is_bottleneck_risk:
+            import concurrent.futures
+            max_workers = min(len(self.subagents), self.capacity.max_safe_subagents)
+            with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+                results = list(executor.map(_run_subagent, self.subagents))
+        else:
+            for sa in self.subagents:
+                results.append(_run_subagent(sa))
         top_audit = self.top_engine_quality_audit()
         return {
             "task": task,
             "top_audit": top_audit,
             "subagent_executions": results,
         }
+
+    def plan_with_research_and_options(self, task: str) -> Dict[str, Any]:
+        """Generate a complete planning phase, research context, and options analysis with pros/cons.
+        
+        Enables user transparency and step-by-step customization before code generation.
+        """
+        from .severity_triage import judge_task_severity
+
+        triage = judge_task_severity(task)
+        hw = get_hardware_status()
+
+        niche = triage.domain if hasattr(triage, "domain") else "general_engineering"
+        invariants = [
+            "Karpathy Simplicity: Minimal lines of code, 0 speculative wrappers",
+            "Security: 0 shell=True, 0 os.system, strictly safe standard libraries",
+            "Cross-Platform: 100% portable across Windows, macOS, Linux (zero hardcoded paths)",
+            "Token Arbitrage: 0 frontier tokens for routine execution worker code drafts",
+        ]
+
+        options = [
+            {
+                "id": "option-1",
+                "name": "Minimal Standard Library (Karpathy Simplicity)",
+                "recommended": True,
+                "complexity": 1,
+                "pros": [
+                    "Zero external dependencies, zero supply-chain vulnerabilities",
+                    "Sub-millisecond execution and lowest memory overhead",
+                    "Easiest to audit, test, and maintain long-term",
+                ],
+                "cons": [
+                    "Requires implementing self-contained logic rather than pulling large frameworks",
+                ],
+                "rationale": "Recommended by default for maximum reliability, speed, and safety.",
+            },
+            {
+                "id": "option-2",
+                "name": "Modular Service Architecture",
+                "recommended": False,
+                "complexity": 3,
+                "pros": [
+                    "High decoupling across distinct service boundaries",
+                    "Easy to wrap with independent microservice or plugin interfaces",
+                ],
+                "cons": [
+                    "Introduces boilerplate interfaces and higher cognitive load",
+                    "Larger codebase surface area to maintain",
+                ],
+                "rationale": "Best when integrating across multiple enterprise services.",
+            },
+            {
+                "id": "option-3",
+                "name": "High-Throughput Asynchronous Event Pipeline",
+                "recommended": False,
+                "complexity": 4,
+                "pros": [
+                    "Optimized for high concurrency and streaming I/O",
+                    "Non-blocking async worker event queues",
+                ],
+                "cons": [
+                    "Higher debugging complexity with async event loops and race condition risks",
+                    "Higher CPU context switching under light workloads",
+                ],
+                "rationale": "Only necessary for massive concurrent request volume.",
+            },
+        ]
+
+        subagent_nodes = self.plan_hierarchy(task)
+
+        communication_flow = [
+            {
+                "phase": "Phase 1: Task Scoping & Delegation",
+                "from": "Tier 1: Senior Boss (Antigravity Main Engine)",
+                "to": "Tier 2: Junior Boss (Domain Tech Lead)",
+                "message": f"Execute task '{task}' under domain '{subagent_nodes[0].domain}'. Invariants: Karpathy simplicity, zero hardcoded paths, testable.",
+            },
+            {
+                "phase": "Phase 2: Directive Dispatch",
+                "from": "Tier 2: Junior Boss (Subagent Node)",
+                "to": "Tier 3: Execution Worker (Hermes / Claude / Codex / OpenCode / MoE)",
+                "message": "Synthesize minimal raw code draft. Return ONLY clean code. Do not create files or run commands.",
+            },
+            {
+                "phase": "Phase 3: Quality Architecture Gate",
+                "from": "Tier 2: Junior Boss (Subagent Node)",
+                "to": "Tier 2 Audit Gate",
+                "message": "Evaluating candidate draft through 4 Quality Gates: Karpathy Simplicity, Unslop, Red-Team Security, Dual-Env.",
+            },
+            {
+                "phase": "Phase 4: Senior Boss Delivery & User Control",
+                "from": "Tier 2: Junior Boss",
+                "to": "Tier 1: Senior Boss",
+                "message": "Deliver audited code with 0 errors and recorded confidence score.",
+            },
+        ]
+
+        return {
+            "task": task,
+            "research": {
+                "niche": niche,
+                "hardware_headroom": f"{hw.get('avail_ram_gb', 0)}GB RAM free ({hw.get('load_percent', 0)}% load)",
+                "invariants": invariants,
+            },
+            "options": options,
+            "recommended_option": "option-1",
+            "hierarchy_nodes": [s.name for s in subagent_nodes],
+            "communication_flow": communication_flow,
+        }
+
+    def format_planning_and_options_report(self, plan_data: Dict[str, Any]) -> str:
+        """Render transparent planning, research, and options report in GitHub Markdown."""
+        lines = [
+            f"# 🧭 Architectural Planning & Research Phase: {plan_data['task']}",
+            "",
+            "## 1. 🔍 Research & Context Ingestion",
+            f"- **Domain / Niche:** `{plan_data['research']['niche']}`",
+            f"- **Host Hardware Headroom:** {plan_data['research']['hardware_headroom']}",
+            "- **Core Invariants:**",
+        ]
+        for inv in plan_data["research"]["invariants"]:
+            lines.append(f"  - {inv}")
+
+        lines.extend([
+            "",
+            "## 2. ⚖️ Implementation Options Explored (Pros & Cons)",
+            "| Option | Architectural Pattern | Complexity | Recommendation |",
+            "|:---:|---|:---:|:---:|",
+        ])
+        for opt in plan_data["options"]:
+            rec_tag = "**Recommended ✅**" if opt["recommended"] else "Alternative"
+            lines.append(f"| `{opt['id']}` | **{opt['name']}** | {opt['complexity']}/5 | {rec_tag} |")
+
+        lines.append("")
+        for opt in plan_data["options"]:
+            lines.append(f"### Option: `{opt['id']}` — {opt['name']}")
+            lines.append(f"_{opt['rationale']}_")
+            lines.append("- **Pros:**")
+            for pro in opt["pros"]:
+                lines.append(f"  - ✅ {pro}")
+            lines.append("- **Cons:**")
+            for con in opt["cons"]:
+                lines.append(f"  - ⚠️ {con}")
+            lines.append("")
+
+        lines.extend([
+            "## 3. 💬 Hierarchical Boss-Worker Communications",
+            "| Phase | From | To | Directive / Payload |",
+            "|---|---|---|---|",
+        ])
+        for c in plan_data["communication_flow"]:
+            lines.append(f"| **{c['phase']}** | `{c['from']}` | `{c['to']}` | {c['message']} |")
+
+        lines.extend([
+            "",
+            "```mermaid",
+            self.render_mermaid_tree(),
+            "```",
+        ])
+        return "\n".join(lines)

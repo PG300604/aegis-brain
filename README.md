@@ -114,7 +114,7 @@ aegis status
 Daemon:        RUNNING (http://127.0.0.1:8765)
 Autostart:     ENABLED (starts on login/wake)
 Mode:          PUBLIC
-Database:      C:\Users\priya\.aegis-brain\brain.db (Exists)
+Database:      ~/.aegis-brain/brain.db (Active)
 Decisions:     7 recorded
 Tracked PRs:   1 (spring-projects/spring-ai#7308)
 Active Alerts: 0
@@ -221,6 +221,61 @@ Base URL: http://127.0.0.1:8765/v1
 ```
 
 AegisBrain intercepts prompts, fetches relevant workspace decisions and skill vectors (e.g., Karpathy simplicity, TypeScript patterns, or SQL optimization heuristics), injects them into the system prompt, and forwards the augmented request to your local Ollama server (`http://127.0.0.1:11434/v1`).
+
+---
+
+## 🏛️ 3-Tier Multi-Agent Hierarchy & Multi-Tool Governance
+
+AegisBrain introduces a production-tested **3-Tier Multi-Agent Hierarchy** with token arbitrage, structured planning, and multi-tool execution governance. Routine coding drafts are offloaded to local/free worker tools, while frontier models and domain tech leads govern, plan, and audit output bottom-to-top.
+
+```mermaid
+flowchart TD
+    T1["Tier 1: Senior Boss (Antigravity Main Engine)<br/><i>Strategic Planner, Capacity Evaluator & Supreme Quality Gate</i>"]
+    T2["Tier 2: Junior Bosses (Domain Lead Subagents)<br/><i>Surgical Invariant Scopers, Coaching Supervisors & 4-Gate Auditors</i>"]
+    T3["Tier 3: Execution Workers (Pluggable Tool CLIs)<br/><i>Hermes CLI &bull; Claude Code &bull; OpenAI Codex &bull; OpenCode &bull; Ollama MoE</i>"]
+
+    T1 -->|"Autonomous Subagent Delegation"| T2
+    T2 -->|"Task Directive & Invariants"| T3
+    T3 -->|"Raw Candidate Draft (0 Frontier Tokens)"| T2
+    T2 -->|"4-Decision Quality Architecture Gate"| T2
+    T2 -->|"Coaching Feedback Loop (if flaws found)"| T3
+    T2 -->|"Audited Code & Distillation Trajectory"| T1
+```
+
+### Supported Tier 3 Execution Worker Tools
+
+AegisBrain autonomously discovers and interfaces with whichever coding CLI tools you have installed:
+
+| Worker Tool | CLI Invocation | Optimal Domain | Token Cost |
+| :--- | :--- | :--- | :---: |
+| **Nous Hermes Agent CLI** (`hermes`) | `hermes chat -q "<prompt>"` | General coding, autonomous bug fixes, rate limiters | **0 frontier tokens** |
+| **Claude Code CLI** (`claude`) | `claude -p "<prompt>"` | Complex refactoring, full-repo analysis | Local / subscription |
+| **OpenAI Codex CLI** (`codex`) | `codex exec "<prompt>"` | Rapid function synthesis, test authoring | Local / subscription |
+| **OpenCode Interpreter** (`opencode`) | `opencode --prompt "<prompt>"` | Sandboxed script execution, data processing | **0 frontier tokens** |
+| **Ollama Local MoE** (`ollama`) | `http://127.0.0.1:11434` (`qwen2.5-coder:7b`) | Offline air-gapped code generation | **0 tokens / 100% private** |
+
+### Interactive Planning & Options Phase (Pros & Cons)
+
+Developers retain complete control over every generated artifact. Before any execution worker generates code, AegisBrain executes the **Planning & Research Phase**, exploring multiple architectural approaches with pros & cons:
+
+```bash
+# Generate full architectural plan, research context, and options with pros/cons
+aegis hierarchy "Implement distributed token bucket rate limiter" --plan
+
+# Execute hierarchy with specific worker tool (e.g. Hermes, Claude, Codex, or MoE)
+aegis hierarchy "Implement distributed token bucket rate limiter" --execute --worker hermes
+
+# Supervise worker coaching loop through the 4 Quality Gates
+aegis coach "Build thread-safe circular buffer" --worker claude --retries 3
+```
+
+### The 4-Decision Quality Architecture Gate
+
+Before any code draft is presented to the user or committed to disk, it must pass all 4 quality gates:
+1. **Andrej Karpathy Simplicity Doctrine**: Surgical, minimal lines of code. Zero speculative abstractions, zero single-use classes, standard library first.
+2. **Ponytail / Unslop / Turnitout**: Complete removal of conversational AI watermarks, preambles (`"Certainly! Here is..."`), and conversational slop.
+3. **Red-Team Security & Cloudflare Invariant Audit**: Strictly blocks `shell=True`, `os.system`, command injection vectors, and hardcoded secrets.
+4. **Dual-Environment Verification**: Sandboxed syntax compilation and unit testing before disk mutation.
 
 ---
 

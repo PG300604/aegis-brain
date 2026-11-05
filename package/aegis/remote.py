@@ -166,18 +166,27 @@ def set_away_mode(enabled: bool) -> Tuple[bool, str]:
 
 def register_active_poll(poll_id: str, question: str, options: List[str]) -> None:
     """Register active Telegram poll in memory to correlate user vote answers."""
+    now = time.time()
     with _active_polls_lock:
+        # Prune expired polls (>24h) to avoid memory growth
+        expired = [pid for pid, pdata in _active_polls.items() if now - pdata.get("created_at", 0) > 86400]
+        for pid in expired:
+            _active_polls.pop(pid, None)
         _active_polls[poll_id] = {
             "question": question,
             "options": options,
-            "created_at": time.time(),
+            "created_at": now,
         }
 
 
 def get_active_poll(poll_id: str) -> Optional[Dict[str, Any]]:
     """Retrieve registered poll details."""
     with _active_polls_lock:
-        return _active_polls.get(poll_id)
+        poll = _active_polls.get(poll_id)
+        if poll and (time.time() - poll.get("created_at", 0) > 86400):
+            _active_polls.pop(poll_id, None)
+            return None
+        return poll
 
 
 class TerminalMirror:
@@ -204,20 +213,9 @@ class TerminalMirror:
             if len(self.buffer) > self.capacity:
                 self.buffer.pop(0)
 
-        # Stream chunk to phone immediately if away mode is active
-        if is_away_mode_active():
-            self._stream_to_remote(entry)
-
     def _stream_to_remote(self, entry: Dict[str, Any]) -> None:
-        try:
-            cfg = load_remote_config()
-            chat_id = cfg.get("telegram_chat_id")
-            if not chat_id:
-                return
-            msg = f"📟 *[{entry['time_str']} {entry['source'].upper()}]*\n```\n{entry['text'][:1200]}\n```"
-            send_telegram_message(chat_id, msg, config=cfg)
-        except Exception:
-            pass
+        """Deprecated: Streaming is handled by TranscriptWatcher to avoid message duplication."""
+        pass
 
     def get_page(self, page: int = 1, page_size: int = 4) -> Tuple[List[Dict[str, Any]], int, int]:
         with self.lock:
@@ -1539,6 +1537,9 @@ def is_antigravity_vim_mode() -> bool:
     return False
 
 
+_desktop_input_lock = threading.RLock()
+
+
 def inject_console_input(
     text: str,
     press_enter: bool = True,
@@ -1559,7 +1560,16 @@ def inject_console_input(
     """
     if sys.platform != "win32":
         return False, "Console input injection is supported on Windows."
+    with _desktop_input_lock:
+        return _inject_console_input_core(text, press_enter=press_enter, press_alt_m=press_alt_m, vim_mode=vim_mode)
 
+
+def _inject_console_input_core(
+    text: str,
+    press_enter: bool = True,
+    press_alt_m: bool = False,
+    vim_mode: Optional[bool] = None,
+) -> Tuple[bool, str]:
     target_pid = find_target_console_pid()
     if not target_pid:
         return False, "No target console process found."
@@ -1670,16 +1680,16 @@ def inject_console_input(
             return ok
 
         # 1. Vim Mode: Transition cleanly to Insert Mode with inter-key pauses.
-        # ConPTY / VT100 requires delays between Escape and subsequent characters so that
+        # ConPTY / VT100 requires delays (>300ms) between Escape and subsequent characters so that
         # Escape is parsed as a standalone key and NOT as an escape sequence prefix (like Alt+i).
         if vim_mode and text:
             esc_pair = make_key_event(0x1B, 0x01, '\x1b')
             write_records(esc_pair)
-            time.sleep(0.08)
+            time.sleep(0.12)
             write_records(esc_pair)
-            time.sleep(0.08)
+            time.sleep(0.35)
             write_records(make_key_event(0x49, 0x17, 'i'))
-            time.sleep(0.08)
+            time.sleep(0.12)
 
         # 2. Standalone Alt+M if requested without text
         if press_alt_m and not text:
@@ -1696,16 +1706,23 @@ def inject_console_input(
                 u_char = '\r' if ch == '\n' else ch
                 text_recs.extend(make_key_event(vk, scan, u_char))
             write_records(text_recs)
-            time.sleep(0.08)
+            time.sleep(0.15)
 
         # 4. Vim Mode: Escape to Normal Mode before submitting.
-        # Must pause before Enter so Escape is recognized as standalone and NOT combined into Alt+Enter.
+        # Must pause >300ms before Enter so Escape is recognized as standalone and NOT combined into Alt+Enter (\x1b\r).
         if vim_mode and text and (press_enter or press_alt_m):
             esc_pair = make_key_event(0x1B, 0x01, '\x1b')
             write_records(esc_pair)
-            time.sleep(0.08)
+            time.sleep(0.12)
+            write_records(esc_pair)
+            time.sleep(0.35)
+
+        if vim_mode and text and not press_enter and not press_alt_m:
+            esc_pair = make_key_event(0x1B, 0x01, '\x1b')
             write_records(esc_pair)
             time.sleep(0.12)
+            write_records(esc_pair)
+            time.sleep(0.15)
 
         # 5. Submit with Enter or Alt+M
         if press_enter and not press_alt_m:
@@ -1742,6 +1759,16 @@ def type_to_desktop(
     vim_mode: Optional[bool] = None,
 ) -> Tuple[bool, str]:
     """Copy text to clipboard, auto-focus terminal/IDE, and simulate Ctrl+V and optional Enter or Alt+M."""
+    with _desktop_input_lock:
+        return _type_to_desktop_core(text, press_enter=press_enter, press_alt_m=press_alt_m, vim_mode=vim_mode)
+
+
+def _type_to_desktop_core(
+    text: str,
+    press_enter: bool = True,
+    press_alt_m: bool = False,
+    vim_mode: Optional[bool] = None,
+) -> Tuple[bool, str]:
     clean_text = text.strip() if text else ""
     if clean_text.lower().endswith("/alt+m"):
         clean_text = clean_text[:-6].strip()
@@ -1832,14 +1859,14 @@ def type_to_desktop(
                 # 1. Escape twice to guarantee normal mode and dismiss popups
                 user32.keybd_event(0x1B, 0x01, 0, 0)
                 user32.keybd_event(0x1B, 0x01, 0x0002, 0)
-                time.sleep(0.08)
+                time.sleep(0.12)
                 user32.keybd_event(0x1B, 0x01, 0, 0)
                 user32.keybd_event(0x1B, 0x01, 0x0002, 0)
-                time.sleep(0.08)
+                time.sleep(0.35)
                 # 2. 'i' to enter insert mode
                 user32.keybd_event(0x49, 0x17, 0, 0)
                 user32.keybd_event(0x49, 0x17, 0x0002, 0)
-                time.sleep(0.08)
+                time.sleep(0.12)
 
             if clean_text:
                 # Press Ctrl+V with scan codes
@@ -1848,17 +1875,17 @@ def type_to_desktop(
                 time.sleep(0.05)
                 user32.keybd_event(0x56, scan_v, 0x0002, 0)
                 user32.keybd_event(0x11, scan_ctrl, 0x0002, 0)
-                time.sleep(0.08)
+                time.sleep(0.15)
 
             if press_enter and not press_alt_m:
                 if vim_mode:
                     # 3. Escape to return to normal mode before submitting
                     user32.keybd_event(0x1B, 0x01, 0, 0)
                     user32.keybd_event(0x1B, 0x01, 0x0002, 0)
-                    time.sleep(0.08)
+                    time.sleep(0.12)
                     user32.keybd_event(0x1B, 0x01, 0, 0)
                     user32.keybd_event(0x1B, 0x01, 0x0002, 0)
-                    time.sleep(0.12)
+                    time.sleep(0.35)
                 user32.keybd_event(0x0D, scan_enter, 0, 0)
                 time.sleep(0.05)
                 user32.keybd_event(0x0D, scan_enter, 0x0002, 0)
@@ -1868,15 +1895,21 @@ def type_to_desktop(
                 if vim_mode:
                     user32.keybd_event(0x1B, 0x01, 0, 0)
                     user32.keybd_event(0x1B, 0x01, 0x0002, 0)
-                    time.sleep(0.08)
+                    time.sleep(0.12)
                     user32.keybd_event(0x1B, 0x01, 0, 0)
                     user32.keybd_event(0x1B, 0x01, 0x0002, 0)
-                    time.sleep(0.12)
+                    time.sleep(0.35)
                 user32.keybd_event(0x12, scan_alt, 0, 0)
                 user32.keybd_event(0x4D, scan_m, 0, 0)
                 time.sleep(0.05)
                 user32.keybd_event(0x4D, scan_m, 0x0002, 0)
                 user32.keybd_event(0x12, scan_alt, 0x0002, 0)
+
+            if not press_enter and not press_alt_m and vim_mode:
+                time.sleep(0.12)
+                user32.keybd_event(0x1B, 0x01, 0, 0)
+                user32.keybd_event(0x1B, 0x01, 0x0002, 0)
+                time.sleep(0.15)
 
             action_str = "Typed and submitted" if press_enter else "Pasted"
             if press_alt_m:
@@ -2434,12 +2467,14 @@ def handle_remote_command(from_number: str, text: str) -> str:
                         {"text": "👑 Boss: Claude 3.7", "callback_data": "cfg:mgr:claude-3-7-sonnet"},
                     ],
                     [
-                        {"text": "🤖 Worker: Hermes", "callback_data": "cfg:wrk:hermes-agent"},
+                        {"text": "🤖 Worker: Hermes", "callback_data": "cfg:wrk:hermes"},
+                        {"text": "🤖 Worker: Claude", "callback_data": "cfg:wrk:claude"},
+                        {"text": "🤖 Worker: Codex", "callback_data": "cfg:wrk:codex"},
                         {"text": "🤖 Worker: Qwen 2.5", "callback_data": "cfg:wrk:qwen2.5-coder:7b"},
                     ],
                     [
-                        {"text": "💾 Drive: P:\\ (Models)", "callback_data": "cfg:drv:P:\\aegis-brain\\models"},
-                        {"text": "💾 Drive: C:\\", "callback_data": "cfg:drv:C:\\Users\\priya\\.aegis-brain\\models"},
+                        {"text": "💾 Storage: Home Directory", "callback_data": f"cfg:drv:{Path.home() / '.aegis-brain' / 'models'}"},
+                        {"text": "💾 Storage: Local Cache", "callback_data": f"cfg:drv:{Path.home() / '.cache' / 'aegis-models'}"},
                     ],
                     [
                         {"text": "📊 Telemetry Toggle", "callback_data": "cmd:config telemetry toggle"},

@@ -1,7 +1,7 @@
 """AegisBrain Autonomous Skill Scout & Upstream Arsenal Intelligence.
 
 Periodically discovers, filters, and recommends trending agentic skills, MCP servers,
-and CLI tools tailored to Priyanshu's architectural taste and active engineering niches.
+and CLI tools tailored to the developer's architectural taste and active engineering niches.
 Applies Andrej Karpathy simplicity filters and local privacy constraints.
 """
 
@@ -61,7 +61,7 @@ def get_installed_skills_inventory() -> List[str]:
     return sorted(list(installed))
 
 
-# Curated catalog of high-impact agentic skills aligning with Priyanshu's niches
+# Curated catalog of high-impact agentic skills aligning with active niches
 CURATED_ARSENAL_CATALOG = [
     {
         "name": "fast-moe-router",
@@ -79,7 +79,7 @@ CURATED_ARSENAL_CATALOG = [
         "source_url": "https://github.com/remotion-dev/remotion-nvenc-bridge",
         "taste_score": 94,
         "install_cmd": "npm install -g remotion-nvenc-bridge",
-        "rationale": "Matches Priyanshu's high-velocity video editing taste with strict GPU memory headroom preservation.",
+        "rationale": "Matches high-velocity video editing taste with strict GPU memory headroom preservation.",
     },
     {
         "name": "timescale-continuous-rollup",
@@ -106,7 +106,7 @@ CURATED_ARSENAL_CATALOG = [
         "source_url": "https://github.com/ui-ux-pro-max/dark-token-auditor",
         "taste_score": 95,
         "install_cmd": "npm install -g dark-token-auditor",
-        "rationale": "Aligns with Priyanshu's modern dark-mode, neo-minimalist UI aesthetic.",
+        "rationale": "Aligns with modern dark-mode, neo-minimalist UI aesthetic.",
     },
 ]
 
@@ -196,7 +196,7 @@ def format_skill_scout_display(skills: Optional[List[Dict[str, Any]]] = None) ->
 
 
 def send_weekly_scout_digest() -> bool:
-    """Send weekly skill discovery digest over Telegram to Priyanshu."""
+    """Send weekly skill discovery digest over Telegram to the configured user."""
     from .remote import send_remote_notification
     skills = get_discovered_skills(limit=3)
     if not skills:
