@@ -1601,9 +1601,7 @@ def inject_console_input(
             kernel32.FreeConsole()
             return False, f"Failed to open CONIN$ for PID {target_pid} (err: {kernel32.GetLastError()})"
 
-        records: List[INPUT_RECORD] = []
-
-        def add_key_event(vk: int, scan: int, u_char: str = '\0', ctrl_state: int = 0) -> None:
+        def make_key_event(vk: int, scan: int, u_char: str = '\0', ctrl_state: int = 0) -> List[INPUT_RECORD]:
             r_down = INPUT_RECORD()
             r_down.EventType = 1
             r_down.Event.KeyEvent.bKeyDown = True
@@ -1612,7 +1610,6 @@ def inject_console_input(
             r_down.Event.KeyEvent.wVirtualScanCode = scan
             r_down.Event.KeyEvent.uChar.UnicodeChar = u_char
             r_down.Event.KeyEvent.dwControlKeyState = ctrl_state
-            records.append(r_down)
 
             r_up = INPUT_RECORD()
             r_up.EventType = 1
@@ -1622,9 +1619,9 @@ def inject_console_input(
             r_up.Event.KeyEvent.wVirtualScanCode = scan
             r_up.Event.KeyEvent.uChar.UnicodeChar = u_char
             r_up.Event.KeyEvent.dwControlKeyState = ctrl_state
-            records.append(r_up)
+            return [r_down, r_up]
 
-        def add_alt_m_event() -> None:
+        def make_alt_m_event() -> List[INPUT_RECORD]:
             r1 = INPUT_RECORD()
             r1.EventType = 1
             r1.Event.KeyEvent.bKeyDown = True
@@ -1632,7 +1629,7 @@ def inject_console_input(
             r1.Event.KeyEvent.wVirtualKeyCode = 0x12
             r1.Event.KeyEvent.wVirtualScanCode = 0x38
             r1.Event.KeyEvent.dwControlKeyState = 0x0002
-            records.append(r1)
+
             r2 = INPUT_RECORD()
             r2.EventType = 1
             r2.Event.KeyEvent.bKeyDown = True
@@ -1641,7 +1638,7 @@ def inject_console_input(
             r2.Event.KeyEvent.wVirtualScanCode = 0x32
             r2.Event.KeyEvent.uChar.UnicodeChar = 'm'
             r2.Event.KeyEvent.dwControlKeyState = 0x0002
-            records.append(r2)
+
             r3 = INPUT_RECORD()
             r3.EventType = 1
             r3.Event.KeyEvent.bKeyDown = False
@@ -1650,7 +1647,7 @@ def inject_console_input(
             r3.Event.KeyEvent.wVirtualScanCode = 0x32
             r3.Event.KeyEvent.uChar.UnicodeChar = 'm'
             r3.Event.KeyEvent.dwControlKeyState = 0x0002
-            records.append(r3)
+
             r4 = INPUT_RECORD()
             r4.EventType = 1
             r4.Event.KeyEvent.bKeyDown = False
@@ -1658,46 +1655,70 @@ def inject_console_input(
             r4.Event.KeyEvent.wVirtualKeyCode = 0x12
             r4.Event.KeyEvent.wVirtualScanCode = 0x38
             r4.Event.KeyEvent.dwControlKeyState = 0
-            records.append(r4)
+            return [r1, r2, r3, r4]
 
-        # 1. Vim Mode: Ensure we enter Insert Mode so the first char is not eaten as a command
+        success = True
+        def write_records(recs: List[INPUT_RECORD]) -> bool:
+            nonlocal success
+            if not recs:
+                return True
+            arr = (INPUT_RECORD * len(recs))(*recs)
+            written = wintypes.DWORD(0)
+            ok = bool(kernel32.WriteConsoleInputW(h_conin, arr, len(recs), ctypes.byref(written)))
+            if not ok:
+                success = False
+            return ok
+
+        # 1. Vim Mode: Transition cleanly to Insert Mode with inter-key pauses.
+        # ConPTY / VT100 requires delays between Escape and subsequent characters so that
+        # Escape is parsed as a standalone key and NOT as an escape sequence prefix (like Alt+i).
         if vim_mode and text:
-            # Escape (VK 0x1B, Scan 0x01) -> guarantees Normal Mode
-            add_key_event(0x1B, 0x01, '\x1b')
-            # 'i' (VK 0x49, Scan 0x17) -> switches to Insert Mode
-            add_key_event(0x49, 0x17, 'i')
+            esc_pair = make_key_event(0x1B, 0x01, '\x1b')
+            write_records(esc_pair)
+            time.sleep(0.08)
+            write_records(esc_pair)
+            time.sleep(0.08)
+            write_records(make_key_event(0x49, 0x17, 'i'))
+            time.sleep(0.08)
 
         # 2. Standalone Alt+M if requested without text
         if press_alt_m and not text:
-            add_alt_m_event()
+            write_records(make_alt_m_event())
 
-        # 3. Type all characters
-        for ch in text:
-            if ch == '\r':
-                continue
-            vk = 0x0D if ch == '\n' else (user32.VkKeyScanW(ord(ch)) & 0xFF if ord(ch) < 256 else 0)
-            scan = 0x1C if ch == '\n' else (user32.MapVirtualKeyW(vk, 0) if vk else 0)
-            u_char = '\r' if ch == '\n' else ch
-            add_key_event(vk, scan, u_char)
+        # 3. Type all characters in text
+        if text:
+            text_recs: List[INPUT_RECORD] = []
+            for ch in text:
+                if ch == '\r':
+                    continue
+                vk = 0x0D if ch == '\n' else (user32.VkKeyScanW(ord(ch)) & 0xFF if ord(ch) < 256 else 0)
+                scan = 0x1C if ch == '\n' else (user32.MapVirtualKeyW(vk, 0) if vk else 0)
+                u_char = '\r' if ch == '\n' else ch
+                text_recs.extend(make_key_event(vk, scan, u_char))
+            write_records(text_recs)
+            time.sleep(0.08)
 
-        # 4. Vim Mode: Escape to Normal Mode before submitting
+        # 4. Vim Mode: Escape to Normal Mode before submitting.
+        # Must pause before Enter so Escape is recognized as standalone and NOT combined into Alt+Enter.
         if vim_mode and text and (press_enter or press_alt_m):
-            add_key_event(0x1B, 0x01, '\x1b')
+            esc_pair = make_key_event(0x1B, 0x01, '\x1b')
+            write_records(esc_pair)
+            time.sleep(0.08)
+            write_records(esc_pair)
+            time.sleep(0.12)
 
         # 5. Submit with Enter or Alt+M
         if press_enter and not press_alt_m:
-            add_key_event(0x0D, 0x1C, '\r')
+            write_records(make_key_event(0x0D, 0x1C, '\r'))
 
         if press_alt_m and text:
-            add_alt_m_event()
+            time.sleep(0.05)
+            write_records(make_alt_m_event())
 
-        written = wintypes.DWORD(0)
-        arr = (INPUT_RECORD * len(records))(*records)
-        res = kernel32.WriteConsoleInputW(h_conin, arr, len(records), ctypes.byref(written))
         kernel32.CloseHandle(h_conin)
         kernel32.FreeConsole()
 
-        if res:
+        if success:
             action = "Typed and submitted" if press_enter else "Injected"
             if press_alt_m:
                 action += " (with Alt+M in-flight)"
@@ -1808,14 +1829,17 @@ def type_to_desktop(
 
             time.sleep(0.08)
             if vim_mode and clean_text:
-                # 1. Escape to guarantee normal mode
+                # 1. Escape twice to guarantee normal mode and dismiss popups
                 user32.keybd_event(0x1B, 0x01, 0, 0)
                 user32.keybd_event(0x1B, 0x01, 0x0002, 0)
-                time.sleep(0.04)
+                time.sleep(0.08)
+                user32.keybd_event(0x1B, 0x01, 0, 0)
+                user32.keybd_event(0x1B, 0x01, 0x0002, 0)
+                time.sleep(0.08)
                 # 2. 'i' to enter insert mode
                 user32.keybd_event(0x49, 0x17, 0, 0)
                 user32.keybd_event(0x49, 0x17, 0x0002, 0)
-                time.sleep(0.05)
+                time.sleep(0.08)
 
             if clean_text:
                 # Press Ctrl+V with scan codes
@@ -1824,14 +1848,17 @@ def type_to_desktop(
                 time.sleep(0.05)
                 user32.keybd_event(0x56, scan_v, 0x0002, 0)
                 user32.keybd_event(0x11, scan_ctrl, 0x0002, 0)
+                time.sleep(0.08)
 
             if press_enter and not press_alt_m:
-                time.sleep(0.08)
                 if vim_mode:
                     # 3. Escape to return to normal mode before submitting
                     user32.keybd_event(0x1B, 0x01, 0, 0)
                     user32.keybd_event(0x1B, 0x01, 0x0002, 0)
-                    time.sleep(0.05)
+                    time.sleep(0.08)
+                    user32.keybd_event(0x1B, 0x01, 0, 0)
+                    user32.keybd_event(0x1B, 0x01, 0x0002, 0)
+                    time.sleep(0.12)
                 user32.keybd_event(0x0D, scan_enter, 0, 0)
                 time.sleep(0.05)
                 user32.keybd_event(0x0D, scan_enter, 0x0002, 0)
@@ -1841,7 +1868,10 @@ def type_to_desktop(
                 if vim_mode:
                     user32.keybd_event(0x1B, 0x01, 0, 0)
                     user32.keybd_event(0x1B, 0x01, 0x0002, 0)
-                    time.sleep(0.05)
+                    time.sleep(0.08)
+                    user32.keybd_event(0x1B, 0x01, 0, 0)
+                    user32.keybd_event(0x1B, 0x01, 0x0002, 0)
+                    time.sleep(0.12)
                 user32.keybd_event(0x12, scan_alt, 0, 0)
                 user32.keybd_event(0x4D, scan_m, 0, 0)
                 time.sleep(0.05)
