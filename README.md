@@ -1,7 +1,7 @@
 # AegisBrain
 
 <p align="center">
-  <img src="assets/aegis-banner.svg" alt="AegisBrain Banner" width="100%">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/aegis-banner.svg" alt="AegisBrain Banner" width="100%">
 </p>
 
 <p align="center">
@@ -46,7 +46,7 @@ Modern AI coding agents excel in isolated prompt windows, but suffer from three 
 The blueprint below illustrates the system topology, connecting multi-agent clients, the zero-dependency background daemon, neural SQLite WAL storage, and execution worker runtimes:
 
 <p align="center">
-  <img src="assets/architecture-unified.svg" alt="AegisBrain Unified Architecture Diagram" width="100%">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/architecture-unified.svg" alt="AegisBrain Unified Architecture Diagram" width="100%">
 </p>
 
 <p align="center">
@@ -75,7 +75,7 @@ The blueprint below illustrates the system topology, connecting multi-agent clie
 To eliminate frontier token waste and guarantee production-grade code, AegisBrain enforces a strict **Division of Cognition**:
 
 <p align="center">
-  <img src="assets/hierarchy-escalation.svg" alt="3-Tier Multi-Agent Power Architecture and Escalation Protocol" width="100%">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/hierarchy-escalation.svg" alt="3-Tier Multi-Agent Power Architecture and Escalation Protocol" width="100%">
 </p>
 
 ### Division of Labor & Token Arbitrage
@@ -132,7 +132,7 @@ The Subagent transitions to `status="escalated_to_senior_boss"` and alerts Tier 
 Before any candidate draft reaches the user or repository, it must pass all 4 quality gates:
 
 <p align="center">
-  <img src="assets/quality-architecture-gate.svg" alt="4-Decision Quality Architecture Gate" width="100%">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/quality-architecture-gate.svg" alt="4-Decision Quality Architecture Gate" width="100%">
 </p>
 
 1. **Karpathy Simplicity Doctrine**: Surgical, minimal code with zero speculative abstractions, unused wrappers, or premature flexibility. If 200 lines could be written in 50, it is rewritten.
@@ -147,7 +147,7 @@ Before any candidate draft reaches the user or repository, it must pass all 4 qu
 Manage, monitor, and steer your workstation coding sessions from your smartphone via **Telegram** (`@HHAACLIBot`) or **WhatsApp**:
 
 <p align="center">
-  <img src="assets/mobile-remote-bridge.svg" alt="Mobile Remote Bridge and Whisper Voice Pipeline" width="100%">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/mobile-remote-bridge.svg" alt="Mobile Remote Bridge and Whisper Voice Pipeline" width="100%">
 </p>
 
 ### Voice Note Dictation via Local Whisper

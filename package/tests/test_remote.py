@@ -359,6 +359,9 @@ class TestCaffeinateAndRemote(unittest.TestCase):
 
     def test_vim_mode_enter_does_not_escape_in_type_to_desktop_core(self):
         """When press_enter=True in Vim Mode, _type_to_desktop_core stays in Insert Mode without EscEsc before Enter."""
+        if sys.platform != "win32":
+            import unittest
+            raise unittest.SkipTest("Windows-only console injection test")
         from aegis.remote import _type_to_desktop_core
         from unittest.mock import patch, MagicMock
 

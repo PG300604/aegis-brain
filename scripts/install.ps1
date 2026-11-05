@@ -104,7 +104,16 @@ foreach ($target in $PlannedTargets) {
         $destFile = Join-Path $destSubDir (Split-Path -Leaf $tPath)
         Copy-Item -Path $tPath -Destination $destFile -Force
 
-        $hash = (Get-FileHash -Algorithm SHA256 -Path $tPath).Hash.Substring(0, 16).ToLower()
+        if (Get-Command Get-FileHash -ErrorAction SilentlyContinue) {
+            $hash = (Get-FileHash -Algorithm SHA256 -Path $tPath).Hash.Substring(0, 16).ToLower()
+        } else {
+            $stream = [System.IO.File]::OpenRead($tPath)
+            $sha = [System.Security.Cryptography.SHA256]::Create()
+            $hashBytes = $sha.ComputeHash($stream)
+            $stream.Close()
+            $sha.Dispose()
+            $hash = [System.BitConverter]::ToString($hashBytes).Replace("-", "").Substring(0, 16).ToLower()
+        }
         $relBackup = "files/$($target.Label)/$(Split-Path -Leaf $tPath)"
 
         $BackedUpFiles += [PSCustomObject]@{

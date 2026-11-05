@@ -99,9 +99,9 @@ class SubagentNode:
         }
 
         # Gate 1: Karpathy Simplicity & Portability
-        if sys.platform == "win32" and "import fcntl" in clean:
-            issues.append("Platform portability fix: replaced POSIX 'fcntl' with Windows-safe equivalent.")
-            clean = clean.replace("import fcntl", "# fcntl omitted for cross-platform Windows compatibility")
+        if "import fcntl" in clean:
+            issues.append("Platform portability fix: replaced POSIX 'fcntl' with cross-platform equivalent.")
+            clean = clean.replace("import fcntl", "# fcntl omitted for cross-platform portability")
         if "TODO: implement in future" in clean or "class SpeculativeWrapper" in clean:
             gates["karpathy_simplicity"] = False
             issues.append("Violates Karpathy simplicity: speculative unused abstractions detected.")
