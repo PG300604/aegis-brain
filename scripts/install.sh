@@ -233,7 +233,7 @@ echo -e "\033[1;32m      [OK] Snapshot created: $SNAPSHOT_ID\033[0m"
 echo -e "\033[1;32m      [OK] Restore pointer recorded to: $LATEST_POINTER\033[0m"
 
 # 5. Mindset Directives Text
-MINDSET_BLOCK=$(cat << 'EOF'
+read -r -d '' MINDSET_BLOCK << 'EOF' || true
 <!-- AEGIS_BRAIN_MINDSET_START -->
 # AegisBrain Universal Mindset Override: Autonomous Hierarchy & Simplicity Directives
 
@@ -245,10 +245,10 @@ MINDSET_BLOCK=$(cat << 'EOF'
 - **Decomposition & Delegation**: Break complex tasks into distinct, verifiable work units. Routine code drafting and boilerplate generation are delegated to local workers (`aegis orchestrate`, `call_local_worker`, or subagents).
 - **Transparent Progress Observer**: Maintain step-by-step progress micro-updates so the user can steer, pause, or comment early.
 - **4-Stage Quality Gate Review**: Every candidate output must be audited before presentation:
-  1) `Unslop / TurnItOut`: Strip artificial LLM filler and conversational watermarks.
-  2) `Red-Team & Security Audit`: Block unsafe shell commands (`shell=True`, `os.system`), injection payloads, and path traversals.
-  3) `Secret Scanning`: Block hardcoded API keys, tokens, and sensitive credentials.
-  4) `Verifiable Test Loop`: Verify against isolated syntax, unit tests, or compiler checks.
+  1. `Unslop / TurnItOut`: Strip artificial LLM filler and conversational watermarks.
+  2. `Red-Team & Security Audit`: Block unsafe shell commands (`shell=True`, `os.system`), injection payloads, and path traversals.
+  3. `Secret Scanning`: Block hardcoded API keys, tokens, and sensitive credentials.
+  4. `Verifiable Test Loop`: Verify against isolated syntax, unit tests, or compiler checks.
 
 ## 2. AST Graph Symbol Retrieval (Priority #1 Code Navigation)
 - **Sub-Millisecond Code Navigation**: Query symbols, class hierarchies, and caller/callee graphs via `aegis graph --query <symbol>` before dumping files or reading large code chunks.
@@ -269,7 +269,6 @@ MINDSET_BLOCK=$(cat << 'EOF'
 - **Goal-Driven Verifiable Loops**: Define explicit success criteria, write tests that reproduce the issue, and loop until verified.
 <!-- AEGIS_BRAIN_MINDSET_END -->
 EOF
-)
 
 inject_markdown() {
   local target_file="$1"
