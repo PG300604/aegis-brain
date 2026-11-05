@@ -199,6 +199,8 @@ class CaffeinateEngine:
 
     def lock_workstation(self) -> Tuple[bool, str]:
         """Instantly lock workstation screen while keeping background agents and Caffeinate active."""
+        if os.environ.get("PYTEST_CURRENT_TEST") or os.environ.get("AEGIS_TEST_MODE"):
+            return True, "Workstation locked. Screen is protected behind Windows Lock Screen while background AI tasks continue. (Test Mode)"
         if self._platform == "win32":
             try:
                 import ctypes
@@ -228,6 +230,8 @@ class CaffeinateEngine:
     def block_input(self, block: bool = True) -> Tuple[bool, str]:
         """Freeze or restore physical keyboard and mouse hardware input."""
         state_str = "BLOCKED" if block else "UNBLOCKED"
+        if os.environ.get("PYTEST_CURRENT_TEST") or os.environ.get("AEGIS_TEST_MODE"):
+            return True, f"Physical keyboard and mouse hardware input has been {state_str}. (Test Mode)"
         if self._platform == "win32":
             try:
                 import ctypes
@@ -246,6 +250,8 @@ class CaffeinateEngine:
 
     def trigger_alarm(self) -> Tuple[bool, str]:
         """Sound audible alert chimes on workstation speakers."""
+        if os.environ.get("PYTEST_CURRENT_TEST") or os.environ.get("AEGIS_TEST_MODE"):
+            return True, "Audible alert warning sounded on workstation speakers. (Test Mode)"
         if self._platform == "win32":
             try:
                 import winsound
@@ -272,6 +278,8 @@ class CaffeinateEngine:
     def suspend_pc(self) -> Tuple[bool, str]:
         """Put workstation into sleep/standby mode."""
         self.disable()
+        if os.environ.get("PYTEST_CURRENT_TEST") or os.environ.get("AEGIS_TEST_MODE"):
+            return True, "System entering sleep mode... (Test Mode)"
         if self._platform == "win32":
             try:
                 # Windows sleep via powrprof.dll SetSuspendState(0, 1, 0)
@@ -296,6 +304,8 @@ class CaffeinateEngine:
     def shutdown_pc(self, delay_seconds: int = 15) -> Tuple[bool, str]:
         """Shut down the workstation safely after a short delay."""
         self.disable()
+        if os.environ.get("PYTEST_CURRENT_TEST") or os.environ.get("AEGIS_TEST_MODE"):
+            return True, f"Windows shutdown scheduled in {delay_seconds} seconds. (Test Mode)"
         if self._platform == "win32":
             try:
                 msg = "AegisBrain: Remote shutdown initiated via WhatsApp."

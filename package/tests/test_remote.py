@@ -138,18 +138,22 @@ class TestCaffeinateAndRemote(unittest.TestCase):
     def test_remote_security_commands(self):
         from unittest.mock import patch
         
-        # Test /blockinput
-        res_block = handle_remote_command("whatsapp:+1234567890", "/blockinput on")
-        self.assertIn("Physical Input Protection", res_block)
+        with patch("aegis.remote.remote_block_input", return_value=(True, "Hardware input blocked")), \
+             patch("aegis.remote.remote_trigger_alarm", return_value=(True, "Alarm sounded")), \
+             patch("aegis.remote.remote_lock_workstation", return_value=(True, "Locked")), \
+             patch("aegis.remote.send_telegram_inline_keyboard"):
+            # Test /blockinput
+            res_block = handle_remote_command("whatsapp:+1234567890", "/blockinput on")
+            self.assertIn("Physical Input Protection", res_block)
 
-        # Test /alarm
-        res_alarm = handle_remote_command("whatsapp:+1234567890", "/alarm")
-        self.assertIn("Alert Triggered", res_alarm)
+            # Test /alarm
+            res_alarm = handle_remote_command("whatsapp:+1234567890", "/alarm")
+            self.assertIn("Alert Triggered", res_alarm)
 
-        # Test /lock with mock to avoid locking physical screen during test run
-        res_lock = handle_remote_command("whatsapp:+1234567890", "/lock")
-        self.assertIn("Away Mode ACTIVATED", res_lock)
-        self.assertIn("Caffeinate", res_lock)
+            # Test /lock with mock to avoid locking physical screen during test run
+            res_lock = handle_remote_command("whatsapp:+1234567890", "/lock")
+            self.assertIn("Away Mode ACTIVATED", res_lock)
+            self.assertIn("Caffeinate", res_lock)
 
 
     def test_remote_away_mode_and_locked_execution(self):
