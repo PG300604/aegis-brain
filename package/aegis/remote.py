@@ -1447,7 +1447,8 @@ def focus_desktop_window(keyword: str) -> Tuple[bool, str]:
                 user32.keybd_event(0x12, 0, 0x0002, 0)
             except Exception:
                 pass
-            user32.ShowWindow(hwnd, 9)  # SW_RESTORE
+            if user32.IsIconic(hwnd):
+                user32.ShowWindow(hwnd, 9)  # SW_RESTORE only if minimized (preserves Komorebi tiling)
             user32.SetForegroundWindow(hwnd)
             user32.BringWindowToTop(hwnd)
             if cur_th != target_th:
@@ -1457,6 +1458,214 @@ def focus_desktop_window(keyword: str) -> Tuple[bool, str]:
                     pass
             return True, f'Activated window: "{w["title"]}"'
     return False, f'No open window found matching "{keyword}".'
+
+
+def find_target_console_pid() -> Optional[int]:
+    """Find the target console process PID (preferring agy.exe, then powershell.exe / pwsh.exe)."""
+    if sys.platform != "win32":
+        return None
+    try:
+        import ctypes
+        from ctypes import wintypes
+        kernel32 = ctypes.windll.kernel32
+        TH32CS_SNAPPROCESS = 0x00000002
+
+        class PROCESSENTRY32(ctypes.Structure):
+            _fields_ = [
+                ('dwSize', wintypes.DWORD),
+                ('cntUsage', wintypes.DWORD),
+                ('th32ProcessID', wintypes.DWORD),
+                ('th32DefaultHeapID', ctypes.c_size_t),
+                ('th32ModuleID', wintypes.DWORD),
+                ('cntThreads', wintypes.DWORD),
+                ('th32ParentProcessID', wintypes.DWORD),
+                ('pcPriClassBase', wintypes.LONG),
+                ('dwFlags', wintypes.DWORD),
+                ('szExeFile', ctypes.c_wchar * 260)
+            ]
+
+        h_snap = kernel32.CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
+        if h_snap == -1:
+            return None
+
+        pe = PROCESSENTRY32()
+        pe.dwSize = ctypes.sizeof(PROCESSENTRY32)
+
+        candidates = []
+        if kernel32.Process32FirstW(h_snap, ctypes.byref(pe)):
+            while True:
+                name = pe.szExeFile.lower()
+                pid = pe.th32ProcessID
+                if name in ("agy.exe", "powershell.exe", "pwsh.exe", "cmd.exe"):
+                    candidates.append((name, pid))
+                if not kernel32.Process32NextW(h_snap, ctypes.byref(pe)):
+                    break
+        kernel32.CloseHandle(h_snap)
+
+        for name, pid in candidates:
+            if name == "agy.exe":
+                return pid
+
+        for name, pid in candidates:
+            if name in ("powershell.exe", "pwsh.exe"):
+                return pid
+
+        if candidates:
+            return candidates[0][1]
+        return None
+    except Exception:
+        return None
+
+
+def inject_console_input(text: str, press_enter: bool = True, press_alt_m: bool = False) -> Tuple[bool, str]:
+    """Inject keystrokes directly into target console input buffer (CONIN$).
+
+    Operates at the Win32 console kernel subsystem level via AttachConsole + WriteConsoleInputW.
+    Zero window movement, zero clipboard contention, zero disruption to Komorebi tiling,
+    and functions even while the Windows workstation is physically locked.
+    """
+    if sys.platform != "win32":
+        return False, "Console input injection is supported on Windows."
+
+    target_pid = find_target_console_pid()
+    if not target_pid:
+        return False, "No target console process found."
+
+    try:
+        import ctypes
+        from ctypes import wintypes
+        kernel32 = ctypes.windll.kernel32
+        user32 = ctypes.windll.user32
+
+        class CHAR_UNION(ctypes.Union):
+            _fields_ = [('UnicodeChar', wintypes.WCHAR), ('AsciiChar', ctypes.c_char)]
+
+        class KEY_EVENT_RECORD(ctypes.Structure):
+            _fields_ = [
+                ('bKeyDown', wintypes.BOOL),
+                ('wRepeatCount', wintypes.WORD),
+                ('wVirtualKeyCode', wintypes.WORD),
+                ('wVirtualScanCode', wintypes.WORD),
+                ('uChar', CHAR_UNION),
+                ('dwControlKeyState', wintypes.DWORD),
+            ]
+
+        class EVENT_UNION(ctypes.Union):
+            _fields_ = [('KeyEvent', KEY_EVENT_RECORD)]
+
+        class INPUT_RECORD(ctypes.Structure):
+            _fields_ = [('EventType', wintypes.WORD), ('Event', EVENT_UNION)]
+
+        kernel32.FreeConsole()
+        if not kernel32.AttachConsole(target_pid):
+            return False, f"AttachConsole failed for PID {target_pid} (err: {kernel32.GetLastError()})"
+
+        h_conin = kernel32.CreateFileW("CONIN$", 0xC0000000, 3, None, 3, 0, None)
+        if h_conin == -1 or h_conin == 0:
+            kernel32.FreeConsole()
+            return False, f"Failed to open CONIN$ for PID {target_pid} (err: {kernel32.GetLastError()})"
+
+        records: List[INPUT_RECORD] = []
+
+        if press_alt_m:
+            r = INPUT_RECORD()
+            r.EventType = 1
+            r.Event.KeyEvent.bKeyDown = True
+            r.Event.KeyEvent.wRepeatCount = 1
+            r.Event.KeyEvent.wVirtualKeyCode = 0x12
+            r.Event.KeyEvent.wVirtualScanCode = 0x38
+            r.Event.KeyEvent.dwControlKeyState = 0x0002
+            records.append(r)
+            r = INPUT_RECORD()
+            r.EventType = 1
+            r.Event.KeyEvent.bKeyDown = True
+            r.Event.KeyEvent.wRepeatCount = 1
+            r.Event.KeyEvent.wVirtualKeyCode = 0x4D
+            r.Event.KeyEvent.wVirtualScanCode = 0x32
+            r.Event.KeyEvent.uChar.UnicodeChar = 'm'
+            r.Event.KeyEvent.dwControlKeyState = 0x0002
+            records.append(r)
+            r = INPUT_RECORD()
+            r.EventType = 1
+            r.Event.KeyEvent.bKeyDown = False
+            r.Event.KeyEvent.wRepeatCount = 1
+            r.Event.KeyEvent.wVirtualKeyCode = 0x4D
+            r.Event.KeyEvent.wVirtualScanCode = 0x32
+            r.Event.KeyEvent.uChar.UnicodeChar = 'm'
+            r.Event.KeyEvent.dwControlKeyState = 0x0002
+            records.append(r)
+            r = INPUT_RECORD()
+            r.EventType = 1
+            r.Event.KeyEvent.bKeyDown = False
+            r.Event.KeyEvent.wRepeatCount = 1
+            r.Event.KeyEvent.wVirtualKeyCode = 0x12
+            r.Event.KeyEvent.wVirtualScanCode = 0x38
+            r.Event.KeyEvent.dwControlKeyState = 0
+            records.append(r)
+
+        for ch in text:
+            if ch == '\r':
+                continue
+            vk = 0x0D if ch == '\n' else (user32.VkKeyScanW(ord(ch)) & 0xFF if ord(ch) < 256 else 0)
+            scan = 0x1C if ch == '\n' else (user32.MapVirtualKeyW(vk, 0) if vk else 0)
+            u_char = '\r' if ch == '\n' else ch
+
+            r_down = INPUT_RECORD()
+            r_down.EventType = 1
+            r_down.Event.KeyEvent.bKeyDown = True
+            r_down.Event.KeyEvent.wRepeatCount = 1
+            r_down.Event.KeyEvent.wVirtualKeyCode = vk
+            r_down.Event.KeyEvent.wVirtualScanCode = scan
+            r_down.Event.KeyEvent.uChar.UnicodeChar = u_char
+            records.append(r_down)
+
+            r_up = INPUT_RECORD()
+            r_up.EventType = 1
+            r_up.Event.KeyEvent.bKeyDown = False
+            r_up.Event.KeyEvent.wRepeatCount = 1
+            r_up.Event.KeyEvent.wVirtualKeyCode = vk
+            r_up.Event.KeyEvent.wVirtualScanCode = scan
+            r_up.Event.KeyEvent.uChar.UnicodeChar = u_char
+            records.append(r_up)
+
+        if press_enter and not press_alt_m:
+            r_down = INPUT_RECORD()
+            r_down.EventType = 1
+            r_down.Event.KeyEvent.bKeyDown = True
+            r_down.Event.KeyEvent.wRepeatCount = 1
+            r_down.Event.KeyEvent.wVirtualKeyCode = 0x0D
+            r_down.Event.KeyEvent.wVirtualScanCode = 0x1C
+            r_down.Event.KeyEvent.uChar.UnicodeChar = '\r'
+            records.append(r_down)
+
+            r_up = INPUT_RECORD()
+            r_up.EventType = 1
+            r_up.Event.KeyEvent.bKeyDown = False
+            r_up.Event.KeyEvent.wRepeatCount = 1
+            r_up.Event.KeyEvent.wVirtualKeyCode = 0x0D
+            r_up.Event.KeyEvent.wVirtualScanCode = 0x1C
+            r_up.Event.KeyEvent.uChar.UnicodeChar = '\r'
+            records.append(r_up)
+
+        written = wintypes.DWORD(0)
+        arr = (INPUT_RECORD * len(records))(*records)
+        res = kernel32.WriteConsoleInputW(h_conin, arr, len(records), ctypes.byref(written))
+        kernel32.CloseHandle(h_conin)
+        kernel32.FreeConsole()
+
+        if res:
+            action = "Typed and submitted" if press_enter else "Injected"
+            if press_alt_m:
+                action += " (with Alt+M in-flight)"
+            preview = (text[:80] + "...") if len(text) > 80 else text
+            return True, f"{action} directly into console (PID {target_pid}): \"{preview}\""
+        return False, f"WriteConsoleInputW failed (err: {kernel32.GetLastError()})"
+    except Exception as e:
+        try:
+            kernel32.FreeConsole()
+        except Exception:
+            pass
+        return False, f"inject_console_input error: {e}"
 
 
 def type_to_desktop(text: str, press_enter: bool = True, press_alt_m: bool = False) -> Tuple[bool, str]:
@@ -1477,6 +1686,12 @@ def type_to_desktop(text: str, press_enter: bool = True, press_alt_m: bool = Fal
         if press_alt_m:
             action_str += " (with Alt+M in-flight)"
         return True, f"{action_str} into \"Mock IDE (Test Mode)\":\n\"{clean_text[:80]}\""
+
+    if sys.platform == "win32":
+        # First attempt: direct Win32 Console Input Injection (zero focus change, Komorebi-safe, locked-screen safe)
+        ok_con, msg_con = inject_console_input(clean_text, press_enter=press_enter, press_alt_m=press_alt_m)
+        if ok_con:
+            return True, msg_con
 
     attach_to_input_desktop()
     if clean_text:
@@ -1956,7 +2171,7 @@ def handle_remote_command(from_number: str, text: str) -> str:
     elif cmd == "/lock":
         set_away_mode(True)
         enable_caffeinate(keep_display=True, away_mode=True)
-        focus_desktop_window("powershell")
+        ok_l, msg_l = remote_lock_workstation()
         nav_buttons = [
             [
                 {"text": "📟 View Terminal Logs", "callback_data": "nav:1"},
@@ -1968,12 +2183,13 @@ def handle_remote_command(from_number: str, text: str) -> str:
             ]
         ]
         lock_msg = (
-            "🔒 *Workstation Away Mode ACTIVATED!*\n\n"
+            "🔒 *Workstation Screen LOCKED & Away Mode ACTIVATED!*\n\n"
+            "• *Screen Status:* Physically locked (protected behind Windows Lock Screen)\n"
             "• *Caffeinate:* Active (System keep-awake enabled so PC will not sleep while away)\n"
-            "• *Away Mode:* Active (All terminal outputs & agent milestones stream directly to your phone)\n"
-            "• *Instant Remote Input:* Active (When terminal is idle, prompts execute immediately with zero delay)\n"
+            "• *Away Mode:* Active (All terminal outputs stream directly to your phone)\n"
+            "• *Instant Remote Input:* Active (Keystrokes inject directly via console input buffer while locked)\n"
             "• *In-Flight Interrupt:* Append `/altm` to interrupt running tasks from Telegram\n"
-            "• Send `/away off` when returning to desk."
+            "• Send `/shutdown` if you wish to power off remotely, or `/away off` when returning to desk."
         )
         if cfg.get("provider", "telegram").lower() == "telegram" and cfg.get("telegram_token"):
             send_telegram_inline_keyboard(from_number, lock_msg, nav_buttons, config=cfg)

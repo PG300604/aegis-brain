@@ -307,6 +307,18 @@ class TestCaffeinateAndRemote(unittest.TestCase):
 
         set_mock_terminal_busy(None)
 
+    def test_remote_lock_command_invokes_lock_workstation(self):
+        from unittest.mock import patch
+        from aegis.remote import handle_remote_command, is_away_mode_active
+
+        with patch("aegis.remote.remote_lock_workstation") as mock_lock:
+            mock_lock.return_value = (True, "Locked")
+            with patch("aegis.remote.send_telegram_inline_keyboard"):
+                res = handle_remote_command("whatsapp:+1234567890", "/lock")
+                self.assertIn("Workstation Screen LOCKED", res)
+                self.assertTrue(is_away_mode_active())
+                mock_lock.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()
