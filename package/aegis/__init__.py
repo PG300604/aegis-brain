@@ -49,3 +49,22 @@ from .remote import (
 )
 from .ceo_stress_test import YCCEOStressTester, CEOCritique
 from .truth_seeking import SkepticalTruthReviewer, MistakeLedger, SkepticalAuditResult
+from .survival_mode import (
+    is_survival_mode,
+    enable_survival_mode,
+    disable_survival_mode,
+    format_post_response_suggestions_and_review,
+)
+from .confidence import (
+    record_score,
+    get_agent_confidence,
+    format_confidence_report,
+    recommend_agent,
+)
+from .severity_triage import (
+    judge_task_severity,
+    should_delegate_to_worker,
+    SeverityLevel,
+    ExecutionStrategy,
+    TriageDecision,
+)

@@ -174,6 +174,14 @@ def main() -> None:
     orch_parser.add_argument("--simulate", "-s", action="store_true", help="Simulate worker draft for quick testing")
     orch_parser.add_argument("--stats", action="store_true", help="View cumulative tokens saved and distillation history")
 
+    # triage (Task Severity & Bottleneck-Aware Multi-Agent Dispatcher)
+    triage_parser = subparsers.add_parser("triage", help="Judge task severity and recommend multi-agent execution strategy")
+    triage_parser.add_argument("task", help="Task description to triage")
+
+    # hierarchy (3-Tier Multi-Agent Power & Quality Structure)
+    hier_parser = subparsers.add_parser("hierarchy", help="Display 3-Tier Multi-Agent Hierarchy, bottleneck risk, and active tree")
+    hier_parser.add_argument("task", nargs="?", default="", help="Optional task to plan hierarchy for")
+
     # scout (Autonomous Skill Scout & Arsenal Intelligence)
     scout_parser = subparsers.add_parser("scout", help="Autonomous skill discovery matching user taste and niches")
     scout_parser.add_argument("--run", "-r", action="store_true", help="Run active skill scan and store discovered skills")
@@ -262,6 +270,11 @@ def main() -> None:
     brief_parser = subparsers.add_parser("briefing", aliases=["hi", "greeting"], help="Greet user, synchronize offline PRs/alerts, and review pending tasks")
     brief_parser.add_argument("--name", "-n", default="Priyanshu", help="User name to greet")
 
+    # bye / session-end (Graceful Session Close, Snapshot & Context Compaction)
+    bye_parser = subparsers.add_parser("bye", aliases=["close-session", "session-end"], help="Create session snapshot, compress context, and persist to brain DB")
+    bye_parser.add_argument("--summary", "-s", default="", help="Summary of work completed in session")
+    bye_parser.add_argument("--agent", "-a", default="antigravity", help="Agent name (default: antigravity)")
+
     # optimize (Proactive Arsenal Skill & Web Research Recommendations)
     opt_parser = subparsers.add_parser("optimize", help="Proactively recommend highest-scoring Arsenal skills and web research vectors")
     opt_parser.add_argument("task", nargs="+", help="Target task, technology, or feature prompt")
@@ -287,6 +300,34 @@ def main() -> None:
     # act / nlp / do (Zero-Command Natural Language Intent Router)
     act_parser = subparsers.add_parser("act", aliases=["nlp", "do"], help="Execute any natural language instruction via NLP Intent Router")
     act_parser.add_argument("query", nargs="+", help="Natural language request or conversation text")
+
+    # sensory / ingest / reel (Multi-Platform Reel & Social Sensory Ingestion Pipeline)
+    sens_parser = subparsers.add_parser("sensory", aliases=["ingest", "reel"], help="Ingest reel/video/social post, transcribe audio with Whisper, extract FFmpeg frames, and evaluate feasibility")
+    sens_parser.add_argument("url", help="Media or post URL (Instagram, TikTok, YouTube, Reddit, X/Twitter)")
+    sens_parser.add_argument("--out", "-o", default=None, help="Custom output directory")
+
+    # radar (Community Trends & Tracked Creators Radar)
+    radar_parser = subparsers.add_parser("radar", help="Scan tech subreddits (LocalLLaMA, etc.) and tracked creator updates")
+    radar_parser.add_argument("--sub", "-s", default=None, help="Specific subreddit to inspect (e.g. LocalLLaMA)")
+
+    # telegram / tg (Lightweight Mobile Telegram Ingestion Queue & Idle Processor)
+    tg_parser = subparsers.add_parser("telegram", aliases=["tg"], help="Telegram bot queue: poll updates, check status, or drain queue during idle periods")
+    tg_sub = tg_parser.add_subparsers(dest="tg_action", help="Telegram action")
+    
+    tg_setup = tg_sub.add_parser("setup", help="Configure Telegram Bot Token")
+    tg_setup.add_argument("token", nargs="+", help="Bot token from @BotFather")
+    
+    tg_poll = tg_sub.add_parser("poll", help="Poll unread messages from Telegram into local queue")
+    
+    tg_status = tg_sub.add_parser("status", help="Show Telegram queue metrics and system idle status")
+    
+    tg_drain = tg_sub.add_parser("drain", help="Drain and process pending links in queue")
+    tg_drain.add_argument("--force", "-f", action="store_true", help="Process immediately even if system is not idle")
+    tg_drain.add_argument("--limit", "-l", type=int, default=5, help="Max items to process")
+    tg_drain.add_argument("--threshold", "-t", type=float, default=35.0, help="Max CPU percent threshold to consider system idle")
+
+    tg_listen = tg_sub.add_parser("listen", help="Run polling loop that drains automatically when system is idle")
+    tg_listen.add_argument("--interval", "-i", type=int, default=15, help="Polling interval in seconds")
 
     m_record = mist_sub.add_parser("record", help="Record a verified mistake and fix into ledger")
     m_record.add_argument("--task", required=True, help="Task during which mistake occurred")
@@ -764,7 +805,6 @@ def main() -> None:
 
     elif args.command == "dashboard":
         from .dashboard import format_dashboard_tui
-        from .service import is_daemon_running, start_daemon
         if args.open:
             if not is_daemon_running():
                 print("[AegisBrain] Daemon is not active. Auto-starting in background...")
@@ -783,6 +823,11 @@ def main() -> None:
     elif args.command in ["briefing", "hi", "greeting"]:
         from .briefing import OfflineBriefingEngine
         print(OfflineBriefingEngine.generate_briefing(user_name=args.name))
+
+    elif args.command in ["bye", "close-session", "session-end"]:
+        from .session_close import close_session, format_session_close_display
+        res = close_session(agent_name=args.agent, summary=args.summary)
+        print(format_session_close_display(res))
 
     elif args.command == "optimize":
         from .arsenal_optimizer import ArsenalOptimizer
@@ -852,6 +897,141 @@ def main() -> None:
         from .nlp_router import route_and_execute
         query_str = " ".join(args.query) if isinstance(args.query, list) else str(args.query)
         print(route_and_execute(query_str))
+
+    elif args.command in ("sensory", "ingest", "reel"):
+        from .sensory import process_sensory_link
+        out_dir = Path(args.out) if args.out else None
+        print(f"[AegisBrain] Processing sensory ingestion for: {args.url}...")
+        res = process_sensory_link(args.url, output_base=out_dir)
+        art = res["artifact"]
+        analysis = res["analysis"]
+        print(f"\n=======================================================")
+        print(f"🎬 Sensory Ingestion Summary: {art['platform'].upper()}")
+        print(f"=======================================================")
+        print(f"📌 Title:       {art.get('title') or 'N/A'}")
+        print(f"👤 Author:      {art.get('author') or 'N/A'}")
+        print(f"⏱️ Duration:    {art.get('duration_seconds', 0):.1f}s")
+        print(f"📁 Manifest:    {res.get('manifest_path')}")
+        if art.get('comment_trigger_keyword'):
+            print(f"🔑 Gate Trigger:  Comment '{art['comment_trigger_keyword']}' detected -> Auto-bypassed")
+        if art.get('gated_resource_urls'):
+            print(f"🔗 Retrieved Resources:")
+            for r in art['gated_resource_urls'][:3]:
+                print(f"   - {r}")
+        if art.get('keyframes'):
+            print(f"🖼️ Keyframes:   {len(art['keyframes'])} frames extracted")
+            for k in art['keyframes'][:3]:
+                print(f"   - {k}")
+        if art.get('transcript'):
+            print(f"\n🎙️ Spoken Transcript:")
+            print(f"   {art['transcript']}")
+        elif art.get('description'):
+            print(f"\n📝 Content Description / Text:")
+            print(f"   {art['description'][:500]}...")
+            
+        if art.get('gated_resource_content'):
+            print(f"\n📄 Decoded Resource Payload:")
+            print(f"   {art['gated_resource_content'][:600]}...")
+            
+        cre = res.get("creator")
+        if cre:
+            print(f"\n🧠 Creator Intelligence Profile:")
+            print(f"   Handle:      @{cre['handle']} ({cre['videos_count']} videos tracked)")
+            print(f"   Niche:       {cre['niche']}")
+            if cre.get('topics'):
+                print(f"   Key Themes:  {', '.join(cre['topics'][:5])}")
+                
+        refs = res.get("cultural_references")
+        if refs:
+            print(f"\n🎭 Cultural Memes & Tech Lingo Detected ({len(refs)}):")
+            for ref in refs:
+                print(f"   - '{ref['term']}': {ref['meaning']} ({ref['vibe']})")
+
+        print(f"\n💡 YC Feasibility & Inculcation Delta:")
+        yc = analysis.get("yc_ceo_feasibility")
+        if yc:
+            print(f"   Verdict:     {yc.get('strategic_verdict')} (Score: {yc.get('feasibility_score')}/10, Risk: {yc.get('risk_level')})")
+            print(f"   Pain Check:  {yc.get('urgent_pain_assessment')}")
+            print(f"   MVP Scope:   {yc.get('smallest_verifiable_mvp')}")
+
+    elif args.command == "radar":
+        from .creator_intel import get_all_tracked_creators, radar_sweep, scrape_tech_subreddit
+        if args.sub:
+            print(f"[AegisBrain] Sweeping r/{args.sub}...")
+            items = scrape_tech_subreddit(args.sub, limit=5)
+            print(f"\n🔥 Top Discussions in r/{args.sub}:")
+            for it in items:
+                print(f"  ⬆️ {it['score']:>4} | {it['title']}")
+                print(f"     🔗 {it['url']}\n")
+        else:
+            sweep = radar_sweep()
+            print(f"📡 AegisBrain Community & Creator Radar")
+            print(f"   Tracked Creators: {sweep['tracked_creators_count']}")
+            print(f"   Lexicon Terms:    {sweep['lexicon_terms_indexed']}")
+            if sweep.get('recent_creators'):
+                print(f"\n👤 Active Tracked Creators:")
+                for c in sweep['recent_creators']:
+                    print(f"   - @{c['handle']} ({c['platform']}) &bull; {c['videos_count']} videos &bull; Topics: {', '.join(c.get('topics', [])[:4])}")
+            if sweep.get('fresh_community_trends'):
+                print(f"\n🌐 Hot Ecosystem Discussions:")
+                for t in sweep['fresh_community_trends'][:4]:
+                    print(f"   - [{t['source']}] {t['title']} (⬆️ {t['score']})")
+
+    elif args.command in ("telegram", "tg"):
+        from .telegram_queue import TelegramQueue, set_telegram_token, is_system_idle
+        queue = TelegramQueue()
+        action = getattr(args, "tg_action", None)
+        if action == "setup":
+            token_val = "".join(args.token).strip() if isinstance(args.token, list) else str(args.token).strip()
+            set_telegram_token(token_val)
+            print(f"[AegisBrain] Telegram bot token configured successfully in ~/.aegis/config.json")
+        elif action == "poll":
+            queued, max_id = queue.poll()
+            print(f"[AegisBrain] Telegram Poll Complete: {queued} new items queued (Latest Update ID: {max_id})")
+        elif action == "drain":
+            force = getattr(args, "force", False)
+            limit = getattr(args, "limit", 5)
+            thresh = getattr(args, "threshold", 35.0)
+            print(f"[AegisBrain] Draining Telegram queue (Idle Only: {not force}, Limit: {limit})...")
+            processed = queue.drain(idle_only=not force, max_items=limit, cpu_threshold=thresh)
+            if not processed:
+                idle, reason = is_system_idle(thresh)
+                if not idle and not force:
+                    print(f"⏳ System not idle: {reason}. Drain deferred.")
+                else:
+                    print(f"✨ No pending items in Telegram inbox.")
+            else:
+                print(f"✅ Successfully processed {len(processed)} queued item(s)!")
+        elif action == "listen":
+            interval = getattr(args, "interval", 15)
+            print(f"🎧 Listening for Telegram messages every {interval}s (drains when system is idle). Press Ctrl+C to stop.")
+            try:
+                while True:
+                    queued, _ = queue.poll()
+                    if queued > 0:
+                        print(f"📥 Queued {queued} new item(s) from Telegram.")
+                    queue.drain(idle_only=True, max_items=3)
+                    time.sleep(interval)
+            except KeyboardInterrupt:
+                print("\nStopped Telegram listener.")
+        else:
+            st = queue.status()
+            idle_indicator = "🟢 Idle" if st['system_idle'] else "🟡 Busy"
+            print("🤖 AegisBrain Telegram Mobile Ingestion Queue")
+            print(f"   Bot:          {st['bot']}")
+            print(f"   System State: {idle_indicator} ({st['idle_reason']})")
+            print(f"   Inbox Queue:  {st['pending']} pending | {st['completed']} completed | {st['failed']} failed | {st['total']} total")
+
+    elif args.command == "triage":
+        from .severity_triage import judge_task_severity
+        decision = judge_task_severity(args.task)
+        print(decision.format_banner())
+
+    elif args.command == "hierarchy":
+        from .hierarchy import HierarchicalAgentOrchestrator
+        orch = HierarchicalAgentOrchestrator()
+        orch.plan_hierarchy(args.task or "General Multi-Agent Operation")
+        print(orch.format_hierarchy_report(args.task))
 
     else:
         parser.print_help()

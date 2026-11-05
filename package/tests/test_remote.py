@@ -1,5 +1,7 @@
 import unittest
 import sys
+import os
+os.environ["PYTEST_CURRENT_TEST"] = "1"
 from pathlib import Path
 
 # Ensure package is on sys.path
@@ -111,17 +113,23 @@ class TestCaffeinateAndRemote(unittest.TestCase):
         self.assertIn("Hello Aegis Test", res_clip_get)
 
         # Test /type command
-        res_type = handle_remote_command("whatsapp:+1234567890", "/type Test Prompt Injection")
-        self.assertIn("Agent Input", res_type)
+        from unittest.mock import patch
+        with patch("aegis.remote.is_workstation_locked", return_value=False):
+            res_type = handle_remote_command("whatsapp:+1234567890", "/type Test Prompt Injection")
+            self.assertIn("Agent Input", res_type)
 
     def test_remote_mode_toggle(self):
+        from aegis.remote import set_away_mode
+        set_away_mode(False)
         # Switch to chat mode
         res_chat = handle_remote_command("whatsapp:+1234567890", "/mode chat")
         self.assertIn("Switched to CHAT", res_chat)
 
         # Unprefixed message should now type into desktop rather than execute shell
-        res_msg = handle_remote_command("whatsapp:+1234567890", "Analyze my code architecture")
-        self.assertIn("Prompt Sent", res_msg)
+        from unittest.mock import patch
+        with patch("aegis.remote.is_workstation_locked", return_value=False):
+            res_msg = handle_remote_command("whatsapp:+1234567890", "Analyze my code architecture")
+            self.assertIn("Prompt Sent", res_msg)
 
         # Switch back to exec mode
         res_exec = handle_remote_command("whatsapp:+1234567890", "/mode exec")
@@ -143,6 +151,117 @@ class TestCaffeinateAndRemote(unittest.TestCase):
             res_lock = handle_remote_command("whatsapp:+1234567890", "/lock")
             self.assertIn("Workstation Lock", res_lock)
             self.assertIn("Workstation locked for test", res_lock)
+
+
+    def test_remote_away_mode_and_locked_execution(self):
+        from unittest.mock import patch
+        from aegis.remote import set_away_mode
+
+        # 1. Shell commands execute headlessly
+        res_sh = handle_remote_command("whatsapp:+1234567890", "python -c \"print('remote_exec_test')\"")
+        self.assertIn("Command Output", res_sh)
+        self.assertIn("remote_exec_test", res_sh)
+
+        # 2. In locked state, /type routes autonomously rather than crashing or dropping
+        with patch("aegis.remote.is_workstation_locked", return_value=True):
+            res_type_locked = handle_remote_command("whatsapp:+1234567890", "/type echo locked_run")
+            self.assertIn("Workstation is Locked", res_type_locked)
+
+        # 3. Clean away mode toggle
+        set_away_mode(True)
+        res_away_off = handle_remote_command("whatsapp:+1234567890", "/away off")
+        self.assertIn("Away Mode OFF", res_away_off)
+
+    def test_telegram_inbox_persistence(self):
+        from aegis.db import (
+            record_telegram_message,
+            get_pending_telegram_messages,
+            mark_telegram_message_processed,
+            get_recent_telegram_messages,
+        )
+        import time
+        test_uid = int(time.time() * 1000)
+        row_id = record_telegram_message(
+            update_id=test_uid,
+            chat_id="2119188945",
+            text="Analyze my code architecture",
+            sender_username="testuser",
+            sender_name="Test User",
+            message_id=42,
+        )
+        self.assertGreater(row_id, 0)
+
+        pending = get_pending_telegram_messages(limit=10)
+        found = [p for p in pending if p["update_id"] == test_uid]
+        self.assertEqual(len(found), 1)
+        self.assertEqual(found[0]["text"], "Analyze my code architecture")
+        self.assertEqual(found[0]["status"], "pending")
+
+        mark_telegram_message_processed(test_uid, result_summary="Analysis completed via AST engine")
+        recent = get_recent_telegram_messages(limit=10)
+        found_recent = [r for r in recent if r["update_id"] == test_uid]
+        self.assertEqual(len(found_recent), 1)
+        self.assertEqual(found_recent[0]["status"], "processed")
+        self.assertIn("AST engine", found_recent[0]["result_summary"])
+
+    def test_btw_in_flight_command(self):
+        res_empty = handle_remote_command("whatsapp:+1234567890", "/btw")
+        self.assertIn("In-Flight By-The-Way Query", res_empty)
+
+        res_query = handle_remote_command("whatsapp:+1234567890", "/btw how is CPU load?")
+        self.assertIn("[In-Flight Query", res_query)
+        self.assertIn("Session:", res_query)
+
+    def test_alt_m_and_in_flight_typing(self):
+        from aegis.remote import type_to_desktop
+        ok, msg = type_to_desktop("refactor engine /alt+m", press_enter=True)
+        self.assertTrue(ok)
+        self.assertIn("Alt+M in-flight", msg)
+        self.assertIn("refactor engine", msg)
+
+        res_alt = handle_remote_command("whatsapp:+1234567890", "/alt+m")
+        self.assertIn("In-Flight Signal Sent", res_alt)
+
+        res_type_alt = handle_remote_command("whatsapp:+1234567890", "/type speed up build /alt+m")
+        self.assertIn("Agent Input", res_type_alt)
+        self.assertIn("Alt+M in-flight", res_type_alt)
+
+    def test_handle_incoming_document(self):
+        import tempfile
+        from aegis.remote import handle_incoming_document
+        with tempfile.NamedTemporaryFile("w+", suffix=".py", delete=False) as f:
+            f.write("def sample_test():\n    return 42\n")
+            f_path = Path(f.name)
+        try:
+            res_doc = handle_incoming_document(
+                chat_id="123456789",
+                doc_path=f_path,
+                filename="sample.py",
+                mime_type="text/x-python",
+                caption="Please review this test function",
+            )
+            self.assertIn("Document Received on Desktop", res_doc)
+            self.assertIn("sample.py", res_doc)
+            self.assertIn("sample_test", res_doc)
+        finally:
+            if f_path.exists():
+                f_path.unlink()
+
+    def test_handle_incoming_voice(self):
+        import tempfile
+        from aegis.remote import handle_incoming_voice
+        with tempfile.NamedTemporaryFile("wb", suffix=".oga", delete=False) as f:
+            f.write(b"OggS dummy voice bytes")
+            f_path = Path(f.name)
+        try:
+            res_voice = handle_incoming_voice(
+                chat_id="123456789",
+                audio_path=f_path,
+            )
+            self.assertTrue(len(res_voice) > 0)
+        finally:
+            if f_path.exists():
+                f_path.unlink()
 
 
 if __name__ == "__main__":

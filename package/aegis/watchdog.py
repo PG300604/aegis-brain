@@ -271,4 +271,13 @@ class WatchdogRunner:
                 sweep_tracked_prs()
             except Exception:
                 pass
+
+            # Periodically drain queued Telegram mobile links & reels when host is idle
+            try:
+                from .telegram_queue import TelegramQueue
+                tq = TelegramQueue()
+                tq.drain(idle_only=True, max_items=3)
+            except Exception:
+                pass
+
             self._stop_event.wait(self.interval)

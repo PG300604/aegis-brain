@@ -10,8 +10,19 @@ class TestBriefingAndArsenalOptimizer(unittest.TestCase):
         briefing_md = OfflineBriefingEngine.generate_briefing("Priyanshu")
         self.assertIn("Priyanshu", briefing_md)
         self.assertIn("Completed in Last Session", briefing_md)
+        self.assertIn("Fresh Community & Tech Radar", briefing_md)
         self.assertIn("Offline Updates", briefing_md)
         self.assertIn("What would you like to tackle today?", briefing_md)
+
+    def test_session_close_protocol(self):
+        from aegis.session_close import close_session, format_session_close_display
+        res = close_session(agent_name="test_agent", summary="Test session summary")
+        self.assertIn("session_id", res)
+        self.assertIn("snapshot", res)
+        self.assertEqual(res["status"], "archived")
+        display = format_session_close_display(res)
+        self.assertIn("Session Safely Closed & Archived", display)
+        self.assertIn("/exit", display)
 
     def test_salutation_time_ranges(self):
         self.assertIn("Priyanshu", OfflineBriefingEngine.get_greeting_salutation("Priyanshu"))

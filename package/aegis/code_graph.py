@@ -280,3 +280,78 @@ def get_active_graph(workspace: Optional[Path] = None) -> CodebaseGraph:
         _active_graph_instance = CodebaseGraph(workspace)
         _active_graph_instance.index_workspace()
     return _active_graph_instance
+
+
+def traverse_or_fallback(
+    query: str,
+    workspace: Optional[Path] = None,
+    max_results: int = 10,
+    workspace_dir: Optional[Path] = None,
+) -> Dict[str, Any]:
+    """Traverse codebase knowledge base using AST Graph first; natively fall back to file tree if not found."""
+    target_ws = workspace or workspace_dir
+    graph = get_active_graph(target_ws)
+    matches = graph.query_graph(query, limit=max_results)
+
+    if matches:
+        enriched = []
+        for m in matches:
+            nid = m.get("id")
+            neighbors = graph.get_neighbors(nid) if nid else {"incoming": [], "outgoing": []}
+            enriched.append({
+                "name": m.get("name"),
+                "kind": m.get("kind"),
+                "file_path": m.get("file_path"),
+                "lines": f"{m.get('line_start')}-{m.get('line_end')}",
+                "docstring": m.get("docstring"),
+                "callers": [inc["source"] for inc in neighbors["incoming"][:3]],
+                "callees": [out["target"] for out in neighbors["outgoing"][:3]],
+            })
+        return {
+            "query": query,
+            "strategy": "ast_graph",
+            "matches": enriched,
+            "results": enriched,
+            "matches_count": len(enriched),
+            "fallback_used": False,
+        }
+
+    # Fallback to native recursive file search
+    ws = (target_ws or Path.cwd()).resolve()
+    fallback_matches = []
+    q_lower = query.lower()
+    for root, dirs, files in os.walk(ws):
+        dirs[:] = [d for d in dirs if d not in {".git", "node_modules", ".venv", "__pycache__", ".pytest_cache"}]
+        for fname in files:
+            if fname.endswith((".py", ".ts", ".js", ".json", ".md", ".toml", ".txt")):
+                fp = Path(root) / fname
+                try:
+                    rel_p = str(fp.relative_to(ws))
+                    if q_lower in fname.lower():
+                        fallback_matches.append({"name": fname, "kind": "file", "file_path": rel_p})
+                    else:
+                        with open(fp, "r", encoding="utf-8", errors="ignore") as f:
+                            for idx, line in enumerate(f, 1):
+                                if q_lower in line.lower():
+                                    fallback_matches.append({
+                                        "name": fname,
+                                        "kind": "text_match",
+                                        "file_path": rel_p,
+                                        "line": idx,
+                                        "snippet": line.strip()[:100],
+                                    })
+                                    if len(fallback_matches) >= max_results:
+                                        break
+                except Exception:
+                    continue
+        if len(fallback_matches) >= max_results:
+            break
+
+    return {
+        "query": query,
+        "strategy": "filesystem_fallback",
+        "matches": fallback_matches,
+        "results": fallback_matches,
+        "matches_count": len(fallback_matches),
+        "fallback_used": True,
+    }

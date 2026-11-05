@@ -78,6 +78,21 @@ CREATE TABLE IF NOT EXISTS proactive_alerts (
     acknowledged INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS telegram_inbox (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    update_id INTEGER UNIQUE,
+    chat_id TEXT,
+    sender_username TEXT,
+    sender_name TEXT,
+    message_id INTEGER,
+    text TEXT,
+    extracted_urls TEXT,
+    status TEXT DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    processed_at TIMESTAMP,
+    result_summary TEXT
+);
 """
 
 
@@ -277,4 +292,63 @@ def add_alert(category: str, message: str) -> None:
 def get_active_alerts() -> List[Dict[str, Any]]:
     with get_connection() as conn:
         rows = conn.execute("SELECT * FROM proactive_alerts WHERE acknowledged = 0 ORDER BY created_at DESC").fetchall()
+        return [dict(r) for r in rows]
+
+
+def record_telegram_message(
+    update_id: int,
+    chat_id: str,
+    text: str,
+    sender_username: str = "",
+    sender_name: str = "",
+    message_id: int = 0,
+    extracted_urls: str = "",
+) -> int:
+    """Store an incoming Telegram message into persistent inbox so no prompts are ever lost."""
+    with get_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT OR IGNORE INTO telegram_inbox 
+            (update_id, chat_id, sender_username, sender_name, message_id, text, extracted_urls, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')
+            """,
+            (update_id, str(chat_id), sender_username, sender_name, message_id, text, extracted_urls),
+        )
+        if cur.lastrowid:
+            return cur.lastrowid
+        row = conn.execute("SELECT id FROM telegram_inbox WHERE update_id = ?", (update_id,)).fetchone()
+        return row[0] if row else 0
+
+
+def get_pending_telegram_messages(limit: int = 20) -> List[Dict[str, Any]]:
+    """Retrieve unhandled / pending messages from Telegram inbox."""
+    with get_connection() as conn:
+        rows = conn.execute(
+            "SELECT * FROM telegram_inbox WHERE status = 'pending' ORDER BY id ASC LIMIT ?",
+            (limit,),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
+
+def mark_telegram_message_processed(update_id: int, result_summary: str = "") -> None:
+    """Mark a message as processed with an execution summary."""
+    with get_connection() as conn:
+        conn.execute(
+            """
+            UPDATE telegram_inbox 
+            SET status = 'processed', processed_at = CURRENT_TIMESTAMP, result_summary = ?
+            WHERE update_id = ?
+            """,
+            (result_summary, update_id),
+        )
+
+
+def get_recent_telegram_messages(limit: int = 20) -> List[Dict[str, Any]]:
+    """Retrieve recent telegram messages for audit and replay."""
+    with get_connection() as conn:
+        rows = conn.execute(
+            "SELECT * FROM telegram_inbox ORDER BY id DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
         return [dict(r) for r in rows]

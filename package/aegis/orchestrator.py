@@ -107,7 +107,7 @@ def call_local_worker(prompt: str, model: str = "qwen2.5-coder:7b", endpoint: st
                     text=True,
                     encoding="utf-8",
                     errors="replace",
-                    timeout=5,
+                    timeout=60,
                 )
                 if res.returncode == 0 and res.stdout.strip():
                     raw_out = res.stdout.strip()
@@ -143,7 +143,7 @@ def call_local_worker(prompt: str, model: str = "qwen2.5-coder:7b", endpoint: st
                     text=True,
                     encoding="utf-8",
                     errors="replace",
-                    timeout=5,
+                    timeout=60,
                 )
                 if res.returncode == 0 and res.stdout.strip():
                     return True, res.stdout.strip()
@@ -236,6 +236,35 @@ def run_manager_worker_pipeline(
         )
         conn.commit()
 
+    # 4b. Record Agent Output Confidence Score
+    try:
+        from .confidence import record_score
+        worker_score = 9 if worker_ok else 6
+        record_score(
+            agent_name=active_worker,
+            score=worker_score,
+            accepted=worker_ok,
+            revision_rounds=0 if worker_ok else 1,
+            task_type="code_synthesis",
+            task_description=task[:100],
+        )
+    except Exception:
+        pass
+
+    # 5. Format post-response suggestion panel and truth-seeking review
+    from .survival_mode import format_post_response_suggestions_and_review
+    pipeline_response = (
+        f"👑 *Manager-Worker Execution Complete:*\n\n"
+        f"• *Task:* {task}\n"
+        f"• *Manager (Boss):* `{manager_model}`\n"
+        f"• *Worker (Synthesizer):* `{active_worker}` (Hardware Tier: {tier})\n"
+        f"• *Tokens Saved:* `+{tokens_saved}` tokens\n"
+        f"• *Critique:* {critique}\n\n"
+        f"```python\n{final_code}\n```"
+    )
+    formatted_response = format_post_response_suggestions_and_review(task, pipeline_response)
+    post_suggestions_and_review = format_post_response_suggestions_and_review(task, final_code)
+
     return {
         "status": "success",
         "manager_model": manager_model,
@@ -246,6 +275,8 @@ def run_manager_worker_pipeline(
         "manager_critique": critique,
         "final_code": final_code,
         "tokens_saved_estimate": tokens_saved,
+        "response": formatted_response,
+        "suggestions_and_review": post_suggestions_and_review,
     }
 
 
@@ -286,4 +317,12 @@ def format_distillation_report() -> str:
         for t in summary["recent_trajectories"]:
             lines.append(f"• `[#{t['id']}]` *{t['task']}* (Worker: `{t['worker_model']}`) $\\rightarrow$ +{t['tokens_saved_estimate']} tokens saved")
 
-    return "\n".join(lines)
+    raw_report = "\n".join(lines)
+    from .survival_mode import format_post_response_suggestions_and_review
+    return format_post_response_suggestions_and_review("Distillation Report", raw_report)
+
+
+def orchestrate(task: str, context: str = "", simulate_worker: bool = False) -> str:
+    """Execute manager-worker orchestration and return formatted response with suggestions & review."""
+    res = run_manager_worker_pipeline(task, context=context, simulate_worker=simulate_worker)
+    return res["response"]

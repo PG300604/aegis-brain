@@ -31,8 +31,8 @@ class CaffeinateEngine:
         self._platform = sys.platform
         self._proc: subprocess.Popen | None = None
 
-    def enable(self, keep_display: bool = False) -> Tuple[bool, str]:
-        """Prevent idle system sleep."""
+    def enable(self, keep_display: bool = True, away_mode: bool = False) -> Tuple[bool, str]:
+        """Prevent idle system sleep and display lock while AI tasks execute."""
         if self._active:
             return True, f"Caffeinate already active (running for {int(time.time() - self._started_at)}s)"
 
@@ -43,9 +43,11 @@ class CaffeinateEngine:
         if self._platform == "win32":
             try:
                 import ctypes
-                flags = ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED
+                flags = ES_CONTINUOUS | ES_SYSTEM_REQUIRED
                 if keep_display:
                     flags |= ES_DISPLAY_REQUIRED
+                if away_mode:
+                    flags |= ES_AWAYMODE_REQUIRED
                 ctypes.windll.kernel32.SetThreadExecutionState(flags)
 
                 # Background thread to refresh state every 30s to prevent system overrides
@@ -59,7 +61,9 @@ class CaffeinateEngine:
                 self._thread = threading.Thread(target=_win_pulse, daemon=True, name="AegisCaffeinatePulse")
                 self._thread.start()
                 self._active = True
-                return True, "Caffeinate enabled on Windows (AwayMode & System Required active)"
+                self._suppress_dynamic_lock()
+                self._suppress_screensaver()
+                return True, "Caffeinate enabled on Windows (Display & System keep-awake active)"
             except Exception as e:
                 return False, f"Failed to activate Windows wake-lock: {e}"
 
@@ -98,6 +102,8 @@ class CaffeinateEngine:
         if not self._active:
             return True, "Caffeinate is already inactive"
 
+        self._restore_dynamic_lock()
+        self._restore_screensaver()
         self._stop_event.set()
         duration = int(time.time() - self._started_at) if self._started_at else 0
 
@@ -134,6 +140,62 @@ class CaffeinateEngine:
             "uptime_seconds": uptime,
             "started_at": datetime.fromtimestamp(self._started_at, timezone.utc).isoformat() if self._active else None,
         }
+
+    def _suppress_dynamic_lock(self) -> None:
+        """Temporarily disable Dynamic Lock during active agent sessions."""
+        if self._platform != "win32":
+            return
+        try:
+            import winreg
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                r"Software\Microsoft\Windows NT\CurrentVersion\Winlogon",
+                0, winreg.KEY_SET_VALUE)
+            winreg.SetValueEx(key, "EnableGoodbye", 0, winreg.REG_DWORD, 0)
+            winreg.CloseKey(key)
+        except Exception:
+            pass
+
+    def _restore_dynamic_lock(self) -> None:
+        """Re-enable Dynamic Lock when agent session ends."""
+        if self._platform != "win32":
+            return
+        try:
+            import winreg
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                r"Software\Microsoft\Windows NT\CurrentVersion\Winlogon",
+                0, winreg.KEY_SET_VALUE)
+            winreg.SetValueEx(key, "EnableGoodbye", 0, winreg.REG_DWORD, 1)
+            winreg.CloseKey(key)
+        except Exception:
+            pass
+
+    def _suppress_screensaver(self) -> None:
+        """Temporarily disable Windows screensaver during active agent sessions."""
+        if self._platform != "win32":
+            return
+        try:
+            import winreg
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                r"Control Panel\Desktop",
+                0, winreg.KEY_SET_VALUE)
+            winreg.SetValueEx(key, "ScreenSaveActive", 0, winreg.REG_SZ, "0")
+            winreg.CloseKey(key)
+        except Exception:
+            pass
+
+    def _restore_screensaver(self) -> None:
+        """Re-enable Windows screensaver when agent session ends."""
+        if self._platform != "win32":
+            return
+        try:
+            import winreg
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                r"Control Panel\Desktop",
+                0, winreg.KEY_SET_VALUE)
+            winreg.SetValueEx(key, "ScreenSaveActive", 0, winreg.REG_SZ, "1")
+            winreg.CloseKey(key)
+        except Exception:
+            pass
 
     def lock_workstation(self) -> Tuple[bool, str]:
         """Instantly lock workstation screen while keeping background agents and Caffeinate active."""
@@ -262,8 +324,8 @@ class CaffeinateEngine:
 _engine = CaffeinateEngine()
 
 
-def enable_caffeinate(keep_display: bool = False) -> Tuple[bool, str]:
-    return _engine.enable(keep_display=keep_display)
+def enable_caffeinate(keep_display: bool = True, away_mode: bool = False) -> Tuple[bool, str]:
+    return _engine.enable(keep_display=keep_display, away_mode=away_mode)
 
 
 def disable_caffeinate() -> Tuple[bool, str]:

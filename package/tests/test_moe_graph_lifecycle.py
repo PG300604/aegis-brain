@@ -131,3 +131,24 @@ def test_matt_pocock_clarification_gate():
     gate_display = format_clarification_gate(ambiguous_prompt, eval_res)
     assert "Matt Pocock Clarification Gate" in gate_display
     assert "Storage Backend" in gate_display
+
+
+def test_traverse_or_fallback_ast_and_filesystem(tmp_path):
+    from aegis.code_graph import traverse_or_fallback
+    file_a = tmp_path / "model.py"
+    file_a.write_text("class CustomerProfile:\n    def get_id(self):\n        return 123\n", encoding="utf-8")
+
+    file_b = tmp_path / "notes.txt"
+    file_b.write_text("Legacy reference keyword: UNIQUE_LEGACY_TOKEN_XYZ", encoding="utf-8")
+
+    # 1. AST Graph match first
+    res_ast = traverse_or_fallback("CustomerProfile", workspace_dir=tmp_path)
+    assert res_ast["strategy"] == "ast_graph"
+    assert len(res_ast["matches"]) >= 1
+    assert res_ast["matches"][0]["name"] == "CustomerProfile"
+
+    # 2. Filesystem fallback when AST misses
+    res_fs = traverse_or_fallback("UNIQUE_LEGACY_TOKEN_XYZ", workspace_dir=tmp_path)
+    assert res_fs["strategy"] == "filesystem_fallback"
+    assert len(res_fs["matches"]) >= 1
+    assert "notes.txt" in res_fs["matches"][0]["file_path"]

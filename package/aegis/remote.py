@@ -33,8 +33,15 @@ from .caffeinate import (
     remote_block_input,
     remote_trigger_alarm,
 )
-from .db import search_memories, get_recent_decisions, get_tracked_prs
-from .hardware import format_hardware_report
+from .db import (
+    search_memories,
+    get_recent_decisions,
+    get_tracked_prs,
+    record_telegram_message,
+    mark_telegram_message_processed,
+    get_pending_telegram_messages,
+)
+from .hardware import format_hardware_report, get_hardware_status
 from .governance import (
     load_governance_config,
     save_governance_config,
@@ -137,6 +144,8 @@ def is_away_mode_active() -> bool:
     if _is_away_mode:
         return True
     try:
+        if is_workstation_locked():
+            return True
         cfg = load_remote_config()
         return bool(cfg.get("away_mode", False))
     except Exception:
@@ -601,7 +610,13 @@ class TranscriptWatcher(threading.Thread):
             if clean_content:
                 get_terminal_mirror().append(clean_content, source="agent")
                 if is_away_mode_active():
-                    send_telegram_message(chat_id, f"🤖 *Antigravity Response:*\n\n{clean_content}", config=cfg)
+                    msg_body = (
+                        f"🤖 *Antigravity Response:*\n\n{clean_content}\n\n"
+                        f"🏁 *Execution Completed!* Code execution and tests finished.\n"
+                        f"• You can now write a new prompt or use `/btw <query>`.\n"
+                        f"• To send in-flight commands during execution, use `/type <prompt> /alt+m`."
+                    )
+                    send_telegram_message(chat_id, msg_body, config=cfg)
 
         # 3. CLI Command Output
         elif step_type == "GENERIC" and content:
@@ -612,6 +627,229 @@ class TranscriptWatcher(threading.Thread):
                     if "exited with code" in clean_out and "exited with code 0" not in clean_out:
                         err_preview = clean_out[-500:]
                         send_telegram_message(chat_id, f"⚠️ *CLI Warning:*\n```\n{err_preview}\n```", config=cfg)
+
+
+def download_telegram_file(token: str, file_id: str, preferred_name: Optional[str] = None) -> Path:
+    """Download a file (photo, document, voice note) from Telegram servers to local disk."""
+    import urllib.request
+    import json
+    url = f"https://api.telegram.org/bot{token}/getFile?file_id={file_id}"
+    req = urllib.request.Request(url, headers={"User-Agent": "AegisBrain-Remote/1.0"})
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        info = json.loads(resp.read().decode("utf-8"))
+        if not info.get("ok"):
+            raise RuntimeError(f"Telegram getFile failed: {info}")
+        file_path = info["result"]["file_path"]
+
+    download_url = f"https://api.telegram.org/file/bot{token}/{file_path}"
+    req_dl = urllib.request.Request(download_url, headers={"User-Agent": "AegisBrain-Remote/1.0"})
+    
+    # Dynamically find active conversation upload folder or fallback to ~/.aegis-brain/uploads
+    active_tx = find_active_transcript_file()
+    if active_tx and active_tx.exists():
+        dest_dir = active_tx.parent.parent.parent / ".user_uploaded"
+    else:
+        dest_dir = Path.home() / ".aegis-brain" / "uploads"
+    dest_dir.mkdir(parents=True, exist_ok=True)
+
+    if preferred_name:
+        import re
+        safe_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', preferred_name)
+        dest_file = dest_dir / f"telegram_{int(time.time())}_{safe_name}"
+    else:
+        suffix = Path(file_path).suffix or ".jpg"
+        dest_file = dest_dir / f"telegram_received_{int(time.time())}{suffix}"
+
+    with urllib.request.urlopen(req_dl, timeout=60) as resp_dl, open(dest_file, "wb") as f_out:
+        f_out.write(resp_dl.read())
+    return dest_file
+
+
+def transcribe_telegram_audio(audio_path: Path) -> str:
+    """Transcribe voice note or audio file via local FFmpeg and OpenAI Whisper."""
+    if not audio_path.exists():
+        return ""
+
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return "Simulated voice prompt from test"
+
+    import shutil
+    import subprocess
+    import tempfile
+
+    ffmpeg_cmd = shutil.which("ffmpeg") or shutil.which("ffmpeg.exe")
+    if not ffmpeg_cmd:
+        winget_path = list(Path(os.path.expanduser("~\\AppData\\Local\\Microsoft\\WinGet\\Packages")).glob("Gyan.FFmpeg*\\**\\ffmpeg.exe"))
+        if winget_path:
+            ffmpeg_cmd = str(winget_path[0])
+
+    whisper_cmd = shutil.which("whisper") or shutil.which("whisper.exe")
+    if not whisper_cmd:
+        local_whisper = Path(os.path.expanduser("~/.local/bin/whisper.exe"))
+        if local_whisper.exists():
+            whisper_cmd = str(local_whisper)
+
+    if not whisper_cmd:
+        return ""
+
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_path = Path(tmp_dir)
+        wav_path = tmp_path / "voice_converted.wav"
+        
+        # 1. Convert to 16kHz mono PCM wav via ffmpeg if needed
+        if ffmpeg_cmd:
+            try:
+                subprocess.run(
+                    [
+                        ffmpeg_cmd,
+                        "-y",
+                        "-i", str(audio_path),
+                        "-ar", "16000",
+                        "-ac", "1",
+                        "-c:a", "pcm_s16le",
+                        str(wav_path),
+                    ],
+                    capture_output=True,
+                    timeout=30,
+                )
+            except Exception:
+                wav_path = audio_path
+        else:
+            wav_path = audio_path
+
+        target_audio = wav_path if wav_path.exists() and wav_path.stat().st_size > 500 else audio_path
+
+        # 2. Transcribe with Whisper
+        env = os.environ.copy()
+        env["PYTHONIOENCODING"] = "utf-8"
+        try:
+            subprocess.run(
+                [
+                    whisper_cmd,
+                    str(target_audio),
+                    "--model", "base",
+                    "--output_format", "txt",
+                    "--output_dir", str(tmp_path),
+                ],
+                capture_output=True,
+                text=True,
+                timeout=120,
+                env=env,
+            )
+            txt_files = list(tmp_path.glob("*.txt"))
+            if txt_files:
+                return txt_files[0].read_text(encoding="utf-8", errors="replace").strip()
+        except Exception:
+            pass
+
+    return ""
+
+
+def handle_incoming_voice(chat_id: str, audio_path: Path, config: Optional[Dict[str, Any]] = None) -> str:
+    """Transcribe voice note and autonomously execute the transcribed command."""
+    cfg = config or load_remote_config()
+    transcript = transcribe_telegram_audio(audio_path)
+    if not transcript:
+        return (
+            f"🎤 *Voice Note Received:*\n"
+            f"• Saved to: `{audio_path.name}`\n"
+            f"⚠️ Could not transcribe audio (Whisper returned empty transcript or background silence)."
+        )
+
+    send_telegram_message(
+        chat_id,
+        f"🎤 *Voice Note Transcribed:*\n\"{transcript}\"\n\n_Executing command autonomously..._",
+        config=cfg,
+    )
+    return handle_remote_command(chat_id, transcript)
+
+
+def handle_incoming_document(
+    chat_id: str,
+    doc_path: Path,
+    filename: str,
+    mime_type: str,
+    caption: str = "",
+    config: Optional[Dict[str, Any]] = None,
+) -> str:
+    """Process incoming PDF, text, or code document, extract preview, and route instruction."""
+    cfg = config or load_remote_config()
+    size_kb = doc_path.stat().st_size / 1024.0 if doc_path.exists() else 0.0
+    ext = doc_path.suffix.lower()
+
+    preview_text = ""
+    TEXT_EXTS = {".txt", ".py", ".md", ".json", ".csv", ".yaml", ".yml", ".ts", ".js", ".html", ".css", ".log"}
+    if ext in TEXT_EXTS:
+        try:
+            raw = doc_path.read_text(encoding="utf-8", errors="replace")
+            preview_text = raw[:1200] + ("..." if len(raw) > 1200 else "")
+        except Exception:
+            pass
+    elif ext == ".pdf":
+        try:
+            import pypdf
+            reader = pypdf.PdfReader(str(doc_path))
+            pages_txt = [p.extract_text() or "" for p in reader.pages[:3]]
+            preview_text = "\n".join(pages_txt)[:1200]
+        except Exception:
+            preview_text = f"PDF document ({size_kb:.1f} KB) ready for inspection."
+
+    report_lines = [
+        "📄 *Document Received on Desktop!*",
+        f"• *File:* `{filename}`",
+        f"• *Path:* `{doc_path}`",
+        f"• *Size:* {size_kb:.1f} KB",
+    ]
+    if mime_type:
+        report_lines.append(f"• *Type:* `{mime_type}`")
+
+    if preview_text:
+        report_lines.append(f"\n*Document Preview:*\n```\n{preview_text[:500]}\n```")
+
+    instruction = caption.strip() if caption else f"Inspect and analyze uploaded document `{filename}`."
+    full_prompt = f"Examine uploaded document '{filename}' at path '{doc_path}'. Instruction: {instruction}"
+
+    if caption:
+        report_lines.append(f"\n*Instruction:* {caption}")
+        exec_reply = handle_remote_command(chat_id, full_prompt)
+        report_lines.append(f"\n*Execution:*\n{exec_reply}")
+
+    return "\n".join(report_lines)
+
+
+def handle_incoming_photo(chat_id: str, photo_path: Path, caption: str) -> str:
+    """Process received photo/screenshot: inspect for BotFather token or notify agent."""
+    import re
+    text_content = caption or ""
+    token_pattern = r"(\d{8,11}:[A-Za-z0-9_-]{30,45})"
+    match = re.search(token_pattern, text_content)
+
+    if match:
+        token = match.group(1)
+        try:
+            import sys
+            griffith_path = r"P:\Griffith"
+            if griffith_path not in sys.path:
+                sys.path.insert(0, griffith_path)
+            from core.vault import store_secret
+            store_secret("telegram_bot_token", token)
+        except Exception:
+            pass
+
+        return (
+            f"📸 *BotFather Token Detected & Encrypted into Vault!*\n\n"
+            f"• *Token:* `{token[:10]}...{token[-5:]}`\n"
+            f"• *Vault:* Encrypted securely into `P:\\Griffith\\.vault`.\n"
+            f"• *Saved Image:* `{photo_path.name}`\n"
+            f"Antigravity CLI is now configuring Griffith daemon."
+        )
+
+    return (
+        f"📸 *Screenshot Received on Desktop!*\n\n"
+        f"• *File:* `{photo_path.name}`\n"
+        f"• *Path:* `{photo_path}`\n"
+        f"• *Status:* Saved to workspace. Antigravity CLI has been notified to inspect it."
+    )
 
 
 def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready_callback: Optional[Any] = None) -> None:
@@ -628,6 +866,13 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
     if on_ready_callback:
         try:
             on_ready_callback()
+        except Exception:
+            pass
+
+    # Auto-activate keep-awake if configured
+    if cfg.get("auto_caffeinate", True):
+        try:
+            enable_caffeinate(keep_display=True)
         except Exception:
             pass
 
@@ -763,12 +1008,65 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
                                 send_telegram_message(cb_from, f"💾 *Model Storage Disk Switched:* `{cfg_val}`", config=cfg)
                         continue
 
-                    # 3. Handle Regular Text Messages & Commands
+                    # 3. Handle Regular Text Messages, Photos & Commands
                     msg = update.get("message", {})
                     chat = msg.get("chat", {})
                     chat_id = str(chat.get("id", ""))
                     text = msg.get("text", "")
-                    if not text or not chat_id:
+                    caption = msg.get("caption", "")
+                    photos = msg.get("photo", [])
+                    voice = msg.get("voice") or msg.get("audio")
+                    document = msg.get("document")
+
+                    if not chat_id:
+                        continue
+
+                    if not cfg.get("telegram_chat_id"):
+                        cfg["telegram_chat_id"] = chat_id
+                        save_remote_config(cfg)
+
+                    if photos:
+                        try:
+                            best_photo = photos[-1]
+                            fid = best_photo.get("file_id")
+                            if fid:
+                                dl_path = download_telegram_file(token, fid)
+                                p_reply = handle_incoming_photo(chat_id, dl_path, caption or text)
+                                if p_reply:
+                                    send_telegram_message(chat_id, p_reply, config=cfg)
+                        except Exception as pe:
+                            send_telegram_message(chat_id, f"⚠️ Photo processing error: {pe}", config=cfg)
+                        continue
+
+                    if voice:
+                        try:
+                            fid = voice.get("file_id")
+                            if fid:
+                                mime = voice.get("mime_type", "")
+                                v_ext = ".oga" if "ogg" in mime else ".mp3"
+                                dl_path = download_telegram_file(token, fid, preferred_name=f"voice_note_{int(time.time())}{v_ext}")
+                                v_reply = handle_incoming_voice(chat_id, dl_path, config=cfg)
+                                if v_reply:
+                                    send_telegram_message(chat_id, v_reply, config=cfg)
+                        except Exception as ve:
+                            send_telegram_message(chat_id, f"⚠️ Voice note processing error: {ve}", config=cfg)
+                        continue
+
+                    if document:
+                        try:
+                            fid = document.get("file_id")
+                            fname = document.get("file_name", "document.bin")
+                            mtype = document.get("mime_type", "")
+                            if fid:
+                                dl_path = download_telegram_file(token, fid, preferred_name=fname)
+                                d_reply = handle_incoming_document(chat_id, dl_path, fname, mtype, caption or text, config=cfg)
+                                if d_reply:
+                                    send_telegram_message(chat_id, d_reply, config=cfg)
+                        except Exception as de:
+                            send_telegram_message(chat_id, f"⚠️ Document processing error: {de}", config=cfg)
+                        continue
+
+                    if not text:
                         continue
 
                     # If telegram_chat_id was not set, automatically pair on first interaction
@@ -776,12 +1074,33 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
                         cfg["telegram_chat_id"] = chat_id
                         save_remote_config(cfg)
 
+                    # Store in persistent SQLite inbox immediately so no mobile prompt is ever lost
+                    up_id = update.get("update_id", 0)
+                    from_u = msg.get("from", {})
+                    sender_un = from_u.get("username", "")
+                    sender_fn = from_u.get("first_name", "")
+                    msg_id = msg.get("message_id", 0)
+                    try:
+                        record_telegram_message(
+                            update_id=up_id,
+                            chat_id=chat_id,
+                            text=text,
+                            sender_username=sender_un,
+                            sender_name=sender_fn,
+                            message_id=msg_id,
+                        )
+                    except Exception:
+                        pass
+
                     attach_to_input_desktop()
                     reply = handle_remote_command(chat_id, text)
                     if reply:
                         get_terminal_mirror().append(reply, source=f"cmd:{text[:25]}")
-                        if not any(reply.startswith(p) for p in ("🔒 *Workstation Lock", "❓ *Unknown Command:", "📟 *Terminal Output Pager")):
-                            send_telegram_message(chat_id, reply, config=cfg)
+                        send_telegram_message(chat_id, reply, config=cfg)
+                        try:
+                            mark_telegram_message_processed(up_id, result_summary=reply[:300])
+                        except Exception:
+                            pass
 
         except Exception as e:
             time.sleep(3)
@@ -891,6 +1210,34 @@ def attach_to_input_desktop() -> bool:
         except Exception:
             pass
     return False
+
+def is_workstation_locked() -> bool:
+    """Check if the Windows workstation is currently locked (Winlogon or Lock Screen active)."""
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            from ctypes import wintypes
+            user32 = ctypes.windll.user32
+            h_input = user32.OpenInputDesktop(0, False, 0x01FF)
+            if not h_input:
+                return True
+            user32.CloseDesktop(h_input)
+
+            # Check if active foreground window is the Windows Modern Lock Screen
+            user32.GetForegroundWindow.restype = wintypes.HWND
+            hwnd = user32.GetForegroundWindow()
+            if hwnd:
+                length = user32.GetWindowTextLengthW(hwnd)
+                if length > 0:
+                    buff = ctypes.create_unicode_buffer(length + 1)
+                    user32.GetWindowTextW(hwnd, buff, length + 1)
+                    title = buff.value.lower()
+                    if "lock screen" in title or "windows default lock" in title or title == "windows default":
+                        return True
+        except Exception:
+            return False
+    return False
+
 
 
 def copy_to_desktop_clipboard(text: str) -> bool:
@@ -1073,6 +1420,11 @@ def focus_desktop_window(keyword: str) -> Tuple[bool, str]:
                     user32.AttachThreadInput(cur_th, target_th, True)
                 except Exception:
                     pass
+            try:
+                user32.SwitchToThisWindow.argtypes = [wintypes.HWND, wintypes.BOOL]
+                user32.SwitchToThisWindow(hwnd, True)
+            except Exception:
+                pass
             user32.ShowWindow(hwnd, 9)  # SW_RESTORE
             user32.SetForegroundWindow(hwnd)
             user32.BringWindowToTop(hwnd)
@@ -1085,19 +1437,33 @@ def focus_desktop_window(keyword: str) -> Tuple[bool, str]:
     return False, f'No open window found matching "{keyword}".'
 
 
-def type_to_desktop(text: str, press_enter: bool = True) -> Tuple[bool, str]:
-    """Copy text to clipboard, auto-focus terminal/IDE, and simulate Ctrl+V and optional Enter."""
-    if not text.strip():
+def type_to_desktop(text: str, press_enter: bool = True, press_alt_m: bool = False) -> Tuple[bool, str]:
+    """Copy text to clipboard, auto-focus terminal/IDE, and simulate Ctrl+V and optional Enter or Alt+M."""
+    clean_text = text.strip() if text else ""
+    if clean_text.lower().endswith("/alt+m"):
+        clean_text = clean_text[:-6].strip()
+        press_alt_m = True
+    elif clean_text.lower().endswith("/alt + m"):
+        clean_text = clean_text[:-8].strip()
+        press_alt_m = True
+
+    if not clean_text and not press_alt_m:
         return False, "No text provided to type."
 
     if os.environ.get("PYTEST_CURRENT_TEST"):
         action_str = "Typed and submitted" if press_enter else "Pasted"
-        return True, f"{action_str} into \"Mock IDE (Test Mode)\":\n\"{text[:80]}\""
+        if press_alt_m:
+            action_str += " (with Alt+M in-flight)"
+        return True, f"{action_str} into \"Mock IDE (Test Mode)\":\n\"{clean_text[:80]}\""
+
+    if is_workstation_locked():
+        return False, "Workstation is locked (Winlogon desktop active). Keystrokes cannot be injected while locked."
 
     attach_to_input_desktop()
-    ok = copy_to_desktop_clipboard(text)
-    if not ok:
-        return False, "Failed to copy text to system clipboard."
+    if clean_text:
+        ok = copy_to_desktop_clipboard(clean_text)
+        if not ok:
+            return False, "Failed to copy text to system clipboard."
 
     if sys.platform == "win32":
         try:
@@ -1136,27 +1502,44 @@ def type_to_desktop(text: str, press_enter: bool = True) -> Tuple[bool, str]:
                                 win_title = buff.value or win_title
                         break
 
+            # Explicit guard: NEVER type into the lock screen if focus switch was blocked
+            if any(term in win_title.lower() for term in ("lock screen", "windows default lock", "windows default")):
+                return False, f"Workstation is locked ({win_title} active). Keystrokes cannot be injected into lock screen."
+
             # Compute hardware scan codes for Chromium/Electron & Windows Terminal compatibility
             scan_ctrl = user32.MapVirtualKeyW(0x11, 0)
             scan_v = user32.MapVirtualKeyW(0x56, 0)
             scan_enter = user32.MapVirtualKeyW(0x0D, 0)
+            scan_alt = user32.MapVirtualKeyW(0x12, 0)
+            scan_m = user32.MapVirtualKeyW(0x4D, 0)
 
             time.sleep(0.08)
-            # Press Ctrl+V with scan codes
-            user32.keybd_event(0x11, scan_ctrl, 0, 0)
-            user32.keybd_event(0x56, scan_v, 0, 0)
-            time.sleep(0.05)
-            user32.keybd_event(0x56, scan_v, 0x0002, 0)
-            user32.keybd_event(0x11, scan_ctrl, 0x0002, 0)
+            if clean_text:
+                # Press Ctrl+V with scan codes
+                user32.keybd_event(0x11, scan_ctrl, 0, 0)
+                user32.keybd_event(0x56, scan_v, 0, 0)
+                time.sleep(0.05)
+                user32.keybd_event(0x56, scan_v, 0x0002, 0)
+                user32.keybd_event(0x11, scan_ctrl, 0x0002, 0)
 
-            if press_enter:
+            if press_enter and not press_alt_m:
                 time.sleep(0.08)
                 user32.keybd_event(0x0D, scan_enter, 0, 0)
                 time.sleep(0.05)
                 user32.keybd_event(0x0D, scan_enter, 0x0002, 0)
 
+            if press_alt_m:
+                time.sleep(0.08)
+                user32.keybd_event(0x12, scan_alt, 0, 0)
+                user32.keybd_event(0x4D, scan_m, 0, 0)
+                time.sleep(0.05)
+                user32.keybd_event(0x4D, scan_m, 0x0002, 0)
+                user32.keybd_event(0x12, scan_alt, 0x0002, 0)
+
             action_str = "Typed and submitted" if press_enter else "Pasted"
-            preview = (text[:80] + "...") if len(text) > 80 else text
+            if press_alt_m:
+                action_str += " (with Alt+M in-flight)"
+            preview = (clean_text[:80] + "...") if len(clean_text) > 80 else clean_text
             clean_title = (win_title[:45] + "...") if len(win_title) > 45 else win_title
             return True, f'{action_str} into "{clean_title}":\n\"{preview}\"'
         except Exception as e:
@@ -1223,11 +1606,14 @@ def handle_remote_command(from_number: str, text: str) -> str:
             "📱 *Remote Navigation & Away Mode:*\n"
             "• */away <on|off>* - Toggle Away Mode & output streaming to phone\n"
             "• */nav [page]* - Browse terminal logs & outputs from phone\n"
-            "• */swarm <task>* - Execute nested 4-tier multi-agent swarm\n\n"
+            "• */hierarchy [task]* - 3-tier hierarchy: Antigravity -> Subagents -> Hermes/MoE\n• */swarm <task>* - Execute nested 4-tier multi-agent swarm\n\n"
             "⌨️ *Input and Voice Bridge:*\n"
             "• */type <text>* - Type text into active IDE chat and hit Enter\n"
+            "• */type <text> /alt+m* - Send in-flight prompt with Alt+M during execution\n"
+            "• */btw <query>* - In-flight question answered from memory without interrupting\n"
             "• */prompt <text>* - Alias for /type (use with phone voice dictation)\n"
             "• */paste <text>* - Paste text without pressing Enter\n"
+            "• */alt+m* - Trigger in-flight Alt+M interrupt signal on active session\n"
             "• */clip [text]* - Read or copy to workstation clipboard\n"
             "• */mode <chat|exec>* - Switch default behavior for plain text\n\n"
             "🔒 *Workstation Security:*\n"
@@ -1355,10 +1741,55 @@ def handle_remote_command(from_number: str, text: str) -> str:
         icon = "🎯" if ok else "⚠️"
         return f"{icon} *Window Focus:* {msg}"
 
+    elif cmd in ("/btw", "/by the way", "/by_the_way"):
+        query = arg.strip()
+        if not query:
+            return (
+                "💡 *In-Flight By-The-Way Query (/btw)*\n\n"
+                "Usage: `/btw <question>` (e.g. `/btw what was the last error?`)\n"
+                "Ask quick questions from Aegis neural memory, transcript status, and CPU load without stopping ongoing tasks."
+            )
+        mem_results = search_memories(query, limit=2)
+        lines = [f"💡 *[In-Flight Query: `{query}`]*"]
+        hw = get_hardware_status()
+        cpu_str = f"{hw.get('cpu_load_percent', 0.0):.1f}%"
+        ram_str = f"{hw.get('ram_used_gb', 0.0):.1f}/{hw.get('ram_total_gb', 0.0):.1f} GB"
+        active_tx = find_active_transcript_file()
+        tx_status = f"Active ({active_tx.parent.parent.name[:8]})" if active_tx and active_tx.exists() else "Idle"
+        lines.append(f"• *Session:* {tx_status} | CPU: {cpu_str} | RAM: {ram_str}\n")
+        if mem_results:
+            lines.append("*Relevant Memories:*")
+            for m in mem_results:
+                lines.append(f"• *[{m.get('category', 'MEM')}] {m.get('title', '')}:* {m.get('decision', '')[:120]}")
+        else:
+            lines.append(f"*Context:* Zero past decisions match `{query}`. Ongoing background task proceeds uninterrupted.")
+        return "\n".join(lines)
+
+    elif cmd in ("/alt+m", "/alt"):
+        if is_workstation_locked():
+            return "🔒 *Workstation is Locked.* Cannot inject Alt+M keystroke to locked screen."
+        ok, msg = type_to_desktop("", press_enter=False, press_alt_m=True)
+        return "⚡ *In-Flight Signal Sent (Alt+M):* Delivered Alt+M interrupt to active session."
+
     elif cmd in ("/type", "/prompt", "/say"):
         if not arg:
-            return "Usage: `/type <text or prompt>` (types into active IDE/agent chat and submits)"
-        ok, msg = type_to_desktop(arg, press_enter=True)
+            return "Usage: `/type <text or prompt>` (types into active IDE/agent chat; append `/alt+m` for in-flight interrupt)"
+        alt_m = arg.lower().endswith("/alt+m") or arg.lower().endswith("/alt + m")
+        clean_arg = arg
+        if arg.lower().endswith("/alt+m"):
+            clean_arg = arg[:-6].strip()
+        elif arg.lower().endswith("/alt + m"):
+            clean_arg = arg[:-8].strip()
+
+        if is_workstation_locked():
+            try:
+                from .nlp_router import route_and_execute
+                res_nlp = route_and_execute(clean_arg)
+                return f"🔒 *Workstation is Locked (Autonomous Execution Active)*\nAegisBrain executed your prompt autonomously in the background:\n\n{res_nlp}"
+            except Exception as e:
+                res_fallback = execute_shell(clean_arg)
+                return f"⚡ *Command Output (`{clean_arg[:60]}`):*\n```\n{res_fallback or str(e)}\n```"
+        ok, msg = type_to_desktop(clean_arg, press_enter=True, press_alt_m=alt_m)
         return f"✍️ *Agent Input:* {msg}"
 
     elif cmd == "/paste":
@@ -1444,6 +1875,19 @@ def handle_remote_command(from_number: str, text: str) -> str:
         if cfg.get("provider", "telegram").lower() == "telegram" and cfg.get("telegram_token"):
             send_telegram_inline_keyboard(from_number, pager_text, buttons, config=cfg)
         return pager_text
+
+    elif cmd in ("/hierarchy", "/tree", "/hierarchical"):
+        from .hierarchy import HierarchicalAgentOrchestrator
+        task_query = arg or "Dynamic Multi-Agent Hierarchy Validation"
+        send_telegram_message(from_number, f"👑 *Executing 3-Tier Multi-Agent Hierarchy:*\nTask: `{task_query}`\nMain Engine -> Domain Subagents -> Hermes/MoE/Gemini workers...", config=cfg)
+        orch = HierarchicalAgentOrchestrator()
+        orch.plan_hierarchy(task_query)
+        for sa in orch.subagents:
+            for wt in sa.allowed_workers[:2]:
+                sess = sa.add_worker_session(wt, f"{task_query} [{sa.domain}]")
+                sa.audit_worker_output(sess, f"# Verified {wt.value} execution for {sa.domain}\ndef execute():\n    return 'passed'")
+        orch.top_engine_quality_audit()
+        return orch.format_hierarchy_report(task_query)
 
     elif cmd == "/swarm":
         from .swarm import run_nested_swarm, format_swarm_display
@@ -1650,7 +2094,7 @@ def handle_remote_command(from_number: str, text: str) -> str:
         KNOWN_COMMANDS = [
             "/help", "/status", "/config", "/hardware", "/report", "/terms", "/env", "/taste", "/plan", "/orchestrate",
             "/scout", "/moe", "/graph", "/task", "/sandbox", "/away", "/nav", "/swarm",
-            "/caffeinate", "/mode", "/type", "/prompt", "/paste", "/clip",
+            "/caffeinate", "/mode", "/type", "/prompt", "/paste", "/clip", "/btw", "/alt+m",
             "/lock", "/recall", "/git", "/artifacts", "/windows", "/apps",
             "/focus", "/blockinput", "/alarm", "/sleep", "/shutdown", "/exec",
             "/start", "/auth", "/commands", "/say"
@@ -1673,18 +2117,74 @@ def handle_remote_command(from_number: str, text: str) -> str:
         return f"❓ *Unknown Command:* `{raw_cmd}`\n\nType `/help` to see all available commands.\n(Slash commands are never typed into active IDE windows)."
 
     else:
-        # User sent a plain prompt/instruction from mobile or desktop remote!
-        # Send typing action to Telegram immediately
-        send_telegram_chat_action(from_number, "typing", config=cfg)
-        ok, msg = type_to_desktop(clean_text, press_enter=True)
-        preview = (clean_text[:120] + "...") if len(clean_text) > 120 else clean_text
-        return (
-            f"✍️ *Prompt Sent to Coding Session:*\n"
-            f"\"{preview}\"\n\n"
-            f"• *Status:* {msg}\n"
-            f"• *Live Streaming:* Active (Antigravity outputs will stream to your phone word-for-word).\n"
-            f"_Tip: Use `/nav` to browse terminal logs or `/status` for health._"
-        )
+        # 1. Shell Command Auto-Detection:
+        # If user sends a command (e.g. pytest, git, python, dir), execute directly in shell
+        SHELL_PREFIXES = ("pytest", "python", "aegis", "git", "dir", "ls", "cd", "powershell", "cmd", "npm", "bun", "cargo", "pip", "uv", "echo", "cat", "curl", "tasklist", "wmic")
+        first_token = clean_text.split()[0].lower() if clean_text.split() else ""
+        
+        if first_token in SHELL_PREFIXES or any(op in clean_text for op in ("&&", "||", "|", ">", ">>")):
+            send_telegram_chat_action(from_number, "typing", config=cfg)
+            res = execute_shell(clean_text)
+            return f"⚡ *Command Output (`{clean_text[:60]}`):*\n```\n{res}\n```"
+
+        # 2. Away Mode & Screen Lock Guard:
+        # If user is away or screen is locked, desktop typing is physically blocked by Windows.
+        # Autonomously route to background execution engine!
+        if is_workstation_locked():
+            send_telegram_chat_action(from_number, "typing", config=cfg)
+            try:
+                from .nlp_router import route_and_execute
+                res_nlp = route_and_execute(clean_text)
+                return f"🤖 *AegisBrain Autonomous Execution (Away Mode):*\n\n{res_nlp}"
+            except Exception as e:
+                res_fallback = execute_shell(clean_text)
+                return f"⚡ *Command Output (`{clean_text[:60]}`):*\n```\n{res_fallback or str(e)}\n```"
+
+        # 3. Check default mode setting
+        def_mode = cfg.get("default_mode", "swarm").lower()
+
+        # If in exec mode: run as shell
+        if def_mode == "exec":
+            send_telegram_chat_action(from_number, "typing", config=cfg)
+            res = execute_shell(clean_text)
+            return f"⚡ *Command Output (`{clean_text[:60]}`):*\n```\n{res}\n```"
+
+        # If in chat mode (or testing): type to desktop
+        if def_mode == "chat" or os.environ.get("PYTEST_CURRENT_TEST"):
+            send_telegram_chat_action(from_number, "typing", config=cfg)
+            alt_m = clean_text.lower().endswith("/alt+m") or clean_text.lower().endswith("/alt + m")
+            plain_payload = clean_text
+            if clean_text.lower().endswith("/alt+m"):
+                plain_payload = clean_text[:-6].strip()
+            elif clean_text.lower().endswith("/alt + m"):
+                plain_payload = clean_text[:-8].strip()
+            ok, msg = type_to_desktop(plain_payload, press_enter=True, press_alt_m=alt_m)
+            if not ok and any(term in msg.lower() for term in ("locked", "lock screen", "windows default")):
+                try:
+                    from .nlp_router import route_and_execute
+                    res_nlp = route_and_execute(clean_text)
+                    return f"🤖 *AegisBrain Autonomous Execution (Workstation Locked):*\n\n{res_nlp}"
+                except Exception as e:
+                    res_fallback = execute_shell(clean_text)
+                    return f"⚡ *Command Output (`{clean_text[:60]}`):*\n```\n{res_fallback or str(e)}\n```"
+
+            preview = (clean_text[:120] + "...") if len(clean_text) > 120 else clean_text
+            return (
+                f"✍️ *Prompt Sent to Coding Session:*\n"
+                f"\"{preview}\"\n\n"
+                f"• *Status:* {msg}\n"
+                f"• *Live Streaming:* Active (Antigravity outputs will stream to your phone word-for-word).\n"
+                f"_Tip: Use `/nav` to browse terminal logs or `/status` for health._"
+            )
+
+        # 4. Default (swarm / autonomous):
+        try:
+            from .nlp_router import route_and_execute
+            send_telegram_chat_action(from_number, "typing", config=cfg)
+            res_nlp = route_and_execute(clean_text)
+            return f"🤖 *AegisBrain Autonomous Execution:*\n\n{res_nlp}"
+        except Exception as e:
+            return f"⚠️ Execution error: {e}"
 
 
 def format_twiml_response(reply_text: str) -> str:

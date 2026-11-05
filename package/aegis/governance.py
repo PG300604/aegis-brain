@@ -35,6 +35,8 @@ DEFAULT_GOVERNANCE: Dict[str, Any] = {
     "telemetry_acknowledged": False,
     "self_healing": True,
     "reporting_target": "github",
+    "autonomous_fleet_launch": True,
+    "zero_manual_launch_enforced": True,
 }
 
 

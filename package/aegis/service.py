@@ -48,12 +48,17 @@ def stop_daemon(port: int = DEFAULT_PORT) -> Tuple[bool, str]:
     return False, "Could not send shutdown signal to daemon."
 
 
-def _get_python_runner() -> str:
+def _get_python_runner(windowless: bool = False) -> str:
     """Return python executable for background execution."""
     if sys.platform == "win32":
-        py312 = Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Python" / "Python312" / "python.exe"
+        py_name = "pythonw.exe" if windowless else "python.exe"
+        py312 = Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Python" / "Python312" / py_name
         if py312.exists():
             return str(py312)
+        if windowless:
+            pyw = Path(sys.executable).parent / "pythonw.exe"
+            if pyw.exists():
+                return str(pyw)
     return sys.executable
 
 
@@ -187,9 +192,19 @@ def start_daemon(port: int = DEFAULT_PORT) -> Tuple[bool, str]:
     log_file = open(log_path, "a", encoding="utf-8")
 
     if platform.system() == "Windows":
-        vbs_path = _get_windows_startup_vbs()
-        _enable_windows()
-        subprocess.Popen(["wscript.exe", str(vbs_path)], close_fds=True)
+        runner_w = _get_python_runner(windowless=True)
+        DETACHED_PROCESS = 0x00000008
+        CREATE_NO_WINDOW = 0x08000000
+        subprocess.Popen(
+            [runner_w, "-m", "aegis.server"],
+            cwd=repo_dir,
+            env=env,
+            creationflags=DETACHED_PROCESS | CREATE_NO_WINDOW,
+            stdin=subprocess.DEVNULL,
+            stdout=log_file,
+            stderr=log_file,
+            close_fds=True,
+        )
     else:
         subprocess.Popen(
             [runner, "-m", "aegis.server"],
