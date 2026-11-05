@@ -120,6 +120,24 @@ def find_codex_executable() -> Optional[str]:
     return None
 
 
+def find_gemini_executable() -> Optional[str]:
+    """Locate the Gemini CLI / Antigravity CLI executable on disk across platforms."""
+    found = shutil.which("gemini") or shutil.which("gemini.exe") or shutil.which("agy") or shutil.which("agy.exe")
+    if found:
+        return found
+    candidates = [
+        Path.home() / "AppData" / "Local" / "agy" / "bin" / "agy.exe",
+        Path.home() / ".local" / "bin" / "gemini",
+        Path.home() / ".local" / "bin" / "gemini.exe",
+        Path("/usr/local/bin/gemini"),
+        Path("/opt/homebrew/bin/gemini"),
+    ]
+    for c in candidates:
+        if c.exists():
+            return str(c)
+    return None
+
+
 _worker_lock = threading.Lock()
 
 
@@ -250,7 +268,32 @@ def call_local_worker(
                 except RuntimeError:
                     pass
 
-    # 5. Local Ollama / FreeToken endpoint
+    # 5. Targeted Gemini / Agy CLI Worker
+    if mod_lower in ("gemini", "gemini-cli", "gemini.exe", "agy"):
+        gemini_bin = find_gemini_executable()
+        if gemini_bin and _worker_lock.acquire(timeout=1.0):
+            try:
+                cmd = [gemini_bin, "-p", prompt]
+                res = subprocess.run(
+                    cmd,
+                    stdin=subprocess.DEVNULL,
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    timeout=60,
+                )
+                if res.returncode == 0 and res.stdout.strip():
+                    return True, res.stdout.strip()
+            except Exception:
+                pass
+            finally:
+                try:
+                    _worker_lock.release()
+                except RuntimeError:
+                    pass
+
+    # 6. Local Ollama / FreeToken endpoint
     try:
         payload = json.dumps({
             "model": model,

@@ -140,6 +140,99 @@ class TestHierarchyEngine(unittest.TestCase):
         self.assertIn("security_redteam", details["gates"])
         self.assertIn("dual_env_verification", details["gates"])
 
+    def test_record_escalation_event_in_confidence(self):
+        """Verify recording escalation events in brain.db via confidence.py."""
+        from aegis.confidence import record_escalation_event, get_escalation_events
+
+        res = record_escalation_event(
+            agent_name="hermes",
+            task_type="backend_systems",
+            reason="Repeated syntax errors and shell=True usage",
+            initial_errors=3,
+            final_errors=2,
+        )
+        self.assertIn("escalation_id", res)
+        self.assertEqual(res["agent_name"], "hermes")
+        self.assertEqual(res["final_errors"], 2)
+
+        events = get_escalation_events("hermes", limit=5)
+        self.assertTrue(len(events) > 0)
+        self.assertEqual(events[0]["agent_name"], "hermes")
+        self.assertIn("Repeated syntax errors", events[0]["reason"])
+
+    def test_subagent_escalates_to_senior_boss_on_max_retries(self):
+        """When attempts >= max_retries with remaining errors, Subagent constructs dossier and escalates to Senior Boss."""
+        orch = HierarchicalAgentOrchestrator()
+        orch.plan_hierarchy("Build database engine")
+        sa1 = orch.subagents[0]
+
+        # Patch call_local_worker to return flawed code with os.system on all attempts
+        flawed_output = "import os\ndef run():\n    os.system('rm -rf /')\n    return True\n"
+        with patch("aegis.orchestrator.call_local_worker", return_value=(True, flawed_output)):
+            ok, code, info = sa1.execute_worker_with_coaching_loop(
+                task_spec="Build secure query runner",
+                worker_type=WorkerType.HERMES,
+                max_retries=2,
+                simulate=False,
+                high_severity=False,
+            )
+
+        self.assertFalse(ok)
+        self.assertEqual(info["status"], "escalated_to_senior_boss")
+        self.assertEqual(sa1.quality_status, "escalated_to_senior_boss")
+        self.assertIn("escalation_dossier", info)
+
+        dossier = info["escalation_dossier"]
+        self.assertEqual(dossier["worker_type"], "hermes")
+        self.assertIn("reasoning_critique", dossier)
+        self.assertTrue(any("os" in str(f) for f in dossier["flaws"]))
+
+        # Verify Top Engine audit reflects the escalation
+        top_audit = orch.top_engine_quality_audit()
+        self.assertEqual(top_audit["overall_status"], "REVISIONS_NEEDED")
+        self.assertIn("escalated to Senior Boss", sa1.audit_feedback)
+
+    def test_subagent_escalates_high_severity_task(self):
+        """High-severity or critical security tasks immediately escalate to Senior Boss."""
+        orch = HierarchicalAgentOrchestrator()
+        orch.plan_hierarchy("Refactor auth system")
+        sa1 = orch.subagents[0]
+
+        ok, code, info = sa1.execute_worker_with_coaching_loop(
+            task_spec="CRITICAL Security Invariant: Hardware enclave key exchange",
+            worker_type=WorkerType.HERMES,
+            max_retries=3,
+            high_severity=True,
+        )
+
+        self.assertFalse(ok)
+        self.assertEqual(info["status"], "escalated_to_senior_boss")
+        self.assertIn("escalation_dossier", info)
+        self.assertIn("High-severity", info["escalation_dossier"]["escalation_reason"])
+
+    def test_senior_boss_takeover_and_audit(self):
+        """Senior Boss takeover directly authors verified production code and passes quality gates."""
+        orch = HierarchicalAgentOrchestrator()
+        orch.plan_hierarchy("Build mission critical auth")
+        sa1 = orch.subagents[0]
+
+        # Trigger takeover
+        takeover_res = orch.senior_boss_takeover(
+            task="Build mission critical auth",
+            subagent_id=sa1.subagent_id,
+        )
+
+        self.assertEqual(takeover_res["status"], "takeover_completed")
+        self.assertEqual(takeover_res["quality_status"], "passed")
+        self.assertTrue(len(takeover_res["production_code"]) > 0)
+        self.assertTrue(takeover_res["audit_details"]["gates"]["karpathy_simplicity"])
+        self.assertTrue(takeover_res["audit_details"]["gates"]["security_redteam"])
+
+        # Subagent quality status is now approved/passed
+        self.assertEqual(sa1.quality_status, "passed")
+        top_audit = orch.top_engine_quality_audit()
+        self.assertEqual(top_audit["overall_status"], "PASSED")
+
 
 if __name__ == "__main__":
     unittest.main()

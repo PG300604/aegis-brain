@@ -34,6 +34,17 @@ def init_confidence_table() -> None:
                 created_at TEXT DEFAULT (datetime('now'))
             )
         """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS escalation_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                agent_name TEXT NOT NULL,
+                task_type TEXT DEFAULT 'general',
+                reason TEXT NOT NULL,
+                initial_errors INTEGER DEFAULT 0,
+                final_errors INTEGER DEFAULT 0,
+                created_at TEXT DEFAULT (datetime('now'))
+            )
+        """)
         # Safe migration if table existed previously without error tracking columns
         c = conn.cursor()
         c.execute("PRAGMA table_info(agent_confidence)")
@@ -121,6 +132,68 @@ def record_agent_task_feedback(
             f"Confidence: {conf['avg_score']}/10 ({conf['learning_curve']})."
         )
     }
+
+
+def record_escalation_event(
+    agent_name: str,
+    task_type: str = "general",
+    reason: str = "",
+    initial_errors: int = 0,
+    final_errors: int = 0,
+) -> Dict[str, Any]:
+    """Record an escalation event when a worker fails or high-severity task escalates to Senior Boss."""
+    init_confidence_table()
+    db = get_db_path()
+    with sqlite3.connect(db) as conn:
+        cur = conn.execute(
+            """INSERT INTO escalation_events 
+               (agent_name, task_type, reason, initial_errors, final_errors)
+               VALUES (?, ?, ?, ?, ?)""",
+            (agent_name, task_type, reason, initial_errors, final_errors)
+        )
+        escalation_id = cur.lastrowid
+
+    # Also log to agent_confidence to mark the escalated trial
+    score_id = record_score(
+        agent_name=agent_name,
+        score=max(1, 10 - final_errors),
+        accepted=False,
+        revision_rounds=max(1, initial_errors),
+        task_type=task_type,
+        task_description=f"Escalation to Senior Boss: {reason[:120]}",
+        initial_errors=initial_errors,
+        final_errors=final_errors,
+        teaching_notes=reason,
+    )
+
+    return {
+        "escalation_id": escalation_id,
+        "score_id": score_id,
+        "agent_name": agent_name,
+        "task_type": task_type,
+        "reason": reason,
+        "initial_errors": initial_errors,
+        "final_errors": final_errors,
+    }
+
+
+def get_escalation_events(agent_name: Optional[str] = None, limit: int = 20) -> List[Dict[str, Any]]:
+    """Query recent escalation events from SQLite."""
+    init_confidence_table()
+    db = get_db_path()
+    with sqlite3.connect(db) as conn:
+        conn.row_factory = sqlite3.Row
+        if agent_name:
+            rows = conn.execute(
+                "SELECT * FROM escalation_events WHERE agent_name = ? ORDER BY id DESC LIMIT ?",
+                (agent_name, limit)
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT * FROM escalation_events ORDER BY id DESC LIMIT ?",
+                (limit,)
+            ).fetchall()
+        return [dict(r) for r in rows]
 
 
 def can_delegate_complex_task(agent_name: str, task_type: str = "general") -> Tuple[bool, float, str]:

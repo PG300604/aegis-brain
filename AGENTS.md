@@ -25,3 +25,18 @@
 
 ### 3. The Planning & Options Requirement
 - Every multi-step task must present a clear Planning & Options phase (Option 1 vs Option 2 vs Option 3 with Pros & Cons and user steering) before worker dispatch.
+
+### 4. Mandatory Worker CLI Invocation Directive (Zero-Subagent-Direct-Code)
+- **STRICT PROHIBITION FOR TIER 2 SUBAGENTS**:
+  Subagents (Junior Bosses) MUST NEVER write code drafts, functions, or implementation files themselves!
+  In EVERY Subagent dispatch prompt, Tier 1 and Tier 2 MUST explicitly specify the CLI command to run:
+  - `hermes chat -q "<prompt>"` (Primary execution worker)
+  - `ollama run qwen2.5-coder:7b "<prompt>"` (Local MoE worker)
+  - `opencode` / `gemini.exe` / `claude -p` / `codex exec`
+- **Execution Workflow**:
+  1. Tier 2 Junior Boss formats the worker task prompt with strict invariants (Karpathy simplicity, minimal lines, standard library first).
+  2. Tier 2 Junior Boss invokes the CLI worker command (`hermes`, `ollama`, `opencode`, `gemini.exe`) using `run_command`.
+  3. Tier 2 captures the raw candidate code from the worker CLI output.
+  4. Tier 2 audits the candidate code through the 4-Decision Quality Architecture Gate.
+  5. If errors or flaws are found, Tier 2 generates a targeted coaching correction prompt and re-invokes the CLI worker.
+  6. **Escalation Exception**: ONLY when the worker repeatedly fails or commits too many errors across retries (or on mission-critical architectural tasks), the Subagent constructs an Escalation Dossier and escalates to Tier 1 Senior Boss for direct takeover.

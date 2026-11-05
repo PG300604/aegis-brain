@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #FFFFFF; }
+      .box-frame { stroke: #94A3B8; stroke-width: 1.8; stroke-dasharray: 6,6; fill: #F8FAFC; rx: 14; }
+      .label-zone { font-family: 'Virgil', 'Comic Sans MS', 'Caveat', -apple-system, sans-serif; font-size: 13px; font-weight: 700; fill: #64748B; letter-spacing: 1px; }
+      .card-title { font-family: 'Virgil', 'Comic Sans MS', -apple-system, sans-serif; font-size: 15px; font-weight: 700; }
+      .card-sub { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; font-weight: 500; opacity: 0.88; }
+      .edge-label { font-family: 'Virgil', 'Comic Sans MS', -apple-system, sans-serif; font-size: 11px; font-weight: 700; }
+      .arrow { stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .badge-pill { rx: 5; stroke-width: 1.2; }
+      .badge-text { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10px; font-weight: 700; }
+      .badge-amber { fill: #FDE68A; stroke: #F59E0B; }
+      .badge-amber-text { fill: #78350F; }
+      .badge-emerald { fill: #A7F3D0; stroke: #10B981; }
+      .badge-emerald-text { fill: #064E3B; }
+      .badge-violet { fill: #DDD6FE; stroke: #8B5CF6; }
+      .badge-violet-text { fill: #4C1D95; }
+      .badge-rose { fill: #FECDD3; stroke: #F43F5E; }
+      .badge-rose-text { fill: #881337; }
+      .badge-cyan { fill: #BAE6FD; stroke: #0284C7; }
+      .badge-cyan-text { fill: #0369A1; }
+
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #0B0D11; }
+        .box-frame { fill: #11141C; stroke: #334155; }
+        .label-zone { fill: #94A3B8; }
+        .dark-tier1 { fill: #1E1B4B !important; stroke: #6366F1 !important; }
+        .dark-tier2 { fill: #14233C !important; stroke: #0284C7 !important; }
+        .dark-tier3 { fill: #06261B !important; stroke: #059669 !important; }
+        .dark-escalation { fill: #310D1A !important; stroke: #E11D48 !important; }
+        .text-dark { fill: #F8FAFC !important; }
+        .text-dark-sub { fill: #CBD5E1 !important; }
+        .badge-amber { fill: #382006 !important; stroke: #D97706 !important; }
+        .badge-amber-text { fill: #FDE68A !important; }
+        .badge-emerald { fill: #063824 !important; stroke: #059669 !important; }
+        .badge-emerald-text { fill: #6EE7B7 !important; }
+        .badge-violet { fill: #29154E !important; stroke: #7C3AED !important; }
+        .badge-violet-text { fill: #DDD6FE !important; }
+        .badge-rose { fill: #3C0E1B !important; stroke: #E11D48 !important; }
+        .badge-rose-text { fill: #FDA4AF !important; }
+        .badge-cyan { fill: #0C2840 !important; stroke: #0284C7 !important; }
+        .badge-cyan-text { fill: #7DD3FC !important; }
+      }
+    </style>
+    <marker id="arrow-indigo" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#6366F1" />
+    </marker>
+    <marker id="arrow-sky" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#0284C7" />
+    </marker>
+    <marker id="arrow-rose" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#E11D48" />
+    </marker>
+    <marker id="arrow-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#10B981" />
+    </marker>
+  </defs>
+
+  <rect width="100%" height="100%" class="bg" />
+
+  <!-- Title Banner -->
+  <text x="600" y="38" text-anchor="middle" font-family="'Virgil', 'Comic Sans MS', sans-serif" font-size="22" font-weight="700" fill="#4F46E5">🏛️ AegisBrain 3-Tier Multi-Agent Hierarchy &amp; Escalation Protocol</text>
+  <text x="600" y="60" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#64748B">Token Arbitrage Division of Cognition &bull; 4-Decision Quality Gate &bull; Senior Boss Takeover</text>
+
+  <!-- TIER 1 CONTAINER -->
+  <rect x="40" y="85" width="1120" height="135" class="box-frame" />
+  <text x="60" y="110" class="label-zone">TIER 1 &bull; SENIOR BOSS (HIGH COGNITION FRONTIER MANAGER)</text>
+  
+  <rect x="60" y="122" width="740" height="82" rx="10" fill="#EEF2FF" stroke="#6366F1" stroke-width="1.8" class="dark-tier1" />
+  <text x="80" y="150" class="card-title text-dark" fill="#312E81">🧠 Frontier Manager (Gemini 3.8 Flash / Claude 3.7)</text>
+  <text x="80" y="172" class="card-sub text-dark-sub" fill="#4338CA">Role: System Architecture &bull; Options Exploration (Pros/Cons) &bull; Invariants Definition &bull; Final Quality Sign-off</text>
+  <text x="80" y="190" class="card-sub text-dark-sub" fill="#4338CA">Token Arbitrage Invariant: Zero direct boilerplate/implementation coding (reserves frontier tokens for brainwork)</text>
+  
+  <rect x="820" y="122" width="320" height="82" rx="10" fill="#FFF1F2" stroke="#E11D48" stroke-width="1.8" class="dark-escalation" />
+  <text x="835" y="148" class="card-title text-dark" fill="#881337">⚡ Senior Boss Takeover</text>
+  <text x="835" y="168" class="card-sub text-dark-sub" fill="#9F1239">Direct authoring activated ONLY when:</text>
+  <text x="835" y="186" class="card-sub text-dark-sub" fill="#9F1239">1. Task severity = CRITICAL/high-reasoning</text>
+  <text x="835" y="198" class="card-sub text-dark-sub" fill="#9F1239">2. Tier 3 fails coaching retries repeatedly</text>
+
+  <!-- DISPATCH ARROW -->
+  <path d="M 430 205 L 430 240" class="arrow" stroke="#6366F1" marker-end="url(#arrow-indigo)" />
+  <text x="445" y="228" class="edge-label" fill="#4F46E5">1. Spawns Junior Bosses (invoke_subagent)</text>
+
+  <!-- ESCALATION RETURN ARROW -->
+  <path d="M 980 250 L 980 215" class="arrow" stroke="#E11D48" stroke-dasharray="5,5" marker-end="url(#arrow-rose)" />
+  <text x="800" y="232" class="edge-label" fill="#E11D48">⚠️ Escalates when worker cannot converge</text>
+
+  <!-- TIER 2 CONTAINER -->
+  <rect x="40" y="250" width="1120" height="165" class="box-frame" />
+  <text x="60" y="275" class="label-zone">TIER 2 &bull; JUNIOR BOSSES (SUBAGENTS / DOMAIN TECH LEADS)</text>
+
+  <rect x="60" y="288" width="340" height="110" rx="10" fill="#E0F2FE" stroke="#0284C7" stroke-width="1.8" class="dark-tier2" />
+  <text x="75" y="315" class="card-title text-dark" fill="#0369A1">🎯 Domain Tech Leads (Subagents)</text>
+  <text x="75" y="335" class="card-sub text-dark-sub" fill="#0284C7">Backend Lead &bull; Frontend Lead &bull; QA / Sec Lead</text>
+  <text x="75" y="355" class="card-sub text-dark-sub" fill="#0369A1">• Scopes invariants &amp; boundaries</text>
+  <text x="75" y="372" class="card-sub text-dark-sub" fill="#0369A1">• Dispatches tasks to Tier 3 workers</text>
+  <text x="75" y="389" class="card-sub text-dark-sub" fill="#0369A1">• Never writes implementation code itself</text>
+
+  <rect x="420" y="288" width="390" height="110" rx="10" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.8" class="dark-tier2" />
+  <text x="435" y="315" class="card-title text-dark" fill="#B45309">🛡️ 4-Decision Quality Architecture Gate</text>
+  <text x="435" y="335" class="card-sub text-dark-sub" fill="#92400E">1. Karpathy Simplicity (surgical minimal code)</text>
+  <text x="435" y="353" class="card-sub text-dark-sub" fill="#92400E">2. Ponytail / Unslop (0 conversational watermarks)</text>
+  <text x="435" y="371" class="card-sub text-dark-sub" fill="#92400E">3. Red-Team / Cloudflare Audit (block shell=True)</text>
+  <text x="435" y="389" class="card-sub text-dark-sub" fill="#92400E">4. Dual-Env Verification (isolated sandbox first)</text>
+
+  <rect x="830" y="288" width="310" height="110" rx="10" fill="#F0FDF4" stroke="#10B981" stroke-width="1.8" class="dark-tier2" />
+  <text x="845" y="315" class="card-title text-dark" fill="#047857">📈 Coaching &amp; Learning Loop</text>
+  <text x="845" y="335" class="card-sub text-dark-sub" fill="#065F46">• Analyzes logical, syntax, edge-case flaws</text>
+  <text x="845" y="353" class="card-sub text-dark-sub" fill="#065F46">• Feeds targeted coaching prompt to worker</text>
+  <text x="845" y="371" class="card-sub text-dark-sub" fill="#065F46">• Records error delta in SQLite (brain.db)</text>
+  <text x="845" y="389" class="card-sub text-dark-sub" fill="#065F46">• Loops until 0 errors or max retries</text>
+
+  <!-- DISPATCH TO TIER 3 -->
+  <path d="M 230 400 L 230 445" class="arrow" stroke="#0284C7" marker-end="url(#arrow-sky)" />
+  <text x="245" y="428" class="edge-label" fill="#0284C7">2. Dispatches directive</text>
+
+  <!-- COACHING LOOP ARROW -->
+  <path d="M 610 445 L 610 410" class="arrow" stroke="#F59E0B" marker-end="url(#arrow-emerald)" />
+  <text x="625" y="432" class="edge-label" fill="#B45309">3. Reviews draft &amp; coaches revisions</text>
+
+  <!-- TIER 3 CONTAINER -->
+  <rect x="40" y="450" width="1120" height="195" class="box-frame" />
+  <text x="60" y="475" class="label-zone">TIER 3 &bull; EXECUTION WORKERS (FREE / LOCAL SYNTHESIS MUSCLE)</text>
+
+  <!-- WORKER 1: Hermes -->
+  <rect x="60" y="488" width="205" height="135" rx="10" fill="#ECFDF5" stroke="#10B981" stroke-width="1.8" class="dark-tier3" />
+  <text x="75" y="515" class="card-title text-dark" fill="#065F46">⚡ Hermes CLI</text>
+  <text x="75" y="535" class="card-sub text-dark-sub" fill="#047857">Autonomous Coding Agent</text>
+  <text x="75" y="555" class="card-sub text-dark-sub" fill="#047857">• Fast token generation</text>
+  <text x="75" y="572" class="card-sub text-dark-sub" fill="#047857">• Local command execution</text>
+  <text x="75" y="590" class="card-sub text-dark-sub" fill="#047857">• 0 frontier tokens consumed</text>
+  <rect x="75" y="600" width="85" height="16" class="badge-pill badge-emerald" />
+  <text x="82" y="612" class="badge-text badge-emerald-text">hermes chat</text>
+
+  <!-- WORKER 2: Claude Code CLI -->
+  <rect x="280" y="488" width="205" height="135" rx="10" fill="#ECFDF5" stroke="#10B981" stroke-width="1.8" class="dark-tier3" />
+  <text x="295" y="515" class="card-title text-dark" fill="#065F46">🛠️ Claude Code CLI</text>
+  <text x="295" y="535" class="card-sub text-dark-sub" fill="#047857">Terminal CLI Worker</text>
+  <text x="295" y="555" class="card-sub text-dark-sub" fill="#047857">• Script &amp; test synthesis</text>
+  <text x="295" y="572" class="card-sub text-dark-sub" fill="#047857">• Sandboxed execution</text>
+  <text x="295" y="590" class="card-sub text-dark-sub" fill="#047857">• Auto-governed edits</text>
+  <rect x="295" y="600" width="75" height="16" class="badge-pill badge-emerald" />
+  <text x="302" y="612" class="badge-text badge-emerald-text">claude -p</text>
+
+  <!-- WORKER 3: OpenAI Codex CLI -->
+  <rect x="500" y="488" width="205" height="135" rx="10" fill="#ECFDF5" stroke="#10B981" stroke-width="1.8" class="dark-tier3" />
+  <text x="515" y="515" class="card-title text-dark" fill="#065F46">💻 Codex CLI</text>
+  <text x="515" y="535" class="card-sub text-dark-sub" fill="#047857">Headless Worker</text>
+  <text x="515" y="555" class="card-sub text-dark-sub" fill="#047857">• Boilerplate offload</text>
+  <text x="515" y="572" class="card-sub text-dark-sub" fill="#047857">• JSON / AST transformations</text>
+  <text x="515" y="590" class="card-sub text-dark-sub" fill="#047857">• Reversible diff drafts</text>
+  <rect x="515" y="600" width="85" height="16" class="badge-pill badge-emerald" />
+  <text x="522" y="612" class="badge-text badge-emerald-text">codex exec</text>
+
+  <!-- WORKER 4: OpenCode -->
+  <rect x="720" y="488" width="205" height="135" rx="10" fill="#ECFDF5" stroke="#10B981" stroke-width="1.8" class="dark-tier3" />
+  <text x="735" y="515" class="card-title text-dark" fill="#065F46">🌐 OpenCode</text>
+  <text x="735" y="535" class="card-sub text-dark-sub" fill="#047857">Multi-Provider Engine</text>
+  <text x="735" y="555" class="card-sub text-dark-sub" fill="#047857">• Pluggable backend models</text>
+  <text x="735" y="572" class="card-sub text-dark-sub" fill="#047857">• Zero token cost</text>
+  <text x="735" y="590" class="card-sub text-dark-sub" fill="#047857">• Fast iteration loop</text>
+  <rect x="735" y="600" width="75" height="16" class="badge-pill badge-emerald" />
+  <text x="742" y="612" class="badge-text badge-emerald-text">opencode</text>
+
+  <!-- WORKER 5: Ollama / MoE -->
+  <rect x="940" y="488" width="200" height="135" rx="10" fill="#ECFDF5" stroke="#10B981" stroke-width="1.8" class="dark-tier3" />
+  <text x="955" y="515" class="card-title text-dark" fill="#065F46">🦙 MoE / Ollama</text>
+  <text x="955" y="535" class="card-sub text-dark-sub" fill="#047857">Local Offline Models</text>
+  <text x="955" y="555" class="card-sub text-dark-sub" fill="#047857">• Qwen 2.5 Coder / Llama 3</text>
+  <text x="955" y="572" class="card-sub text-dark-sub" fill="#047857">• 100% offline &amp; private</text>
+  <text x="955" y="590" class="card-sub text-dark-sub" fill="#047857">• Infinite token generation</text>
+  <rect x="955" y="600" width="85" height="16" class="badge-pill badge-emerald" />
+  <text x="962" y="612" class="badge-text badge-emerald-text">ollama run</text>
+</svg>

@@ -776,6 +776,13 @@ def handle_incoming_voice(chat_id: str, audio_path: Path, config: Optional[Dict[
         f"🎤 *Voice Note Transcribed:*\n\"{transcript}\"\n\n_Executing command autonomously..._",
         config=cfg,
     )
+    # Ensure transcribed voice prompt from Whisper is executed with press_enter=True and not trapped in the chat prompt.
+    if not transcript.startswith("/"):
+        SHELL_PREFIXES = ("pytest", "python", "aegis", "git", "dir", "ls", "cd", "powershell", "cmd", "npm", "bun", "cargo", "pip", "uv", "echo", "cat", "curl", "tasklist", "wmic")
+        first_word = transcript.split()[0].lower() if transcript.split() else ""
+        if first_word not in SHELL_PREFIXES and not any(op in transcript for op in ("&&", "||", "|", ">", ">>")):
+            return handle_remote_command(chat_id, f"/type {transcript}")
+
     return handle_remote_command(chat_id, transcript)
 
 
@@ -1708,21 +1715,15 @@ def _inject_console_input_core(
             write_records(text_recs)
             time.sleep(0.15)
 
-        # 4. Vim Mode: Escape to Normal Mode before submitting.
-        # Must pause >300ms before Enter so Escape is recognized as standalone and NOT combined into Alt+Enter (\x1b\r).
-        if vim_mode and text and (press_enter or press_alt_m):
+        # 4. Vim Mode:
+        # When press_enter is True, DO NOT write Escape records. Stay in Insert Mode so writing Enter (\r) executes the prompt immediately.
+        # Only escape to Normal Mode if NOT submitting with Enter (e.g. for Alt+M or non-submitting injection).
+        if vim_mode and text and not press_enter:
             esc_pair = make_key_event(0x1B, 0x01, '\x1b')
             write_records(esc_pair)
             time.sleep(0.12)
             write_records(esc_pair)
-            time.sleep(0.35)
-
-        if vim_mode and text and not press_enter and not press_alt_m:
-            esc_pair = make_key_event(0x1B, 0x01, '\x1b')
-            write_records(esc_pair)
-            time.sleep(0.12)
-            write_records(esc_pair)
-            time.sleep(0.15)
+            time.sleep(0.35 if press_alt_m else 0.15)
 
         # 5. Submit with Enter or Alt+M
         if press_enter and not press_alt_m:
@@ -1878,14 +1879,7 @@ def _type_to_desktop_core(
                 time.sleep(0.15)
 
             if press_enter and not press_alt_m:
-                if vim_mode:
-                    # 3. Escape to return to normal mode before submitting
-                    user32.keybd_event(0x1B, 0x01, 0, 0)
-                    user32.keybd_event(0x1B, 0x01, 0x0002, 0)
-                    time.sleep(0.12)
-                    user32.keybd_event(0x1B, 0x01, 0, 0)
-                    user32.keybd_event(0x1B, 0x01, 0x0002, 0)
-                    time.sleep(0.35)
+                # When press_enter is True, DO NOT press <Esc><Esc>. Stay in Insert Mode so pressing Enter (0x0D, scan 0x1C) executes the prompt immediately.
                 user32.keybd_event(0x0D, scan_enter, 0, 0)
                 time.sleep(0.05)
                 user32.keybd_event(0x0D, scan_enter, 0x0002, 0)

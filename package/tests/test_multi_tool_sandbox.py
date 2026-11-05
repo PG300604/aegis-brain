@@ -24,6 +24,7 @@ from aegis.orchestrator import (
     find_claude_executable,
     find_codex_executable,
     find_opencode_executable,
+    find_gemini_executable,
 )
 
 
@@ -44,9 +45,12 @@ class TestMultiToolGovernanceAndSandbox(unittest.TestCase):
         oc = find_opencode_executable()
         self.assertTrue(oc is None or isinstance(oc, str))
 
+        g = find_gemini_executable()
+        self.assertTrue(g is None or isinstance(g, str))
+
     def test_sandbox_simulation_mode_across_all_tools(self):
         """In sandbox mode, call_local_worker must successfully simulate any worker tool."""
-        tools = ["hermes", "claude", "codex", "opencode", "moe"]
+        tools = ["hermes", "claude", "codex", "opencode", "moe", "gemini"]
         for tool in tools:
             ok, out = call_local_worker("Write a math function", model=tool, simulate=True)
             self.assertTrue(ok, f"Worker {tool} simulation failed")

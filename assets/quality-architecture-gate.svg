@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #FFFFFF; }
+      .box-frame { stroke: #94A3B8; stroke-width: 1.8; stroke-dasharray: 6,6; fill: #F8FAFC; rx: 14; }
+      .label-zone { font-family: 'Virgil', 'Comic Sans MS', 'Caveat', -apple-system, sans-serif; font-size: 13px; font-weight: 700; fill: #64748B; letter-spacing: 1px; }
+      .card-title { font-family: 'Virgil', 'Comic Sans MS', -apple-system, sans-serif; font-size: 15px; font-weight: 700; }
+      .card-sub { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; font-weight: 500; opacity: 0.88; }
+      .arrow { stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .badge-pill { rx: 5; stroke-width: 1.2; }
+      .badge-text { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10px; font-weight: 700; }
+      .badge-blue { fill: #DBEAFE; stroke: #2563EB; }
+      .badge-blue-text { fill: #1E40AF; }
+      .badge-purple { fill: #EDE9FE; stroke: #7C3AED; }
+      .badge-purple-text { fill: #5B21B6; }
+      .badge-rose { fill: #FFE4E6; stroke: #E11D48; }
+      .badge-rose-text { fill: #9F1239; }
+      .badge-emerald { fill: #D1FAE5; stroke: #059669; }
+      .badge-emerald-text { fill: #065F46; }
+
+      @media (prefers-color-scheme: dark) {
+        .bg { fill: #0B0D11; }
+        .box-frame { fill: #11141C; stroke: #334155; }
+        .label-zone { fill: #94A3B8; }
+        .dark-g1 { fill: #0C1E33 !important; stroke: #2563EB !important; }
+        .dark-g2 { fill: #1E1B4B !important; stroke: #7C3AED !important; }
+        .dark-g3 { fill: #310D1A !important; stroke: #E11D48 !important; }
+        .dark-g4 { fill: #06261B !important; stroke: #059669 !important; }
+        .text-dark { fill: #F8FAFC !important; }
+        .text-dark-sub { fill: #CBD5E1 !important; }
+      }
+    </style>
+    <marker id="g-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#64748B" />
+    </marker>
+  </defs>
+
+  <rect width="100%" height="100%" class="bg" />
+
+  <text x="600" y="38" text-anchor="middle" font-family="'Virgil', 'Comic Sans MS', sans-serif" font-size="22" font-weight="700" fill="#0F172A" class="text-dark">🛡️ The 4-Decision Quality Architecture Gate</text>
+  <text x="600" y="60" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#64748B">Every worker candidate draft must pass all 4 gates before reaching senior models or git</text>
+
+  <!-- GATE 1: Karpathy Simplicity -->
+  <rect x="40" y="90" width="250" height="340" rx="14" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.8" class="dark-g1" />
+  <text x="60" y="125" class="card-title text-dark" fill="#1E40AF">1. Karpathy Simplicity</text>
+  <text x="60" y="150" class="card-sub text-dark-sub" fill="#1D4ED8">• Surgical minimal diffs</text>
+  <text x="60" y="172" class="card-sub text-dark-sub" fill="#1D4ED8">• Standard library first</text>
+  <text x="60" y="194" class="card-sub text-dark-sub" fill="#1D4ED8">• Zero speculative abstractions</text>
+  <text x="60" y="216" class="card-sub text-dark-sub" fill="#1D4ED8">• Zero unreachable wrappers</text>
+  <text x="60" y="238" class="card-sub text-dark-sub" fill="#1D4ED8">• If 200 lines could be 50,</text>
+  <text x="60" y="256" class="card-sub text-dark-sub" fill="#1D4ED8">  it is rewritten immediately</text>
+  <rect x="60" y="375" width="135" height="20" class="badge-pill badge-blue" />
+  <text x="68" y="390" class="badge-text badge-blue-text">Zero Over-Engineering</text>
+
+  <!-- ARROW 1 -> 2 -->
+  <path d="M 290 260 L 330 260" class="arrow" stroke="#64748B" marker-end="url(#g-arrow)" />
+
+  <!-- GATE 2: Ponytail / Unslop -->
+  <rect x="330" y="90" width="250" height="340" rx="14" fill="#FAF5FF" stroke="#7C3AED" stroke-width="1.8" class="dark-g2" />
+  <text x="350" y="125" class="card-title text-dark" fill="#5B21B6">2. Ponytail / Unslop</text>
+  <text x="350" y="150" class="card-sub text-dark-sub" fill="#6D28D9">• Strips conversational slop</text>
+  <text x="350" y="172" class="card-sub text-dark-sub" fill="#6D28D9">• "Certainly!", "Here is..."</text>
+  <text x="350" y="194" class="card-sub text-dark-sub" fill="#6D28D9">• Removes polite preambles</text>
+  <text x="350" y="216" class="card-sub text-dark-sub" fill="#6D28D9">• Removes redundant comments</text>
+  <text x="350" y="238" class="card-sub text-dark-sub" fill="#6D28D9">• Enforces raw executable code</text>
+  <text x="350" y="256" class="card-sub text-dark-sub" fill="#6D28D9">• 0 AI watermarks in git</text>
+  <rect x="350" y="375" width="115" height="20" class="badge-pill badge-purple" />
+  <text x="358" y="390" class="badge-text badge-purple-text">Human-Grade Code</text>
+
+  <!-- ARROW 2 -> 3 -->
+  <path d="M 580 260 L 620 260" class="arrow" stroke="#64748B" marker-end="url(#g-arrow)" />
+
+  <!-- GATE 3: Red-Team & Security -->
+  <rect x="620" y="90" width="250" height="340" rx="14" fill="#FFF1F2" stroke="#E11D48" stroke-width="1.8" class="dark-g3" />
+  <text x="640" y="125" class="card-title text-dark" fill="#9F1239">3. Red-Team / Cloudflare</text>
+  <text x="640" y="150" class="card-sub text-dark-sub" fill="#BE123C">• Blocks shell=True execution</text>
+  <text x="640" y="172" class="card-sub text-dark-sub" fill="#BE123C">• Blocks os.system() payloads</text>
+  <text x="640" y="194" class="card-sub text-dark-sub" fill="#BE123C">• Path traversal prevention</text>
+  <text x="640" y="216" class="card-sub text-dark-sub" fill="#BE123C">• Secret scanner (GitGuardian)</text>
+  <text x="640" y="238" class="card-sub text-dark-sub" fill="#BE123C">• Injection vulnerability guard</text>
+  <text x="640" y="256" class="card-sub text-dark-sub" fill="#BE123C">• Host perimeter protection</text>
+  <rect x="640" y="375" width="130" height="20" class="badge-pill badge-rose" />
+  <text x="648" y="390" class="badge-text badge-rose-text">Strict Perimeter Safety</text>
+
+  <!-- ARROW 3 -> 4 -->
+  <path d="M 870 260 L 910 260" class="arrow" stroke="#64748B" marker-end="url(#g-arrow)" />
+
+  <!-- GATE 4: Dual-Env Verification -->
+  <rect x="910" y="90" width="250" height="340" rx="14" fill="#ECFDF5" stroke="#059669" stroke-width="1.8" class="dark-g4" />
+  <text x="930" y="125" class="card-title text-dark" fill="#065F46">4. Dual-Env Verification</text>
+  <text x="930" y="150" class="card-sub text-dark-sub" fill="#047857">• AST compilation check</text>
+  <text x="930" y="172" class="card-sub text-dark-sub" fill="#047857">• Isolated sandbox dry-run</text>
+  <text x="930" y="194" class="card-sub text-dark-sub" fill="#047857">• Syntax verification</text>
+  <text x="930" y="216" class="card-sub text-dark-sub" fill="#047857">• Local host test run</text>
+  <text x="930" y="238" class="card-sub text-dark-sub" fill="#047857">• Zero syntax / runtime errors</text>
+  <text x="930" y="256" class="card-sub text-dark-sub" fill="#047857">• Safe for git commit</text>
+  <rect x="930" y="375" width="140" height="20" class="badge-pill badge-emerald" />
+  <text x="938" y="390" class="badge-text badge-emerald-text">Verified Production Safe</text>
+</svg>

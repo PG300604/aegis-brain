@@ -357,6 +357,66 @@ class TestCaffeinateAndRemote(unittest.TestCase):
         self.assertTrue(ok2)
         self.assertNotIn("[Vim Mode calibrated]", msg2)
 
+    def test_vim_mode_enter_does_not_escape_in_type_to_desktop_core(self):
+        """When press_enter=True in Vim Mode, _type_to_desktop_core stays in Insert Mode without EscEsc before Enter."""
+        from aegis.remote import _type_to_desktop_core
+        from unittest.mock import patch, MagicMock
+
+        events = []
+        def mock_keybd_event(vk, scan, flags, extra):
+            events.append((vk, scan, flags))
+
+        with patch.dict(os.environ, {}, clear=False):
+            # Temporarily remove PYTEST_CURRENT_TEST to test the real Windows code path
+            if "PYTEST_CURRENT_TEST" in os.environ:
+                del os.environ["PYTEST_CURRENT_TEST"]
+            with patch("ctypes.windll.user32.keybd_event", side_effect=mock_keybd_event), \
+                 patch("ctypes.windll.user32.GetForegroundWindow", return_value=1234), \
+                 patch("ctypes.windll.user32.GetWindowTextLengthW", return_value=10), \
+                 patch("ctypes.windll.user32.GetWindowTextW", return_value=10), \
+                 patch("aegis.remote.attach_to_input_desktop"), \
+                 patch("aegis.remote.copy_to_desktop_clipboard", return_value=True), \
+                 patch("aegis.remote.inject_console_input", return_value=(False, "fallback")):
+                
+                # Case 1: press_enter=True (must NOT press Esc before Enter)
+                events.clear()
+                ok, msg = _type_to_desktop_core("my prompt", press_enter=True, press_alt_m=False, vim_mode=True)
+                self.assertTrue(ok)
+                # Initial sequence to enter Insert Mode: Esc (0x1B), Esc (0x1B), i (0x49)
+                vk_calls = [ev[0] for ev in events]
+                # Count 0x1B occurrences: should only be the initial 2 Esc key presses (down+up = 4 calls)
+                esc_calls = [ev for ev in events if ev[0] == 0x1B]
+                self.assertEqual(len(esc_calls), 4, "Initial <Esc><Esc> to switch to insert mode should be exactly 2 keypresses (4 events)")
+                # Enter (0x0D) should be pressed (down+up = 2 calls)
+                enter_calls = [ev for ev in events if ev[0] == 0x0D]
+                self.assertEqual(len(enter_calls), 2, "Enter (0x0D) must be pressed to execute prompt immediately")
+
+                # Case 2: press_enter=False (paste only: MUST escape back to normal mode)
+                events.clear()
+                ok2, msg2 = _type_to_desktop_core("my prompt", press_enter=False, press_alt_m=False, vim_mode=True)
+                self.assertTrue(ok2)
+                esc_calls2 = [ev for ev in events if ev[0] == 0x1B]
+                self.assertEqual(len(esc_calls2), 6, "Initial 2 Esc + trailing 1 Esc when not pressing enter = 3 keypresses (6 events)")
+
+    def test_handle_incoming_voice_executes_prompt_with_press_enter(self):
+        """Transcribed voice prompt from Whisper is executed with press_enter=True and not trapped."""
+        from aegis.remote import handle_incoming_voice
+        from unittest.mock import patch
+        import tempfile
+
+        with tempfile.NamedTemporaryFile("wb", suffix=".oga", delete=False) as f:
+            f.write(b"OggS dummy voice bytes")
+            f_path = Path(f.name)
+        try:
+            with patch("aegis.remote.transcribe_telegram_audio", return_value="Refactor the authentication middleware"), \
+                 patch("aegis.remote.send_telegram_message", return_value=(True, {})):
+                res = handle_incoming_voice("123456789", f_path)
+                self.assertIn("Typed and submitted", res)
+                self.assertIn("Refactor the authentication middleware", res)
+        finally:
+            if f_path.exists():
+                f_path.unlink()
+
 
 if __name__ == "__main__":
     unittest.main()
