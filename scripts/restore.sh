@@ -89,11 +89,14 @@ if [ -z "$PYTHON_CMD" ]; then
 fi
 
 # Print metadata
-"$PYTHON_CMD" - <<EOF
+export AEGIS_MANIFEST_PATH="$MANIFEST_PATH"
+"$PYTHON_CMD" - << 'EOF'
 import json
+import os
 from pathlib import Path
 
-m = json.loads(Path("$MANIFEST_PATH").read_text(encoding="utf-8"))
+manifest_path = os.environ.get("AEGIS_MANIFEST_PATH", "")
+m = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
 print(f" Identified Restore Point:")
 print(f"   Snapshot ID : {m.get('snapshot_id')}")
 print(f"   Created At  : {m.get('created_at')}")
@@ -117,16 +120,19 @@ echo -e "\033[1;36m[2/4] Removing newly created files (Zero Residue)...\033[0m"
 echo -e "\033[1;36m[3/4] Cleaning up empty installer-created directories...\033[0m"
 echo -e "\033[1;36m[4/4] Executing defense-in-depth residual marker check...\033[0m"
 
-"$PYTHON_CMD" - <<EOF
+export AEGIS_MANIFEST_PATH="$MANIFEST_PATH"
+export AEGIS_SNAPSHOT_TARGET_DIR="$SNAPSHOT_TARGET_DIR"
+export AEGIS_HOME_DIR="$HOME_DIR"
+"$PYTHON_CMD" - << 'EOF'
 import json
 import os
 import shutil
 import re
 from pathlib import Path
 
-manifest_p = Path("$MANIFEST_PATH")
-snap_dir = Path("$SNAPSHOT_TARGET_DIR")
-home = Path("$HOME_DIR")
+manifest_p = Path(os.environ.get("AEGIS_MANIFEST_PATH", ""))
+snap_dir = Path(os.environ.get("AEGIS_SNAPSHOT_TARGET_DIR", ""))
+home = Path(os.environ.get("AEGIS_HOME_DIR", ""))
 
 manifest = json.loads(manifest_p.read_text(encoding="utf-8"))
 

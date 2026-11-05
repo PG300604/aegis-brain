@@ -136,7 +136,13 @@ CREATED_FILES_JSON="[]"
 CREATED_DIRS_JSON="[]"
 
 if [ -n "$PYTHON_CMD" ]; then
-  "$PYTHON_CMD" - <<EOF
+  export AEGIS_HOME_DIR="$HOME_DIR"
+  export AEGIS_WORKSPACE="$RESOLVED_WORKSPACE"
+  export AEGIS_SNAPSHOT_TARGET_DIR="$SNAPSHOT_TARGET_DIR"
+  export AEGIS_SNAPSHOT_ID="$SNAPSHOT_ID"
+  export AEGIS_SNAPSHOT_REASON="$SNAPSHOT_REASON"
+  export AEGIS_TIMESTAMP="$TIMESTAMP"
+  "$PYTHON_CMD" - << 'EOF'
 import json
 import os
 import shutil
@@ -144,23 +150,24 @@ import time
 import hashlib
 from pathlib import Path
 
+home_dir = os.environ.get("AEGIS_HOME_DIR", "")
 targets = [
-    ("antigravity_gemini_md", "$HOME_DIR/.gemini/config/GEMINI.md"),
-    ("antigravity_mindset_knowledge", "$HOME_DIR/.gemini/antigravity-cli/knowledge/aegis_mindset.md"),
-    ("aegis_skill_antigravity", "$HOME_DIR/.gemini/config/skills/aegis/SKILL.md"),
-    ("claude_code_claude_md", "$HOME_DIR/.claude/CLAUDE.md"),
-    ("aegis_skill_claude", "$HOME_DIR/.claude/skills/aegis/SKILL.md"),
-    ("codex_instructions_md", "$HOME_DIR/.codex/instructions.md"),
-    ("aegis_skill_codex", "$HOME_DIR/.codex/skills/aegis/SKILL.md"),
-    ("aider_conf_yml", "$HOME_DIR/.aider.conf.yml"),
-    ("aider_conventions_md", "$HOME_DIR/.aider/conventions.md"),
+    ("antigravity_gemini_md", os.path.join(home_dir, ".gemini", "config", "GEMINI.md")),
+    ("antigravity_mindset_knowledge", os.path.join(home_dir, ".gemini", "antigravity-cli", "knowledge", "aegis_mindset.md")),
+    ("aegis_skill_antigravity", os.path.join(home_dir, ".gemini", "config", "skills", "aegis", "SKILL.md")),
+    ("claude_code_claude_md", os.path.join(home_dir, ".claude", "CLAUDE.md")),
+    ("aegis_skill_claude", os.path.join(home_dir, ".claude", "skills", "aegis", "SKILL.md")),
+    ("codex_instructions_md", os.path.join(home_dir, ".codex", "instructions.md")),
+    ("aegis_skill_codex", os.path.join(home_dir, ".codex", "skills", "aegis", "SKILL.md")),
+    ("aider_conf_yml", os.path.join(home_dir, ".aider.conf.yml")),
+    ("aider_conventions_md", os.path.join(home_dir, ".aider", "conventions.md")),
 ]
-ws = "$RESOLVED_WORKSPACE"
+ws = os.environ.get("AEGIS_WORKSPACE", "")
 if ws:
     targets.append(("workspace_claude_md", os.path.join(ws, "CLAUDE.md")))
     targets.append(("workspace_agents_md", os.path.join(ws, "AGENTS.md")))
 
-snap_dir = Path("$SNAPSHOT_TARGET_DIR")
+snap_dir = Path(os.environ.get("AEGIS_SNAPSHOT_TARGET_DIR", ""))
 snap_files = snap_dir / "files"
 snap_files.mkdir(parents=True, exist_ok=True)
 
@@ -188,12 +195,13 @@ for label, p_str in targets:
         if not parent.exists() and str(parent) not in created_dirs:
             created_dirs.append(str(parent))
 
+ts_val = int(os.environ.get("AEGIS_TIMESTAMP", "0"))
 manifest = {
-    "snapshot_id": "$SNAPSHOT_ID",
+    "snapshot_id": os.environ.get("AEGIS_SNAPSHOT_ID", ""),
     "name": "mindset_override",
-    "reason": "$SNAPSHOT_REASON",
-    "timestamp": int("$TIMESTAMP"),
-    "created_at": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(int("$TIMESTAMP"))),
+    "reason": os.environ.get("AEGIS_SNAPSHOT_REASON", ""),
+    "timestamp": ts_val,
+    "created_at": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ts_val)),
     "file_count": len(backed_files),
     "files": backed_files,
     "created_files": created_files,
@@ -272,18 +280,22 @@ inject_markdown() {
 
   if [ -f "$target_file" ]; then
     if [ -n "$PYTHON_CMD" ]; then
-      "$PYTHON_CMD" - <<EOF
+      export AEGIS_TARGET_FILE="$target_file"
+      export AEGIS_MINDSET_BLOCK="$MINDSET_BLOCK"
+      export AEGIS_PREPEND="$prepend"
+      "$PYTHON_CMD" - << 'EOF'
+import os
 import re
 from pathlib import Path
 
-p = Path("$target_file")
+p = Path(os.environ.get("AEGIS_TARGET_FILE", ""))
 content = p.read_text(encoding="utf-8")
-block = """$MINDSET_BLOCK"""
+block = os.environ.get("AEGIS_MINDSET_BLOCK", "")
 pattern = r"<!-- AEGIS_BRAIN_MINDSET_START -->[\s\S]*?<!-- AEGIS_BRAIN_MINDSET_END -->"
 
 if re.search(pattern, content):
     new_content = re.sub(pattern, block.strip(), content)
-elif "$prepend" == "true":
+elif os.environ.get("AEGIS_PREPEND", "false") == "true":
     new_content = block.strip() + "\n\n" + content.lstrip()
 else:
     new_content = content.rstrip() + "\n\n" + block.strip() + "\n"
