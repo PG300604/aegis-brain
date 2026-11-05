@@ -280,4 +280,12 @@ class WatchdogRunner:
             except Exception:
                 pass
 
+            # Check and drain any pending desktop prompts if screen is unlocked
+            try:
+                from .remote import is_workstation_locked, drain_pending_desktop_prompts
+                if not is_workstation_locked():
+                    drain_pending_desktop_prompts()
+            except Exception:
+                pass
+
             self._stop_event.wait(self.interval)

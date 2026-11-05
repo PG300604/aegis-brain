@@ -79,9 +79,14 @@ def _enable_windows() -> Tuple[bool, str]:
     repo_dir = str(REPO_ROOT)
 
     log_path = Path.home() / ".aegis-brain" / "daemon.log"
-    # VBScript executes completely headlessly (0 = invisible window, False = don't wait)
-    vbs_content = f'''Set WshShell = CreateObject("WScript.Shell")
-WshShell.Run "cmd /c set PYTHONIOENCODING=utf-8&&set PYTHONPATH={repo_dir}&&cd /d ""{repo_dir}""&&""{runner}"" -m aegis.server >> ""{log_path}"" 2>&1", 0, False
+    # Prefer pythonw.exe on Windows for zero-console headless execution
+    pythonw_runner = runner.parent / "pythonw.exe"
+    actual_runner = pythonw_runner if pythonw_runner.exists() else runner
+
+    # VBScript executes completely headlessly (0 = invisible window, False = don't wait, On Error Resume Next suppresses dialogs)
+    vbs_content = f'''On Error Resume Next
+Set WshShell = CreateObject("WScript.Shell")
+WshShell.Run "cmd /c set PYTHONIOENCODING=utf-8&&set PYTHONPATH={repo_dir}&&cd /d ""{repo_dir}""&&""{actual_runner}"" -m aegis.server >> ""{log_path}"" 2>&1", 0, False
 '''
     vbs_path.write_text(vbs_content, encoding="utf-8")
     return True, f"Windows autostart enabled via {vbs_path}"

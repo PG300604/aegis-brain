@@ -293,6 +293,11 @@ def create_server(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT) -> Threadi
 
 
 def run_daemon(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT, watchdog_interval: int = 300) -> None:
+    from .service import is_daemon_running
+    if is_daemon_running():
+        # Daemon already running on target port, exit cleanly
+        return
+
     init_db()
     watchdog = WatchdogRunner(interval_seconds=watchdog_interval)
     watchdog.start()

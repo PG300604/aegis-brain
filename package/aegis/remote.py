@@ -533,10 +533,17 @@ class TranscriptWatcher(threading.Thread):
 
     def run(self):
         while not self.stop_event.is_set():
+            # Check and drain any staged desktop prompts if workstation is unlocked
+            try:
+                if not is_workstation_locked():
+                    drain_pending_desktop_prompts()
+            except Exception:
+                pass
+
             try:
                 active_file = find_active_transcript_file()
                 if not active_file or not active_file.exists():
-                    time.sleep(1.2)
+                    time.sleep(0.4 if get_pending_desktop_prompts_count() > 0 else 1.2)
                     continue
 
                 if self.last_path != active_file:
@@ -562,7 +569,7 @@ class TranscriptWatcher(threading.Thread):
                             continue
             except Exception:
                 pass
-            time.sleep(1.2)
+            time.sleep(0.4 if get_pending_desktop_prompts_count() > 0 else 1.2)
 
     def _dispatch_event(self, obj: Dict[str, Any]) -> None:
         cfg = load_remote_config()
@@ -1425,6 +1432,16 @@ def focus_desktop_window(keyword: str) -> Tuple[bool, str]:
                 user32.SwitchToThisWindow(hwnd, True)
             except Exception:
                 pass
+            try:
+                user32.AllowSetForegroundWindow(0xFFFFFFFF)
+            except Exception:
+                pass
+            # Simulate Alt key down/up to break Windows foreground lock
+            try:
+                user32.keybd_event(0x12, 0, 0, 0)
+                user32.keybd_event(0x12, 0, 0x0002, 0)
+            except Exception:
+                pass
             user32.ShowWindow(hwnd, 9)  # SW_RESTORE
             user32.SetForegroundWindow(hwnd)
             user32.BringWindowToTop(hwnd)
@@ -1486,7 +1503,10 @@ def type_to_desktop(text: str, press_enter: bool = True, press_alt_m: bool = Fal
                     win_title = buff.value or win_title
 
             # Auto-focus coding / terminal window if user is away or focused elsewhere
-            TARGET_IDE_KEYWORDS = ["powershell", "terminal", "antigravity", "visual studio code", "code", "cmd", "bash"]
+            TARGET_IDE_KEYWORDS = [
+                "powershell", "windows powershell", "pwsh", "terminal", "antigravity",
+                "visual studio code", "code", "cmd", "bash"
+            ]
             is_target_ide = any(kw in win_title.lower() for kw in TARGET_IDE_KEYWORDS)
             if not is_target_ide:
                 for kw in TARGET_IDE_KEYWORDS:
@@ -1562,6 +1582,63 @@ def type_to_desktop(text: str, press_enter: bool = True, press_alt_m: bool = Fal
             return True, "Pasted into active desktop window via xdotool."
         except Exception:
             return True, "Copied to Linux clipboard."
+
+
+# --- Staged Desktop Injection Queue for Away Mode / Screen Lock ---
+_pending_desktop_queue: List[Dict[str, Any]] = []
+_pending_queue_lock = threading.Lock()
+
+
+def queue_pending_desktop_prompt(
+    chat_id: str,
+    prompt: str,
+    press_enter: bool = True,
+    press_alt_m: bool = False,
+) -> None:
+    """Queue a prompt to be typed and submitted into the terminal the instant the workstation is unlocked."""
+    with _pending_queue_lock:
+        _pending_desktop_queue.append({
+            "chat_id": chat_id,
+            "prompt": prompt,
+            "press_enter": press_enter,
+            "press_alt_m": press_alt_m,
+            "timestamp": time.time(),
+        })
+
+
+def get_pending_desktop_prompts_count() -> int:
+    with _pending_queue_lock:
+        return len(_pending_desktop_queue)
+
+
+def drain_pending_desktop_prompts() -> int:
+    """If workstation is unlocked and there are queued prompts, inject them into the active terminal session."""
+    if is_workstation_locked():
+        return 0
+
+    with _pending_queue_lock:
+        if not _pending_desktop_queue:
+            return 0
+        items = list(_pending_desktop_queue)
+        _pending_desktop_queue.clear()
+
+    drained = 0
+    cfg = load_remote_config()
+    for item in items:
+        time.sleep(0.35)
+        ok, msg = type_to_desktop(item["prompt"], press_enter=item["press_enter"], press_alt_m=item["press_alt_m"])
+        drained += 1
+        preview = (item["prompt"][:80] + "...") if len(item["prompt"]) > 80 else item["prompt"]
+        send_telegram_message(
+            item["chat_id"],
+            f"🚀 *Workstation Unlocked!*\n"
+            f"Delivered queued prompt directly into Antigravity terminal session:\n"
+            f"\"{preview}\"\n\n"
+            f"• *Status:* {msg}\n"
+            f"• *Live Streaming:* Active",
+            config=cfg,
+        )
+    return drained
 
 
 def handle_remote_command(from_number: str, text: str) -> str:
@@ -1782,13 +1859,14 @@ def handle_remote_command(from_number: str, text: str) -> str:
             clean_arg = arg[:-8].strip()
 
         if is_workstation_locked():
-            try:
-                from .nlp_router import route_and_execute
-                res_nlp = route_and_execute(clean_arg)
-                return f"🔒 *Workstation is Locked (Autonomous Execution Active)*\nAegisBrain executed your prompt autonomously in the background:\n\n{res_nlp}"
-            except Exception as e:
-                res_fallback = execute_shell(clean_arg)
-                return f"⚡ *Command Output (`{clean_arg[:60]}`):*\n```\n{res_fallback or str(e)}\n```"
+            queue_pending_desktop_prompt(from_number, clean_arg, press_enter=True, press_alt_m=alt_m)
+            preview = (clean_arg[:120] + "...") if len(clean_arg) > 120 else clean_arg
+            return (
+                f"✍️ *Prompt Staged in Queue:*\n\"{preview}\"\n\n"
+                f"🔒 *Workstation is Locked (Away Mode Staged Queue).*\n"
+                f"• Staged in Aegis memory.\n"
+                f"• The instant you open your laptop or unlock Windows, Aegis will focus your Antigravity terminal and paste/submit this prompt automatically!"
+            )
         ok, msg = type_to_desktop(clean_arg, press_enter=True, press_alt_m=alt_m)
         return f"✍️ *Agent Input:* {msg}"
 
@@ -2127,21 +2205,8 @@ def handle_remote_command(from_number: str, text: str) -> str:
             res = execute_shell(clean_text)
             return f"⚡ *Command Output (`{clean_text[:60]}`):*\n```\n{res}\n```"
 
-        # 2. Away Mode & Screen Lock Guard:
-        # If user is away or screen is locked, desktop typing is physically blocked by Windows.
-        # Autonomously route to background execution engine!
-        if is_workstation_locked():
-            send_telegram_chat_action(from_number, "typing", config=cfg)
-            try:
-                from .nlp_router import route_and_execute
-                res_nlp = route_and_execute(clean_text)
-                return f"🤖 *AegisBrain Autonomous Execution (Away Mode):*\n\n{res_nlp}"
-            except Exception as e:
-                res_fallback = execute_shell(clean_text)
-                return f"⚡ *Command Output (`{clean_text[:60]}`):*\n```\n{res_fallback or str(e)}\n```"
-
-        # 3. Check default mode setting
-        def_mode = cfg.get("default_mode", "swarm").lower()
+        # 2. Check default mode setting (defaults to "chat")
+        def_mode = cfg.get("default_mode", "chat").lower()
 
         # If in exec mode: run as shell
         if def_mode == "exec":
@@ -2149,42 +2214,47 @@ def handle_remote_command(from_number: str, text: str) -> str:
             res = execute_shell(clean_text)
             return f"⚡ *Command Output (`{clean_text[:60]}`):*\n```\n{res}\n```"
 
-        # If in chat mode (or testing): type to desktop
-        if def_mode == "chat" or os.environ.get("PYTEST_CURRENT_TEST"):
+        # If in explicit swarm mode:
+        if def_mode == "swarm":
             send_telegram_chat_action(from_number, "typing", config=cfg)
-            alt_m = clean_text.lower().endswith("/alt+m") or clean_text.lower().endswith("/alt + m")
-            plain_payload = clean_text
-            if clean_text.lower().endswith("/alt+m"):
-                plain_payload = clean_text[:-6].strip()
-            elif clean_text.lower().endswith("/alt + m"):
-                plain_payload = clean_text[:-8].strip()
-            ok, msg = type_to_desktop(plain_payload, press_enter=True, press_alt_m=alt_m)
-            if not ok and any(term in msg.lower() for term in ("locked", "lock screen", "windows default")):
-                try:
-                    from .nlp_router import route_and_execute
-                    res_nlp = route_and_execute(clean_text)
-                    return f"🤖 *AegisBrain Autonomous Execution (Workstation Locked):*\n\n{res_nlp}"
-                except Exception as e:
-                    res_fallback = execute_shell(clean_text)
-                    return f"⚡ *Command Output (`{clean_text[:60]}`):*\n```\n{res_fallback or str(e)}\n```"
+            try:
+                from .nlp_router import route_and_execute
+                res_nlp = route_and_execute(clean_text)
+                return f"🤖 *AegisBrain Autonomous Execution:*\n\n{res_nlp}"
+            except Exception as e:
+                return f"⚠️ Execution error: {e}"
 
-            preview = (clean_text[:120] + "...") if len(clean_text) > 120 else clean_text
+        # 3. Default: Chat mode (Deliver directly to active Antigravity terminal session)
+        send_telegram_chat_action(from_number, "typing", config=cfg)
+        alt_m = clean_text.lower().endswith("/alt+m") or clean_text.lower().endswith("/alt + m")
+        plain_payload = clean_text
+        if clean_text.lower().endswith("/alt+m"):
+            plain_payload = clean_text[:-6].strip()
+        elif clean_text.lower().endswith("/alt + m"):
+            plain_payload = clean_text[:-8].strip()
+
+        # Away Mode / Screen Lock Guard:
+        # If workstation is locked, stage prompt in queue to paste the moment laptop is opened/unlocked!
+        if is_workstation_locked():
+            queue_pending_desktop_prompt(from_number, plain_payload, press_enter=True, press_alt_m=alt_m)
+            preview = (plain_payload[:120] + "...") if len(plain_payload) > 120 else plain_payload
             return (
-                f"✍️ *Prompt Sent to Coding Session:*\n"
+                f"✍️ *Prompt Staged for Antigravity Session:*\n"
                 f"\"{preview}\"\n\n"
-                f"• *Status:* {msg}\n"
-                f"• *Live Streaming:* Active (Antigravity outputs will stream to your phone word-for-word).\n"
-                f"_Tip: Use `/nav` to browse terminal logs or `/status` for health._"
+                f"🔒 *Workstation is Locked (Away Mode Staged Queue).*\n"
+                f"• Staged in Aegis memory.\n"
+                f"• The instant you open your laptop or unlock Windows, Aegis will focus your terminal, paste this prompt, and submit it!"
             )
 
-        # 4. Default (swarm / autonomous):
-        try:
-            from .nlp_router import route_and_execute
-            send_telegram_chat_action(from_number, "typing", config=cfg)
-            res_nlp = route_and_execute(clean_text)
-            return f"🤖 *AegisBrain Autonomous Execution:*\n\n{res_nlp}"
-        except Exception as e:
-            return f"⚠️ Execution error: {e}"
+        ok, msg = type_to_desktop(plain_payload, press_enter=True, press_alt_m=alt_m)
+        preview = (clean_text[:120] + "...") if len(clean_text) > 120 else clean_text
+        return (
+            f"✍️ *Prompt Sent to Coding Session:*\n"
+            f"\"{preview}\"\n\n"
+            f"• *Status:* {msg}\n"
+            f"• *Live Streaming:* Active (Antigravity outputs will stream to your phone word-for-word).\n"
+            f"_Tip: Use `/nav` to browse terminal logs or `/status` for health._"
+        )
 
 
 def format_twiml_response(reply_text: str) -> str:

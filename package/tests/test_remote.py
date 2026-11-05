@@ -264,5 +264,31 @@ class TestCaffeinateAndRemote(unittest.TestCase):
                 f_path.unlink()
 
 
+    def test_staged_desktop_prompt_queue_and_drain(self):
+        from aegis.remote import (
+            queue_pending_desktop_prompt,
+            get_pending_desktop_prompts_count,
+            drain_pending_desktop_prompts,
+        )
+        from unittest.mock import patch
+
+        # Queue while locked
+        queue_pending_desktop_prompt("2119188945", "Fix button component", press_enter=True)
+        self.assertGreaterEqual(get_pending_desktop_prompts_count(), 1)
+
+        # While locked, drain returns 0
+        with patch("aegis.remote.is_workstation_locked", return_value=True):
+            drained_locked = drain_pending_desktop_prompts()
+            self.assertEqual(drained_locked, 0)
+            self.assertGreaterEqual(get_pending_desktop_prompts_count(), 1)
+
+        # When unlocked, drain delivers and clears queue
+        with patch("aegis.remote.is_workstation_locked", return_value=False), \
+             patch("aegis.remote.send_telegram_message"):
+            drained_unlocked = drain_pending_desktop_prompts()
+            self.assertGreaterEqual(drained_unlocked, 1)
+            self.assertEqual(get_pending_desktop_prompts_count(), 0)
+
+
 if __name__ == "__main__":
     unittest.main()
