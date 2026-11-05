@@ -49,7 +49,7 @@
 
   <!-- Header -->
   <text x="600" y="38" text-anchor="middle" font-family="'Virgil', 'Comic Sans MS', sans-serif" font-size="22" font-weight="700" fill="#0284C7">📱 Telegram 24/7 Mobile Operations &amp; Whisper Voice Pipeline</text>
-  <text x="600" y="60" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#64748B">Voice Note &bull; Local Whisper &bull; Win32 Console Injection &bull; Vim-Calibrated Insert Mode Submission</text>
+  <text x="600" y="60" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#64748B">Voice Note &#8226; Local Whisper &#8226; Win32 Console Injection &#8226; Vim-Calibrated Insert Mode Submission</text>
 
   <!-- COLUMN 1: USER MOBILE PHONE -->
   <rect x="40" y="85" width="240" height="490" class="box-frame" />
@@ -136,7 +136,7 @@
   <text x="968" y="194" class="card-sub text-dark-sub" fill="#047857">   AttachConsole(pid)</text>
   <text x="968" y="212" class="card-sub text-dark-sub" fill="#047857">   WriteConsoleInputW</text>
   <text x="968" y="240" class="card-sub text-dark-sub" fill="#047857">2. Vim Calibration</text>
-  <text x="968" y="258" class="card-sub text-dark-sub" fill="#047857">   Esc, Esc &rarr; 'i' (Insert)</text>
+  <text x="968" y="258" class="card-sub text-dark-sub" fill="#047857">   Esc, Esc &#8594; 'i' (Insert)</text>
   <text x="968" y="276" class="card-sub text-dark-sub" fill="#047857">   Paste command text</text>
   <text x="968" y="304" class="card-sub text-dark-sub" fill="#065F46">3. Direct Enter Submit</text>
   <text x="968" y="322" class="card-sub text-dark-sub" fill="#065F46">   ✅ Stays in INSERT mode</text>

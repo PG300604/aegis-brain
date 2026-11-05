@@ -61,15 +61,15 @@
 
   <!-- Title Banner -->
   <text x="600" y="38" text-anchor="middle" font-family="'Virgil', 'Comic Sans MS', sans-serif" font-size="22" font-weight="700" fill="#4F46E5">🏛️ AegisBrain 3-Tier Multi-Agent Hierarchy &amp; Escalation Protocol</text>
-  <text x="600" y="60" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#64748B">Token Arbitrage Division of Cognition &bull; 4-Decision Quality Gate &bull; Senior Boss Takeover</text>
+  <text x="600" y="60" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#64748B">Token Arbitrage Division of Cognition &#8226; 4-Decision Quality Gate &#8226; Senior Boss Takeover</text>
 
   <!-- TIER 1 CONTAINER -->
   <rect x="40" y="85" width="1120" height="135" class="box-frame" />
-  <text x="60" y="110" class="label-zone">TIER 1 &bull; SENIOR BOSS (HIGH COGNITION FRONTIER MANAGER)</text>
+  <text x="60" y="110" class="label-zone">TIER 1 &#8226; SENIOR BOSS (HIGH COGNITION FRONTIER MANAGER)</text>
   
   <rect x="60" y="122" width="740" height="82" rx="10" fill="#EEF2FF" stroke="#6366F1" stroke-width="1.8" class="dark-tier1" />
   <text x="80" y="150" class="card-title text-dark" fill="#312E81">🧠 Frontier Manager (Gemini 3.8 Flash / Claude 3.7)</text>
-  <text x="80" y="172" class="card-sub text-dark-sub" fill="#4338CA">Role: System Architecture &bull; Options Exploration (Pros/Cons) &bull; Invariants Definition &bull; Final Quality Sign-off</text>
+  <text x="80" y="172" class="card-sub text-dark-sub" fill="#4338CA">Role: System Architecture &#8226; Options Exploration (Pros/Cons) &#8226; Invariants Definition &#8226; Final Quality Sign-off</text>
   <text x="80" y="190" class="card-sub text-dark-sub" fill="#4338CA">Token Arbitrage Invariant: Zero direct boilerplate/implementation coding (reserves frontier tokens for brainwork)</text>
   
   <rect x="820" y="122" width="320" height="82" rx="10" fill="#FFF1F2" stroke="#E11D48" stroke-width="1.8" class="dark-escalation" />
@@ -88,11 +88,11 @@
 
   <!-- TIER 2 CONTAINER -->
   <rect x="40" y="250" width="1120" height="165" class="box-frame" />
-  <text x="60" y="275" class="label-zone">TIER 2 &bull; JUNIOR BOSSES (SUBAGENTS / DOMAIN TECH LEADS)</text>
+  <text x="60" y="275" class="label-zone">TIER 2 &#8226; JUNIOR BOSSES (SUBAGENTS / DOMAIN TECH LEADS)</text>
 
   <rect x="60" y="288" width="340" height="110" rx="10" fill="#E0F2FE" stroke="#0284C7" stroke-width="1.8" class="dark-tier2" />
   <text x="75" y="315" class="card-title text-dark" fill="#0369A1">🎯 Domain Tech Leads (Subagents)</text>
-  <text x="75" y="335" class="card-sub text-dark-sub" fill="#0284C7">Backend Lead &bull; Frontend Lead &bull; QA / Sec Lead</text>
+  <text x="75" y="335" class="card-sub text-dark-sub" fill="#0284C7">Backend Lead &#8226; Frontend Lead &#8226; QA / Sec Lead</text>
   <text x="75" y="355" class="card-sub text-dark-sub" fill="#0369A1">• Scopes invariants &amp; boundaries</text>
   <text x="75" y="372" class="card-sub text-dark-sub" fill="#0369A1">• Dispatches tasks to Tier 3 workers</text>
   <text x="75" y="389" class="card-sub text-dark-sub" fill="#0369A1">• Never writes implementation code itself</text>
@@ -121,7 +121,7 @@
 
   <!-- TIER 3 CONTAINER -->
   <rect x="40" y="450" width="1120" height="195" class="box-frame" />
-  <text x="60" y="475" class="label-zone">TIER 3 &bull; EXECUTION WORKERS (FREE / LOCAL SYNTHESIS MUSCLE)</text>
+  <text x="60" y="475" class="label-zone">TIER 3 &#8226; EXECUTION WORKERS (FREE / LOCAL SYNTHESIS MUSCLE)</text>
 
   <!-- WORKER 1: Hermes -->
   <rect x="60" y="488" width="205" height="135" rx="10" fill="#ECFDF5" stroke="#10B981" stroke-width="1.8" class="dark-tier3" />
