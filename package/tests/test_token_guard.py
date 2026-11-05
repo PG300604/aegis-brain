@@ -1,4 +1,18 @@
-import pytest
+try:
+    import pytest
+except ImportError:
+    class _DummyPytest:
+        @staticmethod
+        def fixture(*args, **kwargs):
+            def decorator(f):
+                return f
+            return decorator
+
+        @staticmethod
+        def skip(reason=""):
+            pass
+
+    pytest = _DummyPytest()
 from aegis.token_guard import (
     check_token_emergency_lock,
     is_priority_task,

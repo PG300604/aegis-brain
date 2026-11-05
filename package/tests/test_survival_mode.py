@@ -11,7 +11,21 @@ Verifies:
 
 import json
 from pathlib import Path
-import pytest
+try:
+    import pytest
+except ImportError:
+    class _DummyPytest:
+        @staticmethod
+        def fixture(*args, **kwargs):
+            def decorator(f):
+                return f
+            return decorator
+
+        @staticmethod
+        def skip(reason=""):
+            pass
+
+    pytest = _DummyPytest()
 
 from aegis.survival_mode import (
     is_survival_mode,

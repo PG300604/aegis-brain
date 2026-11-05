@@ -1,6 +1,20 @@
 import json
 from unittest.mock import MagicMock, patch
-import pytest
+try:
+    import pytest
+except ImportError:
+    class _DummyPytest:
+        @staticmethod
+        def fixture(*args, **kwargs):
+            def decorator(f):
+                return f
+            return decorator
+
+        @staticmethod
+        def skip(reason=""):
+            pass
+
+    pytest = _DummyPytest()
 
 from aegis.db import get_connection, init_db
 from aegis.telegram_queue import (

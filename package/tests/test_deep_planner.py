@@ -1,6 +1,5 @@
 """Unit tests for AegisBrain Deep Planning, Feasibility & Cascading Alignment Engine."""
 
-import pytest
 from aegis.deep_planner import (
     DeepPlanningEngine,
     DeepPlanReport,

@@ -6,7 +6,21 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
-import pytest
+try:
+    import pytest
+except ImportError:
+    class _DummyPytest:
+        @staticmethod
+        def fixture(*args, **kwargs):
+            def decorator(f):
+                return f
+            return decorator
+
+        @staticmethod
+        def skip(reason=""):
+            pass
+
+    pytest = _DummyPytest()
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 SCRIPTS_DIR = REPO_ROOT / "scripts"
