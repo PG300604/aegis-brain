@@ -44,4 +44,4 @@ jobs:
 
       - name: Run tests
         working-directory: package
-        run: python -m pytest tests -v
+        run: python -c "import subprocess, os, sys; p = subprocess.run([sys.executable, '-m', 'pytest', 'tests', '-v', '--tb=short'], capture_output=True, text=True); sf = os.environ.get('GITHUB_STEP_SUMMARY'); (open(sf, 'a', encoding='utf-8').write(f'### Pytest Output\n```\n{p.stdout[-3500:]}\n{p.stderr[-1500:]}\n```\n') if sf else None); print(p.stdout); print(p.stderr, file=sys.stderr); sys.exit(p.returncode)"
