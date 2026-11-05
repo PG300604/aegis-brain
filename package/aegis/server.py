@@ -288,6 +288,7 @@ class AegisRequestHandler(BaseHTTPRequestHandler):
 
 def create_server(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT) -> ThreadingHTTPServer:
     init_db()
+    ThreadingHTTPServer.allow_reuse_address = True
     server = ThreadingHTTPServer((host, port), AegisRequestHandler)
     return server
 
