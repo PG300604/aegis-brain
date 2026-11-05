@@ -1,0 +1,213 @@
+<#
+.SYNOPSIS
+    AegisBrain Universal Agent Mindset Rollback Script.
+.DESCRIPTION
+    Restores all agent configurations, prompts, and rules back to their exact pre-override
+    state with ZERO RESIDUE.
+.PARAMETER SnapshotId
+    Optional snapshot ID to restore. If omitted, restores the latest mindset snapshot.
+.PARAMETER Force
+    Bypass interactive confirmation prompt.
+#>
+[CmdletBinding()]
+param(
+    [string]$SnapshotId = "",
+    [switch]$Force
+)
+
+$ErrorActionPreference = 'Stop'
+
+Write-Host ""
+Write-Host "========================================================================" -ForegroundColor Cyan
+Write-Host " AegisBrain Universal Agent Mindset Rollback & Restore" -ForegroundColor Cyan
+Write-Host "========================================================================" -ForegroundColor Cyan
+Write-Host ""
+
+$HomeDir = if ($env:USERPROFILE) { $env:USERPROFILE } else { [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::UserProfile) }
+$SnapshotsDir = Join-Path $HomeDir ".aegis-brain\snapshots"
+$LatestPointer = Join-Path $SnapshotsDir "LATEST_MINDSET_SNAPSHOT.txt"
+
+# 1. Resolve Snapshot ID & Directory
+$TargetSnapshotId = $SnapshotId
+if (-not $TargetSnapshotId) {
+    if (Test-Path $LatestPointer) {
+        $TargetSnapshotId = (Get-Content -Path $LatestPointer -Raw -Encoding utf8).Trim()
+    }
+}
+
+if (-not $TargetSnapshotId) {
+    # Auto-discover latest snapshot
+    if (Test-Path $SnapshotsDir) {
+        $matching = Get-ChildItem -Path $SnapshotsDir -Directory | Where-Object {
+            (Test-Path (Join-Path $_.FullName "manifest.json")) -and ($_.Name -match 'mindset_override')
+        } | Sort-Object Name -Descending
+
+        if ($matching) {
+            $TargetSnapshotId = $matching[0].Name
+        } else {
+            $anySnap = Get-ChildItem -Path $SnapshotsDir -Directory | Where-Object {
+                Test-Path (Join-Path $_.FullName "manifest.json")
+            } | Sort-Object Name -Descending
+            if ($anySnap) {
+                $TargetSnapshotId = $anySnap[0].Name
+            }
+        }
+    }
+}
+
+if (-not $TargetSnapshotId) {
+    Write-Host "[ERROR] No restore points found in $SnapshotsDir" -ForegroundColor Red
+    exit 1
+}
+
+$SnapshotTargetDir = Join-Path $SnapshotsDir $TargetSnapshotId
+if (-not (Test-Path $SnapshotTargetDir)) {
+    # Check partial match
+    $candidates = Get-ChildItem -Path $SnapshotsDir -Directory | Where-Object { $_.Name -like "*$TargetSnapshotId*" }
+    if ($candidates) {
+        $SnapshotTargetDir = $candidates[0].FullName
+        $TargetSnapshotId = $candidates[0].Name
+    } else {
+        Write-Host "[ERROR] Snapshot '$TargetSnapshotId' does not exist in $SnapshotsDir" -ForegroundColor Red
+        exit 1
+    }
+}
+
+$ManifestPath = Join-Path $SnapshotTargetDir "manifest.json"
+if (-not (Test-Path $ManifestPath)) {
+    Write-Host "[ERROR] Corrupt snapshot: missing manifest.json in $SnapshotTargetDir" -ForegroundColor Red
+    exit 1
+}
+
+$Manifest = Get-Content -Path $ManifestPath -Raw -Encoding utf8 | ConvertFrom-Json
+
+Write-Host " Identified Restore Point:" -ForegroundColor White
+Write-Host "   Snapshot ID : $($Manifest.snapshot_id)" -ForegroundColor Yellow
+Write-Host "   Created At  : $($Manifest.created_at)" -ForegroundColor Yellow
+Write-Host "   Reason      : $($Manifest.reason)" -ForegroundColor Yellow
+Write-Host "   Backed Files: $($Manifest.file_count)" -ForegroundColor Yellow
+Write-Host ""
+
+if (-not $Force -and [System.Environment]::UserInteractive -and -not $env:CI -and -not $env:NONINTERACTIVE) {
+    try {
+        $resp = Read-Host "Proceed with restoring this snapshot? All post-snapshot changes will be reverted. [Y/n]"
+        if ($resp -match '^[nN]') {
+            Write-Host "[AegisBrain] Rollback cancelled by user." -ForegroundColor Yellow
+            exit 0
+        }
+    } catch {
+        # Non-interactive fallback
+    }
+}
+
+Write-Host "[1/4] Restoring pre-override configuration files..." -ForegroundColor Cyan
+$restoredCount = 0
+$restoreErrors = @()
+
+foreach ($file in $Manifest.files) {
+    $origPath = $file.original_path
+    $backupPath = Join-Path $SnapshotTargetDir $file.backup_path
+
+    if (Test-Path $backupPath) {
+        try {
+            $parent = Split-Path -Parent $origPath
+            if (-not (Test-Path $parent)) {
+                New-Item -ItemType Directory -Path $parent -Force | Out-Null
+            }
+            Copy-Item -Path $backupPath -Destination $origPath -Force
+            $restoredCount++
+            Write-Host "      [RESTORED] $origPath" -ForegroundColor Green
+        } catch {
+            $msg = "$($origPath): $($_.Exception.Message)"
+            $restoreErrors += $msg
+            Write-Host "      [FAIL] $msg" -ForegroundColor Red
+        }
+    } else {
+        $msg = "Backup missing for $($origPath) at $($backupPath)"
+        $restoreErrors += $msg
+        Write-Host "      [WARN] $msg" -ForegroundColor Yellow
+    }
+}
+
+Write-Host "[2/4] Removing newly created files (Zero Residue)..." -ForegroundColor Cyan
+$cleanedFilesCount = 0
+if ($Manifest.created_files) {
+    foreach ($createdPath in $Manifest.created_files) {
+        if (Test-Path $createdPath -PathType Leaf) {
+            try {
+                Remove-Item -Path $createdPath -Force
+                $cleanedFilesCount++
+                Write-Host "      [REMOVED] $createdPath" -ForegroundColor Green
+            } catch {
+                Write-Host "      [WARN] Could not remove $($createdPath) : $($_.Exception.Message)" -ForegroundColor Yellow
+            }
+        }
+    }
+}
+
+Write-Host "[3/4] Cleaning up empty installer-created directories..." -ForegroundColor Cyan
+$cleanedDirsCount = 0
+if ($Manifest.created_dirs) {
+    # Reverse to clean deepest directories first
+    $reversedDirs = [System.Collections.ArrayList]@($Manifest.created_dirs)
+    $reversedDirs.Reverse()
+
+    foreach ($createdDir in $reversedDirs) {
+        if (Test-Path $createdDir -PathType Container) {
+            $items = Get-ChildItem -Path $createdDir -Force
+            if ($items.Count -eq 0) {
+                try {
+                    Remove-Item -Path $createdDir -Force -Recurse
+                    $cleanedDirsCount++
+                    Write-Host "      [CLEANED] Empty directory: $createdDir" -ForegroundColor Green
+                } catch {
+                    # Ignore directory removal errors if locked or in use
+                }
+            }
+        }
+    }
+}
+
+Write-Host "[4/4] Executing defense-in-depth residual marker check..." -ForegroundColor Cyan
+# Ensure no stray marker remains in any monitored file
+$allMonitored = @(
+    (Join-Path $HomeDir ".gemini\config\GEMINI.md"),
+    (Join-Path $HomeDir ".claude\CLAUDE.md"),
+    (Join-Path $HomeDir ".codex\instructions.md"),
+    (Join-Path $HomeDir ".aider\conventions.md")
+)
+if ($Manifest.workspace) {
+    $allMonitored += (Join-Path $Manifest.workspace "CLAUDE.md")
+    $allMonitored += (Join-Path $Manifest.workspace "AGENTS.md")
+}
+
+foreach ($targetFile in $allMonitored) {
+    if (Test-Path $targetFile -PathType Leaf) {
+        $raw = Get-Content -Path $targetFile -Raw -Encoding utf8
+        if ($raw -match '<!-- AEGIS_BRAIN_MINDSET_START -->[\s\S]*?<!-- AEGIS_BRAIN_MINDSET_END -->') {
+            $stripped = [regex]::Replace($raw, '(?m)^\s*<!-- AEGIS_BRAIN_MINDSET_START -->[\s\S]*?<!-- AEGIS_BRAIN_MINDSET_END -->\s*$', '').Trim()
+            $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+            if ($stripped.Length -eq 0 -and ($Manifest.created_files -contains $targetFile)) {
+                Remove-Item -Path $targetFile -Force
+                Write-Host "      [CLEANED] Empty residual file removed: $targetFile" -ForegroundColor Green
+            } else {
+                [System.IO.File]::WriteAllText($targetFile, $stripped, $utf8NoBom)
+                Write-Host "      [SCRUBBED] Stripped residual mindset marker from: $targetFile" -ForegroundColor Green
+            }
+        }
+    }
+}
+
+Write-Host ""
+Write-Host "========================================================================" -ForegroundColor Green
+Write-Host " [SUCCESS] Mindset override rolled back successfully with ZERO RESIDUE!" -ForegroundColor Green
+Write-Host "========================================================================" -ForegroundColor Green
+Write-Host " Summary:" -ForegroundColor White
+Write-Host "   Files Restored : $restoredCount" -ForegroundColor Green
+Write-Host "   Files Removed  : $cleanedFilesCount" -ForegroundColor Green
+Write-Host "   Dirs Cleaned   : $cleanedDirsCount" -ForegroundColor Green
+if ($restoreErrors.Count -gt 0) {
+    Write-Host "   Warnings       : $($restoreErrors.Count)" -ForegroundColor Yellow
+}
+Write-Host "========================================================================" -ForegroundColor Green
+Write-Host ""

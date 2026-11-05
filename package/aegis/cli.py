@@ -182,6 +182,16 @@ def main() -> None:
     # hierarchy (3-Tier Multi-Agent Power & Quality Structure)
     hier_parser = subparsers.add_parser("hierarchy", help="Display 3-Tier Multi-Agent Hierarchy, bottleneck risk, and active tree")
     hier_parser.add_argument("task", nargs="?", default="", help="Optional task to plan hierarchy for")
+    hier_parser.add_argument("--execute", "-e", action="store_true", help="Execute hierarchy with worker coaching loop")
+    hier_parser.add_argument("--simulate", "-s", action="store_true", help="Simulate worker execution for testing")
+    hier_parser.add_argument("--worker", "-w", choices=["hermes", "moe", "gemini"], default=None, help="Execution worker model")
+
+    # coach (Junior Boss Subagent Supervised Coaching Loop)
+    coach_parser = subparsers.add_parser("coach", help="Junior Boss Subagent coaches execution workers (Hermes/MoE) through the 4 Quality Gates")
+    coach_parser.add_argument("task", help="Task specification for worker execution")
+    coach_parser.add_argument("--worker", "-w", choices=["hermes", "moe", "gemini"], default="hermes", help="Target execution worker")
+    coach_parser.add_argument("--simulate", "-s", action="store_true", help="Simulate worker draft and coaching corrections")
+    coach_parser.add_argument("--retries", "-r", type=int, default=3, help="Max coaching retries")
 
     # scout (Autonomous Skill Scout & Arsenal Intelligence)
     scout_parser = subparsers.add_parser("scout", help="Autonomous skill discovery matching user taste and niches")
@@ -1030,10 +1040,44 @@ def main() -> None:
         print(decision.format_banner())
 
     elif args.command == "hierarchy":
-        from .hierarchy import HierarchicalAgentOrchestrator
+        from .hierarchy import HierarchicalAgentOrchestrator, WorkerType
         orch = HierarchicalAgentOrchestrator()
-        orch.plan_hierarchy(args.task or "General Multi-Agent Operation")
-        print(orch.format_hierarchy_report(args.task))
+        task_str = args.task or "General Multi-Agent Operation"
+        if getattr(args, "execute", False):
+            w_type = WorkerType(args.worker) if args.worker else None
+            res = orch.execute_hierarchy(task_str, worker_type=w_type, simulate=args.simulate)
+            print(orch.format_hierarchy_report(task_str))
+            print("\n🚀 Execution & Coaching Summary:")
+            for sub in res["subagent_executions"]:
+                print(f"  • {sub['name']} ({sub['domain']}): Passed={sub['passed']}, Attempts={sub['attempts']}, Error Delta={sub['initial_errors']} ➔ {sub['final_errors']}")
+                if sub["coaching_history"]:
+                    print(f"    Coaching: {sub['coaching_history'][-1]}")
+        else:
+            orch.plan_hierarchy(task_str)
+            print(orch.format_hierarchy_report(task_str))
+
+    elif args.command == "coach":
+        from .hierarchy import SubagentNode, WorkerType
+        w_type = WorkerType(args.worker)
+        sa = SubagentNode(
+            subagent_id="subagent-lead",
+            name="Antigravity Junior Boss (Domain Lead)",
+            domain="core_execution",
+            allowed_workers=[w_type],
+        )
+        print(f"👔 Junior Boss initiating supervised execution with worker `{w_type.value}`...")
+        ok, code, info = sa.execute_worker_with_coaching_loop(
+            task_spec=args.task,
+            worker_type=w_type,
+            max_retries=args.retries,
+            simulate=args.simulate,
+        )
+        print(f"🎯 Status: {'PASSED ✅' if ok else 'REVISIONS NEEDED ⚠️'} (Attempts: {info['attempts']}, Initial Errors: {info['initial_errors']} ➔ Final Errors: {info['final_errors']})")
+        if info.get("coaching_history"):
+            print("\nCoaching Interventions:")
+            for c in info["coaching_history"]:
+                print(f"  - {c}")
+        print(f"\nFinal Verified Output:\n```python\n{code}\n```")
 
     else:
         parser.print_help()

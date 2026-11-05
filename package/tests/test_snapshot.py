@@ -52,3 +52,47 @@ def test_restore_snapshot(tmp_path, monkeypatch):
     # 4. Verify original state restored
     restored_text = dummy_file.read_text(encoding="utf-8")
     assert "original_state" in restored_text
+
+
+def test_restore_snapshot_zero_residue_cleanup(tmp_path, monkeypatch):
+    monkeypatch.setattr("aegis.snapshot.get_snapshots_dir", lambda: tmp_path / "snapshots")
+
+    # Create dummy original file
+    dummy_orig = tmp_path / "orig.txt"
+    dummy_orig.write_text("orig_content", encoding="utf-8")
+
+    dummy_created = tmp_path / "created_by_installer.txt"
+    dummy_created_dir = tmp_path / "created_dir"
+
+    monkeypatch.setattr(
+        "aegis.snapshot.get_monitored_agent_paths",
+        lambda: [("dummy_orig", dummy_orig)]
+    )
+
+    # Create snapshot
+    manifest = create_snapshot(name="pre_install_test")
+
+    # Installer simulates creating new file and directory
+    dummy_created_dir.mkdir(parents=True, exist_ok=True)
+    dummy_created.write_text("injected_content", encoding="utf-8")
+    dummy_orig.write_text("modified_content", encoding="utf-8")
+
+    # Add created_files and created_dirs to manifest on disk
+    snap_dir = tmp_path / "snapshots" / manifest["snapshot_id"]
+    manifest["created_files"] = [str(dummy_created)]
+    manifest["created_dirs"] = [str(dummy_created_dir)]
+    (snap_dir / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+    assert dummy_created.exists()
+    assert dummy_created_dir.exists()
+    assert dummy_orig.read_text(encoding="utf-8") == "modified_content"
+
+    # Restore
+    ok, msg = restore_snapshot(manifest["snapshot_id"])
+    assert ok is True
+    assert "zero residue" in msg
+
+    # Verify zero residue
+    assert not dummy_created.exists()
+    assert not dummy_created_dir.exists()
+    assert dummy_orig.read_text(encoding="utf-8") == "orig_content"

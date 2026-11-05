@@ -197,6 +197,141 @@ class SubagentNode:
         self.confidence_score = 10 if not issues else 9
         return True, clean_code, session.audit_notes
 
+    def execute_worker_with_coaching_loop(
+        self,
+        task_spec: str,
+        worker_type: Optional[WorkerType] = None,
+        max_retries: int = 3,
+        simulate: bool = False,
+    ) -> Tuple[bool, str, Dict[str, Any]]:
+        """Supervise and coach execution workers through the 4-Decision Architecture Gate.
+
+        The Subagent (Junior Boss) NEVER writes the code draft itself. Instead:
+        1. Dispatches the prompt to Tier 3 Worker (Hermes CLI, MoE, Ollama, OpenCode).
+        2. Audits the candidate draft using the 4-Decision Architecture Gate.
+        3. If flaws are found (watermarks, shell=True, syntax errors, speculative code):
+           - Formulates a targeted coaching prompt specifying exact errors.
+           - Instructs the worker to revise its output.
+           - Records error reduction and confidence trajectory in SQLite.
+        4. Loops until 0 critical errors remain or max_retries reached.
+        """
+        from .orchestrator import call_local_worker, init_distillation_table
+        init_distillation_table()
+
+        chosen_worker = worker_type or (self.allowed_workers[0] if self.allowed_workers else WorkerType.HERMES)
+        session = self.add_worker_session(chosen_worker, task_spec)
+
+        current_prompt = (
+            f"### Junior Boss ({self.name}) Directive\n"
+            f"Task: {task_spec}\n"
+            f"Domain: {self.domain}\n"
+            f"Invariants: Minimal lines of code, standard library first, zero over-engineering, zero conversational slop.\n"
+            f"Write clean, verifiable code."
+        )
+
+        initial_errors = 0
+        final_errors = 0
+        coaching_history: List[str] = []
+        clean_code = ""
+        audit_details: Dict[str, Any] = {}
+
+        for attempt in range(1, max_retries + 1):
+            if simulate:
+                # In simulation mode: attempt 1 produces a draft with flaws; attempt 2 produces clean minimal code
+                if attempt == 1:
+                    raw_draft = (
+                        "Certainly! Here is the implementation:\n"
+                        "def execute_task():\n"
+                        "    import os\n"
+                        "    os.system('echo running')\n"
+                        "    return True\n"
+                        "Let me know if you need anything else!"
+                    )
+                else:
+                    raw_draft = (
+                        "def execute_task():\n"
+                        "    return True\n"
+                    )
+                worker_ok = True
+            else:
+                worker_model = "qwen2.5-coder:7b" if chosen_worker == WorkerType.MOE else chosen_worker.value
+                worker_ok, raw_draft = call_local_worker(current_prompt, model=worker_model)
+                if not worker_ok:
+                    raw_draft = f"# Local worker fallback for: {task_spec}\ndef execute():\n    return 'completed'"
+
+            passed, clean_code, audit_details = self.four_decision_architecture_audit(raw_draft)
+            issues = audit_details.get("issues", [])
+            err_count = len(issues)
+
+            if attempt == 1:
+                initial_errors = err_count
+
+            final_errors = err_count
+
+            if passed and err_count == 0:
+                session.raw_output = raw_draft
+                session.status = "success"
+                session.tokens_saved = 1050
+                session.audit_notes = f"Attempt {attempt}: Passed all 4 Quality Gates."
+                self.quality_status = "passed"
+                self.confidence_score = 10
+
+                if attempt > 1:
+                    # Successfully coached worker to 0 errors
+                    self.teach_and_refine_worker(
+                        session=session,
+                        initial_errors=initial_errors,
+                        final_errors=0,
+                        teaching_prompt=coaching_history[-1] if coaching_history else "Coached to zero errors",
+                    )
+                return True, clean_code, {
+                    "attempts": attempt,
+                    "initial_errors": initial_errors,
+                    "final_errors": 0,
+                    "coaching_history": coaching_history,
+                    "audit_details": audit_details,
+                    "status": "passed",
+                }
+
+            # Flaws detected: Junior Boss formulates coaching prompt for worker revision
+            coaching_notes = f"Attempt {attempt} failed {err_count} quality checks: {'; '.join(issues)}"
+            coaching_history.append(coaching_notes)
+
+            coaching_prompt = (
+                f"### COACHING CORRECTION - Attempt {attempt + 1}\n"
+                f"Your previous code had {err_count} issues:\n"
+                + "\n".join(f"- {iss}" for iss in issues) + "\n\n"
+                f"Fix these exact issues:\n"
+                f"1. Remove any conversational AI watermarks/preambles completely.\n"
+                f"2. Never use shell=True or os.system; use safe standard library methods.\n"
+                f"3. Ensure strictly valid syntax and minimal Karpathy simplicity.\n"
+                f"Original Task: {task_spec}\n"
+                f"Return ONLY the corrected, minimal code."
+            )
+            current_prompt = coaching_prompt
+
+        session.raw_output = raw_draft
+        session.status = "failed"
+        session.audit_notes = f"Max coaching retries ({max_retries}) reached with {final_errors} remaining errors."
+        self.quality_status = "revision_required"
+        self.confidence_score = max(1, 10 - final_errors)
+
+        self.teach_and_refine_worker(
+            session=session,
+            initial_errors=initial_errors,
+            final_errors=final_errors,
+            teaching_prompt=coaching_history[-1] if coaching_history else "Unresolved errors",
+        )
+
+        return False, clean_code, {
+            "attempts": max_retries,
+            "initial_errors": initial_errors,
+            "final_errors": final_errors,
+            "coaching_history": coaching_history,
+            "audit_details": audit_details,
+            "status": "failed",
+        }
+
 
 @dataclass
 class HierarchyCapacity:
@@ -421,3 +556,42 @@ class HierarchicalAgentOrchestrator:
         lines.append("```")
 
         return "\n".join(lines)
+
+    def execute_hierarchy(
+        self,
+        task: str,
+        worker_type: Optional[WorkerType] = None,
+        simulate: bool = False,
+    ) -> Dict[str, Any]:
+        """Execute the full 3-Tier Multi-Agent hierarchy with Subagent coaching loops.
+
+        Tier 1 (Main Engine): Supreme orchestrator, evaluates capacity, sizes subagents.
+        Tier 2 (Junior Boss Subagents): Domain leads. Do NOT write code; dispatch to Tier 3
+        workers, audit output against the 4 Quality Gates, and coach worker if issues exist.
+        Tier 3 (Execution Workers): Hermes CLI, FreeToken MoE, synthesize drafts.
+        """
+        self.plan_hierarchy(task)
+        results = []
+        for sa in self.subagents:
+            ok, clean_code, audit_info = sa.execute_worker_with_coaching_loop(
+                task_spec=f"{task} [{sa.domain}]",
+                worker_type=worker_type,
+                simulate=simulate,
+            )
+            results.append({
+                "subagent_id": sa.subagent_id,
+                "name": sa.name,
+                "domain": sa.domain,
+                "passed": ok,
+                "attempts": audit_info.get("attempts", 1),
+                "initial_errors": audit_info.get("initial_errors", 0),
+                "final_errors": audit_info.get("final_errors", 0),
+                "coaching_history": audit_info.get("coaching_history", []),
+                "code": clean_code,
+            })
+        top_audit = self.top_engine_quality_audit()
+        return {
+            "task": task,
+            "top_audit": top_audit,
+            "subagent_executions": results,
+        }

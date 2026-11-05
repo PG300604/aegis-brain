@@ -34,6 +34,10 @@ def get_monitored_agent_paths() -> List[Tuple[str, Path]]:
         ("windsurf_global_rules", home / ".windsurfrules"),
         ("aegis_skill_antigravity", home / ".gemini" / "config" / "skills" / "aegis" / "SKILL.md"),
         ("aegis_skill_claude", home / ".claude" / "skills" / "aegis" / "SKILL.md"),
+        ("codex_instructions_md", home / ".codex" / "instructions.md"),
+        ("aegis_skill_codex", home / ".codex" / "skills" / "aegis" / "SKILL.md"),
+        ("aider_conf_yml", home / ".aider.conf.yml"),
+        ("aider_conventions_md", home / ".aider" / "conventions.md"),
         ("aegis_windows_shim", home / ".local" / "bin" / "aegis.cmd"),
         ("aegis_posix_shim", home / ".local" / "bin" / "aegis"),
     ]
@@ -152,7 +156,28 @@ def restore_snapshot(snapshot_id: str) -> Tuple[bool, str]:
         except Exception as exc:
             errors.append(f"{orig_p.name}: {exc}")
 
+    # Clean up newly created files and directories for zero residue
+    cleaned_count = 0
+    for created_item in manifest.get("created_files", []):
+        try:
+            c_path = Path(created_item)
+            if c_path.exists() and (c_path.is_file() or c_path.is_symlink()):
+                c_path.unlink()
+                cleaned_count += 1
+        except Exception as exc:
+            errors.append(f"cleanup {created_item}: {exc}")
+
+    for created_dir in reversed(manifest.get("created_dirs", [])):
+        try:
+            d_path = Path(created_dir)
+            if d_path.exists() and d_path.is_dir() and not any(d_path.iterdir()):
+                d_path.rmdir()
+        except Exception:
+            pass
+
     msg = f"Restored {restored_count} files from restore point '{manifest.get('name')}'"
+    if cleaned_count:
+        msg += f" (cleaned {cleaned_count} newly created files for zero residue)"
     if errors:
         msg += f" (warnings: {'; '.join(errors)})"
     return True, msg
