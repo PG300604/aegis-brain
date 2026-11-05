@@ -359,3 +359,88 @@ def remote_block_input(block: bool = True) -> Tuple[bool, str]:
 def remote_trigger_alarm() -> Tuple[bool, str]:
     return _engine.trigger_alarm()
 
+
+def is_agent_cli_running() -> bool:
+    """Check if any AI coding agent CLI (Antigravity, Claude, Codex) or active terminal is running."""
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return False
+
+    if sys.platform == "win32":
+        try:
+            import ctypes
+            import ctypes.wintypes
+            kernel32 = ctypes.windll.kernel32
+            TH32CS_SNAPPROCESS = 0x00000002
+            class PROCESSENTRY32(ctypes.Structure):
+                _fields_ = [
+                    ('dwSize', ctypes.wintypes.DWORD),
+                    ('cntUsage', ctypes.wintypes.DWORD),
+                    ('th32ProcessID', ctypes.wintypes.DWORD),
+                    ('th32DefaultHeapID', ctypes.c_void_p),
+                    ('th32ModuleID', ctypes.wintypes.DWORD),
+                    ('cntThreads', ctypes.wintypes.DWORD),
+                    ('th32ParentProcessID', ctypes.wintypes.DWORD),
+                    ('pcPriClassBase', ctypes.c_long),
+                    ('dwFlags', ctypes.wintypes.DWORD),
+                    ('szExeFile', ctypes.c_char * 260)
+                ]
+            h = kernel32.CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
+            if h and h != -1:
+                pe = PROCESSENTRY32()
+                pe.dwSize = ctypes.sizeof(PROCESSENTRY32)
+                TARGET_EXES = ("agy.exe", "antigravity", "claude.exe", "codex.exe")
+                found = False
+                if kernel32.Process32First(h, ctypes.byref(pe)):
+                    while True:
+                        name = pe.szExeFile.decode('latin1', errors='ignore').lower()
+                        if any(target in name for target in TARGET_EXES):
+                            found = True
+                            break
+                        if not kernel32.Process32Next(h, ctypes.byref(pe)):
+                            break
+                kernel32.CloseHandle(h)
+                if found:
+                    return True
+        except Exception:
+            pass
+
+    # Check if recent transcript file was modified within last 3 minutes
+    try:
+        from pathlib import Path
+        brain_dir = Path.home() / ".gemini" / "antigravity-cli" / "brain"
+        if brain_dir.exists():
+            transcripts = list(brain_dir.glob("*/.system_generated/logs/transcript.jsonl"))
+            if transcripts:
+                latest = max(transcripts, key=lambda p: p.stat().st_mtime)
+                if (time.time() - latest.stat().st_mtime) < 180:
+                    return True
+    except Exception:
+        pass
+
+    return False
+
+
+def sync_caffeinate_lifecycle(away_mode: Any = None) -> Tuple[bool, str]:
+    """Dynamically calibrate Caffeinate:
+    - If CLI is running or Away Mode is active -> Enable Caffeinate (keep PC awake).
+    - If CLI is closed and not in Away Mode -> Disable Caffeinate (Windows returns to normal power plan).
+    """
+    if away_mode is None:
+        try:
+            from .remote import is_away_mode_active
+            away_mode = is_away_mode_active()
+        except Exception:
+            away_mode = False
+
+    cli_active = is_agent_cli_running()
+
+    if away_mode or cli_active:
+        if not is_caffeinate_active():
+            return enable_caffeinate(keep_display=True, away_mode=bool(away_mode))
+        return True, "Caffeinate active (CLI or Away Mode active)"
+    else:
+        if is_caffeinate_active():
+            return disable_caffeinate()
+        return True, "Caffeinate inactive (Windows normal power plan restored)"
+
+

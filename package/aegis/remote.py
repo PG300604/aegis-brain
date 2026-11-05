@@ -533,6 +533,13 @@ class TranscriptWatcher(threading.Thread):
 
     def run(self):
         while not self.stop_event.is_set():
+            # Dynamically calibrate Caffeinate: activate with CLI / Away Mode, release when terminal closes
+            try:
+                from .caffeinate import sync_caffeinate_lifecycle
+                sync_caffeinate_lifecycle()
+            except Exception:
+                pass
+
             # Check and drain any staged desktop prompts if workstation is unlocked
             try:
                 if not is_workstation_locked():
@@ -1219,17 +1226,12 @@ def attach_to_input_desktop() -> bool:
     return False
 
 def is_workstation_locked() -> bool:
-    """Check if the Windows workstation is currently locked (Winlogon or Lock Screen active)."""
+    """Check if the Windows workstation is currently showing an active Lock Screen."""
     if sys.platform == "win32":
         try:
             import ctypes
             from ctypes import wintypes
             user32 = ctypes.windll.user32
-            h_input = user32.OpenInputDesktop(0, False, 0x01FF)
-            if not h_input:
-                return True
-            user32.CloseDesktop(h_input)
-
             # Check if active foreground window is the Windows Modern Lock Screen
             user32.GetForegroundWindow.restype = wintypes.HWND
             hwnd = user32.GetForegroundWindow()
@@ -1239,7 +1241,7 @@ def is_workstation_locked() -> bool:
                     buff = ctypes.create_unicode_buffer(length + 1)
                     user32.GetWindowTextW(hwnd, buff, length + 1)
                     title = buff.value.lower()
-                    if "lock screen" in title or "windows default lock" in title or title == "windows default":
+                    if "lock screen" in title or "windows default lock" in title or title == "windows default" or "lockapp" in title:
                         return True
         except Exception:
             return False
@@ -1472,9 +1474,6 @@ def type_to_desktop(text: str, press_enter: bool = True, press_alt_m: bool = Fal
         if press_alt_m:
             action_str += " (with Alt+M in-flight)"
         return True, f"{action_str} into \"Mock IDE (Test Mode)\":\n\"{clean_text[:80]}\""
-
-    if is_workstation_locked():
-        return False, "Workstation is locked (Winlogon desktop active). Keystrokes cannot be injected while locked."
 
     attach_to_input_desktop()
     if clean_text:
@@ -1858,16 +1857,15 @@ def handle_remote_command(from_number: str, text: str) -> str:
         elif arg.lower().endswith("/alt + m"):
             clean_arg = arg[:-8].strip()
 
-        if is_workstation_locked():
+        ok, msg = type_to_desktop(clean_arg, press_enter=True, press_alt_m=alt_m)
+        if not ok and is_workstation_locked():
             queue_pending_desktop_prompt(from_number, clean_arg, press_enter=True, press_alt_m=alt_m)
             preview = (clean_arg[:120] + "...") if len(clean_arg) > 120 else clean_arg
             return (
-                f"✍️ *Prompt Staged in Queue:*\n\"{preview}\"\n\n"
-                f"🔒 *Workstation is Locked (Away Mode Staged Queue).*\n"
-                f"• Staged in Aegis memory.\n"
-                f"• The instant you open your laptop or unlock Windows, Aegis will focus your Antigravity terminal and paste/submit this prompt automatically!"
+                f"✍️ *Workstation Screen Locked — Prompt Queued:*\n\"{preview}\"\n\n"
+                f"• Staged safely in memory.\n"
+                f"• Will type into terminal the second screen unlocks."
             )
-        ok, msg = type_to_desktop(clean_arg, press_enter=True, press_alt_m=alt_m)
         return f"✍️ *Agent Input:* {msg}"
 
     elif cmd == "/paste":
@@ -1889,8 +1887,9 @@ def handle_remote_command(from_number: str, text: str) -> str:
             return f"📋 *PC Clipboard Contents:*\n```\n{preview}\n```"
 
     elif cmd == "/lock":
-        ok, msg = remote_lock_workstation()
         set_away_mode(True)
+        enable_caffeinate(keep_display=True, away_mode=True)
+        ok, msg = remote_lock_workstation()
         nav_buttons = [
             [
                 {"text": "📟 View Terminal Logs", "callback_data": "nav:1"},
@@ -1904,8 +1903,9 @@ def handle_remote_command(from_number: str, text: str) -> str:
         lock_msg = (
             f"🔒 *Workstation Lock — Away Mode ACTIVATED!*\n\n"
             f"• *Desktop:* {msg}\n"
+            f"• *Caffeinate:* Active (System keep-awake enabled so PC will not sleep while away)\n"
             "• *Away Mode:* Active (All terminal outputs & agent milestones will stream directly to your phone!)\n"
-            "• *Navigation:* Tap buttons below or send `/nav` to browse output history.\n"
+            "• *Remote Prompts:* You can send prompts and code directly from Telegram anytime; they execute immediately.\n"
             "• Send `/away off` when returning to desk."
         )
         if cfg.get("provider", "telegram").lower() == "telegram" and cfg.get("telegram_token"):
@@ -1916,9 +1916,12 @@ def handle_remote_command(from_number: str, text: str) -> str:
         subcmd = arg.lower().strip()
         if subcmd in ("on", "start", "enable"):
             set_away_mode(True)
-            return "🔒 *Away Mode ON:*\nTerminal output streaming to phone is active. Send `/away off` when returning to desk."
+            enable_caffeinate(keep_display=True, away_mode=True)
+            return "🔒 *Away Mode ON:*\nCaffeinate keep-awake enabled. Terminal output streaming to phone is active. Send `/away off` when returning to desk."
         elif subcmd in ("off", "stop", "disable"):
             set_away_mode(False)
+            from .caffeinate import sync_caffeinate_lifecycle
+            sync_caffeinate_lifecycle(away_mode=False)
             return "👋 *Away Mode OFF:*\nWelcome back to your desk! Terminal output streaming paused."
         else:
             state = "ACTIVE" if is_away_mode_active() else "INACTIVE"
@@ -2094,28 +2097,26 @@ def handle_remote_command(from_number: str, text: str) -> str:
         return format_taste_display()
 
     elif cmd == "/plan":
-        from .deep_planner import DeepPlanningEngine
-        task_query = arg or "Next Development Milestone"
-        deep_plan = DeepPlanningEngine.create_plan(task_query, question_count=6)
-        
-        # Dispatch native Telegram poll for the first key decision
-        first_q = deep_plan.clarifying_questions[0] if deep_plan.clarifying_questions else None
-        if first_q:
-            send_telegram_poll(from_number, f"Q1 [{first_q.category}]: {first_q.question[:200]}", [o[:90] for o in first_q.options[:10]], config=cfg)
-        
-        options_summary = "\n".join(
-            f"{i+1}. *{o.name}* ({o.archetype}) — Score: `{o.feasibility_score}%` | Cost: `{o.token_cost_rating}`"
-            for i, o in enumerate(deep_plan.architecture_options)
-        )
+        task_query = arg.strip() if arg else ""
+        if not task_query:
+            return "❓ *Please provide a task to plan:*\nUsage: `/plan <idea or task description>`"
+            
+        prompt_payload = f"Plan: {task_query}"
+        ok, msg = type_to_desktop(prompt_payload, press_enter=True)
+        if not ok and is_workstation_locked():
+            queue_pending_desktop_prompt(from_number, prompt_payload, press_enter=True)
+            preview = (task_query[:120] + "...") if len(task_query) > 120 else task_query
+            return (
+                f"🧠 *Workstation Screen Locked — Planning Prompt Queued:*\n\"{preview}\"\n\n"
+                f"• Staged safely in memory."
+            )
+        preview = (task_query[:120] + "...") if len(task_query) > 120 else task_query
         return (
-            f"🧠 *AegisBrain Deep Planning & Feasibility Report*\n\n"
-            f"• *Target Task:* `{task_query}`\n"
-            f"• *Domain Niche:* `{deep_plan.niche}`\n"
-            f"• *YC Feasibility Score:* `{deep_plan.feasibility_score}/100`\n"
-            f"• *Matched Arsenal:* {', '.join(deep_plan.arsenal_tools_recommended[:4])}\n\n"
-            f"🏗️ *Architectural Options:*\n{options_summary}\n\n"
-            f"💡 *Recommended:* `{deep_plan.recommended_option}`\n\n"
-            f"🛑 *Clarification Gate Active:* {len(deep_plan.clarifying_questions)} questions prepared. Check poll above or reply with preferences before code execution starts."
+            f"🧠 *Planning Prompt Delivered to Antigravity Session:*\n"
+            f"\"{preview}\"\n\n"
+            f"• *Status:* {msg}\n"
+            f"• *Live Streaming:* Active.\n"
+            f"Antigravity is now analyzing the task, searching arsenal tools, and preparing the diagnostic alignment interview."
         )
 
     elif cmd == "/orchestrate":
@@ -2249,20 +2250,16 @@ def handle_remote_command(from_number: str, text: str) -> str:
         elif clean_text.lower().endswith("/alt + m"):
             plain_payload = clean_text[:-8].strip()
 
-        # Away Mode / Screen Lock Guard:
-        # If workstation is locked, stage prompt in queue to paste the moment laptop is opened/unlocked!
-        if is_workstation_locked():
+        ok, msg = type_to_desktop(plain_payload, press_enter=True, press_alt_m=alt_m)
+        if not ok and is_workstation_locked():
             queue_pending_desktop_prompt(from_number, plain_payload, press_enter=True, press_alt_m=alt_m)
             preview = (plain_payload[:120] + "...") if len(plain_payload) > 120 else plain_payload
             return (
-                f"✍️ *Prompt Staged for Antigravity Session:*\n"
-                f"\"{preview}\"\n\n"
-                f"🔒 *Workstation is Locked (Away Mode Staged Queue).*\n"
-                f"• Staged in Aegis memory.\n"
-                f"• The instant you open your laptop or unlock Windows, Aegis will focus your terminal, paste this prompt, and submit it!"
+                f"✍️ *Workstation Screen Locked — Prompt Queued:*\n\"{preview}\"\n\n"
+                f"• Staged safely in memory.\n"
+                f"• Will type into terminal the second screen unlocks."
             )
 
-        ok, msg = type_to_desktop(plain_payload, press_enter=True, press_alt_m=alt_m)
         preview = (clean_text[:120] + "...") if len(clean_text) > 120 else clean_text
         return (
             f"✍️ *Prompt Sent to Coding Session:*\n"

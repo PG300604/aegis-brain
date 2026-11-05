@@ -162,10 +162,11 @@ class TestCaffeinateAndRemote(unittest.TestCase):
         self.assertIn("Command Output", res_sh)
         self.assertIn("remote_exec_test", res_sh)
 
-        # 2. In locked state, /type routes autonomously rather than crashing or dropping
-        with patch("aegis.remote.is_workstation_locked", return_value=True):
+        # 2. In locked state with blocked desktop, /type queues safely rather than crashing or dropping
+        with patch("aegis.remote.type_to_desktop", return_value=(False, "Workstation is locked")), \
+             patch("aegis.remote.is_workstation_locked", return_value=True):
             res_type_locked = handle_remote_command("whatsapp:+1234567890", "/type echo locked_run")
-            self.assertIn("Workstation is Locked", res_type_locked)
+            self.assertIn("Workstation Screen Locked", res_type_locked)
 
         # 3. Clean away mode toggle
         set_away_mode(True)

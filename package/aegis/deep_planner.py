@@ -2,13 +2,13 @@
 
 Implements the Comprehensive Pre-Execution Architecture:
 1. Arsenal & Skill Discovery:
-   - Scans ~/.gemini/config/{plugins,skills,tools} and recommends optimal execution muscles.
+   - Scans ~/.gemini/config/{plugins,skills,tools} and matches optimal execution muscles.
 2. Y-Combinator Feasibility & Flaw Detection:
    - Evaluates core hypotheses, fatal assumptions, failure modes, and scores feasibility (0-100).
 3. Multi-Approach Architectural Scenarios:
-   - Generates 3-4 distinct technical pathways with detailed Pros, Cons, Complexity, Token Cost, and Feasibility.
+   - Generates 3-4 tailored technical pathways based on user requirements with detailed Pros, Cons, Complexity, and Token Cost.
 4. Zero-Assumption Clarification Gate:
-   - Generates 4 to 20 precise diagnostic questions to eliminate ambiguity.
+   - Generates 4 to 20 precise diagnostic questions tailored to the exact problem space.
    - Strictly blocks code generation until requirements and trade-offs are confirmed.
 5. Cascading Hierarchical Alignment:
    - Senior Boss (Antigravity Frontier) ⇄ Junior Boss (Domain Leads) ⇄ Workers (Hermes, MOE, Local Models).
@@ -46,7 +46,7 @@ class ArchitectureOption:
 @dataclass
 class ClarifyingQuestion:
     id: str
-    category: str  # "Scope", "UI/UX", "Backend Logic", "Security & Reliability"
+    category: str  # "Scope", "UI/UX", "Backend Logic", "Security & Reliability", "Sensory & Tooling"
     question: str
     options: List[str]
     answered: bool = False
@@ -178,13 +178,18 @@ class DeepPlanningEngine:
         def _has_keyword(patterns: List[str]) -> bool:
             return any(re.search(rf"\b{re.escape(p)}\b", lower) for p in patterns)
 
-        if _has_keyword(["ui", "frontend", "landing", "css", "react", "page", "web"]):
+        # Multi-modal / Sensory / Research Tools
+        if _has_keyword(["browser", "playwright", "eyes", "ears", "whisper", "research", "reels", "trends", "github", "stack overflow"]):
+            niche = "research-and-sensory"
+            tools.extend(["aegis.browser", "local-whisper", "playwright-skill", "ffmpeg", "creator-intel", "ponytail", "unslop"])
+
+        elif _has_keyword(["ui", "frontend", "landing", "css", "react", "page", "web"]):
             niche = "frontend"
-            tools.extend(["uipro", "ui-ux-pro-max", "tailwindcss", "lucide-icons", "gsap-motion"])
+            tools.extend(["uipro", "ui-ux-pro-max", "tailwindcss", "lucide-icons", "ponytail", "unslop"])
 
         elif _has_keyword(["backend", "api", "database", "postgres", "sql", "fastapi", "server", "pipeline", "streaming"]):
             niche = "backend"
-            tools.extend(["pg-aiguide", "fastapi-patterns", "pydantic-v2", "sql-sentinel", "uv"])
+            tools.extend(["pg-aiguide", "fastapi-patterns", "pydantic-v2", "sql-sentinel", "uv", "ponytail"])
 
         elif _has_keyword(["video", "audio", "voice", "speech", "media", "transcribe"]):
             niche = "media-processing"
@@ -195,7 +200,7 @@ class DeepPlanningEngine:
             tools.extend(["redteam-mindset", "sast-scanning", "gitguardian-scanner", "invariant-guard"])
 
         if not tools:
-            tools = ["andrej-karpathy-skills", "uv", "python-pro", "systematic-debugging", "ast-deep-merger"]
+            tools = ["andrej-karpathy-skills", "ponytail", "unslop", "uv", "systematic-debugging", "ast-deep-merger"]
 
         return niche, tools
 
@@ -206,19 +211,58 @@ class DeepPlanningEngine:
         score = min(max(critique.feasibility_score * 10, 30), 95)
         flaws = list(critique.fatal_failure_modes)
 
-        # Append domain-specific edge-case flaws
-        if niche == "frontend" and not any("state" in f.lower() for f in flaws):
+        if niche == "research-and-sensory":
+            flaws.append("Browser scraping rate-limits & Cloudflare turnstile gates if using raw web clients without proxy pools.")
+            flaws.append("High memory / VRAM consumption when running local Whisper and headless Playwright simultaneously.")
+        elif niche == "frontend" and not any("state" in f.lower() for f in flaws):
             flaws.append("Frontend state hydration mismatches and mobile viewport accessibility clipping.")
         elif niche == "backend" and not any("concurrency" in f.lower() for f in flaws):
             flaws.append("Unbounded database connection pooling and lack of circuit breakers under load spikes.")
-        elif niche == "general-engineering" and not any("complexity" in f.lower() for f in flaws):
-            flaws.append("Premature modular abstraction for single-use code paths violating Karpathy simplicity.")
+        elif niche == "general-engineering" and not any("abstraction" in f.lower() for f in flaws):
+            flaws.append("Premature modular abstraction for single-use code paths violating Karpathy and Ponytail simplicity.")
 
         return score, flaws
 
     @classmethod
     def generate_architecture_options(cls, task: str, niche: str) -> List[ArchitectureOption]:
-        """Generate 3 to 4 distinct technical implementation pathways."""
+        """Generate 3 to 4 distinct technical implementation pathways customized to the task."""
+        if niche == "research-and-sensory":
+            return [
+                ArchitectureOption(
+                    name="Dual-Layer Research & Sensory Pipeline (Fast HTTP + Playwright Fallback)",
+                    archetype="Ponytail Efficiency / Zero-Bloat",
+                    summary="Lightweight Jev-style HTTP parser for 90% of text/docs (<1,500 tokens), escalating to headless Playwright CLI only for JavaScript-heavy SPAs and visual screenshot inspections.",
+                    feasibility_score=95,
+                    complexity=3,
+                    token_cost_rating="Lowest",
+                    pros=["Ultra-low RAM overhead", "Sub-second scraping latency", "Local Whisper audio pipeline isolated in background process"],
+                    cons=["Headless browser only spawned on demand, slight initial launch delay on cold start"],
+                    recommended_when="Continuous planning phase research, GitHub/Reddit scraping, and rapid documentation extraction."
+                ),
+                ArchitectureOption(
+                    name="Persistent Headless Playwright Browser Cluster with Dedicated CDP",
+                    archetype="Heavy-Duty Browser Automation",
+                    summary="Always-on Chromium instance via Chrome DevTools Protocol (CDP) with randomized user-agents and full DOM mutation observers.",
+                    feasibility_score=82,
+                    complexity=7,
+                    token_cost_rating="Moderate",
+                    pros=["Full JavaScript execution, cookie persistence, and automated UI event recording"],
+                    cons=["Consumes ~600MB RAM persistently, risk of triggering host hardware bottleneck guard"],
+                    recommended_when="Complex interactive UI journey testing, authenticated dashboards, and randomized stress testing."
+                ),
+                ArchitectureOption(
+                    name="Asynchronous Social & Tech Radar Aggregator",
+                    archetype="Event-Driven Multi-Source Collector",
+                    summary="Background daemon queue polling Reddit (r/LocalLLaMA), GitHub trending feeds, and Telegram inbox media asynchronously during system idle periods.",
+                    feasibility_score=90,
+                    complexity=4,
+                    token_cost_rating="Lowest",
+                    pros=["Zero interference with active coding sessions", "Pre-computes research before user prompts arrive", "Offline Whisper audio transcription"],
+                    cons=["Data freshness depends on polling interval"],
+                    recommended_when="Long-term research accumulation, social reel ingestion, and keeping abreast of new tech trends."
+                )
+            ]
+
         if niche == "frontend":
             return [
                 ArchitectureOption(
@@ -256,12 +300,12 @@ class DeepPlanningEngine:
                 )
             ]
 
-        # Default / Backend / General Options
+        # Backend / General Engineering
         return [
             ArchitectureOption(
                 name="Surgical In-Place Minimalist Implementation",
-                archetype="Andrej Karpathy Doctrine",
-                summary="Minimum code required to fulfill requirements using native stdlib and surgical edits. Zero speculative classes or decorators.",
+                archetype="Andrej Karpathy & Ponytail Doctrine",
+                summary="Minimum code required to fulfill requirements using native stdlib and surgical edits. Zero speculative classes, decorators, or wrappers.",
                 feasibility_score=96,
                 complexity=2,
                 token_cost_rating="Lowest",
@@ -295,7 +339,73 @@ class DeepPlanningEngine:
 
     @classmethod
     def generate_clarifying_interview(cls, task: str, niche: str, count: int = 6) -> List[ClarifyingQuestion]:
-        """Generate 4 to 20 deep diagnostic questions before any code is generated."""
+        """Generate 4 to 20 deep diagnostic questions tailored specifically to the problem domain."""
+        if niche == "research-and-sensory":
+            questions = [
+                ClarifyingQuestion(
+                    id="browser_extraction_mode",
+                    category="Sensory & Tooling",
+                    question="How should the research browser handle web content extraction during planning?",
+                    options=[
+                        "(Recommended) Lightweight Jev-style HTTP parser (<1,500 tokens) with Playwright fallback only for complex SPAs",
+                        "Always spawn full Playwright headless browser for every URL to execute full JavaScript",
+                        "DuckDuckGo API search only with snippet extraction, avoiding direct website navigation"
+                    ]
+                ),
+                ClarifyingQuestion(
+                    id="whisper_model_tier",
+                    category="Sensory & Tooling",
+                    question="Which local Whisper model tier should be used for audio perception without spiking host RAM?",
+                    options=[
+                        "(Recommended) Whisper 'base.en' (~140MB VRAM, fast sub-second transcription)",
+                        "Whisper 'small' (~460MB VRAM, higher accuracy for technical jargon and accents)",
+                        "Whisper 'tiny' (~75MB VRAM, maximum speed, minimal hardware footprint)"
+                    ]
+                ),
+                ClarifyingQuestion(
+                    id="playwright_ui_testing_strategy",
+                    category="Sensory & Tooling",
+                    question="How should Playwright CLI conduct frontend validation and randomized testing?",
+                    options=[
+                        "(Recommended) Randomized fuzz clicks and viewport resize tests with screenshot capture on error",
+                        "Strict end-to-end user journey assertions matching PRD specification",
+                        "Headless console error and network failure listener without UI interaction"
+                    ]
+                ),
+                ClarifyingQuestion(
+                    id="tech_radar_sources",
+                    category="Scope",
+                    question="Which community and trend sources should be prioritized during planning research?",
+                    options=[
+                        "(Recommended) Reddit (r/LocalLLaMA, r/webdev) + GitHub trending repositories + Stack Overflow",
+                        "GitHub repository search & code inspection only",
+                        "Official framework documentation sites and RFC specification indices"
+                    ]
+                ),
+                ClarifyingQuestion(
+                    id="telegram_media_pipeline",
+                    category="Backend Logic",
+                    question="How should incoming Telegram reels and links be stored and processed?",
+                    options=[
+                        "(Recommended) Download to .user_uploaded, transcribe audio with Whisper, extract keyframes with FFmpeg, and queue for idle processing",
+                        "Process immediately upon receipt and interrupt active Antigravity session",
+                        "Save URLs to a Markdown backlog without automatic media transcoding"
+                    ]
+                ),
+                ClarifyingQuestion(
+                    id="sandbox_promotion_gate",
+                    category="Security & Reliability",
+                    question="What gate must pass before tools and research scripts are executed on the host system?",
+                    options=[
+                        "(Recommended) Isolated sandbox test runner + Red-Team subprocess audit (block shell=True)",
+                        "Standard unit test assertion runner with host permissions",
+                        "Interactive user confirmation before every browser or script execution"
+                    ]
+                )
+            ]
+            return questions[:count]
+
+        # Standard / Other Niches
         questions = [
             ClarifyingQuestion(
                 id="deliverable_boundary",
@@ -371,7 +481,7 @@ class DeepPlanningEngine:
                 tier_to="Tier 1: Senior Boss (Antigravity)",
                 agent_name="ArchitectureLead",
                 question="What is the maximum allowed dependency footprint and token budget for this architecture?",
-                answer="Keep dependencies strictly to standard library and verified packages. Do not introduce speculative abstractions. Token budget is capped at ≤ 1,500 tokens for planning.",
+                answer="Keep dependencies strictly to standard library and verified packages. Do not introduce speculative abstractions. Apply Ponytail and Karpathy simplicity.",
                 status="RESOLVED"
             ),
             HierarchicalAgentDialog(
@@ -379,7 +489,7 @@ class DeepPlanningEngine:
                 tier_to="Tier 1: Senior Boss (Antigravity)",
                 agent_name="ImplementationLead",
                 question="Which tools from the user arsenal are authorized for local execution workers?",
-                answer="Authorize uipro design tokens, AST code graph indexing, and local Python test runner. Block raw shell=True execution.",
+                answer="Authorize aegis.browser for light scraping, local Whisper for audio, and Playwright for UI validation. Block raw shell=True execution.",
                 status="RESOLVED"
             ),
             HierarchicalAgentDialog(
@@ -394,8 +504,8 @@ class DeepPlanningEngine:
                 tier_from="Tier 3: Execution Worker (MoE Synthesizer)",
                 tier_to="Tier 2: Junior Boss (ImplementationLead)",
                 agent_name="MoESynthesizer-02",
-                question="I need the UI UX Pro Max color tokens for Dark Obsidian. Do I have access?",
-                answer="Provided from arsenal: Primary #06080F, Card rgba(15,23,42,0.65), Accent #6366F1, Cyan #38BDF8. Applied to component tokens.",
+                question="I need the UI UX Pro Max color tokens and Ponytail rules. Do I have access?",
+                answer="Provided from arsenal: ~/.gemini/config/plugins/ponytail and ui-ux-pro-max design tokens applied. Strip AI filler with unslop.",
                 status="RESOLVED"
             ),
             HierarchicalAgentDialog(
@@ -414,23 +524,23 @@ class DeepPlanningEngine:
         """Generate PRD, TRD, ERD, and Task Ledger before code is written."""
         prd = f"""
 - **Objective**: Deliver a production-grade, verifiable solution for `{task}` adhering to the {option.name} architecture.
-- **Target Users**: Engineers and stakeholders seeking autonomous, zero-token-waste execution.
+- **Target Users**: Engineers and autonomous agent swarms requiring reliable research and testing capabilities.
 - **Key Deliverables**:
-  1. Complete, functional core logic with zero placeholder stubs.
-  2. Automated test suite validating both happy paths and edge cases.
-  3. Interactive, accessible visual or CLI interface.
+  1. Complete, functional core logic with zero placeholder stubs or hardcoded responses.
+  2. Automated test suite validating both happy paths and edge cases in an isolated sandbox.
+  3. Seamless integration with active arsenal tools (Ponytail, Unslop, Browser, Whisper, Playwright).
 - **Acceptance Criteria**:
   - Must pass 100% of unit tests in an isolated sandbox.
-  - Must produce zero Red-Team security vulnerabilities or secret leaks.
+  - Zero Red-Team security vulnerabilities, shell=True invocations, or secret leaks.
   - Zero conversational AI filler or speculative over-engineering.
 """.strip()
 
         trd = f"""
 - **Architecture Pattern**: `{option.archetype}`
-- **Runtime Environment**: Host Workstation (Windows 11 / Python 3.12 / Modern Browser)
+- **Runtime Environment**: Host Workstation (Windows 11 / Python 3.12 / Playwright CLI / Local Whisper)
 - **Security Invariants**:
   - Subprocess calls must use explicit argument lists without `shell=True`.
-  - Input strings sanitized against path traversal and SQL injection.
+  - Input strings sanitized against path traversal and command injection.
 - **Error Handling**: Graceful degradation with automated snapshot rollback on fatal exceptions.
 - **Dependencies**: Whitelisted local packages with zero untrusted external dependencies.
 """.strip()

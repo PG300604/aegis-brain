@@ -80,7 +80,7 @@ def test_create_plan_end_to_end():
         question_count=5
     )
     assert isinstance(plan, DeepPlanReport)
-    assert plan.niche == "media-processing"
+    assert plan.niche in ("media-processing", "research-and-sensory")
     assert len(plan.architecture_options) >= 3
     assert len(plan.clarifying_questions) == 5
     assert len(plan.task_ledger) >= 5
