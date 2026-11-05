@@ -319,6 +319,40 @@ class TestCaffeinateAndRemote(unittest.TestCase):
                 self.assertTrue(is_away_mode_active())
                 mock_lock.assert_called_once()
 
+    def test_vim_mode_commands_and_injection(self):
+        from aegis.remote import (
+            handle_remote_command,
+            is_antigravity_vim_mode,
+            type_to_desktop,
+            save_remote_config,
+            load_remote_config,
+        )
+        from unittest.mock import patch
+
+        # Test /vim on
+        res_on = handle_remote_command("whatsapp:+1234567890", "/vim on")
+        self.assertIn("Vim Mode ON", res_on)
+        self.assertTrue(is_antigravity_vim_mode())
+
+        # Test /vim status
+        res_stat = handle_remote_command("whatsapp:+1234567890", "/vim status")
+        self.assertIn("Vim Mode is ENABLED", res_stat)
+
+        # Test /vim off
+        res_off = handle_remote_command("whatsapp:+1234567890", "/vim off")
+        self.assertIn("Vim Mode OFF", res_off)
+        self.assertFalse(is_antigravity_vim_mode())
+
+        # Test type_to_desktop with vim_mode=True in test mode
+        ok, msg = type_to_desktop("Test prompt for vim", vim_mode=True)
+        self.assertTrue(ok)
+        self.assertIn("[Vim Mode calibrated]", msg)
+
+        # Test type_to_desktop with vim_mode=False in test mode
+        ok2, msg2 = type_to_desktop("Test prompt standard", vim_mode=False)
+        self.assertTrue(ok2)
+        self.assertNotIn("[Vim Mode calibrated]", msg2)
+
 
 if __name__ == "__main__":
     unittest.main()

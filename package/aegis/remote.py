@@ -1517,12 +1517,45 @@ def find_target_console_pid() -> Optional[int]:
         return None
 
 
-def inject_console_input(text: str, press_enter: bool = True, press_alt_m: bool = False) -> Tuple[bool, str]:
+def is_antigravity_vim_mode() -> bool:
+    """Check if Antigravity CLI or Aegis is configured in Vim editor mode."""
+    # 1. Check remote config override if explicitly set
+    try:
+        rc = load_remote_config()
+        if rc.get("vim_mode") is not None:
+            return bool(rc.get("vim_mode"))
+    except Exception:
+        pass
+
+    # 2. Check Antigravity CLI settings.json (~/.gemini/antigravity-cli/settings.json)
+    try:
+        settings_p = Path.home() / ".gemini" / "antigravity-cli" / "settings.json"
+        if settings_p.exists():
+            data = json.loads(settings_p.read_text(encoding="utf-8"))
+            return str(data.get("editorMode", "")).strip().lower() == "vim"
+    except Exception:
+        pass
+
+    return False
+
+
+def inject_console_input(
+    text: str,
+    press_enter: bool = True,
+    press_alt_m: bool = False,
+    vim_mode: Optional[bool] = None,
+) -> Tuple[bool, str]:
     """Inject keystrokes directly into target console input buffer (CONIN$).
 
     Operates at the Win32 console kernel subsystem level via AttachConsole + WriteConsoleInputW.
     Zero window movement, zero clipboard contention, zero disruption to Komorebi tiling,
     and functions even while the Windows workstation is physically locked.
+
+    Vim Editor Mode Compatibility:
+    When Vim mode is active (e.g. editorMode: 'vim' in ~/.gemini/antigravity-cli/settings.json):
+    1. Sends <Esc> -> <i> to guarantee Insert Mode before text typing (prevents consuming first character).
+    2. Types the prompt text payload.
+    3. Sends <Esc> to return to Normal Mode before <Enter> (ensures Enter executes prompt instead of adding newline).
     """
     if sys.platform != "win32":
         return False, "Console input injection is supported on Windows."
@@ -1530,6 +1563,9 @@ def inject_console_input(text: str, press_enter: bool = True, press_alt_m: bool 
     target_pid = find_target_console_pid()
     if not target_pid:
         return False, "No target console process found."
+
+    if vim_mode is None:
+        vim_mode = is_antigravity_vim_mode()
 
     try:
         import ctypes
@@ -1567,49 +1603,7 @@ def inject_console_input(text: str, press_enter: bool = True, press_alt_m: bool 
 
         records: List[INPUT_RECORD] = []
 
-        if press_alt_m:
-            r = INPUT_RECORD()
-            r.EventType = 1
-            r.Event.KeyEvent.bKeyDown = True
-            r.Event.KeyEvent.wRepeatCount = 1
-            r.Event.KeyEvent.wVirtualKeyCode = 0x12
-            r.Event.KeyEvent.wVirtualScanCode = 0x38
-            r.Event.KeyEvent.dwControlKeyState = 0x0002
-            records.append(r)
-            r = INPUT_RECORD()
-            r.EventType = 1
-            r.Event.KeyEvent.bKeyDown = True
-            r.Event.KeyEvent.wRepeatCount = 1
-            r.Event.KeyEvent.wVirtualKeyCode = 0x4D
-            r.Event.KeyEvent.wVirtualScanCode = 0x32
-            r.Event.KeyEvent.uChar.UnicodeChar = 'm'
-            r.Event.KeyEvent.dwControlKeyState = 0x0002
-            records.append(r)
-            r = INPUT_RECORD()
-            r.EventType = 1
-            r.Event.KeyEvent.bKeyDown = False
-            r.Event.KeyEvent.wRepeatCount = 1
-            r.Event.KeyEvent.wVirtualKeyCode = 0x4D
-            r.Event.KeyEvent.wVirtualScanCode = 0x32
-            r.Event.KeyEvent.uChar.UnicodeChar = 'm'
-            r.Event.KeyEvent.dwControlKeyState = 0x0002
-            records.append(r)
-            r = INPUT_RECORD()
-            r.EventType = 1
-            r.Event.KeyEvent.bKeyDown = False
-            r.Event.KeyEvent.wRepeatCount = 1
-            r.Event.KeyEvent.wVirtualKeyCode = 0x12
-            r.Event.KeyEvent.wVirtualScanCode = 0x38
-            r.Event.KeyEvent.dwControlKeyState = 0
-            records.append(r)
-
-        for ch in text:
-            if ch == '\r':
-                continue
-            vk = 0x0D if ch == '\n' else (user32.VkKeyScanW(ord(ch)) & 0xFF if ord(ch) < 256 else 0)
-            scan = 0x1C if ch == '\n' else (user32.MapVirtualKeyW(vk, 0) if vk else 0)
-            u_char = '\r' if ch == '\n' else ch
-
+        def add_key_event(vk: int, scan: int, u_char: str = '\0', ctrl_state: int = 0) -> None:
             r_down = INPUT_RECORD()
             r_down.EventType = 1
             r_down.Event.KeyEvent.bKeyDown = True
@@ -1617,6 +1611,7 @@ def inject_console_input(text: str, press_enter: bool = True, press_alt_m: bool 
             r_down.Event.KeyEvent.wVirtualKeyCode = vk
             r_down.Event.KeyEvent.wVirtualScanCode = scan
             r_down.Event.KeyEvent.uChar.UnicodeChar = u_char
+            r_down.Event.KeyEvent.dwControlKeyState = ctrl_state
             records.append(r_down)
 
             r_up = INPUT_RECORD()
@@ -1626,26 +1621,75 @@ def inject_console_input(text: str, press_enter: bool = True, press_alt_m: bool 
             r_up.Event.KeyEvent.wVirtualKeyCode = vk
             r_up.Event.KeyEvent.wVirtualScanCode = scan
             r_up.Event.KeyEvent.uChar.UnicodeChar = u_char
+            r_up.Event.KeyEvent.dwControlKeyState = ctrl_state
             records.append(r_up)
 
+        def add_alt_m_event() -> None:
+            r1 = INPUT_RECORD()
+            r1.EventType = 1
+            r1.Event.KeyEvent.bKeyDown = True
+            r1.Event.KeyEvent.wRepeatCount = 1
+            r1.Event.KeyEvent.wVirtualKeyCode = 0x12
+            r1.Event.KeyEvent.wVirtualScanCode = 0x38
+            r1.Event.KeyEvent.dwControlKeyState = 0x0002
+            records.append(r1)
+            r2 = INPUT_RECORD()
+            r2.EventType = 1
+            r2.Event.KeyEvent.bKeyDown = True
+            r2.Event.KeyEvent.wRepeatCount = 1
+            r2.Event.KeyEvent.wVirtualKeyCode = 0x4D
+            r2.Event.KeyEvent.wVirtualScanCode = 0x32
+            r2.Event.KeyEvent.uChar.UnicodeChar = 'm'
+            r2.Event.KeyEvent.dwControlKeyState = 0x0002
+            records.append(r2)
+            r3 = INPUT_RECORD()
+            r3.EventType = 1
+            r3.Event.KeyEvent.bKeyDown = False
+            r3.Event.KeyEvent.wRepeatCount = 1
+            r3.Event.KeyEvent.wVirtualKeyCode = 0x4D
+            r3.Event.KeyEvent.wVirtualScanCode = 0x32
+            r3.Event.KeyEvent.uChar.UnicodeChar = 'm'
+            r3.Event.KeyEvent.dwControlKeyState = 0x0002
+            records.append(r3)
+            r4 = INPUT_RECORD()
+            r4.EventType = 1
+            r4.Event.KeyEvent.bKeyDown = False
+            r4.Event.KeyEvent.wRepeatCount = 1
+            r4.Event.KeyEvent.wVirtualKeyCode = 0x12
+            r4.Event.KeyEvent.wVirtualScanCode = 0x38
+            r4.Event.KeyEvent.dwControlKeyState = 0
+            records.append(r4)
+
+        # 1. Vim Mode: Ensure we enter Insert Mode so the first char is not eaten as a command
+        if vim_mode and text:
+            # Escape (VK 0x1B, Scan 0x01) -> guarantees Normal Mode
+            add_key_event(0x1B, 0x01, '\x1b')
+            # 'i' (VK 0x49, Scan 0x17) -> switches to Insert Mode
+            add_key_event(0x49, 0x17, 'i')
+
+        # 2. Standalone Alt+M if requested without text
+        if press_alt_m and not text:
+            add_alt_m_event()
+
+        # 3. Type all characters
+        for ch in text:
+            if ch == '\r':
+                continue
+            vk = 0x0D if ch == '\n' else (user32.VkKeyScanW(ord(ch)) & 0xFF if ord(ch) < 256 else 0)
+            scan = 0x1C if ch == '\n' else (user32.MapVirtualKeyW(vk, 0) if vk else 0)
+            u_char = '\r' if ch == '\n' else ch
+            add_key_event(vk, scan, u_char)
+
+        # 4. Vim Mode: Escape to Normal Mode before submitting
+        if vim_mode and text and (press_enter or press_alt_m):
+            add_key_event(0x1B, 0x01, '\x1b')
+
+        # 5. Submit with Enter or Alt+M
         if press_enter and not press_alt_m:
-            r_down = INPUT_RECORD()
-            r_down.EventType = 1
-            r_down.Event.KeyEvent.bKeyDown = True
-            r_down.Event.KeyEvent.wRepeatCount = 1
-            r_down.Event.KeyEvent.wVirtualKeyCode = 0x0D
-            r_down.Event.KeyEvent.wVirtualScanCode = 0x1C
-            r_down.Event.KeyEvent.uChar.UnicodeChar = '\r'
-            records.append(r_down)
+            add_key_event(0x0D, 0x1C, '\r')
 
-            r_up = INPUT_RECORD()
-            r_up.EventType = 1
-            r_up.Event.KeyEvent.bKeyDown = False
-            r_up.Event.KeyEvent.wRepeatCount = 1
-            r_up.Event.KeyEvent.wVirtualKeyCode = 0x0D
-            r_up.Event.KeyEvent.wVirtualScanCode = 0x1C
-            r_up.Event.KeyEvent.uChar.UnicodeChar = '\r'
-            records.append(r_up)
+        if press_alt_m and text:
+            add_alt_m_event()
 
         written = wintypes.DWORD(0)
         arr = (INPUT_RECORD * len(records))(*records)
@@ -1657,6 +1701,8 @@ def inject_console_input(text: str, press_enter: bool = True, press_alt_m: bool 
             action = "Typed and submitted" if press_enter else "Injected"
             if press_alt_m:
                 action += " (with Alt+M in-flight)"
+            if vim_mode:
+                action += " [Vim Mode calibrated]"
             preview = (text[:80] + "...") if len(text) > 80 else text
             return True, f"{action} directly into console (PID {target_pid}): \"{preview}\""
         return False, f"WriteConsoleInputW failed (err: {kernel32.GetLastError()})"
@@ -1668,7 +1714,12 @@ def inject_console_input(text: str, press_enter: bool = True, press_alt_m: bool 
         return False, f"inject_console_input error: {e}"
 
 
-def type_to_desktop(text: str, press_enter: bool = True, press_alt_m: bool = False) -> Tuple[bool, str]:
+def type_to_desktop(
+    text: str,
+    press_enter: bool = True,
+    press_alt_m: bool = False,
+    vim_mode: Optional[bool] = None,
+) -> Tuple[bool, str]:
     """Copy text to clipboard, auto-focus terminal/IDE, and simulate Ctrl+V and optional Enter or Alt+M."""
     clean_text = text.strip() if text else ""
     if clean_text.lower().endswith("/alt+m"):
@@ -1681,15 +1732,20 @@ def type_to_desktop(text: str, press_enter: bool = True, press_alt_m: bool = Fal
     if not clean_text and not press_alt_m:
         return False, "No text provided to type."
 
+    if vim_mode is None:
+        vim_mode = is_antigravity_vim_mode()
+
     if os.environ.get("PYTEST_CURRENT_TEST"):
         action_str = "Typed and submitted" if press_enter else "Pasted"
         if press_alt_m:
             action_str += " (with Alt+M in-flight)"
+        if vim_mode:
+            action_str += " [Vim Mode calibrated]"
         return True, f"{action_str} into \"Mock IDE (Test Mode)\":\n\"{clean_text[:80]}\""
 
     if sys.platform == "win32":
         # First attempt: direct Win32 Console Input Injection (zero focus change, Komorebi-safe, locked-screen safe)
-        ok_con, msg_con = inject_console_input(clean_text, press_enter=press_enter, press_alt_m=press_alt_m)
+        ok_con, msg_con = inject_console_input(clean_text, press_enter=press_enter, press_alt_m=press_alt_m, vim_mode=vim_mode)
         if ok_con:
             return True, msg_con
 
@@ -1751,6 +1807,16 @@ def type_to_desktop(text: str, press_enter: bool = True, press_alt_m: bool = Fal
             scan_m = user32.MapVirtualKeyW(0x4D, 0)
 
             time.sleep(0.08)
+            if vim_mode and clean_text:
+                # 1. Escape to guarantee normal mode
+                user32.keybd_event(0x1B, 0x01, 0, 0)
+                user32.keybd_event(0x1B, 0x01, 0x0002, 0)
+                time.sleep(0.04)
+                # 2. 'i' to enter insert mode
+                user32.keybd_event(0x49, 0x17, 0, 0)
+                user32.keybd_event(0x49, 0x17, 0x0002, 0)
+                time.sleep(0.05)
+
             if clean_text:
                 # Press Ctrl+V with scan codes
                 user32.keybd_event(0x11, scan_ctrl, 0, 0)
@@ -1761,12 +1827,21 @@ def type_to_desktop(text: str, press_enter: bool = True, press_alt_m: bool = Fal
 
             if press_enter and not press_alt_m:
                 time.sleep(0.08)
+                if vim_mode:
+                    # 3. Escape to return to normal mode before submitting
+                    user32.keybd_event(0x1B, 0x01, 0, 0)
+                    user32.keybd_event(0x1B, 0x01, 0x0002, 0)
+                    time.sleep(0.05)
                 user32.keybd_event(0x0D, scan_enter, 0, 0)
                 time.sleep(0.05)
                 user32.keybd_event(0x0D, scan_enter, 0x0002, 0)
 
             if press_alt_m:
                 time.sleep(0.08)
+                if vim_mode:
+                    user32.keybd_event(0x1B, 0x01, 0, 0)
+                    user32.keybd_event(0x1B, 0x01, 0x0002, 0)
+                    time.sleep(0.05)
                 user32.keybd_event(0x12, scan_alt, 0, 0)
                 user32.keybd_event(0x4D, scan_m, 0, 0)
                 time.sleep(0.05)
@@ -1776,6 +1851,8 @@ def type_to_desktop(text: str, press_enter: bool = True, press_alt_m: bool = Fal
             action_str = "Typed and submitted" if press_enter else "Pasted"
             if press_alt_m:
                 action_str += " (with Alt+M in-flight)"
+            if vim_mode:
+                action_str += " [Vim Mode calibrated]"
             preview = (clean_text[:80] + "...") if len(clean_text) > 80 else clean_text
             clean_title = (win_title[:45] + "...") if len(win_title) > 45 else win_title
             return True, f'{action_str} into "{clean_title}":\n\"{preview}\"'
@@ -1966,7 +2043,8 @@ def handle_remote_command(from_number: str, text: str) -> str:
             "• */paste <text>* - Paste text without pressing Enter\n"
             "• */alt+m* - Trigger in-flight Alt+M interrupt signal on active session\n"
             "• */clip [text]* - Read or copy to workstation clipboard\n"
-            "• */mode <chat|exec>* - Switch default behavior for plain text\n\n"
+            "• */mode <chat|exec>* - Switch default behavior for plain text\n"
+            "• */vim <on|off|status>* - Toggle Vim mode calibration for Antigravity CLI\n\n"
             "🔒 *Workstation Security:*\n"
             "• */lock* - Instantly lock screen & activate Away Mode streaming\n"
             "• */blockinput <on|off>* - Freeze/unfreeze desk keyboard and mouse\n"
@@ -2287,6 +2365,25 @@ def handle_remote_command(from_number: str, text: str) -> str:
         else:
             cur = cfg.get("default_mode", "swarm").upper()
             return f"🔄 *Current Input Mode:* `{cur}`\nUsage: `/mode <swarm|chat|exec>`\n• `swarm`: Prompts execute via multi-agent swarm\n• `chat`: Voice and messages type into IDE\n• `exec`: Messages run as shell commands"
+
+    elif cmd == "/vim":
+        subcmd = arg.lower().strip()
+        if subcmd in ("on", "enable", "true", "1"):
+            cfg["vim_mode"] = True
+            save_remote_config(cfg)
+            return "⌨️ *Vim Mode ON:*\nRemote input injection is calibrated for Antigravity Vim mode (`<Esc> -> <i> -> [text] -> <Esc> -> <Enter>`)."
+        elif subcmd in ("off", "disable", "false", "0"):
+            cfg["vim_mode"] = False
+            save_remote_config(cfg)
+            return "⌨️ *Vim Mode OFF:*\nStandard console typing enabled."
+        else:
+            active = is_antigravity_vim_mode()
+            state = "ENABLED" if active else "DISABLED"
+            return (
+                f"⌨️ *Vim Mode is {state}*\n"
+                f"• Auto-detected from settings or override: `{state}`\n"
+                "• Usage: `/vim on` or `/vim off`"
+            )
 
     elif cmd == "/sleep":
         ok, msg = remote_suspend_pc()
