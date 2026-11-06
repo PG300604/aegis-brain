@@ -14,6 +14,8 @@ import sys
 import time
 import threading
 import subprocess
+
+creationflags = subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
 import urllib.parse
 import urllib.request
 import urllib.error
@@ -726,6 +728,7 @@ def transcribe_telegram_audio(audio_path: Path) -> str:
                     ],
                     capture_output=True,
                     timeout=30,
+                    creationflags=creationflags,
                 )
             except Exception:
                 wav_path = audio_path
@@ -750,6 +753,7 @@ def transcribe_telegram_audio(audio_path: Path) -> str:
                 text=True,
                 timeout=120,
                 env=env,
+                creationflags=creationflags,
             )
             txt_files = list(tmp_path.glob("*.txt"))
             if txt_files:

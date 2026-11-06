@@ -17,9 +17,12 @@ import html
 import json
 import logging
 import os
+import sys
 import re
 import shutil
 import subprocess
+
+creationflags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
 import urllib.parse
 import urllib.request
 from dataclasses import asdict, dataclass, field
@@ -129,6 +132,7 @@ def extract_media(url: str, output_dir: Path) -> SensoryArtifact:
                 capture_output=True,
                 text=True,
                 timeout=120,
+                creationflags=creationflags,
                 env=env,
             )
             if proc.stdout.strip():
@@ -191,6 +195,7 @@ def extract_audio_and_transcribe(artifact: SensoryArtifact, output_dir: Path) ->
             ],
             capture_output=True,
             timeout=30,
+            creationflags=creationflags,
         )
         if audio_path.exists() and audio_path.stat().st_size > 1000:
             artifact.audio_path = str(audio_path)
@@ -220,6 +225,7 @@ def extract_audio_and_transcribe(artifact: SensoryArtifact, output_dir: Path) ->
                 capture_output=True,
                 text=True,
                 timeout=180,
+                creationflags=creationflags,
                 env=env,
             )
             txt_file = output_dir / "audio.txt"
@@ -270,6 +276,7 @@ def extract_visual_keyframes(artifact: SensoryArtifact, output_dir: Path, frame_
                 ],
                 capture_output=True,
                 timeout=15,
+                creationflags=creationflags,
             )
             if out_img.exists() and out_img.stat().st_size > 1000:
                 extracted.append(str(out_img))
