@@ -748,6 +748,7 @@ def transcribe_telegram_audio(audio_path: Path) -> str:
                     "--model", "base",
                     "--output_format", "txt",
                     "--output_dir", str(tmp_path),
+                    "--fp16", "False",
                 ],
                 capture_output=True,
                 text=True,
@@ -1720,9 +1721,9 @@ def _inject_console_input_core(
             time.sleep(0.15)
 
         # 4. Vim Mode:
-        # When press_enter is True, DO NOT write Escape records. Stay in Insert Mode so writing Enter (\r) executes the prompt immediately.
-        # Only escape to Normal Mode if NOT submitting with Enter (e.g. for Alt+M or non-submitting injection).
-        if vim_mode and text and not press_enter:
+        # In Vim mode, Enter in Insert Mode inserts a newline. In Normal Mode, Enter executes/submits the prompt.
+        # When text was typed in Insert Mode, escape back to Normal Mode before submitting with Enter or Alt+M.
+        if vim_mode and text:
             esc_pair = make_key_event(0x1B, 0x01, '\x1b')
             write_records(esc_pair)
             time.sleep(0.12)
@@ -1883,7 +1884,14 @@ def _type_to_desktop_core(
                 time.sleep(0.15)
 
             if press_enter and not press_alt_m:
-                # When press_enter is True, DO NOT press <Esc><Esc>. Stay in Insert Mode so pressing Enter (0x0D, scan 0x1C) executes the prompt immediately.
+                if vim_mode and clean_text:
+                    time.sleep(0.08)
+                    user32.keybd_event(0x1B, 0x01, 0, 0)
+                    user32.keybd_event(0x1B, 0x01, 0x0002, 0)
+                    time.sleep(0.12)
+                    user32.keybd_event(0x1B, 0x01, 0, 0)
+                    user32.keybd_event(0x1B, 0x01, 0x0002, 0)
+                    time.sleep(0.15)
                 user32.keybd_event(0x0D, scan_enter, 0, 0)
                 time.sleep(0.05)
                 user32.keybd_event(0x0D, scan_enter, 0x0002, 0)

@@ -357,8 +357,8 @@ class TestCaffeinateAndRemote(unittest.TestCase):
         self.assertTrue(ok2)
         self.assertNotIn("[Vim Mode calibrated]", msg2)
 
-    def test_vim_mode_enter_does_not_escape_in_type_to_desktop_core(self):
-        """When press_enter=True in Vim Mode, _type_to_desktop_core stays in Insert Mode without EscEsc before Enter."""
+    def test_vim_mode_enter_escapes_to_normal_mode_before_submitting(self):
+        """When press_enter=True in Vim Mode, _type_to_desktop_core transitions to Normal Mode before Enter."""
         if sys.platform != "win32":
             import unittest
             raise unittest.SkipTest("Windows-only console injection test")
@@ -381,15 +381,15 @@ class TestCaffeinateAndRemote(unittest.TestCase):
                  patch("aegis.remote.copy_to_desktop_clipboard", return_value=True), \
                  patch("aegis.remote.inject_console_input", return_value=(False, "fallback")):
                 
-                # Case 1: press_enter=True (must NOT press Esc before Enter)
+                # Case 1: press_enter=True (MUST transition to Normal Mode before Enter)
                 events.clear()
                 ok, msg = _type_to_desktop_core("my prompt", press_enter=True, press_alt_m=False, vim_mode=True)
                 self.assertTrue(ok)
                 # Initial sequence to enter Insert Mode: Esc (0x1B), Esc (0x1B), i (0x49)
+                # Plus trailing sequence before Enter: Esc (0x1B), Esc (0x1B)
                 vk_calls = [ev[0] for ev in events]
-                # Count 0x1B occurrences: should only be the initial 2 Esc key presses (down+up = 4 calls)
                 esc_calls = [ev for ev in events if ev[0] == 0x1B]
-                self.assertEqual(len(esc_calls), 4, "Initial <Esc><Esc> to switch to insert mode should be exactly 2 keypresses (4 events)")
+                self.assertEqual(len(esc_calls), 8, "Initial 2 Esc + trailing 2 Esc before enter = 4 keypresses (8 events)")
                 # Enter (0x0D) should be pressed (down+up = 2 calls)
                 enter_calls = [ev for ev in events if ev[0] == 0x0D]
                 self.assertEqual(len(enter_calls), 2, "Enter (0x0D) must be pressed to execute prompt immediately")
