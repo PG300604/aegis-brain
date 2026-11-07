@@ -68,7 +68,7 @@
   <text x="60" y="110" class="label-zone">TIER 1 &#8226; SENIOR BOSS (HIGH COGNITION FRONTIER MANAGER)</text>
   
   <rect x="60" y="122" width="740" height="82" rx="10" fill="#EEF2FF" stroke="#6366F1" stroke-width="1.8" class="dark-tier1" />
-  <text x="80" y="150" class="card-title text-dark" fill="#312E81">🧠 Frontier Manager (Gemini 3.8 Flash / Claude 3.7)</text>
+  <text x="80" y="150" class="card-title text-dark" fill="#312E81">🧠 Frontier Manager (Gemini 4 Argon / Claude Opus 5.5 / 5.1 Fable)</text>
   <text x="80" y="172" class="card-sub text-dark-sub" fill="#4338CA">Role: System Architecture &#8226; Options Exploration (Pros/Cons) &#8226; Invariants Definition &#8226; Final Quality Sign-off</text>
   <text x="80" y="190" class="card-sub text-dark-sub" fill="#4338CA">Token Arbitrage Invariant: Zero direct boilerplate/implementation coding (reserves frontier tokens for brainwork)</text>
   

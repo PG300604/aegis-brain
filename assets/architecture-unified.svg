@@ -104,7 +104,7 @@
     <g transform="translate(12, 68)">
       <rect width="222" height="42" rx="7" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.2" class="dark-pill-bg" />
       <text x="12" y="22" fill="#0369A1" font-family="'Virgil', 'Comic Sans MS', sans-serif" font-size="13" font-weight="700" class="dark-pill-title">✦ Google Antigravity</text>
-      <text x="12" y="35" fill="#0284C7" font-family="ui-monospace, monospace" font-size="10" class="dark-pill-sub">Gemini 3.8 / Claude 3.7</text>
+      <text x="12" y="35" fill="#0284C7" font-family="ui-monospace, monospace" font-size="10" class="dark-pill-sub">Gemini 4 Argon / Claude Opus 5.5</text>
     </g>
 
     <!-- Agent 2: Claude Code -->
@@ -231,7 +231,7 @@
   <g transform="translate(1052, 72)">
     <rect width="284" height="82" rx="10" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2" class="dark-engine-violet" />
     <text x="16" y="26" fill="#6D28D9" class="card-title text-dark">Tier 1: Frontier Manager</text>
-    <text x="16" y="44" fill="#5B21B6" class="card-sub text-dark-sub">Gemini 3.8 Flash / Claude 3.7</text>
+    <text x="16" y="44" fill="#5B21B6" class="card-sub text-dark-sub">Gemini 4 Argon / Claude Opus 5.5</text>
     <text x="16" y="64" fill="#7C3AED" class="badge-text">Architecture • Invariants • Review</text>
   </g>
 

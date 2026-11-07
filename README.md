@@ -39,7 +39,7 @@ Modern AI coding agents excel in isolated prompt windows, but break down under t
 
 1. **Context Amnesia and Token Thrashing**: Starting a new terminal session or switching tools (Antigravity, Claude Code, Cursor, Hermes, OpenCode) wipes working context. When developers ask *"What was our last database decision?"*, agents crawl raw `transcript.jsonl` files, burning 50,000+ tokens and stalling for 15+ seconds.
 2. **The Skill Context Bloat Paradox**: Stuffing 150+ skills and tools into an agent's system prompt destroys the 90% prompt-cache discount, increases cold startup latency from 40ms to 3.8s, and induces parameter hallucinations.
-3. **Frontier Token Burn on Routine Synthesis**: Frontier models (Gemini 3.8 Flash, Claude 3.7) waste high-cognition reasoning tokens writing repetitive CRUD boilerplate and test scripts. Leaving smaller local models unsupervised introduces subtle architectural and security flaws.
+3. **Frontier Token Burn on Routine Synthesis**: Frontier models (Gemini 4 Argon / Carbon, Claude Opus 5.5, Claude 5.1 Fable) waste high-cognition reasoning tokens writing repetitive CRUD boilerplate and test scripts. Leaving smaller local models unsupervised introduces subtle architectural and security flaws.
 4. **Desktop Lock-In and Dead Time**: Complex workflows, builds, and multi-agent loops require developers to remain tethered to their desk. Workstation sleep interrupts active jobs, and idle agents sit waiting for manual intervention.
 
 **AegisBrain** is a local-first, zero-external-dependency autonomous engineering chassis, neural memory bus, sub-3ms semantic decision engine, and 3-tier multi-agent governor running 24/7 on your workstation.
@@ -93,7 +93,7 @@ flowchart TD
     end
 
     subgraph PowerEngine ["4. 3-Tier Multi-Agent Power Engine"]
-        T1["Tier 1: Senior Boss (Gemini 3.8 / Claude 3.7)<br/>Architecture • Invariants • Review • Escalation"]
+        T1["Tier 1: Senior Boss (Gemini 4 Argon / Claude Opus 5.5)<br/>Architecture • Invariants • Review • Escalation"]
         T2["Tier 2: Junior Bosses (Domain Tech Leads)<br/>Boundary Scoping • Automated Coaching Loops"]
         T3["Tier 3: Execution Workers (Hermes, Ollama, OpenCode)<br/>100% Candidate Code Drafts (0 Frontier Tokens)"]
         
@@ -255,7 +255,7 @@ To eliminate frontier token waste and guarantee production-grade code, AegisBrai
 
 | Tier | Role | Models / Engines | Primary Responsibility | Direct Code Invariant |
 | :--- | :--- | :--- | :--- | :--- |
-| **Tier 1: Senior Boss** | Supreme Brain & Architect | Gemini 3.8 Flash / Claude 3.7 | System architecture, research, option exploration (Pros/Cons), invariants, error detection, test review, final sign-off. | **Zero Direct Code by default** (writes code *only* upon Tier 2 Escalation). |
+| **Tier 1: Senior Boss** | Supreme Brain & Architect | Gemini 4 Argon / Carbon, Claude Opus 5.5, Claude 5.1 Fable | System architecture, research, option exploration (Pros/Cons), invariants, error detection, test review, final sign-off. | **Zero Direct Code by default** (writes code *only* upon Tier 2 Escalation). |
 | **Tier 2: Junior Bosses** | Domain Tech Leads / Subagents | Specialized Subagents (`invoke_subagent`) | Scoping boundaries, dispatching tasks to Tier 3 workers, bottom-to-top 4-Gate auditing, coaching error-reduction loops. | **Zero Direct Code**. Coaches workers; never writes code drafts directly. |
 | **Tier 3: Execution Workers** | Code Synthesis Muscle | Hermes CLI, Claude Code CLI, Codex CLI, OpenCode, Ollama MoE, Gemini CLI | Writes all raw code drafts, functions, boilerplate, and implementations using free/local tokens (0 frontier tokens). | **Writes 100% of candidate code**. Subject to iterative coaching loops. |
 
