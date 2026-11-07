@@ -140,7 +140,7 @@ class OfflineBriefingEngine:
             priority_lines.append(f"**Task #{t['id']} ({t['title']})**: {t.get('description') or 'Continue execution.'}")
         # Priority from tracked PRs with alerts
         for pr in tracked_prs:
-            if pr.get("status") == "open" and pr.get("latest_review_state") not in ("REVIEWED", "APPROVED", "DISMISSED"):
+            if pr.get("status") == "open" and pr.get("latest_review_state") == "CHANGES_REQUESTED" and not pr.get("review_handled"):
                 priority_lines.append(f"**{pr['repo']} PR #{pr['pr_number']}**: Address review comments on '{pr['title']}'.")
                 break
         # Priority from latest handoff or decision
