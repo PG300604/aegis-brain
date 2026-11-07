@@ -19,6 +19,7 @@
 <p align="center">
   <a href="#overview">Overview</a> &bull;
   <a href="#-whats-new-in-v020-flagship-capabilities">What's New</a> &bull;
+  <a href="#%EF%B8%8F-system-architecture-v020-blueprint">System Architecture</a> &bull;
   <a href="#-1-jev-semantic-decision-engine">Jev Decision Engine</a> &bull;
   <a href="#-2-clean-room-global-skill-armory">Global Skill Armory</a> &bull;
   <a href="#-3-unslop-master-super-skill">Unslop-Master</a> &bull;
@@ -60,6 +61,101 @@ AegisBrain v0.2.0 introduces four breakthrough architectural systems:
 │ 📊 Clean-Room Harness Benchmark│ 94% Context Reduction & 90x Faster Startup      │
 └───────────────────────────────┴─────────────────────────────────────────────────┘
 ```
+
+---
+
+## 🏛️ System Architecture (v0.2.0 Blueprint)
+
+The topology below showcases the complete end-to-end architecture connecting multi-agent clients, mobile ingress, the Jev semantic decision engine, the clean-room global skill armory, the 3-tier multi-agent power hierarchy, and the persistent SQLite WAL memory daemon:
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/architecture-unified.svg" alt="AegisBrain Unified Architecture Diagram v0.2.0" width="100%">
+</p>
+
+```mermaid
+flowchart TD
+    subgraph Ingestion ["1. Multi-Channel Client & Ingestion Layer"]
+        A1["Coding Agents<br/>(Antigravity, Claude Code, Cursor, Hermes, OpenCode)"]
+        A2["24/7 Mobile Bridge<br/>(Telegram @HHAACLIBot & WhatsApp)"]
+        A3["Local Whisper Engine<br/>(100% Offline whisper.exe)"]
+        A4["Win32 Console Injector<br/>(AttachConsole + Calibrated Vim Insert Mode)"]
+        A2 --> A3 --> A4 --> A1
+    end
+
+    subgraph DecisionLayer ["2. Jev Semantic Decision & Triage Head (Sub-3ms)"]
+        JevEngine["aegis.jev (Sub-100ms Token-Free Head)"]
+        RiskGate{"Risk Gating"}
+        SkillPruner["Dynamic Context Skill Pruner<br/>(Prunes to 1-3 Skills Max)"]
+        
+        RiskGate -->|CRITICAL / Secrets / rm -rf| LockT1["Locked to Tier 1 Frontier"]
+        RiskGate -->|HIGH / Prod Deploy| RouteT1["Tier 1 Frontier Manager"]
+        RiskGate -->|MEDIUM / Refactor| RouteT2["Tier 2 Domain Coach"]
+        RiskGate -->|LOW / Boilerplate| RouteT3["Tier 3 Hermes / Ollama"]
+        
+        JevEngine --> RiskGate
+        JevEngine --> SkillPruner
+    end
+
+    subgraph ArmoryZone ["3. Clean-Room Global Skill Armory"]
+        FTSIndex["Central SQLite FTS5 Armory (~/.aegis-brain/armory/)"]
+        Quarantine["4-Gate Security Quarantine<br/>(Null-Byte • Prompt Defense • Shell Injection • Secrets)"]
+        Projection["Cross-Agent Universal Projection<br/>(NTFS Hard Junctions & JSON Tool Specs)"]
+        
+        Quarantine --> FTSIndex --> Projection
+        SkillPruner -.->|Queries| FTSIndex
+        Projection -.->|Micro-Mounts Top 1-3 Skills| A1
+    end
+
+    subgraph PowerEngine ["4. 3-Tier Multi-Agent Power Engine"]
+        T1["Tier 1: Senior Boss (Gemini 3.8 / Claude 3.7)<br/>Architecture • Invariants • Review • Escalation"]
+        T2["Tier 2: Junior Bosses (Domain Leads)<br/>Boundary Scoping • Automated Coaching Loops"]
+        T3["Tier 3: Execution Workers (Hermes, Ollama, OpenCode)<br/>100% Raw Code Synthesis (0 Frontier Tokens)"]
+        
+        LockT1 & RouteT1 --> T1
+        RouteT2 --> T2
+        RouteT3 --> T3
+        T1 -->|Dispatches Directive| T2
+        T2 -->|Dispatches Task| T3
+        T3 -->|Candidate Draft| T2
+        T2 -->|Coaching Loop on Error| T3
+        T2 -.->|Escalation Dossier on Failure| T1
+    end
+
+    subgraph QualityGate ["5. The 4-Decision Quality Architecture Gate"]
+        Q1["Karpathy Simplicity Doctrine (Surgical minimal lines)"]
+        Q2["Unslop-Master Super Skill (Code • Prose • Hallmark • UI)"]
+        Q3["Artemis Red-Team Audit (No shell=True, injection guard)"]
+        Q4["Dual-Environment Sandbox (AST syntax validation)"]
+        
+        T3 -.-> Q1 --> Q2 --> Q3 --> Q4
+    end
+
+    subgraph DaemonState ["6. 24/7 Neural Daemon & Storage (~/.aegis-brain/)"]
+        Daemon["aegis.server (:8765 Chassis)"]
+        Memory["SQLite WAL Neural Memory (FTS5 < 0.1ms Recall)"]
+        Gov["Deterministic Context Governor (ACTIVE_CONTEXT.md <= 400 tokens)"]
+        Headroom["Hardware Sentinel (< 3.5GB RAM Concurrency Guard)"]
+        Caff["Native Win32/macOS Wake-Lock Caffeinate"]
+        
+        Daemon --- Memory
+        Daemon --- Gov
+        Daemon --- Headroom
+        Daemon --- Caff
+    end
+
+    A1 --> JevEngine
+    Q4 -->|Verified Production Code| A1
+    Daemon -.->|Sub-second Bootstrap & Memory| A1
+```
+
+### Architectural Subsystems:
+
+1. **Multi-Channel Client & Ingestion Layer**: Connects any AI coding agent (Google Antigravity, Anthropic Claude Code, OpenAI Codex, Cursor, Windsurf, Nous Hermes, OpenCode) through a single common bus (`127.0.0.1:8765` or CLI). Supports 24/7 mobile steering via Telegram (`@HHAACLIBot`) with local Whisper offline audio transcription and calibrated Win32 console injection.
+2. **Jev Semantic Decision Head (`aegis jev`)**: Sub-3ms token-free classifier and risk gating head. Routes tasks to the appropriate model tier and dynamically prunes the active skill set down to 1–3 skills, saving 94% prompt tokens.
+3. **Clean-Room Global Skill Armory (`aegis armory`)**: Isolates all skills from agent system prompts into a local SQLite FTS5 index. Evaluates skills through a 4-gate security quarantine and projects them dynamically to any agent via NTFS hard junctions or JSON specs.
+4. **3-Tier Multi-Agent Power Engine**: Enforces strict Division of Cognition. Tier 1 Frontier Manager handles architecture and invariants; Tier 2 Junior Bosses supervise and coach; Tier 3 Local Workers synthesize 100% of candidate code with zero frontier token burn.
+5. **4-Decision Quality Architecture Gate**: Candidate code must pass Karpathy simplicity, Unslop-Master 4-pillar scrubbing, Artemis security checks, and sandbox AST syntax verification before reaching disk.
+6. **24/7 Neural Daemon & Persistent State**: Lightweight background daemon (< 25MB RAM) maintaining SQLite WAL neural memory (< 0.1ms recall), context governor ($\le 400$ tokens), and hardware headroom protection.
 
 ---
 
