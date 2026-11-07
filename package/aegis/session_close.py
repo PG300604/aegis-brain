@@ -73,16 +73,18 @@ def format_session_close_display(result: Dict[str, Any]) -> str:
     reason = snap.get("reason", "session_bye_archive")
     session_id = result.get("session_id", "unknown")
 
+    divider = "─" * 72
     return f"""
-==================================================================
-🛡️  AegisBrain Session Safely Closed & Archived
-==================================================================
-• Snapshot ID:    `{snap_id}` ({files_count} files archived)
+{divider}
+AegisBrain • Session Safely Closed & Archived
+{divider}
+• Snapshot ID:    {snap_id} ({files_count} files archived)
 • Reason:         {reason}
-• Neural DB:      Session `{session_id}` saved to brain.db
+• Neural DB:      Session {session_id} saved to brain.db
 • Active Context: Compacted & synced to ACTIVE_CONTEXT.md
 
-👋 Ready for clean shutdown! Next steps:
-   1. Type `/exit` to exit Antigravity CLI.
-   2. Type `exit` to close the terminal.
+Ready for clean shutdown:
+  1. Type '/exit' to exit Antigravity CLI.
+  2. Type 'exit' to close terminal.
+{divider}
 """.strip()

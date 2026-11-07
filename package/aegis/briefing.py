@@ -69,21 +69,20 @@ class OfflineBriefingEngine:
         # 1. Tracked PRs & Code Reviews
         pr_lines: List[str] = []
         for pr in tracked_prs:
-            rev_badge = f" &bull; Review: `{pr.get('latest_review_state')}`" if pr.get("latest_review_state") else ""
-            pr_lines.append(f"- 🐙 **[{pr['repo']}#{pr['pr_number']}]({pr.get('html_url', '#')})**: {pr['title']} (`{pr['status'].upper()}`{rev_badge})")
+            rev_badge = f" | Review: {pr.get('latest_review_state')}" if pr.get('latest_review_state') else ""
+            pr_lines.append(f"  • {pr['repo']}#{pr['pr_number']}: {pr['title']} ({pr['status'].upper()}{rev_badge})")
         if not pr_lines:
-            pr_lines.append("- No external PRs currently blocking.")
+            pr_lines.append("  • No external PRs currently blocking.")
 
         # 2. Open Alerts & Reviews
         alert_lines: List[str] = []
         for a in alerts[:4]:
             category = a.get("category", "ALERT")
             msg = a.get("message", "")
-            # Truncate first line for clean briefing
             short_msg = msg.split("\n")[0] if "\n" in msg else msg
-            alert_lines.append(f"- ⚠️ **{category}**: {short_msg[:120]}...")
+            alert_lines.append(f"  • {category}: {short_msg[:120]}")
         if not alert_lines:
-            alert_lines.append("- All systems nominal. Zero unaddressed critical alerts.")
+            alert_lines.append("  • All systems nominal. Zero unaddressed critical alerts.")
 
         # 3. Dynamic Recent Milestones & Completed Tasks (from Neural Memory & DB)
         completed_lines: List[str] = []
@@ -95,7 +94,7 @@ class OfflineBriefingEngine:
             d_cat = d.get("category", "GENERAL")
             if d_dec:
                 short_dec = d_dec.split("\n")[0] if "\n" in d_dec else d_dec
-                completed_lines.append(f"- 🧠 **{d_title}** [{d_cat}]: {short_dec[:140]}")
+                completed_lines.append(f"  • {d_title} [{d_cat}]: {short_dec[:140]}")
             if len(completed_lines) >= 3:
                 break
 
@@ -105,21 +104,21 @@ class OfflineBriefingEngine:
                 break
             t_title = t.get("title", "")
             t_outcome = t.get("outcome") or "Completed and verified."
-            completed_lines.append(f"- ✅ **{t_title}**: {t_outcome}")
+            completed_lines.append(f"  • {t_title}: {t_outcome}")
 
         # Fallback only if no dynamic history exists
         if not completed_lines:
             completed_lines = [
-                "- ✅ **System Baseline Initialized**: Neural memory ready and operational.",
+                "  • System Baseline Initialized: Neural memory ready and operational.",
             ]
 
         # 4. Snapshots & Restore Point Info
         if snapshots:
             snap_id = snapshots[0]["snapshot_id"]
             reason = snapshots[0].get("reason", "manual")
-            latest_snap_str = f"`{snap_id}` ({reason})"
+            latest_snap_str = f"{snap_id} ({reason})"
         else:
-            latest_snap_str = "`None`"
+            latest_snap_str = "None"
 
         # 5. Fresh Community & Tech Radar Trends
         trend_lines: List[str] = []
@@ -129,29 +128,29 @@ class OfflineBriefingEngine:
             url = tr.get("url", "#")
             score = tr.get("score", 0)
             score_str = f" (+{score})" if score else ""
-            trend_lines.append(f"- 🔥 **[{src}]** [{title}]({url}){score_str}")
+            trend_lines.append(f"  • [{src}] {title}{score_str}")
         if not trend_lines:
-            trend_lines.append("- Radar nominal. Zero external breaking updates detected.")
+            trend_lines.append("  • Radar nominal. Zero external breaking updates detected.")
 
         # 6. Dynamic Suggested Priorities for Today
-        priority_lines: List[str] = []
+        priority_lines: List[str] = ["Zoe Agent: Lightweight personal desktop agent on drive 'P:\\vault'."]
         # Priority from active tasks
         for t in active_tasks[:2]:
-            priority_lines.append(f"**Task #{t['id']} ({t['title']})**: {t.get('description') or 'Continue execution.'}")
+            priority_lines.append(f"Task #{t['id']} ({t['title']}): {t.get('description') or 'Continue execution.'}")
         # Priority from tracked PRs with alerts
         for pr in tracked_prs:
             if pr.get("status") == "open" and pr.get("latest_review_state") == "CHANGES_REQUESTED" and not pr.get("review_handled"):
-                priority_lines.append(f"**{pr['repo']} PR #{pr['pr_number']}**: Address review comments on '{pr['title']}'.")
+                priority_lines.append(f"{pr['repo']} PR #{pr['pr_number']}: Address review comments on '{pr['title']}'.")
                 break
         # Priority from latest handoff or decision
         if recent_decisions:
             top_dec = recent_decisions[0]
             if "handoff" in top_dec.get("title", "").lower() or "handoff" in str(top_dec.get("tags", "")).lower():
-                priority_lines.append(f"**Resume Handoff ({top_dec['title']})**: {top_dec['decision'][:80]}...")
+                priority_lines.append(f"Resume Handoff ({top_dec['title']}): {top_dec['decision'][:80]}...")
 
         # Roadmap fallbacks to ensure actionable choices
         default_priorities = [
-            "**Zoe Agent**: Lightweight personal desktop agent on drive 'P:\\vault'.",
+            "Zoe Agent: Lightweight personal desktop agent on drive 'P:\\vault'.",
         ]
         for dp in default_priorities:
             if len(priority_lines) < 4:
@@ -159,30 +158,28 @@ class OfflineBriefingEngine:
                 if not any(prefix in p for p in priority_lines):
                     priority_lines.append(dp)
 
-        numbered_priorities = "\n".join(f"{idx}. {item}" for idx, item in enumerate(priority_lines[:4], 1))
+        numbered_priorities = "\n".join(f"  {idx}. {item}" for idx, item in enumerate(priority_lines[:4], 1))
 
-        # Format Final Markdown Output
+        divider = "─" * 72
         return f"""
-# 🌅 {salutation} Welcome Back to AegisBrain!
+{divider}
+AegisBrain • {salutation}
+Mode: {mode.upper()} | Caffeinate: {'ACTIVE' if caff.get('active') else 'OFF'} | Restore Point: {latest_snap_str}
+{divider}
 
-> **System State**: Mode: `{mode.upper()}` &bull; Caffeinate: `{'ACTIVE' if caff.get('active') else 'OFF'}` &bull; Latest Restore Point: {latest_snap_str}
-
----
-
-### 📌 Completed in Last Session
+Completed in Last Session
 {chr(10).join(completed_lines)}
 
-### 🌐 Fresh Community & Tech Radar
+Community & Tech Radar
 {chr(10).join(trend_lines)}
 
-### 📬 Offline Updates & External Feedback
+Tracked Pull Requests
 {chr(10).join(pr_lines)}
 
-### ⚠️ Active Attention Items
+Attention Items
 {chr(10).join(alert_lines)}
 
----
-
-### ❓ What would you like to tackle today?
+Suggested Next Action
 {numbered_priorities}
+{divider}
 """.strip()
