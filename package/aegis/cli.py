@@ -425,6 +425,24 @@ def main() -> None:
         help="Check only: exit with code 1 if slop is detected",
     )
 
+    # jev
+    jev_parser = subparsers.add_parser(
+        "jev",
+        help="TypeSafe AI-inspired Jev Semantic Decision Engine: sub-100ms routing, risk gating, and skill pruning",
+    )
+    jev_sub = jev_parser.add_subparsers(dest="jev_action")
+
+    j_decide = jev_sub.add_parser("decide", help="Make sub-100ms decision: risk gating, model routing, and skill pruning")
+    j_decide.add_argument("prompt", help="Input prompt / task description")
+    j_decide.add_argument("--json", action="store_true", help="Output raw JSON")
+
+    j_route = jev_sub.add_parser("route", help="Route prompt to model tier (Tier 1/2/3)")
+    j_route.add_argument("prompt", help="Input prompt / task description")
+    j_route.add_argument("--json", action="store_true", help="Output raw JSON")
+
+    j_status = jev_sub.add_parser("status", help="Show Jev Semantic Engine status and metrics")
+    j_status.add_argument("--json", action="store_true", help="Output raw JSON")
+
     args = parser.parse_args()
 
     if args.command == "daemon":
@@ -1271,6 +1289,45 @@ def main() -> None:
             print(f"[{status}] {file_path} (Score: {res.score}/100)")
         else:
             print(res.cleaned_text)
+
+    elif args.command == "jev":
+        from .jev import JevDecisionEngine
+        engine = JevDecisionEngine()
+        action = getattr(args, "jev_action", None)
+
+        if action == "decide":
+            decision = engine.decide(args.prompt)
+            if getattr(args, "json", False):
+                import json
+                print(json.dumps(decision.to_dict(), indent=2))
+            else:
+                print(decision.format_banner())
+        elif action == "route":
+            risk, _ = engine.classify_risk(args.prompt)
+            tier, worker, rationale = engine.route_model(args.prompt, risk)
+            if getattr(args, "json", False):
+                import json
+                print(json.dumps({
+                    "prompt": args.prompt,
+                    "model_tier": tier.value if hasattr(tier, "value") else str(tier),
+                    "recommended_worker": worker,
+                    "risk_level": risk.value if hasattr(risk, "value") else str(risk),
+                    "rationale": rationale,
+                }, indent=2))
+            else:
+                print(f"Model Tier: {tier.value if hasattr(tier, 'value') else str(tier)}")
+                print(f"Worker:     {worker}")
+                print(f"Risk Level: {risk.value if hasattr(risk, 'value') else str(risk)}")
+                print(f"Rationale:  {rationale}")
+        elif action == "status" or not action:
+            status = engine.get_status()
+            if getattr(args, "json", False):
+                import json
+                print(json.dumps(status, indent=2))
+            else:
+                print("=== Aegis Jev Semantic Decision Engine Status ===")
+                for k, v in status.items():
+                    print(f"• {k}: {v}")
 
     else:
         parser.print_help()

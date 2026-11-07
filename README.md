@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-224%20Passing-success.svg?logo=githubactions&logoColor=white" alt="CI"></a>
+  <a href="https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-235%20Passing-success.svg?logo=githubactions&logoColor=white" alt="CI"></a>
   <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?logo=python&logoColor=white" alt="Python"></a>
   <a href="https://sqlite.org"><img src="https://img.shields.io/badge/Storage-SQLite%20WAL%20%2B%20FTS5-003B57.svg?logo=sqlite&logoColor=white" alt="Storage"></a>
   <img src="https://img.shields.io/badge/RAM-%3C%2025%20MB-10B981.svg" alt="Memory">
@@ -200,6 +200,7 @@ command -v aegis >/dev/null 2>&1 && eval "$(aegis hook --shell bash)"
 
 | Command | Subcommand / Options | Description |
 | :--- | :--- | :--- |
+| `aegis jev` | `{decide,route,status} [prompt] [--json]` | TypeSafe AI-inspired semantic decision engine: sub-100ms risk gating, model tier routing, and skill pruning. |
 | `aegis armory` | `{status,list,search,inspect,scan,mount,unmount,mine}` | Clean-room Global Skill Armory: FTS5 indexing, 4-gate security quarantine, and cross-agent projection. |
 | `aegis unslop` | `[text] [--file F] [--deep] [--mode auto\|code\|prose\|ui]` | Unified Unslop-Master: eliminates conversational AI watermarks, hallmark prose, and UI slop. |
 | `aegis briefing` | `[--name N]` (aliases: `hi`, `greeting`) | High-craft, anti-slop developer briefing: status, recent milestones, real-time community radar, and next actions. |
@@ -316,7 +317,7 @@ AegisBrain achieves a **97.2% reduction in frontier API expenditures** while mai
 - **Hardware Headroom Sentinel**: Dynamically monitors physical RAM and CPU load. If free RAM drops below **3.5 GB** or CPU exceeds **85%**, subagent concurrency throttles to 1 to protect workstation stability.
 - **Daemon RAM Footprint**: 18.4 MB (idle), 24.2 MB (active multi-agent routing).
 - **Daemon Startup Time**: 34 ms (zero external imports).
-- **Test Suite Coverage**: **224 / 224 passed (100% pass rate in 28.30s)**.
+- **Test Suite Coverage**: **235 / 235 passed (100% pass rate in 27.45s)**.
 
 ---
 
