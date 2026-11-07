@@ -1,7 +1,11 @@
-# AegisBrain
+<p align="center">
+  <a href="https://github.com/PG300604/aegis-brain"><img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/logo.png" alt="AegisBrain Logo" width="128" height="128"></a>
+</p>
+
+<h1 align="center">AegisBrain</h1>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/aegis-banner.svg" alt="AegisBrain Banner" width="100%">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/social-preview.png" alt="AegisBrain Social Preview" width="100%">
 </p>
 
 <p align="center">
