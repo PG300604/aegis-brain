@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-235%20Passing-success.svg?logo=githubactions&logoColor=white" alt="CI"></a>
+  <a href="https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-236%20Passing-success.svg?logo=githubactions&logoColor=white" alt="CI"></a>
   <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?logo=python&logoColor=white" alt="Python"></a>
   <a href="https://sqlite.org"><img src="https://img.shields.io/badge/Storage-SQLite%20WAL%20%2B%20FTS5-003B57.svg?logo=sqlite&logoColor=white" alt="Storage"></a>
   <img src="https://img.shields.io/badge/Jev%20Latency-%3C%203%20ms-8B5CF6.svg" alt="Jev Latency">
@@ -354,7 +354,7 @@ All metrics below are derived from empirical telemetry recorded in `brain.db` ac
 | **Initial-to-Final Defect Convergence** | Unsupervised (41% defect escape) | **78.87% automated error elimination** | **4-Gate verification** |
 | **Worker Trial Quality Score (Historical)** | Baseline: 6.8 / 10 | **9.76 / 10 (Median: 10.0 / 10)** | **+43.5% score gain** |
 | **Effective Inference Cost / 1,000 LOC** | $18.50 (100% frontier tokens) | **$0.42 (Tier 3 worker offload)** | **97.7% cost reduction** |
-| **Test Suite Coverage** | N/A | **235 / 235 passed (100% in 27.45s)** | **Rock-solid stability** |
+| **Test Suite Coverage** | N/A | **236 / 236 passed (100% in 28.59s)** | **Rock-solid stability** |
 
 ---
 

@@ -137,3 +137,21 @@ class TestUnslopResultAndConvenience:
         res = master.run("Certainly! Test.")
         assert isinstance(res, UnslopResult)
         assert "Certainly!" not in res.cleaned_text
+
+
+class TestCheerleadingAndEmojiScrub:
+    def test_scrub_cheerleading_and_emojis(self):
+        text = (
+            "### 🏛️ Architecture Overview\n"
+            "- ⚡ Core Engine\n"
+            "- 🛡️ Security Perimeter\n"
+            "System operational.\n"
+            "Your repository is updated for your launch tonight!"
+        )
+        master = UnslopMaster(mode="prose", deep=False)
+        res = master.run(text)
+        cleaned = res.cleaned_text
+        assert "### Architecture Overview" in cleaned
+        assert "- Core Engine" in cleaned
+        assert "- Security Perimeter" in cleaned
+        assert "Your repository is updated for your launch tonight!" not in cleaned

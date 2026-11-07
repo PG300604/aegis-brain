@@ -93,6 +93,9 @@ class UnslopMaster:
         r"(?:\n\s*)*Feel free to ask (?:me )?if you have any(?: further)? questions!?.*$",
         r"(?:\n\s*)*Let me know if you (?:need|would like) any further changes!?.*$",
         r"(?:\n\s*)*Let me know if you have any questions!?.*$",
+        r"(?:\n\s*)*Your (?:repository|code|project|documentation|system|build) (?:is|has been) (?:updated|ready|prepared).*?$",
+        r"(?:\n\s*)*You(?:'re| are) (?:all set|ready to (?:post|launch|ship)|good to go).*?$",
+        r"(?:\n\s*)*Happy (?:coding|hacking|posting)!?.*$",
     ]
 
     REDUNDANT_COMMENT_PATTERNS = [
@@ -211,6 +214,13 @@ class UnslopMaster:
 
         # Normalize em-dashes
         new_cleaned = re.sub(r"\s*—\s*", ", ", cleaned)
+        if new_cleaned != cleaned:
+            changed = True
+            cleaned = new_cleaned
+
+        # Strip decorative emoji headers and bullet icons
+        emoji_pattern = r"(?m)^(\s*(?:#+|-|\*|\d+\.|\•)\s*)[\U00010000-\U0010ffff\u2600-\u27ff\u2b50\u200d\ufe0f]+\s*"
+        new_cleaned = re.sub(emoji_pattern, r"\1", cleaned)
         if new_cleaned != cleaned:
             changed = True
             cleaned = new_cleaned
