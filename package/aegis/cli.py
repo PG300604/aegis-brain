@@ -348,6 +348,43 @@ def main() -> None:
     m_record.add_argument("--fix", required=True, help="Corrective action / solution")
     m_record.add_argument("--tags", nargs="*", default=[], help="Tags (e.g. windows ntfs git)")
 
+    # armory (Clean-Room Global Skill Armory & Cross-Agent Projection)
+    armory_parser = subparsers.add_parser("armory", help="Aegis Global Skill Armory: FTS5 search, 4-gate security, cross-agent projection")
+    armory_sub = armory_parser.add_subparsers(dest="armory_action", help="Armory action")
+
+    armory_sub.add_parser("status", help="Show Global Skill Armory status")
+
+    arm_list = armory_sub.add_parser("list", help="List registered skills")
+    arm_list.add_argument("--category", "-c", default=None, help="Category filter")
+    arm_list.add_argument("--status", "-s", default="active", help="Status filter (active/quarantined)")
+
+    arm_search = armory_sub.add_parser("search", help="Sub-millisecond FTS5 search across armory skills")
+    arm_search.add_argument("query", help="Search query")
+    arm_search.add_argument("--limit", "-n", type=int, default=10, help="Max results")
+
+    arm_inspect = armory_sub.add_parser("inspect", help="Inspect metadata for a skill")
+    arm_inspect.add_argument("name", help="Skill name")
+
+    arm_scan = armory_sub.add_parser("scan", help="Run 4-gate quarantine security evaluation on a skill file")
+    arm_scan.add_argument("path", help="Path to SKILL.md file")
+
+    arm_mount = armory_sub.add_parser("mount", help="Project / mount a skill into an agent directory")
+    arm_mount.add_argument("name", help="Skill name")
+    arm_mount.add_argument("--agent", "-a", default="antigravity", help="Target agent (antigravity, claude, hermes, opencode)")
+    arm_mount.add_argument("--dir", "-d", type=Path, default=None, help="Target directory path")
+
+    arm_unmount = armory_sub.add_parser("unmount", help="Unmount a skill from an agent directory")
+    arm_unmount.add_argument("name", help="Skill name")
+    arm_unmount.add_argument("--agent", "-a", default="antigravity", help="Target agent")
+    arm_unmount.add_argument("--dir", "-d", type=Path, default=None, help="Target directory path")
+
+    arm_mine = armory_sub.add_parser("mine", help="Queue a URL for mining or process mining queue")
+    arm_mine.add_argument("url", nargs="?", default=None, help="Source URL to queue for mining")
+    arm_mine.add_argument("--process", action="store_true", help="Process pending items in miner queue")
+
+    arm_delete = armory_sub.add_parser("delete", help="Delete a skill (core native skills are protected)")
+    arm_delete.add_argument("name", help="Skill name")
+
     args = parser.parse_args()
 
     if args.command == "daemon":
@@ -1079,6 +1116,82 @@ def main() -> None:
             for c in info["coaching_history"]:
                 print(f"  - {c}")
         print(f"\nFinal Verified Output:\n```python\n{code}\n```")
+
+    elif args.command == "armory":
+        from .armory import (
+            init_armory_db,
+            format_armory_status,
+            list_armory_skills,
+            search_armory,
+            get_skill,
+            evaluate_skill_security,
+            mount_skill,
+            unmount_skill,
+            queue_skill_for_mining,
+            process_miner_queue,
+            delete_skill,
+        )
+        init_armory_db()
+        action = getattr(args, "armory_action", "status") or "status"
+
+        if action == "status":
+            print(format_armory_status())
+        elif action == "list":
+            skills = list_armory_skills(category=args.category, status=args.status)
+            print(f"=== Aegis Skill Armory ({len(skills)} skills, status={args.status}) ===")
+            for s in skills:
+                print(f"• {s['name']} [{s['category']}] (Score: {s.get('security_score', 100)}) - {s.get('description', '')}")
+        elif action == "search":
+            results = search_armory(args.query, limit=args.limit)
+            print(f"Found {len(results)} matches for '{args.query}':\n")
+            for r in results:
+                print(f"• {r['name']} [{r.get('category', 'general')}] (Status: {r.get('status', 'active')})")
+                print(f"  {r.get('description', '')}\n")
+        elif action == "inspect":
+            s = get_skill(args.name)
+            if not s:
+                print(f"Skill '{args.name}' not found.")
+            else:
+                print(f"Skill: {s['name']}")
+                print(f"Category: {s.get('category')}")
+                print(f"Status: {s.get('status')} (Score: {s.get('security_score')})")
+                print(f"Path: {s.get('path')}")
+                print(f"Description: {s.get('description')}")
+        elif action == "scan":
+            p = Path(args.path)
+            res = evaluate_skill_security(p)
+            print(f"Security Scan Report for {p.name}:")
+            print(f"  Passed: {res['passed']} (Score: {res['score']}/100)")
+            for g, ok in res.get("gates", {}).items():
+                print(f"  - Gate {g}: {'PASSED ✅' if ok else 'FAILED ❌'}")
+            if res.get("violations"):
+                print("  Violations:")
+                for v in res["violations"]:
+                    print(f"    • {v}")
+        elif action == "mount":
+            res = mount_skill(args.name, target_agent=args.agent, target_dir=args.dir)
+            print(f"Mounted '{args.name}' to {args.agent} (Mode: {res.get('mode', 'link')}): {res.get('target_path', '')}")
+        elif action == "unmount":
+            try:
+                ok = unmount_skill(args.name, target_agent=args.agent, target_dir=args.dir)
+                print(f"Unmounted '{args.name}' from {args.agent}: {'SUCCESS' if ok else 'NOT FOUND'}")
+            except ValueError as e:
+                print(f"PROTECTED INVARIANT: {e}")
+        elif action == "mine":
+            if args.url:
+                qid = queue_skill_for_mining(args.url)
+                print(f"Queued URL for mining (Queue ID: {qid}): {args.url}")
+            if args.process or not args.url:
+                processed = process_miner_queue()
+                print(f"Processed {len(processed)} queued item(s) from miner.")
+                for item in processed:
+                    print(f"  • {item.get('name')}: {item.get('status')} (Queue ID: {item.get('queue_id')})")
+        elif action == "delete":
+            try:
+                ok = delete_skill(args.name)
+                print(f"Deleted skill '{args.name}': {'SUCCESS' if ok else 'NOT FOUND'}")
+            except ValueError as e:
+                print(f"PROTECTED INVARIANT: {e}")
 
     else:
         parser.print_help()
