@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "aegis-brain"
-version = "0.1.0"
-description = "Local Neural Memory Bus, Agent Orchestrator & Cross-Model Skill Distillation System"
+version = "0.2.0"
+description = "Local Neural Memory Bus, Sub-3ms Semantic Decision Head & Clean-Room Skill Armory for AI Coding Agents"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "GPL-3.0-or-later" }
