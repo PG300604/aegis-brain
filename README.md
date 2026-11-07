@@ -64,7 +64,7 @@ flowchart TD
         Agents["Coding Agents: Antigravity • Claude Code • Cursor • Hermes • OpenCode"]
         Phone["Mobile Remote: Telegram (@HHAACLIBot) • WhatsApp"]
         Whisper["Local Offline Whisper (whisper.exe • 0 Cloud Keys)"]
-        Console["Win32 Console Injector (AttachConsole • Vim Insert Mode)"]
+        Console["Win32 Console Injector (AttachConsole • Vim/Komorebi/whkd Safe)"]
         Phone --> Whisper --> Console --> Agents
     end
 
@@ -330,12 +330,12 @@ Control, monitor, and steer workstation coding sessions from your smartphone via
 3. The local Whisper engine (`whisper.exe`, model: `base`) transcribes the audio 100% offline with zero cloud API keys.
 4. AegisBrain calibrates Vim Insert Mode and executes the prompt into your workstation console.
 
-### Calibrated Win32 Console Injection:
-- Injects inputs directly via Win32 `AttachConsole()` and `WriteConsoleInputW()`—zero focus stealing, Komorebi tile-safe, and functional even when the display is locked.
-- Automatically transitions to Insert Mode (`Esc`, `Esc`, `i`), types the payload, and **presses `<Enter>` directly in Insert Mode** to eliminate trapped prompt bugs.
-- **In-Flight Interrupts (`/altm`)**: Send `/altm` from your phone to send an instant in-flight Alt+M interrupt signal into running sessions.
+### Calibrated Win32 Console Injection & Modal Compatibility:
+- **Tiling Window Manager & Hotkey Compatibility**: Built to work seamlessly with custom desktop setups, including **Komorebi** tiling window manager and **whkd** hotkey daemon. Injections operate via Win32 `AttachConsole()` and `WriteConsoleInputW()` without stealing window focus, disrupting active tiled workspaces, or halting when the display is locked.
+- **Modal Shell & Vim Mode Safety**: If modal terminal configurations (Vim / Neovim editing modes in PowerShell, Bash, or Zsh) are active, AegisBrain automatically calibrates state transitions (`Esc`, `Esc`, `i`), types the payload, and **presses `<Enter>` directly in Insert Mode** to eliminate trapped prompts across all CLI agents.
+- **In-Flight Interrupts (`/altm`)**: Send `/altm` from your phone to issue an in-flight Alt+M interrupt signal into running sessions.
 - **In-Flight Memory Queries (`/btw`)**: Query neural memory (`/btw what was our last DB migration?`) without interrupting active execution.
-- **Word-for-Word Live Streaming**: Agent outputs stream directly to your phone in real time, concluding with a execution completion banner.
+- **Word-for-Word Live Streaming**: Agent outputs stream directly to your phone in real time, concluding with an execution completion banner.
 
 ---
 
