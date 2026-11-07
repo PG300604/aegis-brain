@@ -140,7 +140,7 @@ class OfflineBriefingEngine:
             priority_lines.append(f"**Task #{t['id']} ({t['title']})**: {t.get('description') or 'Continue execution.'}")
         # Priority from tracked PRs with alerts
         for pr in tracked_prs:
-            if pr.get("status") == "open":
+            if pr.get("status") == "open" and pr.get("latest_review_state") not in ("REVIEWED", "APPROVED", "DISMISSED"):
                 priority_lines.append(f"**{pr['repo']} PR #{pr['pr_number']}**: Address review comments on '{pr['title']}'.")
                 break
         # Priority from latest handoff or decision
@@ -149,11 +149,9 @@ class OfflineBriefingEngine:
             if "handoff" in top_dec.get("title", "").lower() or "handoff" in str(top_dec.get("tags", "")).lower():
                 priority_lines.append(f"**Resume Handoff ({top_dec['title']})**: {top_dec['decision'][:80]}...")
 
-        # Roadmap fallbacks to ensure 3-4 actionable choices
+        # Roadmap fallbacks to ensure actionable choices
         default_priorities = [
-            "**Personal Lightweight AI Agent**: Design and build your personal desktop agent on drive `P:\\`.",
-            "**Chrome Web Store Release**: Finalize store submission package and listing metadata.",
-            "**GitGuardian Secret Remediation**: Review and rotate flagged historical credentials.",
+            "**Zoe Agent**: Lightweight personal desktop agent on drive 'P:\\vault'.",
         ]
         for dp in default_priorities:
             if len(priority_lines) < 4:

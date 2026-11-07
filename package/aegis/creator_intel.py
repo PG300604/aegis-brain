@@ -134,7 +134,6 @@ def init_creator_tables() -> None:
             );
         """)
 
-
 def track_creator(
     handle: str,
     platform: str,
@@ -206,7 +205,6 @@ def track_creator(
                 bio_links=bio_links,
             )
 
-
 def get_all_tracked_creators(limit: int = 50) -> List[CreatorProfile]:
     """Retrieve all tracked creators in user profile."""
     init_creator_tables()
@@ -228,7 +226,6 @@ def get_all_tracked_creators(limit: int = 50) -> List[CreatorProfile]:
             ))
         return profiles
 
-
 def detect_cultural_references(text: str) -> List[Dict[str, str]]:
     """Scan transcript or user text for developer memes, slang, and cultural jokes."""
     found = []
@@ -242,7 +239,6 @@ def detect_cultural_references(text: str) -> List[Dict[str, str]]:
                 "vibe": data["vibe"]
             })
     return found
-
 
 def scrape_tech_subreddit(subreddit: str = "LocalLLaMA", limit: int = 5) -> List[Dict[str, Any]]:
     """Fetch top trending developer discussions from Reddit directly."""
@@ -281,7 +277,6 @@ def scrape_tech_subreddit(subreddit: str = "LocalLLaMA", limit: int = 5) -> List
 
     return trends
 
-
 def scrape_hacker_news(limit: int = 5) -> List[Dict[str, Any]]:
     """Fetch top trending engineering & startup discussions from Hacker News."""
     init_creator_tables()
@@ -318,21 +313,37 @@ def scrape_hacker_news(limit: int = 5) -> List[Dict[str, Any]]:
         logger.debug("Failed scraping HackerNews: %s", e)
     return trends
 
-
-def get_recent_trends(limit: int = 5) -> List[Dict[str, Any]]:
-    """Retrieve recent community and tech trends from database, or fallback to scrape."""
+def get_recent_trends(limit: int = 5, force_refresh: bool = False, max_age_hours: float = 2.0) -> List[Dict[str, Any]]:
+    """Retrieve recent community and tech trends from database, refreshing if stale."""
     init_creator_tables()
+    refresh_needed = force_refresh
+    with get_connection() as conn:
+        row = conn.execute(
+            "SELECT (julianday('now') - julianday(created_at)) * 24.0 AS age_hours FROM community_trends ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+        if not row or row["age_hours"] is None or row["age_hours"] > max_age_hours:
+            refresh_needed = True
+
+    if refresh_needed:
+        with get_connection() as conn:
+            try:
+                conn.execute("DELETE FROM community_trends WHERE created_at < datetime('now', '-2 days')")
+            except Exception:
+                pass
+        try:
+            scrape_hacker_news(limit=limit)
+        except Exception:
+            pass
+        try:
+            scrape_tech_subreddit("LocalLLaMA", limit=3)
+        except Exception:
+            pass
+
     with get_connection() as conn:
         rows = conn.execute(
             "SELECT * FROM community_trends ORDER BY id DESC LIMIT ?", (limit,)
         ).fetchall()
-        if rows:
-            return [dict(r) for r in rows]
-    try:
-        return scrape_hacker_news(limit=limit)
-    except Exception:
-        return []
-
+        return [dict(r) for r in rows]
 
 def radar_sweep() -> Dict[str, Any]:
     """Execute community & creator radar sweep across tracked niches."""
