@@ -10,9 +10,9 @@ class TestBriefingAndArsenalOptimizer(unittest.TestCase):
         briefing_md = OfflineBriefingEngine.generate_briefing("Priyanshu")
         self.assertIn("Priyanshu", briefing_md)
         self.assertIn("Completed in Last Session", briefing_md)
-        self.assertIn("Fresh Community & Tech Radar", briefing_md)
-        self.assertIn("Offline Updates", briefing_md)
-        self.assertIn("What would you like to tackle today?", briefing_md)
+        self.assertIn("Community & Tech Radar", briefing_md)
+        self.assertIn("Tracked Pull Requests", briefing_md)
+        self.assertIn("Suggested Next Action", briefing_md)
 
     def test_session_close_protocol(self):
         from aegis.session_close import close_session, format_session_close_display

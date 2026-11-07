@@ -40,3 +40,8 @@
   4. Tier 2 audits the candidate code through the 4-Decision Quality Architecture Gate.
   5. If errors or flaws are found, Tier 2 generates a targeted coaching correction prompt and re-invokes the CLI worker.
   6. **Escalation Exception**: ONLY when the worker repeatedly fails or commits too many errors across retries (or on mission-critical architectural tasks), the Subagent constructs an Escalation Dossier and escalates to Tier 1 Senior Boss for direct takeover.
+
+### 5. Anti-Slop & Clean Typography Directives
+- **Zero Hashtag & Formatting Noise**: Never begin responses or CLI prints with raw markdown `#` or `###` headers, or decorative `---` dividers.
+- **Zero Emoji Clutter**: Strictly eliminate gratuitous emojis (`🌅`, `🌐`, `🔥`, `🐙`, `⚠️`, `❓`, `🧠`, `✅`, `🛡️`).
+- **Direct & Concise Communication**: Present information cleanly in natural bullet points (`  • `). State facts, actions, and code without conversational preamble or self-congratulatory meta-commentary.

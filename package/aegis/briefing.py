@@ -133,7 +133,8 @@ class OfflineBriefingEngine:
             trend_lines.append("  • Radar nominal. Zero external breaking updates detected.")
 
         # 6. Dynamic Suggested Priorities for Today
-        priority_lines: List[str] = ["Zoe Agent: Lightweight personal desktop agent on drive 'P:\\vault'."]
+        workspace_display = Path.cwd().name or "active workspace"
+        priority_lines: List[str] = [f"Zoe Agent: Lightweight personal desktop agent in {workspace_display}."]
         # Priority from active tasks
         for t in active_tasks[:2]:
             priority_lines.append(f"Task #{t['id']} ({t['title']}): {t.get('description') or 'Continue execution.'}")
@@ -150,7 +151,7 @@ class OfflineBriefingEngine:
 
         # Roadmap fallbacks to ensure actionable choices
         default_priorities = [
-            "Zoe Agent: Lightweight personal desktop agent on drive 'P:\\vault'.",
+            f"Zoe Agent: Lightweight personal desktop agent in {workspace_display}.",
         ]
         for dp in default_priorities:
             if len(priority_lines) < 4:

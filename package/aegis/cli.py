@@ -280,7 +280,7 @@ def main() -> None:
 
     # briefing / hi (Greeting & Offline Task Synchronization)
     brief_parser = subparsers.add_parser("briefing", aliases=["hi", "greeting"], help="Greet user, synchronize offline PRs/alerts, and review pending tasks")
-    brief_parser.add_argument("--name", "-n", default="Priyanshu", help="User name to greet")
+    brief_parser.add_argument("--name", "-n", default=None, help="User name to greet (defaults to current system user)")
 
     # bye / session-end (Graceful Session Close, Snapshot & Context Compaction)
     bye_parser = subparsers.add_parser("bye", aliases=["close-session", "session-end"], help="Create session snapshot, compress context, and persist to brain DB")

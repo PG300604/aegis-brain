@@ -289,7 +289,7 @@ def build_skeptical_review(task: str, response_body: str) -> str:
     # Format recommendations
     recs = list(audit.counter_recommendations)
     if not verified:
-        recs.append("Run `pytest P:\\open-source\\aegis-brain\\package\\tests` to confirm zero regressions.")
+        recs.append("Run `pytest package/tests` to confirm zero regressions.")
     if recs:
         recs_md = "\n".join(f"- 💡 {r}" for r in recs)
     else:

@@ -200,6 +200,9 @@ command -v aegis >/dev/null 2>&1 && eval "$(aegis hook --shell bash)"
 
 | Command | Subcommand / Options | Description |
 | :--- | :--- | :--- |
+| `aegis briefing` | `[--name N]` (aliases: `hi`, `greeting`) | High-craft, anti-slop developer briefing: status, recent milestones, real-time community radar, and next actions. |
+| `aegis bye` | `[--summary S]` (aliases: `close-session`, `session-end`) | Graceful session termination: restore-point snapshot, context compaction to `ACTIVE_CONTEXT.md`, and DB archive. |
+| `aegis radar` | `[--sub S] [--limit N]` | Scan real-time engineering discussions from HackerNews and r/LocalLLaMA with 2-hour TTL auto-cache. |
 | `aegis recall` | `[query] [--limit N]` | Instant sub-second memory search across decisions and tasks (< 50ms). |
 | `aegis remember` | `<text> [--category C]` | Record a key architectural decision or milestone into persistent neural memory. |
 | `aegis bootstrap` | `[--json]` | Output active workspace context ($\le 400$ tokens) for instant agent startup. |
