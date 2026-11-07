@@ -16,6 +16,8 @@ CORE_NATIVE_SKILLS = {
     "superpowers",
     "ecc",
     "aegis",
+    "unslop-master",
+    "unslop",
 }
 
 def is_core_skill(name: str) -> bool:

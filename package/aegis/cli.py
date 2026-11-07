@@ -385,6 +385,46 @@ def main() -> None:
     arm_delete = armory_sub.add_parser("delete", help="Delete a skill (core native skills are protected)")
     arm_delete.add_argument("name", help="Skill name")
 
+    # unslop
+    unslop_parser = subparsers.add_parser(
+        "unslop",
+        aliases=["deslop"],
+        help="Consolidated AI slop removal (code, prose, UI, and AI hallmarks)",
+    )
+    unslop_parser.add_argument(
+        "--file", "-f",
+        type=Path,
+        default=None,
+        help="Target file to scrub (modifies in place or prints if --stdout)",
+    )
+    unslop_parser.add_argument(
+        "text",
+        nargs="?",
+        default=None,
+        help="Input text string (reads from stdin if omitted and no --file)",
+    )
+    unslop_parser.add_argument(
+        "--deep", "-d",
+        action="store_true",
+        help="Enable second-pass AST, stock buzzword, and UI slop scrubbing",
+    )
+    unslop_parser.add_argument(
+        "--mode", "-m",
+        choices=["auto", "code", "prose", "ui"],
+        default="auto",
+        help="Content mode (default: auto)",
+    )
+    unslop_parser.add_argument(
+        "--stdout",
+        action="store_true",
+        help="Print to stdout instead of in-place editing when --file is given",
+    )
+    unslop_parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Check only: exit with code 1 if slop is detected",
+    )
+
     args = parser.parse_args()
 
     if args.command == "daemon":
@@ -1192,6 +1232,45 @@ def main() -> None:
                 print(f"Deleted skill '{args.name}': {'SUCCESS' if ok else 'NOT FOUND'}")
             except ValueError as e:
                 print(f"PROTECTED INVARIANT: {e}")
+
+    elif args.command in ("unslop", "deslop"):
+        from .unslop_master import UnslopMaster
+
+        input_text = ""
+        file_path = args.file
+
+        if file_path:
+            if not file_path.exists():
+                print(f"Error: File '{file_path}' does not exist.", file=sys.stderr)
+                sys.exit(1)
+            input_text = file_path.read_text(encoding="utf-8", errors="replace")
+        elif args.text:
+            input_text = args.text
+        elif not sys.stdin.isatty():
+            input_text = sys.stdin.read()
+        else:
+            print("Error: Provide text as argument, --file <path>, or pipe via stdin.", file=sys.stderr)
+            sys.exit(1)
+
+        res = UnslopMaster.run(input_text, mode=args.mode, deep=args.deep)
+
+        if args.check:
+            print(f"Slop Score: {res.score}/100")
+            print(f"Slop Detected: {'YES' if res.slop_detected else 'NO'}")
+            if res.findings:
+                print("\nFindings:")
+                for f in res.findings:
+                    p = f.get("pillar", "general")
+                    d = f.get("details", "")
+                    print(f"  • [{p}] {d}")
+            sys.exit(1 if res.slop_detected else 0)
+
+        if file_path and not args.stdout:
+            file_path.write_text(res.cleaned_text, encoding="utf-8")
+            status = "Cleaned & overwritten" if res.slop_detected else "Already clean"
+            print(f"[{status}] {file_path} (Score: {res.score}/100)")
+        else:
+            print(res.cleaned_text)
 
     else:
         parser.print_help()

@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from .sandbox import RedTeamAuditor, run_in_sandbox
+from .unslop_master import UnslopMaster
 
 
 AI_CONVERSATIONAL_WATERMARKS = [
@@ -68,24 +69,10 @@ class QualityGatesPipeline:
     """Orchestrates the 4 post-processing quality gates on candidate agent output."""
 
     @classmethod
-    def apply_unslop(cls, content: str) -> Tuple[str, bool]:
-        """Strip conversational AI filler, watermarks, and redundant code comments."""
-        cleaned = content
-        modified = False
-
-        for pat in AI_CONVERSATIONAL_WATERMARKS:
-            new_text = re.sub(pat, "", cleaned, flags=re.MULTILINE | re.IGNORECASE)
-            if new_text != cleaned:
-                cleaned = new_text
-                modified = True
-
-        for pat, repl in REDUNDANT_COMMENT_PATTERNS:
-            new_text = re.sub(pat, repl, cleaned)
-            if new_text != cleaned:
-                cleaned = new_text
-                modified = True
-
-        return cleaned.strip(), modified
+    def apply_unslop(cls, content: str, deep: bool = False) -> Tuple[str, bool]:
+        """Strip conversational AI filler, watermarks, redundant code comments, and slop via UnslopMaster."""
+        cleaned, modified = UnslopMaster.scrub(content, mode="auto", deep=deep)
+        return str(cleaned).strip(), modified
 
     @classmethod
     def scan_gitguardian_secrets(cls, content: str) -> List[Dict[str, Any]]:
@@ -127,10 +114,10 @@ class QualityGatesPipeline:
         return findings
 
     @classmethod
-    def run_pipeline(cls, raw_content: str, run_sandbox: bool = False) -> QualityGateResult:
+    def run_pipeline(cls, raw_content: str, run_sandbox: bool = False, deep: bool = False) -> QualityGateResult:
         """Run all 4 gates sequentially."""
         # Gate 1: Unslop
-        cleaned, unslop_applied = cls.apply_unslop(raw_content)
+        cleaned, unslop_applied = cls.apply_unslop(raw_content, deep=deep)
 
         # Gate 2: Security Audit
         sec_report = RedTeamAuditor.audit_code(cleaned)

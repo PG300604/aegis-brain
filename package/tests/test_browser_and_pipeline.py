@@ -99,6 +99,7 @@ def test_transparent_observer():
 
 def test_dashboard_and_feedback(tmp_path, monkeypatch):
     monkeypatch.setattr("aegis.config.get_db_path", lambda: tmp_path / "brain.db")
+    monkeypatch.setattr("aegis.dashboard.get_db_path", lambda: tmp_path / "brain.db")
 
     fb_id = record_feedback("code_quality", 5, "Clean Karpathy simplicity", task_ref="Task #1")
     assert fb_id > 0
