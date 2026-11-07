@@ -1,4 +1,4 @@
-"""TypeSafe AI-inspired Jev Semantic Decision Engine for AegisBrain.
+"""Autonomous Jev Semantic Decision Engine for AegisBrain.
 
 Sub-100ms, token-free semantic classification, risk gating, and model routing.
 Pure Python standard library only: dataclasses, typing, json, re, math, time, sqlite3, enum, pathlib.

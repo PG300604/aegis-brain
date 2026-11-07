@@ -108,9 +108,9 @@ flowchart TD
     end
 
     subgraph QualityGate ["5. The 4-Decision Quality Architecture Gate"]
-        Q1["Karpathy Simplicity Doctrine (Surgical minimal lines)"]
+        Q1["Surgical Simplicity Doctrine (Minimal code, zero speculative bloat)"]
         Q2["Unslop-Master Super Skill (Code • Prose • Hallmark • UI)"]
-        Q3["Artemis Red-Team Audit (No shell=True, injection guard)"]
+        Q3["Autonomous Red-Team Audit (No shell=True, injection guard)"]
         Q4["Dual-Environment Sandbox (AST syntax validation)"]
         
         T3 -.-> Q1 --> Q2 --> Q3 --> Q4
@@ -138,7 +138,7 @@ flowchart TD
 
 ## Jev Semantic Decision Engine
 
-Inspired by TypeSafe AI's Jev, AegisBrain incorporates an in-process, sub-3ms **Semantic Decision Head** (`aegis jev`). It operates with **zero generation tokens** and **zero external dependencies**, replacing expensive frontier LLM triage calls with deterministic scoring.
+AegisBrain incorporates an in-process, sub-3ms **Semantic Decision Head** (`aegis jev`). It operates with **zero generation tokens** and **zero external dependencies**, replacing expensive frontier LLM triage calls with deterministic scoring.
 
 ```mermaid
 flowchart LR
@@ -195,7 +195,7 @@ flowchart TD
 ### Universal Cross-Agent Projection:
 - **NTFS Hard Junctions**: Mounts skills directly into Antigravity or Claude Code without duplicating disk space.
 - **Dynamic JSON Tool Specs**: Automatically synthesizes tool specifications for Nous Hermes and OpenCode.
-- **Immutable Core Native Skills**: Core engineering heuristics (`andrej-karpathy-skills`, `artemis`, `unslop-master`, `ecc`, `diagram-design`, `pg-aiguide`, `superpowers`) are permanently protected against accidental deletion or unmounting.
+- **Immutable Core Native Skills**: Core engineering heuristics (`unslop-master`, `clean-code`, `security-audit`, `diagram-design`, `pg-aiguide`, `superpowers`, `backend-patterns`) are permanently protected against accidental deletion or unmounting.
 
 ```bash
 # Inspect armory status and active mounted skills
@@ -219,7 +219,7 @@ flowchart LR
     Input["Candidate Code / Prose Draft"] --> TwoStage["aegis unslop (Two-Stage Engine)"]
     
     subgraph Pillars ["4 Pillars of Unslop-Master"]
-        P1["1. Code Unslop: Karpathy simplicity, zero speculative wrappers, dead import cleanup"]
+        P1["1. Code Unslop: Surgical simplicity, zero speculative wrappers, dead import cleanup"]
         P2["2. Prose Unslop: Strips preambles, sycophancy, and filler phrases"]
         P3["3. Hallmark Eradication: Removes negative tricolons, em-dash pileups, transition tics"]
         P4["4. UI Taste: Enforces accessible contrast tokens and density standards"]
@@ -309,9 +309,9 @@ Before any candidate draft reaches the user or repository, it must pass all 4 qu
   <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/quality-architecture-gate.svg" alt="4-Decision Quality Architecture Gate" width="100%">
 </p>
 
-1. **Karpathy Simplicity Doctrine**: Surgical, minimal code with zero speculative abstractions, unused wrappers, or premature flexibility. If 200 lines can be written in 50, it is rewritten.
+1. **Surgical Simplicity Doctrine**: Minimal code that directly solves the requirement. Zero speculative abstractions, unused wrappers, or premature flexibility. If 200 lines can be written in 50, it is rewritten.
 2. **Unslop-Master Two-Stage Scrub**: Complete elimination of conversational AI slop, conversational preambles, and filler text.
-3. **Artemis & Cloudflare Security Audit**: Perimeter defense blocking `shell=True`, `os.system()`, command injections, path traversals, and hardcoded secrets.
+3. **Autonomous Red-Team Security Audit**: Perimeter defense blocking `shell=True`, `os.system()`, command injections, path traversals, and hardcoded secrets.
 4. **Dual-Environment Sandbox Verification**: AST syntax validation and dry-run compilation in an isolated sandbox environment before any host filesystem mutation.
 
 ---
@@ -376,7 +376,7 @@ All metrics below are derived from empirical telemetry recorded in `brain.db` ac
 
 | Command | Subcommand / Options | Description |
 | :--- | :--- | :--- |
-| `aegis jev` | `decide "<prompt>" [--json]` | TypeSafe AI-inspired semantic decision head: sub-3ms risk gating, model tier routing, and skill pruning. |
+| `aegis jev` | `decide "<prompt>" [--json]` | In-process semantic decision head: sub-3ms risk gating, model tier routing, and skill pruning. |
 | `aegis jev` | `route "<prompt>" [--json]` | Instant model tier recommendation (`TIER_1`, `TIER_2`, `TIER_3`) and rationale. |
 | `aegis jev` | `status [--json]` | Inspect Jev engine status, rule counts, and average latency metrics. |
 | `aegis armory` | `{status,list,search,inspect}` | Clean-room Global Skill Armory: SQLite FTS5 search, metrics, and skill inspection. |

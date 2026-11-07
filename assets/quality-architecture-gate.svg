@@ -40,9 +40,9 @@
   <text x="600" y="38" text-anchor="middle" font-family="'Virgil', 'Comic Sans MS', sans-serif" font-size="22" font-weight="700" fill="#0F172A" class="text-dark">🛡️ The 4-Decision Quality Architecture Gate</text>
   <text x="600" y="60" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#64748B">Every worker candidate draft must pass all 4 gates before reaching senior models or git</text>
 
-  <!-- GATE 1: Karpathy Simplicity -->
+  <!-- GATE 1: Surgical Simplicity -->
   <rect x="40" y="90" width="250" height="340" rx="14" fill="#EFF6FF" stroke="#2563EB" stroke-width="1.8" class="dark-g1" />
-  <text x="60" y="125" class="card-title text-dark" fill="#1E40AF">1. Karpathy Simplicity</text>
+  <text x="60" y="125" class="card-title text-dark" fill="#1E40AF">1. Surgical Simplicity</text>
   <text x="60" y="150" class="card-sub text-dark-sub" fill="#1D4ED8">• Surgical minimal diffs</text>
   <text x="60" y="172" class="card-sub text-dark-sub" fill="#1D4ED8">• Standard library first</text>
   <text x="60" y="194" class="card-sub text-dark-sub" fill="#1D4ED8">• Zero speculative abstractions</text>
@@ -55,9 +55,9 @@
   <!-- ARROW 1 -> 2 -->
   <path d="M 290 260 L 330 260" class="arrow" stroke="#64748B" marker-end="url(#g-arrow)" />
 
-  <!-- GATE 2: Ponytail / Unslop -->
+  <!-- GATE 2: Unslop-Master -->
   <rect x="330" y="90" width="250" height="340" rx="14" fill="#FAF5FF" stroke="#7C3AED" stroke-width="1.8" class="dark-g2" />
-  <text x="350" y="125" class="card-title text-dark" fill="#5B21B6">2. Ponytail / Unslop</text>
+  <text x="350" y="125" class="card-title text-dark" fill="#5B21B6">2. Unslop-Master</text>
   <text x="350" y="150" class="card-sub text-dark-sub" fill="#6D28D9">• Strips conversational slop</text>
   <text x="350" y="172" class="card-sub text-dark-sub" fill="#6D28D9">• "Certainly!", "Here is..."</text>
   <text x="350" y="194" class="card-sub text-dark-sub" fill="#6D28D9">• Removes polite preambles</text>
@@ -72,7 +72,7 @@
 
   <!-- GATE 3: Red-Team & Security -->
   <rect x="620" y="90" width="250" height="340" rx="14" fill="#FFF1F2" stroke="#E11D48" stroke-width="1.8" class="dark-g3" />
-  <text x="640" y="125" class="card-title text-dark" fill="#9F1239">3. Red-Team / Cloudflare</text>
+  <text x="640" y="125" class="card-title text-dark" fill="#9F1239">3. Red-Team Security</text>
   <text x="640" y="150" class="card-sub text-dark-sub" fill="#BE123C">• Blocks shell=True execution</text>
   <text x="640" y="172" class="card-sub text-dark-sub" fill="#BE123C">• Blocks os.system() payloads</text>
   <text x="640" y="194" class="card-sub text-dark-sub" fill="#BE123C">• Path traversal prevention</text>
