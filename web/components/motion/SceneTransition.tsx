@@ -8,35 +8,34 @@ interface SceneTransitionProps {
   fromAct?: string;
   toAct?: string;
   badge?: string;
-  accentColor?: string;
+  dark?: boolean;
 }
 
 export function SceneTransition({
-  fromAct = "ACT I",
-  toAct = "ACT II",
+  fromAct = "CHAPTER I",
+  toAct = "CHAPTER II",
   badge = "CONVERGENCE → NEURAL PERSISTENCE",
-  accentColor = "cyan",
+  dark = false,
 }: SceneTransitionProps) {
   return (
-    <div className="relative w-full py-16 flex flex-col items-center justify-center pointer-events-none">
-      {/* Background ambient radial glow */}
-      <div className="absolute w-72 h-32 bg-cyan-500/10 rounded-full blur-3xl" />
+    <div className="relative w-full py-12 sm:py-16 flex flex-col items-center justify-center pointer-events-none select-none">
+      {/* Horizontal Inked Seam Bar */}
+      <div className={`w-full max-w-4xl px-4 ${dark ? "scene-seam-bar-dark" : "scene-seam-bar"}`} />
 
-      {/* Horizontal Seam Bar */}
-      <div className="scene-seam-bar max-w-4xl" />
-
-      {/* Center Floating Connector Pill */}
+      {/* Center Floating Inked Connector Pill */}
       <motion.div
         initial={{ opacity: 0, y: 10, scale: 0.95 }}
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="relative -top-4 pointer-events-auto"
+        viewport={{ once: true, margin: "-30px" }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        className="relative -top-3.5 pointer-events-auto"
       >
-        <div className="glass-panel-glow px-4 py-1.5 rounded-full flex items-center gap-2.5 text-[11px] font-mono uppercase tracking-widest text-cyan-300 border border-cyan-400/40 shadow-[0_0_20px_rgba(0,240,255,0.3)]">
-          <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-          <span className="font-bold">{badge}</span>
-          <ArrowDown className="w-3.5 h-3.5 text-cyan-400" />
+        <div className="bg-white border-2 border-black shadow-[4px_4px_0px_#000000] px-4 py-1.5 flex items-center gap-2.5 text-[11px] font-nikkei uppercase tracking-widest text-black">
+          <Sparkles className="w-3.5 h-3.5 text-[#B91C1C] animate-pulse" />
+          <span className="font-extrabold text-[#B91C1C]">{fromAct}</span>
+          <span className="text-black/40">/</span>
+          <span>{badge}</span>
+          <ArrowDown className="w-3 h-3 text-[#B91C1C]" />
         </div>
       </motion.div>
     </div>
