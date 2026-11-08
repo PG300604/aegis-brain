@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { triggerSoundEffect } from "@/components/audio/SoundtrackController";
 import {
   Cpu,
   Layers,
@@ -213,7 +214,7 @@ export function InfographicsGallery() {
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
             Architecture &amp; Execution Flow
           </h3>
-          <p className="text-xs sm:text-sm text-zinc-400 font-gt-era max-w-xl mt-1">
+          <p className="text-xs sm:text-sm text-zinc-200 font-sans font-medium max-w-xl mt-1 leading-relaxed">
             Clear system blueprints detailing multi-agent token arbitrage, sub-second neural memory, and deterministic mobile telemetry.
           </p>
         </div>
@@ -226,6 +227,13 @@ export function InfographicsGallery() {
         </div>
       </div>
 
+      {/* Graphic Novel Narration Box matching Santioni style */}
+      <div className="narration-box my-4">
+        <p className="narration-text">
+          SEVEN SOVEREIGN BLUEPRINTS ETCHED IN STEEL AND PAPYRUS. FROM TOPOLOGY TO RECOVERY GATES, EVERY INVARIANT IS MATHEMATICALLY VERIFIED.
+        </p>
+      </div>
+
       {/* Navigation Tabs Bar */}
       <div className="flex items-center justify-start gap-2 overflow-x-auto py-4 my-2 no-scrollbar">
         {DIAGRAMS.map((diagram) => {
@@ -235,7 +243,10 @@ export function InfographicsGallery() {
             <button
               key={diagram.id}
               type="button"
-              onClick={() => setActiveTab(diagram.id)}
+              onClick={() => {
+                setActiveTab(diagram.id);
+                triggerSoundEffect("click");
+              }}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-nikkei uppercase tracking-wider whitespace-nowrap transition-all border-2 border-black cursor-pointer ${
                 isActive
                   ? "bg-[#B91C1C] text-white shadow-[3px_3px_0px_#000000]"
@@ -268,7 +279,10 @@ export function InfographicsGallery() {
 
         {/* High-Contrast Cream Paper Canvas Presentation */}
         <div
-          onClick={() => setLightboxOpen(true)}
+          onClick={() => {
+            setLightboxOpen(true);
+            triggerSoundEffect("transition");
+          }}
           className="my-5 relative rounded-lg bg-[#FAF8F5] p-3 sm:p-6 shadow-[4px_4px_0px_#000000] border-2 border-black cursor-zoom-in group transition-all"
         >
           <div className="absolute top-4 right-4 z-10 px-2 py-1 rounded bg-black border border-black text-[10px] font-mono text-white flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

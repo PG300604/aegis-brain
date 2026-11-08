@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { triggerSoundEffect } from "@/components/audio/SoundtrackController";
 import {
   ShieldAlert,
   Sparkles,
@@ -138,7 +139,7 @@ export function QualityGateCards() {
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
             The 4-Decision Quality Architecture Gate
           </h3>
-          <p className="text-xs sm:text-sm text-zinc-400 font-gt-era max-w-xl mt-1">
+          <p className="text-xs sm:text-sm text-zinc-200 font-sans font-medium max-w-xl mt-1 leading-relaxed">
             Before any candidate code from local workers or subagents reaches production, it must pass all 4 rigorous
             architectural and security filters.
           </p>
@@ -150,6 +151,13 @@ export function QualityGateCards() {
           </div>
           <div className="text-[10px] font-mono uppercase text-zinc-400">Strict Enforcement</div>
         </div>
+      </div>
+
+      {/* Graphic Novel Narration Box matching Santioni style */}
+      <div className="narration-box my-4">
+        <p className="narration-text">
+          FOUR GATES OF STEEL STAND GUARD. SURGICAL SIMPLICITY, ZERO SLOP WATERMARKS, AST INJECTION BLOCKING, AND DUAL-ENVIRONMENT PROOF.
+        </p>
       </div>
 
       {/* Gate Tabs Selector */}

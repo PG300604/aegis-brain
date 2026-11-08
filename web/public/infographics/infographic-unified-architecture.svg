@@ -1,215 +1,443 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1380" width="100%" height="auto">
-  <defs>
-    <style><![CDATA[
-      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-      .font-sans { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
-      .font-mono { font-family: 'JetBrains Mono', monospace; }
-    ]]></style>
-    <filter id="brutalist-shadow" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="4" dy="4" stdDeviation="0" flood-color="#000000" flood-opacity="0.9" />
-    </filter>
-  </defs>
-
-  <!-- Background Plate -->
-  <rect width="1000" height="1380" rx="16" fill="#090A0F" stroke="#262738" stroke-width="2" />
-
-  <!-- Header -->
-  <g transform="translate(40, 28)">
-    <rect x="0" y="0" width="920" height="80" rx="8" fill="#12131C" stroke="#D4AF37" stroke-width="1.8" filter="url(#brutalist-shadow)" />
-    <!-- Seal Badge -->
-    <rect x="18" y="16" width="48" height="48" rx="6" fill="#1C1D2B" stroke="#D4AF37" stroke-width="1.2" />
-    <circle cx="42" cy="40" r="14" fill="none" stroke="#D4AF37" stroke-width="1.5" stroke-dasharray="3 2" />
-    <polygon points="42,30 50,46 34,46" fill="none" stroke="#B91C1C" stroke-width="1.5" />
-    <circle cx="42" cy="41" r="2.5" fill="#10B981" />
-
-    <text x="82" y="34" class="font-sans" font-size="11" font-weight="700" fill="#D4AF37" letter-spacing="2">SYSTEM TOPOLOGY // MASTER ARCHITECTURE</text>
-    <text x="82" y="60" class="font-sans" font-size="20" font-weight="800" fill="#FFFFFF" letter-spacing="0.5">AEGISBRAIN UNIFIED END-TO-END BLUEPRINT</text>
-    <text x="840" y="48" text-anchor="end" class="font-mono" font-size="11" font-weight="700" fill="#10B981">v2.4.0 ACTIVE</text>
-  </g>
-
-  <!-- LAYER 1: INGESTION & COCKPIT -->
-  <g transform="translate(40, 134)">
-    <rect x="0" y="0" width="920" height="230" rx="10" fill="#12131C" stroke="#3B82F6" stroke-width="1.8" filter="url(#brutalist-shadow)" />
-    <rect x="20" y="16" width="180" height="24" rx="4" fill="#122238" stroke="#3B82F6" stroke-width="1" />
-    <text x="110" y="32" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#93C5FD">LAYER 01 • INGESTION</text>
-    <text x="215" y="32" class="font-mono" font-size="11" fill="#9CA3AF">Omni-Channel Directives &amp; Audio Transcode Shield</text>
-
-    <g transform="translate(20, 56)">
-      <!-- Channel A: Mobile Telegram -->
-      <rect x="0" y="0" width="280" height="150" rx="6" fill="#161928" stroke="#252D47" stroke-width="1" />
-      <text x="16" y="24" class="font-sans" font-size="14" font-weight="700" fill="#FFFFFF">Mobile Telegram Bot</text>
-      <text x="16" y="42" class="font-mono" font-size="10" fill="#60A5FA">@HHAACLIBot • 24/7 Polling</text>
-      <text x="16" y="66" class="font-mono" font-size="10" fill="#9CA3AF">• /type &lt;cmd&gt; /alt+m in-flight</text>
-      <text x="16" y="84" class="font-mono" font-size="10" fill="#9CA3AF">• /briefing &amp; /btw status check</text>
-      <text x="16" y="102" class="font-mono" font-size="10" fill="#9CA3AF">• FFmpeg 25s voice slicing</text>
-      <text x="16" y="126" class="font-mono" font-size="10" font-weight="700" fill="#10B981">Zero Audio Drop Guaranteed</text>
-
-      <!-- Channel B: Desktop Terminal CLI -->
-      <rect x="300" y="0" width="280" height="150" rx="6" fill="#161928" stroke="#252D47" stroke-width="1" />
-      <text x="16" y="24" class="font-sans" font-size="14" font-weight="700" fill="#FFFFFF">PromptBar &amp; Terminal CLI</text>
-      <text x="16" y="42" class="font-mono" font-size="10" fill="#D4AF37">antigravity-cli &amp; aegis command</text>
-      <text x="16" y="66" class="font-mono" font-size="10" fill="#9CA3AF">• aegis recall "&lt;query&gt;"</text>
-      <text x="16" y="84" class="font-mono" font-size="10" fill="#9CA3AF">• aegis challenge &lt;target&gt;</text>
-      <text x="16" y="102" class="font-mono" font-size="10" fill="#9CA3AF">• aegis snapshot create</text>
-      <text x="16" y="126" class="font-mono" font-size="10" font-weight="700" fill="#D4AF37">&lt; 25ms Command Latency</text>
-
-      <!-- Channel C: Audio Slicer & Whisper -->
-      <rect x="600" y="0" width="280" height="150" rx="6" fill="#161928" stroke="#252D47" stroke-width="1" />
-      <text x="16" y="24" class="font-sans" font-size="14" font-weight="700" fill="#FFFFFF">Audio Transcode Shield</text>
-      <text x="16" y="42" class="font-mono" font-size="10" fill="#F43F5E">FFmpeg + Local Whisper STT</text>
-      <text x="16" y="66" class="font-mono" font-size="10" fill="#9CA3AF">• Slices OGA into 25s chunks</text>
-      <text x="16" y="84" class="font-mono" font-size="10" fill="#9CA3AF">• Eliminates &gt;30s hallucinations</text>
-      <text x="16" y="102" class="font-mono" font-size="10" fill="#9CA3AF">• Local offline transcription</text>
-      <text x="16" y="126" class="font-mono" font-size="10" font-weight="700" fill="#34D399">100% Deterministic STT</text>
-    </g>
-  </g>
-
-  <!-- Flow Connector 1 -->
-  <g transform="translate(500, 364)">
-    <line x1="0" y1="0" x2="0" y2="30" stroke="#3B82F6" stroke-width="2" stroke-dasharray="4 3" />
-    <polygon points="-5,26 0,32 5,26" fill="#3B82F6" />
-  </g>
-
-  <!-- LAYER 2: SOVEREIGN NEURAL BUS & MEMORY -->
-  <g transform="translate(40, 394)">
-    <rect x="0" y="0" width="920" height="280" rx="10" fill="#12131C" stroke="#D4AF37" stroke-width="1.8" filter="url(#brutalist-shadow)" />
-    <rect x="20" y="16" width="220" height="24" rx="4" fill="#3D3012" stroke="#D4AF37" stroke-width="1" />
-    <text x="130" y="32" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#FDE047">LAYER 02 • NEURAL MEMORY BUS</text>
-    <text x="255" y="32" class="font-mono" font-size="11" fill="#9CA3AF">Sub-Second SQLite WAL Persistence &amp; Invariant Registry</text>
-
-    <g transform="translate(20, 56)">
-      <!-- Box 1: brain.db WAL -->
-      <rect x="0" y="0" width="430" height="198" rx="6" fill="#1A1822" stroke="#332B3A" stroke-width="1" />
-      <text x="16" y="24" class="font-sans" font-size="14" font-weight="700" fill="#FFFFFF">brain.db (SQLite WAL Mode)</text>
-      <text x="16" y="42" class="font-mono" font-size="10" fill="#D4AF37">FTS5 BM25 Virtual Table • 24ms Recall</text>
-      <g transform="translate(16, 56)">
-        <text x="0" y="14" class="font-mono" font-size="10" fill="#9CA3AF">• memories (FTS5 indexed, BM25 scored)</text>
-        <text x="0" y="32" class="font-mono" font-size="10" fill="#9CA3AF">• restore_points (snapshots &amp; AST state)</text>
-        <text x="0" y="50" class="font-mono" font-size="10" fill="#9CA3AF">• agent_confidence (learning error tracker)</text>
-        <text x="0" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• telegram_inbox (async queue)</text>
-        <text x="0" y="90" class="font-mono" font-size="10" fill="#10B981">✓ Multi-process concurrency with zero WAL database lockouts</text>
-        <text x="0" y="112" class="font-mono" font-size="10" fill="#34D399">✓ Sub-second context bootstrapping (&lt; 400 tokens)</text>
-      </g>
-
-      <!-- Box 2: Win32 24/7 Watchdog Shield -->
-      <rect x="450" y="0" width="430" height="198" rx="6" fill="#1A1822" stroke="#332B3A" stroke-width="1" />
-      <text x="16" y="24" class="font-sans" font-size="14" font-weight="700" fill="#FFFFFF">24/7 Win32 Watchdog Daemon</text>
-      <text x="16" y="42" class="font-mono" font-size="10" fill="#10B981">http://127.0.0.1:8765 • Task Scheduler</text>
-      <g transform="translate(16, 56)">
-        <text x="0" y="14" class="font-mono" font-size="10" fill="#9CA3AF">• AegisBrainDaemonKeepAlive Scheduled Task</text>
-        <text x="0" y="32" class="font-mono" font-size="10" fill="#9CA3AF">• Auto-resurrects on terminal close or reboot</text>
-        <text x="0" y="50" class="font-mono" font-size="10" fill="#9CA3AF">• Hardware metric monitor (RAM / CPU throttle)</text>
-        <text x="0" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Drains idle queue when host has headroom</text>
-        <text x="0" y="90" class="font-mono" font-size="10" fill="#10B981">✓ 99.98% Measured Uptime Across All Sessions</text>
-        <text x="0" y="112" class="font-mono" font-size="10" fill="#D4AF37">✓ Zero disrupted Telegram voice sessions</text>
-      </g>
-    </g>
-  </g>
-
-  <!-- Flow Connector 2 -->
-  <g transform="translate(500, 674)">
-    <line x1="0" y1="0" x2="0" y2="30" stroke="#D4AF37" stroke-width="2" stroke-dasharray="4 3" />
-    <polygon points="-5,26 0,32 5,26" fill="#D4AF37" />
-  </g>
-
-  <!-- LAYER 3: 3-TIER TOKEN ARBITRAGE FLEET -->
-  <g transform="translate(40, 704)">
-    <rect x="0" y="0" width="920" height="280" rx="10" fill="#12131C" stroke="#10B981" stroke-width="1.8" filter="url(#brutalist-shadow)" />
-    <rect x="20" y="16" width="220" height="24" rx="4" fill="#0A3320" stroke="#10B981" stroke-width="1" />
-    <text x="130" y="32" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#6EE7B7">LAYER 03 • TOKEN ARBITRAGE</text>
-    <text x="255" y="32" class="font-mono" font-size="11" fill="#9CA3AF">Hierarchical Division of Labor ($1,840+/mo Savings)</text>
-
-    <g transform="translate(20, 56)">
-      <!-- Tier 1 -->
-      <rect x="0" y="0" width="280" height="198" rx="6" fill="#13211B" stroke="#1D4A35" stroke-width="1" />
-      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#D4AF37">TIER 1: SENIOR BOSS</text>
-      <text x="16" y="44" class="font-sans" font-size="13" font-weight="700" fill="#FFFFFF">Gemini 4 / Opus 5.5</text>
-      <text x="16" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Architectural reasoning</text>
-      <text x="16" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• Define strict invariants</text>
-      <text x="16" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• Coach subagents</text>
-      <text x="16" y="122" class="font-mono" font-size="10" fill="#9CA3AF">• Final delivery sign-off</text>
-      <text x="16" y="150" class="font-mono" font-size="10" font-weight="700" fill="#EF4444">0 Direct Code Invariant</text>
-      <text x="16" y="170" class="font-mono" font-size="10" fill="#D4AF37">&lt; 8% Total Token Usage</text>
-
-      <!-- Tier 2 -->
-      <rect x="300" y="0" width="280" height="198" rx="6" fill="#13211B" stroke="#1D4A35" stroke-width="1" />
-      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#60A5FA">TIER 2: JUNIOR BOSS</text>
-      <text x="16" y="44" class="font-sans" font-size="13" font-weight="700" fill="#FFFFFF">Specialized Subagents</text>
-      <text x="16" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Workload triage (≤15 lines)</text>
-      <text x="16" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• Dispatch worker CLIs</text>
-      <text x="16" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• AST taint security audit</text>
-      <text x="16" y="122" class="font-mono" font-size="10" fill="#9CA3AF">• Error coaching loops</text>
-      <text x="16" y="150" class="font-mono" font-size="10" font-weight="700" fill="#10B981">Adaptive Fast-Path</text>
-      <text x="16" y="170" class="font-mono" font-size="10" fill="#60A5FA">Domain Orchestration</text>
-
-      <!-- Tier 3 -->
-      <rect x="600" y="0" width="280" height="198" rx="6" fill="#13211B" stroke="#1D4A35" stroke-width="1" />
-      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#10B981">TIER 3: WORKERS</text>
-      <text x="16" y="44" class="font-sans" font-size="13" font-weight="700" fill="#FFFFFF">Hermes / Ollama / OpenCode</text>
-      <text x="16" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Raw code drafts &amp; tests</text>
-      <text x="16" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• Verbose function boilerplate</text>
-      <text x="16" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• 100% free hardware tokens</text>
-      <text x="16" y="122" class="font-mono" font-size="10" fill="#9CA3AF">• 0 frontier tokens burned</text>
-      <text x="16" y="150" class="font-mono" font-size="10" font-weight="700" fill="#10B981">$0.00 / Token Execution</text>
-      <text x="16" y="170" class="font-mono" font-size="10" fill="#34D399">95.8% Cost Savings</text>
-    </g>
-  </g>
-
-  <!-- Flow Connector 3 -->
-  <g transform="translate(500, 984)">
-    <line x1="0" y1="0" x2="0" y2="30" stroke="#10B981" stroke-width="2" stroke-dasharray="4 3" />
-    <polygon points="-5,26 0,32 5,26" fill="#10B981" />
-  </g>
-
-  <!-- LAYER 4: 4-DECISION QUALITY ARCHITECTURE GATE -->
-  <g transform="translate(40, 1014)">
-    <rect x="0" y="0" width="920" height="280" rx="10" fill="#12131C" stroke="#B91C1C" stroke-width="1.8" filter="url(#brutalist-shadow)" />
-    <rect x="20" y="16" width="220" height="24" rx="4" fill="#3B1214" stroke="#B91C1C" stroke-width="1" />
-    <text x="130" y="32" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#FCA5A5">LAYER 04 • QUALITY GATE</text>
-    <text x="255" y="32" class="font-mono" font-size="11" fill="#9CA3AF">4 Gates of Steel: Zero Defects &amp; Zero AI Slop</text>
-
-    <g transform="translate(20, 56)">
-      <!-- Gate 1 -->
-      <rect x="0" y="0" width="205" height="198" rx="6" fill="#1A151C" stroke="#381D23" stroke-width="1" />
-      <text x="14" y="24" class="font-mono" font-size="10" font-weight="700" fill="#D4AF37">GATE 01</text>
-      <text x="14" y="44" class="font-sans" font-size="12" font-weight="700" fill="#FFFFFF">Karpathy Simplicity</text>
-      <text x="14" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Minimal diff trace</text>
-      <text x="14" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• 0 speculative abstraction</text>
-      <text x="14" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• Standard library first</text>
-      <text x="14" y="130" class="font-mono" font-size="9" fill="#10B981">✓ Simplicity Guaranteed</text>
-
-      <!-- Gate 2 -->
-      <rect x="225" y="0" width="205" height="198" rx="6" fill="#1A151C" stroke="#381D23" stroke-width="1" />
-      <text x="14" y="24" class="font-mono" font-size="10" font-weight="700" fill="#D4AF37">GATE 02</text>
-      <text x="14" y="44" class="font-sans" font-size="12" font-weight="700" fill="#FFFFFF">Ponytail Unslop</text>
-      <text x="14" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Strip AI watermarks</text>
-      <text x="14" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• Remove conversational slop</text>
-      <text x="14" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• Direct, dense code</text>
-      <text x="14" y="130" class="font-mono" font-size="9" fill="#10B981">✓ Pure Clean Code</text>
-
-      <!-- Gate 3 -->
-      <rect x="450" y="0" width="205" height="198" rx="6" fill="#1A151C" stroke="#381D23" stroke-width="1" />
-      <text x="14" y="24" class="font-mono" font-size="10" font-weight="700" fill="#D4AF37">GATE 03</text>
-      <text x="14" y="44" class="font-sans" font-size="12" font-weight="700" fill="#FFFFFF">Red-Team AST Audit</text>
-      <text x="14" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Block shell=True execution</text>
-      <text x="14" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• Cloudflare AST visitor</text>
-      <text x="14" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• GitGuardian secrets block</text>
-      <text x="14" y="130" class="font-mono" font-size="9" fill="#10B981">✓ 0 Injection Vectors</text>
-
-      <!-- Gate 4 -->
-      <rect x="675" y="0" width="205" height="198" rx="6" fill="#1A151C" stroke="#381D23" stroke-width="1" />
-      <text x="14" y="24" class="font-mono" font-size="10" font-weight="700" fill="#D4AF37">GATE 04</text>
-      <text x="14" y="44" class="font-sans" font-size="12" font-weight="700" fill="#FFFFFF">Dual-Env Verification</text>
-      <text x="14" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Sandbox syntax compile</text>
-      <text x="14" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• 286/286 pytest tests</text>
-      <text x="14" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• Host environment verify</text>
-      <text x="14" y="130" class="font-mono" font-size="9" fill="#10B981">✓ 100% Passing Tests</text>
-    </g>
-  </g>
-
-  <!-- Bottom Specs -->
-  <g transform="translate(40, 1330)">
-    <text x="0" y="0" class="font-mono" font-size="10" fill="#71717A">SYSTEM TOPOLOGY SPEC: AegisBrain Architecture Matrix v2.4.0 • Apache-2.0 License • 286 Tests Verified</text>
-    <text x="920" y="0" text-anchor="end" class="font-mono" font-size="10" fill="#D4AF37">P:\open-sourceegis-brain\packageegis\core	opology.py</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1380" width="100%" height="auto">
+
+  <defs>
+    <pattern id="woodcut-hatch" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#000000" stroke-width="1" />
+    </pattern>
+    <pattern id="woodcut-dense-hatch" width="5" height="5" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#000000" stroke-width="1.2" />
+    </pattern>
+    <pattern id="woodcut-cross" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="10" stroke="#000000" stroke-width="1.2" />
+      <line x1="0" y1="0" x2="10" y2="0" stroke="#000000" stroke-width="1.2" />
+    </pattern>
+    <filter id="brutalist-ink" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="4" dy="4" stdDeviation="0" flood-color="#000000" flood-opacity="1" />
+    </filter>
+
+
+    <style><![CDATA[
+
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+      .font-sans { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+
+      .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+    ]]></style>
+
+    <filter id="brutalist-shadow" x="-5%" y="-5%" width="110%" height="110%">
+
+      <feDropShadow dx="4" dy="4" stdDeviation="0" flood-color="#000000" flood-opacity="0.9" />
+
+    </filter>
+
+  </defs>
+
+
+
+  <!-- Background Plate -->
+
+  <rect width="1000" height="1380" fill="#FAF8F5" stroke="#000000" stroke-width="3" />
+
+
+
+  <!-- Header -->
+
+  <g transform="translate(40, 28)">
+
+    <rect x="0" y="0" width="920" height="80" rx="8" fill="#000000" stroke="#000000" stroke-width="1.8" filter="url(#brutalist-shadow)" />
+
+    <!-- Seal Badge -->
+
+    <rect x="18" y="16" width="48" height="48" rx="6" fill="#000000" stroke="#000000" stroke-width="1.2" />
+
+    <circle cx="42" cy="40" r="14" fill="none" stroke="#000000" stroke-width="1.5" stroke-dasharray="3 2" />
+
+    <polygon points="42,30 50,46 34,46" fill="none" stroke="#B91C1C" stroke-width="1.5" />
+
+    <circle cx="42" cy="41" r="2.5" fill="#000000" />
+
+
+
+    <text x="82" y="34" class="font-sans" font-size="11" font-weight="700" fill="#D4AF37" letter-spacing="2">SYSTEM TOPOLOGY // MASTER ARCHITECTURE</text>
+
+    <text x="82" y="60" class="font-sans" font-size="20" font-weight="800" fill="#000000" letter-spacing="0.5">AEGISBRAIN UNIFIED END-TO-END BLUEPRINT</text>
+
+    <text x="840" y="48" text-anchor="end" class="font-mono" font-size="11" font-weight="700" fill="#000000">v2.4.0 ACTIVE</text>
+
+  </g>
+
+
+
+  <!-- LAYER 1: INGESTION & COCKPIT -->
+
+  <g transform="translate(40, 134)">
+
+    <rect x="0" y="0" width="920" height="230" rx="10" fill="#000000" stroke="#000000" stroke-width="1.8" filter="url(#brutalist-shadow)" />
+
+    <rect x="20" y="16" width="180" height="24" rx="4" fill="#000000" stroke="#000000" stroke-width="1" />
+
+    <text x="110" y="32" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#000000">LAYER 01 • INGESTION</text>
+
+    <text x="215" y="32" class="font-mono" font-size="11" fill="#9CA3AF">Omni-Channel Directives &amp; Audio Transcode Shield</text>
+
+
+
+    <g transform="translate(20, 56)">
+
+      <!-- Channel A: Mobile Telegram -->
+
+      <rect x="0" y="0" width="280" height="150" rx="6" fill="#000000" stroke="#000000" stroke-width="1" />
+
+      <text x="16" y="24" class="font-sans" font-size="14" font-weight="700" fill="#000000">Mobile Telegram Bot</text>
+
+      <text x="16" y="42" class="font-mono" font-size="10" fill="#B91C1C">@HHAACLIBot • 24/7 Polling</text>
+
+      <text x="16" y="66" class="font-mono" font-size="10" fill="#9CA3AF">• /type &lt;cmd&gt; /alt+m in-flight</text>
+
+      <text x="16" y="84" class="font-mono" font-size="10" fill="#9CA3AF">• /briefing &amp; /btw status check</text>
+
+      <text x="16" y="102" class="font-mono" font-size="10" fill="#9CA3AF">• FFmpeg 25s voice slicing</text>
+
+      <text x="16" y="126" class="font-mono" font-size="10" font-weight="700" fill="#000000">Zero Audio Drop Guaranteed</text>
+
+
+
+      <!-- Channel B: Desktop Terminal CLI -->
+
+      <rect x="300" y="0" width="280" height="150" rx="6" fill="#000000" stroke="#000000" stroke-width="1" />
+
+      <text x="16" y="24" class="font-sans" font-size="14" font-weight="700" fill="#000000">PromptBar &amp; Terminal CLI</text>
+
+      <text x="16" y="42" class="font-mono" font-size="10" fill="#D4AF37">antigravity-cli &amp; aegis command</text>
+
+      <text x="16" y="66" class="font-mono" font-size="10" fill="#9CA3AF">• aegis recall "&lt;query&gt;"</text>
+
+      <text x="16" y="84" class="font-mono" font-size="10" fill="#9CA3AF">• aegis challenge &lt;target&gt;</text>
+
+      <text x="16" y="102" class="font-mono" font-size="10" fill="#9CA3AF">• aegis snapshot create</text>
+
+      <text x="16" y="126" class="font-mono" font-size="10" font-weight="700" fill="#D4AF37">&lt; 25ms Command Latency</text>
+
+
+
+      <!-- Channel C: Audio Slicer & Whisper -->
+
+      <rect x="600" y="0" width="280" height="150" rx="6" fill="#000000" stroke="#000000" stroke-width="1" />
+
+      <text x="16" y="24" class="font-sans" font-size="14" font-weight="700" fill="#000000">Audio Transcode Shield</text>
+
+      <text x="16" y="42" class="font-mono" font-size="10" fill="#F43F5E">FFmpeg + Local Whisper STT</text>
+
+      <text x="16" y="66" class="font-mono" font-size="10" fill="#9CA3AF">• Slices OGA into 25s chunks</text>
+
+      <text x="16" y="84" class="font-mono" font-size="10" fill="#9CA3AF">• Eliminates &gt;30s hallucinations</text>
+
+      <text x="16" y="102" class="font-mono" font-size="10" fill="#9CA3AF">• Local offline transcription</text>
+
+      <text x="16" y="126" class="font-mono" font-size="10" font-weight="700" fill="#000000">100% Deterministic STT</text>
+
+    </g>
+
+  </g>
+
+
+
+  <!-- Flow Connector 1 -->
+
+  <g transform="translate(500, 364)">
+
+    <line x1="0" y1="0" x2="0" y2="30" stroke="#000000" stroke-width="2" stroke-dasharray="4 3" />
+
+    <polygon points="-5,26 0,32 5,26" fill="#3B82F6" />
+
+  </g>
+
+
+
+  <!-- LAYER 2: SOVEREIGN NEURAL BUS & MEMORY -->
+
+  <g transform="translate(40, 394)">
+
+    <rect x="0" y="0" width="920" height="280" rx="10" fill="#000000" stroke="#000000" stroke-width="1.8" filter="url(#brutalist-shadow)" />
+
+    <rect x="20" y="16" width="220" height="24" rx="4" fill="#3D3012" stroke="#000000" stroke-width="1" />
+
+    <text x="130" y="32" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#FDE047">LAYER 02 • NEURAL MEMORY BUS</text>
+
+    <text x="255" y="32" class="font-mono" font-size="11" fill="#9CA3AF">Sub-Second SQLite WAL Persistence &amp; Invariant Registry</text>
+
+
+
+    <g transform="translate(20, 56)">
+
+      <!-- Box 1: brain.db WAL -->
+
+      <rect x="0" y="0" width="430" height="198" rx="6" fill="#000000" stroke="#332B3A" stroke-width="1" />
+
+      <text x="16" y="24" class="font-sans" font-size="14" font-weight="700" fill="#000000">brain.db (SQLite WAL Mode)</text>
+
+      <text x="16" y="42" class="font-mono" font-size="10" fill="#D4AF37">FTS5 BM25 Virtual Table • 24ms Recall</text>
+
+      <g transform="translate(16, 56)">
+
+        <text x="0" y="14" class="font-mono" font-size="10" fill="#9CA3AF">• memories (FTS5 indexed, BM25 scored)</text>
+
+        <text x="0" y="32" class="font-mono" font-size="10" fill="#9CA3AF">• restore_points (snapshots &amp; AST state)</text>
+
+        <text x="0" y="50" class="font-mono" font-size="10" fill="#9CA3AF">• agent_confidence (learning error tracker)</text>
+
+        <text x="0" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• telegram_inbox (async queue)</text>
+
+        <text x="0" y="90" class="font-mono" font-size="10" fill="#000000">✓ Multi-process concurrency with zero WAL database lockouts</text>
+
+        <text x="0" y="112" class="font-mono" font-size="10" fill="#000000">✓ Sub-second context bootstrapping (&lt; 400 tokens)</text>
+
+      </g>
+
+
+
+      <!-- Box 2: Win32 24/7 Watchdog Shield -->
+
+      <rect x="450" y="0" width="430" height="198" rx="6" fill="#000000" stroke="#332B3A" stroke-width="1" />
+
+      <text x="16" y="24" class="font-sans" font-size="14" font-weight="700" fill="#000000">24/7 Win32 Watchdog Daemon</text>
+
+      <text x="16" y="42" class="font-mono" font-size="10" fill="#000000">http://127.0.0.1:8765 • Task Scheduler</text>
+
+      <g transform="translate(16, 56)">
+
+        <text x="0" y="14" class="font-mono" font-size="10" fill="#9CA3AF">• AegisBrainDaemonKeepAlive Scheduled Task</text>
+
+        <text x="0" y="32" class="font-mono" font-size="10" fill="#9CA3AF">• Auto-resurrects on terminal close or reboot</text>
+
+        <text x="0" y="50" class="font-mono" font-size="10" fill="#9CA3AF">• Hardware metric monitor (RAM / CPU throttle)</text>
+
+        <text x="0" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Drains idle queue when host has headroom</text>
+
+        <text x="0" y="90" class="font-mono" font-size="10" fill="#000000">✓ 99.98% Measured Uptime Across All Sessions</text>
+
+        <text x="0" y="112" class="font-mono" font-size="10" fill="#D4AF37">✓ Zero disrupted Telegram voice sessions</text>
+
+      </g>
+
+    </g>
+
+  </g>
+
+
+
+  <!-- Flow Connector 2 -->
+
+  <g transform="translate(500, 674)">
+
+    <line x1="0" y1="0" x2="0" y2="30" stroke="#000000" stroke-width="2" stroke-dasharray="4 3" />
+
+    <polygon points="-5,26 0,32 5,26" fill="#D4AF37" />
+
+  </g>
+
+
+
+  <!-- LAYER 3: 3-TIER TOKEN ARBITRAGE FLEET -->
+
+  <g transform="translate(40, 704)">
+
+    <rect x="0" y="0" width="920" height="280" rx="10" fill="#000000" stroke="#000000" stroke-width="1.8" filter="url(#brutalist-shadow)" />
+
+    <rect x="20" y="16" width="220" height="24" rx="4" fill="#FAF8F5" stroke="#000000" stroke-width="1" />
+
+    <text x="130" y="32" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#B91C1C">LAYER 03 • TOKEN ARBITRAGE</text>
+
+    <text x="255" y="32" class="font-mono" font-size="11" fill="#9CA3AF">Hierarchical Division of Labor ($1,840+/mo Savings)</text>
+
+
+
+    <g transform="translate(20, 56)">
+
+      <!-- Tier 1 -->
+
+      <rect x="0" y="0" width="280" height="198" rx="6" fill="#000000" stroke="#1D4A35" stroke-width="1" />
+
+      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#D4AF37">TIER 1: SENIOR BOSS</text>
+
+      <text x="16" y="44" class="font-sans" font-size="13" font-weight="700" fill="#000000">Gemini 4 / Opus 5.5</text>
+
+      <text x="16" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Architectural reasoning</text>
+
+      <text x="16" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• Define strict invariants</text>
+
+      <text x="16" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• Coach subagents</text>
+
+      <text x="16" y="122" class="font-mono" font-size="10" fill="#9CA3AF">• Final delivery sign-off</text>
+
+      <text x="16" y="150" class="font-mono" font-size="10" font-weight="700" fill="#EF4444">0 Direct Code Invariant</text>
+
+      <text x="16" y="170" class="font-mono" font-size="10" fill="#D4AF37">&lt; 8% Total Token Usage</text>
+
+
+
+      <!-- Tier 2 -->
+
+      <rect x="300" y="0" width="280" height="198" rx="6" fill="#000000" stroke="#1D4A35" stroke-width="1" />
+
+      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#B91C1C">TIER 2: JUNIOR BOSS</text>
+
+      <text x="16" y="44" class="font-sans" font-size="13" font-weight="700" fill="#000000">Specialized Subagents</text>
+
+      <text x="16" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Workload triage (≤15 lines)</text>
+
+      <text x="16" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• Dispatch worker CLIs</text>
+
+      <text x="16" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• AST taint security audit</text>
+
+      <text x="16" y="122" class="font-mono" font-size="10" fill="#9CA3AF">• Error coaching loops</text>
+
+      <text x="16" y="150" class="font-mono" font-size="10" font-weight="700" fill="#000000">Adaptive Fast-Path</text>
+
+      <text x="16" y="170" class="font-mono" font-size="10" fill="#B91C1C">Domain Orchestration</text>
+
+
+
+      <!-- Tier 3 -->
+
+      <rect x="600" y="0" width="280" height="198" rx="6" fill="#000000" stroke="#1D4A35" stroke-width="1" />
+
+      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#000000">TIER 3: WORKERS</text>
+
+      <text x="16" y="44" class="font-sans" font-size="13" font-weight="700" fill="#000000">Hermes / Ollama / OpenCode</text>
+
+      <text x="16" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Raw code drafts &amp; tests</text>
+
+      <text x="16" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• Verbose function boilerplate</text>
+
+      <text x="16" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• 100% free hardware tokens</text>
+
+      <text x="16" y="122" class="font-mono" font-size="10" fill="#9CA3AF">• 0 frontier tokens burned</text>
+
+      <text x="16" y="150" class="font-mono" font-size="10" font-weight="700" fill="#000000">$0.00 / Token Execution</text>
+
+      <text x="16" y="170" class="font-mono" font-size="10" fill="#000000">95.8% Cost Savings</text>
+
+    </g>
+
+  </g>
+
+
+
+  <!-- Flow Connector 3 -->
+
+  <g transform="translate(500, 984)">
+
+    <line x1="0" y1="0" x2="0" y2="30" stroke="#000000" stroke-width="2" stroke-dasharray="4 3" />
+
+    <polygon points="-5,26 0,32 5,26" fill="#000000" />
+
+  </g>
+
+
+
+  <!-- LAYER 4: 4-DECISION QUALITY ARCHITECTURE GATE -->
+
+  <g transform="translate(40, 1014)">
+
+    <rect x="0" y="0" width="920" height="280" rx="10" fill="#000000" stroke="#B91C1C" stroke-width="1.8" filter="url(#brutalist-shadow)" />
+
+    <rect x="20" y="16" width="220" height="24" rx="4" fill="#3B1214" stroke="#B91C1C" stroke-width="1" />
+
+    <text x="130" y="32" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#FCA5A5">LAYER 04 • QUALITY GATE</text>
+
+    <text x="255" y="32" class="font-mono" font-size="11" fill="#9CA3AF">4 Gates of Steel: Zero Defects &amp; Zero AI Slop</text>
+
+
+
+    <g transform="translate(20, 56)">
+
+      <!-- Gate 1 -->
+
+      <rect x="0" y="0" width="205" height="198" rx="6" fill="#000000" stroke="#381D23" stroke-width="1" />
+
+      <text x="14" y="24" class="font-mono" font-size="10" font-weight="700" fill="#D4AF37">GATE 01</text>
+
+      <text x="14" y="44" class="font-sans" font-size="12" font-weight="700" fill="#000000">Karpathy Simplicity</text>
+
+      <text x="14" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Minimal diff trace</text>
+
+      <text x="14" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• 0 speculative abstraction</text>
+
+      <text x="14" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• Standard library first</text>
+
+      <text x="14" y="130" class="font-mono" font-size="9" fill="#000000">✓ Simplicity Guaranteed</text>
+
+
+
+      <!-- Gate 2 -->
+
+      <rect x="225" y="0" width="205" height="198" rx="6" fill="#000000" stroke="#381D23" stroke-width="1" />
+
+      <text x="14" y="24" class="font-mono" font-size="10" font-weight="700" fill="#D4AF37">GATE 02</text>
+
+      <text x="14" y="44" class="font-sans" font-size="12" font-weight="700" fill="#000000">Ponytail Unslop</text>
+
+      <text x="14" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Strip AI watermarks</text>
+
+      <text x="14" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• Remove conversational slop</text>
+
+      <text x="14" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• Direct, dense code</text>
+
+      <text x="14" y="130" class="font-mono" font-size="9" fill="#000000">✓ Pure Clean Code</text>
+
+
+
+      <!-- Gate 3 -->
+
+      <rect x="450" y="0" width="205" height="198" rx="6" fill="#000000" stroke="#381D23" stroke-width="1" />
+
+      <text x="14" y="24" class="font-mono" font-size="10" font-weight="700" fill="#D4AF37">GATE 03</text>
+
+      <text x="14" y="44" class="font-sans" font-size="12" font-weight="700" fill="#000000">Red-Team AST Audit</text>
+
+      <text x="14" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Block shell=True execution</text>
+
+      <text x="14" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• Cloudflare AST visitor</text>
+
+      <text x="14" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• GitGuardian secrets block</text>
+
+      <text x="14" y="130" class="font-mono" font-size="9" fill="#000000">✓ 0 Injection Vectors</text>
+
+
+
+      <!-- Gate 4 -->
+
+      <rect x="675" y="0" width="205" height="198" rx="6" fill="#000000" stroke="#381D23" stroke-width="1" />
+
+      <text x="14" y="24" class="font-mono" font-size="10" font-weight="700" fill="#D4AF37">GATE 04</text>
+
+      <text x="14" y="44" class="font-sans" font-size="12" font-weight="700" fill="#000000">Dual-Env Verification</text>
+
+      <text x="14" y="68" class="font-mono" font-size="10" fill="#9CA3AF">• Sandbox syntax compile</text>
+
+      <text x="14" y="86" class="font-mono" font-size="10" fill="#9CA3AF">• 286/286 pytest tests</text>
+
+      <text x="14" y="104" class="font-mono" font-size="10" fill="#9CA3AF">• Host environment verify</text>
+
+      <text x="14" y="130" class="font-mono" font-size="9" fill="#000000">✓ 100% Passing Tests</text>
+
+    </g>
+
+  </g>
+
+
+
+  <!-- Bottom Specs -->
+
+  <g transform="translate(40, 1330)">
+
+    <text x="0" y="0" class="font-mono" font-size="10" fill="#71717A">SYSTEM TOPOLOGY SPEC: AegisBrain Architecture Matrix v2.4.0 • Apache-2.0 License • 286 Tests Verified</text>
+
+    <text x="920" y="0" text-anchor="end" class="font-mono" font-size="10" fill="#D4AF37">P:\open-sourceegis-brain\packageegis\core	opology.py</text>
+
+  </g>
+
 </svg>

@@ -141,16 +141,12 @@ export function StopwatchDial() {
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
             24ms SQLite WAL vs 12,400ms Raw Crawl
           </h3>
-          <p className="text-xs sm:text-sm text-zinc-400 font-gt-era max-w-xl mt-1">
+          <p className="text-xs sm:text-sm text-zinc-200 font-sans font-medium max-w-xl mt-1 leading-relaxed">
             Empirical benchmark simulation. Aegis indexes all symbols into SQLite FTS5 for sub-second neural retrieval.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-black/60 border border-white/10 text-[10px] font-mono text-zinc-400">
-            <Repeat className="w-3 h-3 text-[#10B981] animate-spin" style={{ animationDuration: "6s" }} />
-            LOOPING SIMULATION
-          </span>
           <div className="px-4 py-2 bg-emerald-950/80 border-2 border-emerald-500 rounded text-center shadow-[3px_3px_0px_#000000]">
             <div className="font-nikkei text-xl sm:text-2xl font-extrabold text-emerald-400">
               {speedupFactor}x
@@ -158,6 +154,13 @@ export function StopwatchDial() {
             <div className="text-[10px] font-mono uppercase text-emerald-300">Measured Speedup</div>
           </div>
         </div>
+      </div>
+
+      {/* Graphic Novel Narration Box matching Santioni style */}
+      <div className="narration-box my-4">
+        <p className="narration-text">
+          THE DAEMON SIFTS MILLIONS OF TOKENS IN 24 MILLISECONDS. ZERO RE-READING OF CUMULATIVE TRANSCRIPTS. PERSISTENCE IN REFINED SQLITE WAL.
+        </p>
       </div>
 
       {/* Live Interactive Query Search Bar */}

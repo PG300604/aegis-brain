@@ -91,7 +91,7 @@ export function TerminalInstall() {
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
             Install in Seconds
           </h3>
-          <p className="text-xs sm:text-sm text-zinc-400 font-gt-era max-w-xl mt-1">
+          <p className="text-xs sm:text-sm text-zinc-200 font-sans font-medium max-w-xl mt-1 leading-relaxed">
             Deploy the 24/7 background daemon and global CLI with a single command across macOS, Linux, or Windows.
           </p>
         </div>
@@ -102,6 +102,13 @@ export function TerminalInstall() {
           </div>
           <div className="text-[10px] font-mono uppercase text-zinc-400">Stable Release</div>
         </div>
+      </div>
+
+      {/* Graphic Novel Narration Box matching Santioni style */}
+      <div className="narration-box my-4">
+        <p className="narration-text">
+          ONE SOVEREIGN SCRIPT CONFIGURES THE PERSISTENT BACKGROUND DAEMON, SUB-SECOND SQLITE WAL INDEX, AND IN-FLIGHT TELEMETRY.
+        </p>
       </div>
 
       {/* Sleek Brutalist Command Strip / Code Palette */}
@@ -162,16 +169,6 @@ export function TerminalInstall() {
           </div>
         </div>
 
-        {/* Specs Readout Bar */}
-        <div className="px-5 py-3 bg-black/60 border-t border-black/40 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-zinc-400">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-zinc-300">Single binary • Zero cloud dependencies • Local SQLite WAL</span>
-          </div>
-          <div className="text-zinc-500 text-[11px]">
-            Target: <span className="text-[#D4AF37]">{selected.osBadge}</span>
-          </div>
-        </div>
       </div>
     </div>
   );

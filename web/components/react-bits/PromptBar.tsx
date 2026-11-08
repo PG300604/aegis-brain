@@ -146,10 +146,6 @@ export function PromptBar() {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded bg-black/60 border border-white/10 text-[10px] text-zinc-400">
-            <Repeat className="w-3 h-3 text-[#10B981] animate-spin" style={{ animationDuration: "6s" }} />
-            AUTOPLAY SIMULATION
-          </span>
           <span className="px-2 py-0.5 rounded bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-[10px]">
             {currentStep.model}
           </span>

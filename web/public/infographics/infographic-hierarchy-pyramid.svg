@@ -1,133 +1,279 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 870" width="100%" height="auto">
-  <defs>
-    <style><![CDATA[
-      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-      .font-sans { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
-      .font-mono { font-family: 'JetBrains Mono', monospace; }
-    ]]></style>
-    <filter id="brutalist-shadow" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="4" dy="4" stdDeviation="0" flood-color="#000000" flood-opacity="0.9" />
-    </filter>
-  </defs>
-
-  <!-- Background Plate -->
-  <rect width="1040" height="870" rx="16" fill="#090A0F" stroke="#262738" stroke-width="2" />
-  
-  <!-- Header -->
-  <g transform="translate(40, 28)">
-    <rect x="0" y="0" width="960" height="76" rx="8" fill="#12131C" stroke="#D4AF37" stroke-width="1.8" filter="url(#brutalist-shadow)" />
-    <!-- Seal Badge -->
-    <rect x="18" y="14" width="48" height="48" rx="6" fill="#1C1D2B" stroke="#D4AF37" stroke-width="1.2" />
-    <polygon points="42,22 56,50 28,50" fill="none" stroke="#D4AF37" stroke-width="1.6" />
-    <line x1="33" y1="41" x2="51" y2="41" stroke="#B91C1C" stroke-width="1.5" />
-    <line x1="37" y1="32" x2="47" y2="32" stroke="#10B981" stroke-width="1.5" />
-
-    <text x="82" y="34" class="font-sans" font-size="11" font-weight="700" fill="#D4AF37" letter-spacing="2">MULTI-AGENT TOKEN ARBITRAGE // ARCHITECTURE</text>
-    <text x="82" y="58" class="font-sans" font-size="20" font-weight="800" fill="#FFFFFF" letter-spacing="0.5">3-TIER SOVEREIGN HIERARCHY &amp; LABOR DIVISION</text>
-    <text x="880" y="46" text-anchor="end" class="font-mono" font-size="12" font-weight="700" fill="#D4AF37">$1,840+/MO SAVINGS</text>
-  </g>
-
-  <!-- TIER 1: SENIOR BOSS (TOP SLAB) -->
-  <g transform="translate(180, 130)">
-    <rect x="0" y="0" width="680" height="180" rx="10" fill="#15131C" stroke="#D4AF37" stroke-width="2" filter="url(#brutalist-shadow)" />
-    
-    <rect x="24" y="18" width="160" height="26" rx="4" fill="#3D3012" stroke="#D4AF37" stroke-width="1" />
-    <text x="104" y="35" text-anchor="middle" class="font-mono" font-size="11" font-weight="700" fill="#FDE047">TIER 1 • SENIOR BOSS</text>
-    
-    <text x="200" y="36" class="font-mono" font-size="11" font-weight="600" fill="#9CA3AF">Strategic Brain • High-Cognition Reasoning</text>
-    <text x="656" y="36" text-anchor="end" class="font-mono" font-size="11" font-weight="800" fill="#D4AF37">&lt; 8% TOKENS</text>
-
-    <text x="24" y="74" class="font-sans" font-size="18" font-weight="800" fill="#FFFFFF">Gemini 4 Flash / Claude Opus / Fable Orchestrator</text>
-    
-    <g transform="translate(24, 94)">
-      <rect x="0" y="0" width="632" height="66" rx="6" fill="#1C1A24" stroke="#2F2936" stroke-width="1" />
-      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#E4E4E7">CORE RESPONSIBILITIES (BRAIN WORK ONLY):</text>
-      <text x="16" y="44" class="font-mono" font-size="10" fill="#D4AF37">✓ Architectural Planning &amp; Design Invariants</text>
-      <text x="260" y="44" class="font-mono" font-size="10" fill="#D4AF37">✓ Error Reduction Coaching Feedback</text>
-      <text x="490" y="44" class="font-mono" font-size="10" fill="#D4AF37">✓ Final Verification Gate</text>
-      <text x="16" y="58" class="font-mono" font-size="10" fill="#EF4444">✕ NEVER writes raw implementation code or verbose unit tests directly into files</text>
-    </g>
-  </g>
-
-  <!-- Connection Flow 1 -->
-  <g transform="translate(520, 310)">
-    <line x1="0" y1="0" x2="0" y2="40" stroke="#D4AF37" stroke-width="2.5" stroke-dasharray="4 3" />
-    <polygon points="-6,36 0,44 6,36" fill="#D4AF37" />
-    <rect x="-80" y="10" width="160" height="20" rx="4" fill="#090A0F" stroke="#374151" stroke-width="1" />
-    <text x="0" y="24" text-anchor="middle" class="font-mono" font-size="9" fill="#9CA3AF">Dispatches Directives</text>
-  </g>
-
-  <!-- TIER 2: JUNIOR BOSS / SUBAGENTS (MIDDLE SLAB) -->
-  <g transform="translate(100, 360)">
-    <rect x="0" y="0" width="840" height="190" rx="10" fill="#131520" stroke="#3B82F6" stroke-width="2" filter="url(#brutalist-shadow)" />
-    
-    <rect x="24" y="18" width="180" height="26" rx="4" fill="#102544" stroke="#3B82F6" stroke-width="1" />
-    <text x="114" y="35" text-anchor="middle" class="font-mono" font-size="11" font-weight="700" fill="#93C5FD">TIER 2 • JUNIOR BOSS</text>
-
-    <text x="220" y="36" class="font-mono" font-size="11" font-weight="600" fill="#9CA3AF">Domain Leads • Workload Triage &amp; Quality Auditor</text>
-    <text x="816" y="36" text-anchor="end" class="font-mono" font-size="11" font-weight="800" fill="#60A5FA">ADAPTIVE ROUTING</text>
-
-    <text x="24" y="74" class="font-sans" font-size="18" font-weight="800" fill="#FFFFFF">Specialized Domain Subagents (Backend, Security, QA, Mobile)</text>
-
-    <!-- Subagent Triage Grid -->
-    <g transform="translate(24, 94)">
-      <rect x="0" y="0" width="386" height="74" rx="6" fill="#1A1E2E" stroke="#252F47" stroke-width="1" />
-      <text x="14" y="22" class="font-mono" font-size="10" font-weight="700" fill="#60A5FA">FAST-PATH (≤15 Lines Diff):</text>
-      <text x="14" y="40" class="font-mono" font-size="10" fill="#E4E4E7">• Micro-tasks, typos &amp; single-line flag tweaks</text>
-      <text x="14" y="56" class="font-mono" font-size="10" fill="#10B981">✓ Subagent executes directly via edit_file (0 worker overhead)</text>
-
-      <rect x="406" y="0" width="386" height="74" rx="6" fill="#1A1E2E" stroke="#252F47" stroke-width="1" />
-      <text x="14" y="22" class="font-mono" font-size="10" font-weight="700" fill="#F59E0B">HEAVY-PATH (&gt;15 Lines Diff):</text>
-      <text x="14" y="40" class="font-mono" font-size="10" fill="#E4E4E7">• New modules, boilerplate &amp; large test suites</text>
-      <text x="14" y="56" class="font-mono" font-size="10" fill="#F59E0B">✓ Spawns Tier 3 Local Workers (run_command) for 100% free tokens</text>
-    </g>
-  </g>
-
-  <!-- Connection Flow 2 -->
-  <g transform="translate(520, 550)">
-    <line x1="0" y1="0" x2="0" y2="40" stroke="#10B981" stroke-width="2.5" stroke-dasharray="4 3" />
-    <polygon points="-6,36 0,44 6,36" fill="#10B981" />
-    <rect x="-90" y="10" width="180" height="20" rx="4" fill="#090A0F" stroke="#374151" stroke-width="1" />
-    <text x="0" y="24" text-anchor="middle" class="font-mono" font-size="9" fill="#10B981">Zero-Cost Token Delegation</text>
-  </g>
-
-  <!-- TIER 3: EXECUTION WORKERS (BOTTOM SLAB) -->
-  <g transform="translate(40, 600)">
-    <rect x="0" y="0" width="960" height="210" rx="10" fill="#0E1614" stroke="#10B981" stroke-width="2" filter="url(#brutalist-shadow)" />
-    
-    <rect x="24" y="18" width="190" height="26" rx="4" fill="#063E26" stroke="#10B981" stroke-width="1" />
-    <text x="119" y="35" text-anchor="middle" class="font-mono" font-size="11" font-weight="700" fill="#6EE7B7">TIER 3 • EXECUTION WORKERS</text>
-
-    <text x="230" y="36" class="font-mono" font-size="11" font-weight="600" fill="#9CA3AF">Local Hardware Tokens • 0 Frontier Spend</text>
-    <text x="936" y="36" text-anchor="end" class="font-mono" font-size="11" font-weight="800" fill="#10B981">$0.00 / TOKEN (FREE)</text>
-
-    <text x="24" y="74" class="font-sans" font-size="18" font-weight="800" fill="#FFFFFF">Hermes CLI / Ollama Qwen 2.5 / OpenCode Engine</text>
-
-    <!-- 3 Worker Engines Cards -->
-    <g transform="translate(24, 94)">
-      <rect x="0" y="0" width="292" height="92" rx="6" fill="#12241C" stroke="#1D4A35" stroke-width="1" />
-      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#6EE7B7">Hermes 3 Llama-3.1 8B</text>
-      <text x="16" y="42" class="font-mono" font-size="10" fill="#9CA3AF">Fast CLI tool use &amp; boilerplate</text>
-      <text x="16" y="60" class="font-mono" font-size="10" fill="#E4E4E7">Command: <tspan fill="#34D399">hermes chat -q</tspan></text>
-      <text x="16" y="76" class="font-mono" font-size="9" fill="#D4AF37">Cost: $0.00 / token</text>
-
-      <rect x="310" y="0" width="292" height="92" rx="6" fill="#12241C" stroke="#1D4A35" stroke-width="1" />
-      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#6EE7B7">Ollama MoE Qwen2.5 7B</text>
-      <text x="16" y="42" class="font-mono" font-size="10" fill="#9CA3AF">Local AST parsing &amp; test suites</text>
-      <text x="16" y="60" class="font-mono" font-size="10" fill="#E4E4E7">Command: <tspan fill="#34D399">ollama run qwen</tspan></text>
-      <text x="16" y="76" class="font-mono" font-size="9" fill="#D4AF37">Cost: $0.00 / token</text>
-
-      <rect x="620" y="0" width="292" height="92" rx="6" fill="#12241C" stroke="#1D4A35" stroke-width="1" />
-      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#6EE7B7">OpenCode / DeepSeek</text>
-      <text x="16" y="42" class="font-mono" font-size="10" fill="#9CA3AF">High-volume code synthesis</text>
-      <text x="16" y="60" class="font-mono" font-size="10" fill="#E4E4E7">Command: <tspan fill="#34D399">opencode exec</tspan></text>
-      <text x="16" y="76" class="font-mono" font-size="9" fill="#D4AF37">Cost: $0.00 / token</text>
-    </g>
-  </g>
-
-  <!-- Footer Specs -->
-  <g transform="translate(40, 835)">
-    <text x="0" y="0" class="font-mono" font-size="10" fill="#71717A">ARBITRAGE INVARIANT: Frontier models never write raw code drafts. 100% of raw code generated on local hardware.</text>
-    <text x="960" y="0" text-anchor="end" class="font-mono" font-size="10" fill="#D4AF37">P:\open-sourceegis-brain\packageegisrbitrage	riage.py</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 870" width="100%" height="auto">
+
+  <defs>
+    <pattern id="woodcut-hatch" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#000000" stroke-width="1" />
+    </pattern>
+    <pattern id="woodcut-dense-hatch" width="5" height="5" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#000000" stroke-width="1.2" />
+    </pattern>
+    <pattern id="woodcut-cross" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="10" stroke="#000000" stroke-width="1.2" />
+      <line x1="0" y1="0" x2="10" y2="0" stroke="#000000" stroke-width="1.2" />
+    </pattern>
+    <filter id="brutalist-ink" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="4" dy="4" stdDeviation="0" flood-color="#000000" flood-opacity="1" />
+    </filter>
+
+
+    <style><![CDATA[
+
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+      .font-sans { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+
+      .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+    ]]></style>
+
+    <filter id="brutalist-shadow" x="-5%" y="-5%" width="110%" height="110%">
+
+      <feDropShadow dx="4" dy="4" stdDeviation="0" flood-color="#000000" flood-opacity="0.9" />
+
+    </filter>
+
+  </defs>
+
+
+
+  <!-- Background Plate -->
+
+  <rect width="1040" height="870" fill="#FAF8F5" stroke="#000000" stroke-width="3" />
+
+  
+
+  <!-- Header -->
+
+  <g transform="translate(40, 28)">
+
+    <rect x="0" y="0" width="960" height="76" rx="8" fill="#000000" stroke="#000000" stroke-width="1.8" filter="url(#brutalist-shadow)" />
+
+    <!-- Seal Badge -->
+
+    <rect x="18" y="14" width="48" height="48" rx="6" fill="#000000" stroke="#000000" stroke-width="1.2" />
+
+    <polygon points="42,22 56,50 28,50" fill="none" stroke="#000000" stroke-width="1.6" />
+
+    <line x1="33" y1="41" x2="51" y2="41" stroke="#B91C1C" stroke-width="1.5" />
+
+    <line x1="37" y1="32" x2="47" y2="32" stroke="#000000" stroke-width="1.5" />
+
+
+
+    <text x="82" y="34" class="font-sans" font-size="11" font-weight="700" fill="#D4AF37" letter-spacing="2">MULTI-AGENT TOKEN ARBITRAGE // ARCHITECTURE</text>
+
+    <text x="82" y="58" class="font-sans" font-size="20" font-weight="800" fill="#000000" letter-spacing="0.5">3-TIER SOVEREIGN HIERARCHY &amp; LABOR DIVISION</text>
+
+    <text x="880" y="46" text-anchor="end" class="font-mono" font-size="12" font-weight="700" fill="#D4AF37">$1,840+/MO SAVINGS</text>
+
+  </g>
+
+
+
+  <!-- TIER 1: SENIOR BOSS (TOP SLAB) -->
+
+  <g transform="translate(180, 130)">
+
+    <rect x="0" y="0" width="680" height="180" rx="10" fill="#000000" stroke="#000000" stroke-width="2" filter="url(#brutalist-shadow)" />
+
+    
+
+    <rect x="24" y="18" width="160" height="26" rx="4" fill="#3D3012" stroke="#000000" stroke-width="1" />
+
+    <text x="104" y="35" text-anchor="middle" class="font-mono" font-size="11" font-weight="700" fill="#FDE047">TIER 1 • SENIOR BOSS</text>
+
+    
+
+    <text x="200" y="36" class="font-mono" font-size="11" font-weight="600" fill="#9CA3AF">Strategic Brain • High-Cognition Reasoning</text>
+
+    <text x="656" y="36" text-anchor="end" class="font-mono" font-size="11" font-weight="800" fill="#D4AF37">&lt; 8% TOKENS</text>
+
+
+
+    <text x="24" y="74" class="font-sans" font-size="18" font-weight="800" fill="#000000">Gemini 4 Flash / Claude Opus / Fable Orchestrator</text>
+
+    
+
+    <g transform="translate(24, 94)">
+
+      <rect x="0" y="0" width="632" height="66" rx="6" fill="#000000" stroke="#2F2936" stroke-width="1" />
+
+      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#111111">CORE RESPONSIBILITIES (BRAIN WORK ONLY):</text>
+
+      <text x="16" y="44" class="font-mono" font-size="10" fill="#D4AF37">✓ Architectural Planning &amp; Design Invariants</text>
+
+      <text x="260" y="44" class="font-mono" font-size="10" fill="#D4AF37">✓ Error Reduction Coaching Feedback</text>
+
+      <text x="490" y="44" class="font-mono" font-size="10" fill="#D4AF37">✓ Final Verification Gate</text>
+
+      <text x="16" y="58" class="font-mono" font-size="10" fill="#EF4444">✕ NEVER writes raw implementation code or verbose unit tests directly into files</text>
+
+    </g>
+
+  </g>
+
+
+
+  <!-- Connection Flow 1 -->
+
+  <g transform="translate(520, 310)">
+
+    <line x1="0" y1="0" x2="0" y2="40" stroke="#000000" stroke-width="2.5" stroke-dasharray="4 3" />
+
+    <polygon points="-6,36 0,44 6,36" fill="#D4AF37" />
+
+    <rect x="-80" y="10" width="160" height="20" rx="4" fill="#FAF8F5" stroke="#374151" stroke-width="1" />
+
+    <text x="0" y="24" text-anchor="middle" class="font-mono" font-size="9" fill="#9CA3AF">Dispatches Directives</text>
+
+  </g>
+
+
+
+  <!-- TIER 2: JUNIOR BOSS / SUBAGENTS (MIDDLE SLAB) -->
+
+  <g transform="translate(100, 360)">
+
+    <rect x="0" y="0" width="840" height="190" rx="10" fill="#000000" stroke="#000000" stroke-width="2" filter="url(#brutalist-shadow)" />
+
+    
+
+    <rect x="24" y="18" width="180" height="26" rx="4" fill="#000000" stroke="#000000" stroke-width="1" />
+
+    <text x="114" y="35" text-anchor="middle" class="font-mono" font-size="11" font-weight="700" fill="#000000">TIER 2 • JUNIOR BOSS</text>
+
+
+
+    <text x="220" y="36" class="font-mono" font-size="11" font-weight="600" fill="#9CA3AF">Domain Leads • Workload Triage &amp; Quality Auditor</text>
+
+    <text x="816" y="36" text-anchor="end" class="font-mono" font-size="11" font-weight="800" fill="#B91C1C">ADAPTIVE ROUTING</text>
+
+
+
+    <text x="24" y="74" class="font-sans" font-size="18" font-weight="800" fill="#000000">Specialized Domain Subagents (Backend, Security, QA, Mobile)</text>
+
+
+
+    <!-- Subagent Triage Grid -->
+
+    <g transform="translate(24, 94)">
+
+      <rect x="0" y="0" width="386" height="74" rx="6" fill="#000000" stroke="#252F47" stroke-width="1" />
+
+      <text x="14" y="22" class="font-mono" font-size="10" font-weight="700" fill="#B91C1C">FAST-PATH (≤15 Lines Diff):</text>
+
+      <text x="14" y="40" class="font-mono" font-size="10" fill="#111111">• Micro-tasks, typos &amp; single-line flag tweaks</text>
+
+      <text x="14" y="56" class="font-mono" font-size="10" fill="#000000">✓ Subagent executes directly via edit_file (0 worker overhead)</text>
+
+
+
+      <rect x="406" y="0" width="386" height="74" rx="6" fill="#000000" stroke="#252F47" stroke-width="1" />
+
+      <text x="14" y="22" class="font-mono" font-size="10" font-weight="700" fill="#F59E0B">HEAVY-PATH (&gt;15 Lines Diff):</text>
+
+      <text x="14" y="40" class="font-mono" font-size="10" fill="#111111">• New modules, boilerplate &amp; large test suites</text>
+
+      <text x="14" y="56" class="font-mono" font-size="10" fill="#F59E0B">✓ Spawns Tier 3 Local Workers (run_command) for 100% free tokens</text>
+
+    </g>
+
+  </g>
+
+
+
+  <!-- Connection Flow 2 -->
+
+  <g transform="translate(520, 550)">
+
+    <line x1="0" y1="0" x2="0" y2="40" stroke="#000000" stroke-width="2.5" stroke-dasharray="4 3" />
+
+    <polygon points="-6,36 0,44 6,36" fill="#000000" />
+
+    <rect x="-90" y="10" width="180" height="20" rx="4" fill="#FAF8F5" stroke="#374151" stroke-width="1" />
+
+    <text x="0" y="24" text-anchor="middle" class="font-mono" font-size="9" fill="#000000">Zero-Cost Token Delegation</text>
+
+  </g>
+
+
+
+  <!-- TIER 3: EXECUTION WORKERS (BOTTOM SLAB) -->
+
+  <g transform="translate(40, 600)">
+
+    <rect x="0" y="0" width="960" height="210" rx="10" fill="#FAF8F5" stroke="#000000" stroke-width="2" filter="url(#brutalist-shadow)" />
+
+    
+
+    <rect x="24" y="18" width="190" height="26" rx="4" fill="#FAF8F5" stroke="#000000" stroke-width="1" />
+
+    <text x="119" y="35" text-anchor="middle" class="font-mono" font-size="11" font-weight="700" fill="#B91C1C">TIER 3 • EXECUTION WORKERS</text>
+
+
+
+    <text x="230" y="36" class="font-mono" font-size="11" font-weight="600" fill="#9CA3AF">Local Hardware Tokens • 0 Frontier Spend</text>
+
+    <text x="936" y="36" text-anchor="end" class="font-mono" font-size="11" font-weight="800" fill="#000000">$0.00 / TOKEN (FREE)</text>
+
+
+
+    <text x="24" y="74" class="font-sans" font-size="18" font-weight="800" fill="#000000">Hermes CLI / Ollama Qwen 2.5 / OpenCode Engine</text>
+
+
+
+    <!-- 3 Worker Engines Cards -->
+
+    <g transform="translate(24, 94)">
+
+      <rect x="0" y="0" width="292" height="92" rx="6" fill="#000000" stroke="#1D4A35" stroke-width="1" />
+
+      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#B91C1C">Hermes 3 Llama-3.1 8B</text>
+
+      <text x="16" y="42" class="font-mono" font-size="10" fill="#9CA3AF">Fast CLI tool use &amp; boilerplate</text>
+
+      <text x="16" y="60" class="font-mono" font-size="10" fill="#111111">Command: <tspan fill="#000000">hermes chat -q</tspan></text>
+
+      <text x="16" y="76" class="font-mono" font-size="9" fill="#D4AF37">Cost: $0.00 / token</text>
+
+
+
+      <rect x="310" y="0" width="292" height="92" rx="6" fill="#000000" stroke="#1D4A35" stroke-width="1" />
+
+      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#B91C1C">Ollama MoE Qwen2.5 7B</text>
+
+      <text x="16" y="42" class="font-mono" font-size="10" fill="#9CA3AF">Local AST parsing &amp; test suites</text>
+
+      <text x="16" y="60" class="font-mono" font-size="10" fill="#111111">Command: <tspan fill="#000000">ollama run qwen</tspan></text>
+
+      <text x="16" y="76" class="font-mono" font-size="9" fill="#D4AF37">Cost: $0.00 / token</text>
+
+
+
+      <rect x="620" y="0" width="292" height="92" rx="6" fill="#000000" stroke="#1D4A35" stroke-width="1" />
+
+      <text x="16" y="24" class="font-mono" font-size="11" font-weight="700" fill="#B91C1C">OpenCode / DeepSeek</text>
+
+      <text x="16" y="42" class="font-mono" font-size="10" fill="#9CA3AF">High-volume code synthesis</text>
+
+      <text x="16" y="60" class="font-mono" font-size="10" fill="#111111">Command: <tspan fill="#000000">opencode exec</tspan></text>
+
+      <text x="16" y="76" class="font-mono" font-size="9" fill="#D4AF37">Cost: $0.00 / token</text>
+
+    </g>
+
+  </g>
+
+
+
+  <!-- Footer Specs -->
+
+  <g transform="translate(40, 835)">
+
+    <text x="0" y="0" class="font-mono" font-size="10" fill="#71717A">ARBITRAGE INVARIANT: Frontier models never write raw code drafts. 100% of raw code generated on local hardware.</text>
+
+    <text x="960" y="0" text-anchor="end" class="font-mono" font-size="10" fill="#D4AF37">P:\open-sourceegis-brain\packageegisrbitrage	riage.py</text>
+
+  </g>
+
 </svg>

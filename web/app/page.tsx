@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import Image from "next/image";
 import {
   Volume2,
@@ -37,7 +37,7 @@ import {
   ShieldCheck,
   RotateCcw,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
 import { ThoughtLine } from "@/components/react-bits/ThoughtLine";
 import { CallChip } from "@/components/react-bits/CallChip";
 import { VoicePill } from "@/components/react-bits/VoicePill";
@@ -49,12 +49,23 @@ import { TelegramSimulator } from "@/components/hud/TelegramSimulator";
 import { InfographicsGallery } from "@/components/hud/InfographicsGallery";
 import { FluidWaterWave } from "@/components/motion/FluidWaterWave";
 import { SceneTransition } from "@/components/motion/SceneTransition";
+import { SoundtrackController, triggerSoundEffect } from "@/components/audio/SoundtrackController";
 
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [soundActive, setSoundActive] = useState(false);
   const [copiedClone, setCopiedClone] = useState(false);
   const [selectedInfographicModal, setSelectedInfographicModal] = useState<string | null>(null);
+
+  // Hero section scroll-driven fluid wave reveal
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress: heroScroll } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const waveY = useTransform(heroScroll, [0, 1], ["0%", "-35%"]);
+  const heroOpacity = useTransform(heroScroll, [0, 0.7], [1, 0.15]);
+  const heroScale = useTransform(heroScroll, [0, 0.9], [1, 0.94]);
 
   // Feature 1: 429 Quota Cliff interactive simulation state
   const [quotaSimMode, setQuotaSimMode] = useState<"idle" | "traditional" | "aegis">("idle");
@@ -74,38 +85,6 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Web Audio atmospheric sound generation
-  useEffect(() => {
-    if (!soundActive) return;
-    try {
-      const AudioCtx =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      const ctx = new AudioCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(144, ctx.currentTime); // Deep warm subtle harmonic drone
-      gain.gain.setValueAtTime(0.015, ctx.currentTime);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-
-      return () => {
-        try {
-          osc.stop();
-          ctx.close();
-        } catch {
-          // Ignore
-        }
-      };
-    } catch {
-      // AudioContext not supported
-    }
-  }, [soundActive]);
 
   const handleCopyClone = () => {
     navigator.clipboard.writeText("git clone https://github.com/PG300604/aegis-brain.git");
@@ -224,14 +203,19 @@ export default function Home() {
 
           {/* Sound Wave Indicator */}
           <button
-            onClick={() => setSoundActive(!soundActive)}
+            type="button"
+            onClick={() => {
+              const next = !soundActive;
+              setSoundActive(next);
+              triggerSoundEffect("click");
+            }}
             className="w-10 h-10 bg-[#FBF9F5] border-2 border-black shadow-[4px_4px_0px_#000000] flex items-center justify-center text-black hover:bg-neutral-100 transition-colors cursor-pointer"
             title={soundActive ? "Mute Ambient Sound" : "Enable Sound Atmosphere"}
             aria-label="Toggle sound atmosphere"
           >
             {soundActive ? (
               <div className="flex items-end gap-[2px] h-4">
-                <span className="w-[3px] bg-black sound-bar-1" />
+                <span className="w-[3px] bg-black sound-bar-1 animate-pulse" />
                 <span className="w-[3px] bg-[#B91C1C] sound-bar-2" />
                 <span className="w-[3px] bg-black sound-bar-3" />
                 <span className="w-[3px] bg-black sound-bar-4" />
@@ -250,6 +234,7 @@ export default function Home() {
       */}
       <section
         id="experience"
+        ref={heroRef}
         className="relative min-h-screen w-full flex flex-col items-center justify-between pt-36 pb-0 px-4 bg-[#070709] overflow-hidden"
       >
         {/* Subtle Horizontal Dry-Brush Chalk Streaks */}
@@ -266,8 +251,9 @@ export default function Home() {
           }}
         />
 
-        {/* Center: Monumental Headline with Pure, Non-Jitter Entrance Animation */}
+        {/* Center: Monumental Headline with Pure, Non-Jitter Entrance Animation & Scroll Dissolve */}
         <motion.div
+          style={{ opacity: heroOpacity, scale: heroScale }}
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -299,10 +285,10 @@ export default function Home() {
           </div>
         </motion.div>
 
-        {/* Foreground: Billowing Fluid Liquid Mist Wave */}
-        <div className="relative w-full mt-12 z-10">
+        {/* Foreground: Billowing Fluid Liquid Mist Wave Rising Dynamically on Scroll */}
+        <motion.div style={{ y: waveY }} className="relative w-full mt-12 z-20">
           <FluidWaterWave fillColor="#FBF9F5" />
-        </div>
+        </motion.div>
 
         {/* Scroll Indicator Prompt */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1.5 text-black pointer-events-none select-none">
@@ -760,10 +746,6 @@ export default function Home() {
                 className="object-contain p-2 hover:scale-[1.02] transition-transform duration-300"
               />
             </div>
-            <div className="mt-3 flex items-center justify-between text-[11px] font-mono text-black/60">
-              <span>Deterministic 25-Second Chunking Shield: 0 Hallucinations</span>
-              <span className="text-emerald-700 font-bold">In-Flight /type /alt+m Interrupt</span>
-            </div>
           </div>
 
           {/* Telegram Simulator: TelegramSimulator with integrated REACT BITS <VoicePill /> */}
@@ -808,65 +790,6 @@ export default function Home() {
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
               When lower-tier models generate code, errors occur. Rather than discarding local models, Aegis applies an adversarial compiler and static analysis gate that coach the worker until zero defects remain.
             </p>
-          </div>
-
-          {/* Sovereign Architectural Diagrams Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* Diagram 1: Quality Gate */}
-            <div
-              onClick={() => setSelectedInfographicModal("/infographics/infographic-quality-gate.svg")}
-              className="border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 flex flex-col justify-between cursor-zoom-in group"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-nikkei text-xs uppercase text-black font-extrabold">
-                    1. The 4-Decision Pipeline
-                  </span>
-                  <span className="font-mono text-[10px] text-[#B91C1C] flex items-center gap-1 group-hover:underline">
-                    <ZoomIn className="w-3 h-3" /> Inspect
-                  </span>
-                </div>
-                <div className="relative w-full h-[220px] bg-[#FAF8F5] border border-black/10 flex items-center justify-center">
-                  <Image
-                    src="/infographics/infographic-quality-gate.svg"
-                    alt="4-Decision Quality Architecture Gate"
-                    fill
-                    className="object-contain p-2 group-hover:scale-[1.01] transition-transform duration-300"
-                  />
-                </div>
-              </div>
-              <div className="text-[10px] font-mono text-black/60 mt-2">
-                Simplicity → Unslop → Red-Team AST → Dual-Env
-              </div>
-            </div>
-
-            {/* Diagram 2: Learning Curve */}
-            <div
-              onClick={() => setSelectedInfographicModal("/infographics/infographic-learning-curve.svg")}
-              className="border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 flex flex-col justify-between cursor-zoom-in group"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-nikkei text-xs uppercase text-black font-extrabold">
-                    2. Worker Confidence Curve
-                  </span>
-                  <span className="font-mono text-[10px] text-[#B91C1C] flex items-center gap-1 group-hover:underline">
-                    <ZoomIn className="w-3 h-3" /> Inspect
-                  </span>
-                </div>
-                <div className="relative w-full h-[220px] bg-[#FAF8F5] border border-black/10 flex items-center justify-center">
-                  <Image
-                    src="/infographics/infographic-learning-curve.svg"
-                    alt="Worker Confidence and Error Reduction Curve"
-                    fill
-                    className="object-contain p-2 group-hover:scale-[1.01] transition-transform duration-300"
-                  />
-                </div>
-              </div>
-              <div className="text-[10px] font-mono text-black/60 mt-2">
-                Autonomous error coaching converges to &gt;8.0/10 confidence
-              </div>
-            </div>
           </div>
 
           {/* Quality Gates: QualityGateCards */}
@@ -1301,6 +1224,11 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Atmospheric Audio Soundtrack & Sfx Engine */}
+      <SoundtrackController
+        soundActive={soundActive}
+        onToggleSound={setSoundActive}
+      />
     </div>
   );
 }

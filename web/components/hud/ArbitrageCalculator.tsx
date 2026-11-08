@@ -73,16 +73,12 @@ export function ArbitrageCalculator() {
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
             Dynamic Token Arbitrage Calculator
           </h3>
-          <p className="text-xs sm:text-sm text-zinc-400 font-gt-era max-w-xl mt-1">
+          <p className="text-xs sm:text-sm text-zinc-200 font-sans font-medium max-w-xl mt-1 leading-relaxed">
             Offload 92% of verbose boilerplate to free local workers. Reserve precious frontier cognition exclusively for architecture.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-black/60 border border-white/10 text-[10px] font-mono text-zinc-400">
-            <Repeat className="w-3 h-3 text-[#10B981] animate-spin" style={{ animationDuration: "6s" }} />
-            AUTOPLAY SIMULATION
-          </span>
           <div className="px-4 py-2 bg-emerald-950/80 border-2 border-emerald-500 rounded text-center shadow-[3px_3px_0px_#000000]">
             <div className="font-nikkei text-xl sm:text-2xl font-extrabold text-emerald-400">
               {reductionPercentage}%
@@ -90,6 +86,13 @@ export function ArbitrageCalculator() {
             <div className="text-[10px] font-mono uppercase text-emerald-300">Frontier Cost Reduction</div>
           </div>
         </div>
+      </div>
+
+      {/* Graphic Novel Narration Box matching Santioni style */}
+      <div className="narration-box my-4">
+        <p className="narration-text">
+          THE SENIOR REASONING BRAIN DIRECTS ARCHITECTURE ALONE. VERBOSE BOILERPLATE AND BRUTE IMPLEMENTATION DRAFTS ARE DISPATCHED TO FREE LOCAL WORKERS.
+        </p>
       </div>
 
       {/* Main Calculator Grid */}
