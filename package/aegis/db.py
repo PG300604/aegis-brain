@@ -93,6 +93,20 @@ CREATE TABLE IF NOT EXISTS telegram_inbox (
     processed_at TIMESTAMP,
     result_summary TEXT
 );
+
+CREATE TABLE IF NOT EXISTS host_capabilities (
+    id INTEGER PRIMARY KEY DEFAULT 1,
+    os TEXT NOT NULL,
+    shell TEXT NOT NULL,
+    pkg_manager TEXT NOT NULL,
+    has_ffmpeg INTEGER DEFAULT 0,
+    has_whisper INTEGER DEFAULT 0,
+    has_ollama INTEGER DEFAULT 0,
+    has_hermes INTEGER DEFAULT 0,
+    has_tiling INTEGER DEFAULT 0,
+    has_vim INTEGER DEFAULT 0,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 """
 
 

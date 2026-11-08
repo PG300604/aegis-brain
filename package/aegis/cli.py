@@ -443,6 +443,29 @@ def main() -> None:
     j_status = jev_sub.add_parser("status", help="Show Jev Semantic Engine status and metrics")
     j_status.add_argument("--json", action="store_true", help="Output raw JSON")
 
+    # doctor (Host Capabilities & Diagnostics)
+    doc_parser = subparsers.add_parser(
+        "doctor",
+        aliases=["check", "install"],
+        help="Inspect host platform capabilities and run environment doctor",
+    )
+    doc_parser.add_argument(
+        "--fix",
+        action="store_true",
+        help="Automatically prompt or run installation of missing optional tools",
+    )
+    doc_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Output machine-readable JSON for AI agents",
+    )
+    doc_parser.add_argument(
+        "tool",
+        nargs="?",
+        default=None,
+        help="Specific tool to install (when using 'install' alias)",
+    )
+
     args = parser.parse_args()
 
     if args.command == "daemon":
@@ -1328,6 +1351,48 @@ def main() -> None:
                 print("=== Aegis Jev Semantic Decision Engine Status ===")
                 for k, v in status.items():
                     print(f"• {k}: {v}")
+
+    elif args.command in ("doctor", "check", "install"):
+        from .environment import run_doctor, format_doctor_report, save_host_capabilities, install_tool
+
+        target_tool = getattr(args, "tool", None)
+        if target_tool:
+            print(f"[AegisDoctor] Attempting installation of '{target_tool}'...")
+            ok = install_tool(target_tool)
+            if ok:
+                print(f"✅ Successfully installed '{target_tool}'.")
+            else:
+                print(f"❌ Failed to install '{target_tool}'. Please verify package name or permissions.")
+        else:
+            doc_res = run_doctor()
+            save_host_capabilities(doc_res)
+
+            if getattr(args, "json", False):
+                import json
+                print(json.dumps(doc_res, indent=2))
+            else:
+                show_fix = getattr(args, "fix", False)
+                print(format_doctor_report(doc_res, show_fix=show_fix))
+
+                if show_fix:
+                    missing = []
+                    for tier_key in ("core_essentials", "sensory_accelerators", "token_arbitrage_workers", "workstation_modifiers"):
+                        items = doc_res.get(tier_key, {})
+                        for t_name, t_info in items.items():
+                            if t_info.get("status") in ("MISSING_OPTIONAL", "MISSING_CORE"):
+                                missing.append((t_name, t_info.get("install_cmd", "")))
+
+                    if missing:
+                        print(f"\n[AegisDoctor --fix] Auto-installing {len(missing)} missing component(s)...")
+                        for m_name, m_cmd in missing:
+                            print(f"-> Installing {m_name}...")
+                            ok = install_tool(m_name)
+                            if ok:
+                                print(f"   ✅ {m_name} installed successfully.")
+                            else:
+                                print(f"   ⚠️ {m_name} installation failed or requires manual elevation.")
+                    else:
+                        print("\n[AegisDoctor --fix] All components are already installed.")
 
     else:
         parser.print_help()
