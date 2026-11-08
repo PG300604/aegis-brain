@@ -484,6 +484,33 @@ def main() -> None:
         help="Specific tool to install (when using 'install' alias)",
     )
 
+    # hands / test-ui / ui / inspect-ui (Native Web Inspection & UI Automation)
+    hands_parser = subparsers.add_parser(
+        "hands",
+        aliases=["test-ui", "ui", "inspect-ui"],
+        help="Inspect web apps, verify localhost dev servers, and extract interactive DOM elements",
+    )
+    hands_parser.add_argument("url", help="Target web app URL (e.g., http://localhost:3000 or https://example.com)")
+    hands_parser.add_argument(
+        "--screenshot",
+        action="store_true",
+        default=False,
+        help="Capture and save screenshot to .aegis/screenshots/",
+    )
+    hands_parser.add_argument(
+        "--assert-clean",
+        action="store_true",
+        default=False,
+        help="Exit with code 1 if HTTP error or console errors are found (CI/CD gate)",
+    )
+    hands_parser.add_argument(
+        "--json",
+        action="store_true",
+        default=False,
+        help="Output machine-readable JSON for AI agents",
+    )
+
+
     args = parser.parse_args()
 
     if args.command == "daemon":
@@ -1441,8 +1468,23 @@ def main() -> None:
                     else:
                         print("\n[AegisDoctor --fix] All components are already installed.")
 
+    elif args.command in ("hands", "test-ui", "ui", "inspect-ui"):
+        from .hands import format_hands_report, inspect_web_target
+        result = inspect_web_target(args.url, capture_screenshot=args.screenshot)
+
+        if getattr(args, "json", False):
+            import json
+            print(json.dumps(result.to_dict(), indent=2))
+        else:
+            print(format_hands_report(result))
+
+        if getattr(args, "assert_clean", False):
+            if not result.is_live or result.status_code >= 400 or result.console_errors:
+                sys.exit(1)
+
     else:
         parser.print_help()
+
 
 
 if __name__ == "__main__":
