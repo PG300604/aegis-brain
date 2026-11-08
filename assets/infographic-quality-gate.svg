@@ -49,8 +49,8 @@
       <rect x="0" y="0" width="225" height="390" rx="14" fill="#EFF6FF" stroke="#2563EB" stroke-width="2.4" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Ribbon -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#15803D">1. SURGICAL SIMPLICITY</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12.5" font-weight="700" fill="#15803D">1. Surgical Simplicity</text>
       
       <text x="112" y="36" text-anchor="middle" class="text-heading" font-size="15" fill="#1E40AF">Karpathy Doctrine</text>
       <line x1="25" y1="46" x2="200" y2="46" stroke="#93C5FD" stroke-width="1.6" />
@@ -79,8 +79,8 @@
       <rect x="0" y="0" width="225" height="390" rx="14" fill="#FAF5FF" stroke="#7C3AED" stroke-width="2.4" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Ribbon -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#6B21A8">2. UNSLOP MASTER</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12.5" font-weight="700" fill="#6B21A8">2. Unslop Master</text>
       
       <text x="112" y="36" text-anchor="middle" class="text-heading" font-size="15" fill="#5B21B6">TurnItOut Engine</text>
       <line x1="25" y1="46" x2="200" y2="46" stroke="#D8B4FE" stroke-width="1.6" />
@@ -109,8 +109,8 @@
       <rect x="0" y="0" width="225" height="390" rx="14" fill="#FFF1F2" stroke="#E11D48" stroke-width="2.4" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Ribbon -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#FECDD3" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#9F1239">3. RED-TEAM SECURITY</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#FECDD3" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12.5" font-weight="700" fill="#9F1239">3. Red-Team Security</text>
       
       <text x="112" y="36" text-anchor="middle" class="text-heading" font-size="15" fill="#9F1239">Vulnerability Guard</text>
       <line x1="25" y1="46" x2="200" y2="46" stroke="#FDA4AF" stroke-width="1.6" />
@@ -139,8 +139,8 @@
       <rect x="0" y="0" width="225" height="390" rx="14" fill="#ECFDF5" stroke="#059669" stroke-width="2.4" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Ribbon -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#15803D">4. DUAL-ENV VERIFY</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12.5" font-weight="700" fill="#15803D">4. Dual-Env Verification</text>
       
       <text x="112" y="36" text-anchor="middle" class="text-heading" font-size="15" fill="#065F46">Deterministic Check</text>
       <line x1="25" y1="46" x2="200" y2="46" stroke="#6EE7B7" stroke-width="1.6" />

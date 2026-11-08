@@ -75,10 +75,9 @@ def ribbon_banner(cx, y, w, h, title, subtitle=None):
     return lt + rt + main
 
 def cylinder_3d(cx, cy, rx, ry, h, fill_top, fill_body, label, sublabel=None):
-    # Safe text vertical area strictly between top ellipse bottom (cy + ry) and cylinder body bottom (cy + h)
-    mid_y = cy + ry + (h - ry) / 2
-    label_y = mid_y - (7 if sublabel else 0)
-    sublabel_y = mid_y + 13
+    # Generous text spacing strictly between top ellipse bottom (cy + ry + 1.4) and body bottom
+    label_y = cy + ry + 22
+    sublabel_y = cy + ry + 39
     return f"""
     <g>
       <!-- Cylinder Shadow -->
@@ -98,9 +97,9 @@ def cylinder_3d(cx, cy, rx, ry, h, fill_top, fill_body, label, sublabel=None):
       <!-- Highlight Reflection on Top -->
       <path d="M {cx-rx/2} {cy-ry/3} A {rx/2} {ry/2} 0 0 1 {cx+rx/3} {cy-ry/3}" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
       
-      <!-- Labels positioned cleanly inside cylinder body without touching top or bottom caps -->
-      <text x="{cx}" y="{label_y}" text-anchor="middle" class="text-heading" font-size="15">{label}</text>
-      {f'<text x="{cx}" y="{sublabel_y}" text-anchor="middle" class="text-body" font-size="12" fill="#52525B">{sublabel}</text>' if sublabel else ''}
+      <!-- Labels positioned cleanly inside cylinder body with generous breathing room -->
+      <text x="{cx}" y="{label_y}" text-anchor="middle" class="text-heading" font-size="14.5">{label}</text>
+      {f'<text x="{cx}" y="{sublabel_y}" text-anchor="middle" class="text-body" font-size="11.5" fill="#52525B">{sublabel}</text>' if sublabel else ''}
     </g>
     """
 
@@ -188,10 +187,10 @@ def build_unified_architecture():
     
     # 2. Stage 1: Raw Session Logs & Transcripts
     svg += hand_badge(360, 125, 280, 36, "#FEF08A", "Raw Session Logs &amp; Transcripts")
-    svg += cylinder_3d(500, 185, 85, 18, 65, "#FEF9C3", "#FEF08A", "transcript.jsonl", "Multi-MB Unstructured")
+    svg += cylinder_3d(500, 185, 90, 14, 76, "#FEF9C3", "#FEF08A", "transcript.jsonl", "Multi-MB Unstructured")
     
     # Exploratory Data Analysis Pill & Callouts
-    svg += hand_arrow(585, 205, 715, 205, curve_dx=0)
+    svg += hand_arrow(595, 205, 715, 205, curve_dx=0)
     svg += hand_badge(715, 185, 230, 36, "#FED7AA", "Deterministic AST Parsing")
     svg += hand_arrow(830, 225, 780, 260, curve_dx=0)
     svg += hand_arrow(830, 225, 880, 260, curve_dx=0)
@@ -199,7 +198,7 @@ def build_unified_architecture():
     svg += hand_badge(840, 265, 115, 30, "#BBF7D0", "Call Graph")
     
     # Downward Processing Arrows with annotations
-    svg += hand_arrow(500, 275, 500, 350, curve_dx=0)
+    svg += hand_arrow(500, 276, 500, 350, curve_dx=0)
     svg += """
     <g transform="translate(525, 290)">
       <text x="0" y="0" class="text-body" fill="#22252A">↓ 1. Privacy Scrubbing (Zero Secret Leakage)</text>
@@ -210,13 +209,13 @@ def build_unified_architecture():
     
     # 3. Stage 2: Pre-processed Neural Memory (brain.db)
     svg += hand_badge(360, 355, 280, 36, "#E9D5FF", "Pre-Processed Neural Index")
-    svg += cylinder_3d(500, 415, 95, 18, 65, "#F3E8FF", "#E9D5FF", "SQLite WAL + FTS5", "brain.db (Sub-Second Recall)")
+    svg += cylinder_3d(500, 420, 100, 14, 76, "#F3E8FF", "#E9D5FF", "SQLite WAL + FTS5", "brain.db (Sub-Second Recall)")
     
     # Zoom-in lines to Fast Semantic Table on the left
     svg += f"""
     <!-- Table Zoom Projection Lines -->
-    <path d="M 405 435 L 350 370" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
-    <path d="M 405 480 L 350 540" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
+    <path d="M 395 440 L 350 370" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
+    <path d="M 395 485 L 350 540" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
     
     <!-- Fast Semantic Token Retrieval Matrix Table -->
     <g transform="translate(40, 360)">
@@ -407,12 +406,12 @@ def build_unified_architecture():
     # Coaching Feedback Loop (Curved cleanly on the outside, zero text crossing)
     svg += """
     <!-- Autonomous Coaching Feedback Loop -->
-    <path d="M 940 1040 Q 980 925 945 815" fill="none" stroke="#EA580C" stroke-width="2.6" stroke-dasharray="6,4" />
+    <path d="M 945 1040 Q 995 925 945 815" fill="none" stroke="#EA580C" stroke-width="2.6" stroke-dasharray="6,4" />
     <polygon points="940,815 952,809 952,821" fill="#EA580C" stroke="#EA580C" />
-    <g transform="translate(885, 905)">
-      <rect x="0" y="0" width="85" height="48" rx="6" fill="#FFF7ED" stroke="#EA580C" stroke-width="1.6" filter="url(#sketch-shadow)" />
-      <text x="42" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" font-weight="700" fill="#EA580C">Flaw Detected?</text>
-      <text x="42" y="32" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="10" fill="#7C2D12">Auto-Coaching Loop</text>
+    <g transform="translate(895, 875)">
+      <rect x="0" y="0" width="88" height="46" rx="6" fill="#FFF7ED" stroke="#EA580C" stroke-width="1.6" filter="url(#sketch-shadow)" />
+      <text x="44" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" font-weight="700" fill="#EA580C">Flaw Detected?</text>
+      <text x="44" y="32" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="10" fill="#7C2D12">Auto-Coaching Loop</text>
     </g>
     """
     
@@ -456,13 +455,14 @@ def build_speed_benchmarks():
       <text x="147" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#15803D">SPEED &amp; RETRIEVAL LATENCY</text>
       
       <!-- Hand-Drawn Analog Stopwatches -->
-      <g transform="translate(35, 45)">
+      <g transform="translate(25, 45)">
         <!-- Stopwatch 1: Traditional -->
-        <g transform="translate(15, 0)">
+        <g transform="translate(10, 0)">
           <rect x="30" y="-8" width="10" height="8" rx="2" fill="#E2E8F0" stroke="#22252A" stroke-width="1.8" />
           <circle cx="35" cy="35" r="32" fill="#FEE2E2" stroke="#22252A" stroke-width="2.4" />
-          <path d="M 68 20 Q 78 15 72 5" fill="none" stroke="#EF4444" stroke-width="1.8" stroke-linecap="round" />
-          <path d="M 72 32 Q 84 30 80 18" fill="none" stroke="#EF4444" stroke-width="1.8" stroke-linecap="round" />
+          <!-- Subtle motion lines on outer left margin only -->
+          <path d="M 2 20 Q -6 15 -2 5" fill="none" stroke="#EF4444" stroke-width="1.8" stroke-linecap="round" />
+          <path d="M -2 32 Q -10 30 -6 18" fill="none" stroke="#EF4444" stroke-width="1.8" stroke-linecap="round" />
           <line x1="35" y1="35" x2="58" y2="22" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round" />
           <circle cx="35" cy="35" r="3" fill="#22252A" />
           <text x="35" y="80" text-anchor="middle" class="text-heading" font-size="18" fill="#DC2626">12,400 ms</text>
@@ -470,12 +470,12 @@ def build_speed_benchmarks():
         </g>
         
         <!-- Stopwatch 2: AegisBrain -->
-        <g transform="translate(150, 0)">
+        <g transform="translate(160, 0)">
           <rect x="30" y="-8" width="10" height="8" rx="2" fill="#E2E8F0" stroke="#22252A" stroke-width="1.8" />
           <circle cx="35" cy="35" r="32" fill="#DCFCE7" stroke="#22252A" stroke-width="2.4" />
           <line x1="35" y1="35" x2="35" y2="10" stroke="#16A34A" stroke-width="2.6" stroke-linecap="round" />
           <circle cx="35" cy="35" r="3" fill="#22252A" />
-          <text x="65" y="15" font-size="16" fill="#16A34A">★</text>
+          <text x="62" y="16" font-size="15" fill="#16A34A">★</text>
           <text x="35" y="80" text-anchor="middle" class="text-heading" font-size="18" fill="#16A34A">24 ms</text>
           <text x="35" y="96" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#14532D">AegisBrain FTS5</text>
         </g>
@@ -585,22 +585,22 @@ def build_speed_benchmarks():
       <text x="147" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#6B21A8">HARDWARE &amp; RAM FOOTPRINT</text>
       
       <!-- Hand-Drawn Balance Scale (Raised to give ample clearance above stat box) -->
-      <g transform="translate(45, 40)">
-        <polygon points="100,45 85,72 115,72" fill="#CBD5E1" stroke="#22252A" stroke-width="2.2" />
-        <line x1="20" y1="62" x2="180" y2="28" stroke="#22252A" stroke-width="3" stroke-linecap="round" />
+      <g transform="translate(45, 25)">
+        <polygon points="100,35 85,58 115,58" fill="#CBD5E1" stroke="#22252A" stroke-width="2.2" />
+        <line x1="20" y1="50" x2="180" y2="18" stroke="#22252A" stroke-width="3" stroke-linecap="round" />
         
         <!-- Left Pan (Dumbbell) -->
-        <line x1="20" y1="62" x2="20" y2="72" stroke="#22252A" stroke-width="1.6" />
-        <rect x="5" y="70" width="30" height="12" rx="4" fill="#64748B" stroke="#22252A" stroke-width="1.8" />
-        <text x="20" y="94" text-anchor="middle" class="text-heading" font-size="14" fill="#DC2626">&gt; 1.2 GB</text>
-        <text x="20" y="106" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#7F1D1D">RAM Bloat</text>
+        <line x1="20" y1="50" x2="20" y2="58" stroke="#22252A" stroke-width="1.6" />
+        <rect x="5" y="58" width="30" height="12" rx="4" fill="#64748B" stroke="#22252A" stroke-width="1.8" />
+        <text x="20" y="82" text-anchor="middle" class="text-heading" font-size="14" fill="#DC2626">&gt; 1.2 GB</text>
+        <text x="20" y="94" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#7F1D1D">RAM Bloat</text>
         
         <!-- Right Pan (Feather) -->
-        <line x1="180" y1="28" x2="180" y2="38" stroke="#22252A" stroke-width="1.6" />
-        <path d="M 170 30 Q 185 18 195 32 Q 185 38 170 30" fill="#BAE6FD" stroke="#0284C7" stroke-width="1.6" />
-        <line x1="170" y1="30" x2="195" y2="32" stroke="#0284C7" stroke-width="1.2" />
-        <text x="180" y="60" text-anchor="middle" class="text-heading" font-size="14" fill="#16A34A">&lt; 25 MB</text>
-        <text x="180" y="72" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#14532D">RAM Light</text>
+        <line x1="180" y1="18" x2="180" y2="26" stroke="#22252A" stroke-width="1.6" />
+        <path d="M 170 20 Q 185 8 195 22 Q 185 28 170 20" fill="#BAE6FD" stroke="#0284C7" stroke-width="1.6" />
+        <line x1="170" y1="20" x2="195" y2="22" stroke="#0284C7" stroke-width="1.2" />
+        <text x="180" y="50" text-anchor="middle" class="text-heading" font-size="14" fill="#16A34A">&lt; 25 MB</text>
+        <text x="180" y="62" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#14532D">RAM Light</text>
       </g>
       
       <!-- Big Handwritten Stat -->
@@ -699,9 +699,9 @@ def build_learning_curve():
     
     # Coordinate Axes
     ox = 140
-    oy = 640
+    oy = 610
     ax_len_x = 810
-    ax_len_y = 470
+    ax_len_y = 450
     
     svg += f"""
     <!-- Hand-Drawn Coordinate Axes -->
@@ -709,7 +709,9 @@ def build_learning_curve():
       <!-- X-Axis -->
       <line x1="{ox}" y1="{oy}" x2="{ox+ax_len_x}" y2="{oy}" stroke="#22252A" stroke-width="3.2" stroke-linecap="round" />
       <polygon points="{ox+ax_len_x},{oy} {ox+ax_len_x-14},{oy-6} {ox+ax_len_x-14},{oy+6}" fill="#22252A" />
-      <text x="{ox+ax_len_x/2}" y="{oy+38}" text-anchor="middle" class="text-heading" font-size="22" fill="#22252A">CONVERSATION DEPTH / SESSION TURNS</text>
+      
+      <!-- X-Axis Title Placed Cleanly Below Callout Boxes -->
+      <text x="{ox+ax_len_x/2}" y="730" text-anchor="middle" class="text-heading" font-size="20" fill="#22252A">CONVERSATION DEPTH / SESSION TURNS →</text>
       
       <!-- Y-Axis -->
       <line x1="{ox}" y1="{oy}" x2="{ox}" y2="{oy-ax_len_y}" stroke="#22252A" stroke-width="3.2" stroke-linecap="round" />
@@ -723,25 +725,25 @@ def build_learning_curve():
     # Curve 1: Traditional Unbounded Context Bloat
     svg += f"""
     <!-- Curve 1: Traditional Context Bloat -->
-    <path d="M {ox} 610 Q 320 570 480 430 T 750 250 T 870 200" fill="none" stroke="#FCA5A5" stroke-width="12" stroke-linecap="round" opacity="0.6" />
-    <path d="M {ox} 610 Q 320 570 480 430 T 750 250 T 870 200" fill="none" stroke="#DC2626" stroke-width="3.6" stroke-linecap="round" />
+    <path d="M {ox} 580 Q 320 540 480 390 T 750 220 T 870 170" fill="none" stroke="#FCA5A5" stroke-width="12" stroke-linecap="round" opacity="0.6" />
+    <path d="M {ox} 580 Q 320 540 480 390 T 750 220 T 870 170" fill="none" stroke="#DC2626" stroke-width="3.6" stroke-linecap="round" />
     
     <!-- End dots -->
-    <circle cx="875" cy="198" r="4" fill="#DC2626" />
-    <circle cx="887" cy="196" r="4" fill="#DC2626" />
-    <circle cx="899" cy="194" r="4" fill="#DC2626" />
+    <circle cx="875" cy="168" r="4" fill="#DC2626" />
+    <circle cx="887" cy="166" r="4" fill="#DC2626" />
+    <circle cx="899" cy="164" r="4" fill="#DC2626" />
     
     <!-- Traditional Callout Box 1 (Raised well above the red curve) -->
-    <g transform="translate(195, 380)">
+    <g transform="translate(195, 315)">
       <rect x="0" y="0" width="200" height="58" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2.2" filter="url(#sketch-shadow)" />
       <text x="100" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#9A3412">Turn 5 to 10 Slowdown:</text>
       <text x="100" y="42" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#7C2D12">Full transcript re-read latency</text>
-      <path d="M 100 58 Q 110 85 130 115" fill="none" stroke="#EA580C" stroke-width="2" />
-      <polygon points="130,115 120,110 124,104" fill="#EA580C" />
+      <path d="M 100 58 Q 110 85 125 110" fill="none" stroke="#EA580C" stroke-width="2" />
+      <polygon points="125,110 115,106 120,99" fill="#EA580C" />
     </g>
     
     <!-- Traditional Callout Box 2 (Steep rise) -->
-    <g transform="translate(420, 270)">
+    <g transform="translate(420, 240)">
       <rect x="0" y="0" width="220" height="70" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2.2" filter="url(#sketch-shadow)" />
       <text x="110" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#991B1B">Turn 20+ Explosion:</text>
       <text x="110" y="42" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#7F1D1D">60k+ tokens resent every prompt</text>
@@ -751,7 +753,7 @@ def build_learning_curve():
     </g>
     
     <!-- Traditional Callout Box 3 (Top peak) -->
-    <g transform="translate(720, 140)">
+    <g transform="translate(720, 115)">
       <rect x="0" y="0" width="230" height="75" rx="8" fill="#FFE4E6" stroke="#E11D48" stroke-width="2.2" filter="url(#sketch-shadow)" />
       <text x="115" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#9F1239">Context Overflow Crash:</text>
       <text x="115" y="44" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#881337">Hallucinations begin, rules</text>
@@ -764,32 +766,32 @@ def build_learning_curve():
     # Curve 2: AegisBrain Pinned Active Context (<= 400 Tokens)
     svg += f"""
     <!-- Curve 2: AegisBrain Pinned Active Context -->
-    <rect x="{ox}" y="595" width="{ax_len_x}" height="45" fill="#DCFCE7" opacity="0.4" />
+    <rect x="{ox}" y="565" width="{ax_len_x}" height="45" fill="#DCFCE7" opacity="0.4" />
     
-    <line x1="{ox}" y1="600" x2="{ox+ax_len_x}" y2="600" stroke="#86EFAC" stroke-width="12" stroke-linecap="round" />
-    <line x1="{ox}" y1="600" x2="{ox+ax_len_x}" y2="600" stroke="#16A34A" stroke-width="3.6" stroke-linecap="round" />
+    <line x1="{ox}" y1="575" x2="{ox+ax_len_x}" y2="575" stroke="#86EFAC" stroke-width="12" stroke-linecap="round" />
+    <line x1="{ox}" y1="575" x2="{ox+ax_len_x}" y2="575" stroke="#16A34A" stroke-width="3.6" stroke-linecap="round" />
     
     <!-- AegisBrain Callout Box 1 (Left) -->
-    <g transform="translate(180, 675)">
-      <rect x="0" y="0" width="290" height="58" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="145" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#14532D">Turn 1 to Turn 1,000+ Pinned:</text>
-      <text x="145" y="44" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#166534">Active working context strictly pinned ≤ 400 t</text>
-      <path d="M 145 0 Q 145 -15 145 -65" fill="none" stroke="#16A34A" stroke-width="2" />
-      <polygon points="145,-65 140,-55 150,-55" fill="#16A34A" />
+    <g transform="translate(170, 635)">
+      <rect x="0" y="0" width="300" height="58" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="150" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#14532D">Turn 1 to Turn 1,000+ Pinned:</text>
+      <text x="150" y="44" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#166534">Active working context strictly pinned ≤ 400 t</text>
+      <path d="M 150 0 Q 150 -15 150 -58" fill="none" stroke="#16A34A" stroke-width="2" />
+      <polygon points="150,-58 145,-48 155,-48" fill="#16A34A" />
     </g>
     
     <!-- AegisBrain Callout Box 2 (Right) -->
-    <g transform="translate(550, 675)">
-      <rect x="0" y="0" width="330" height="58" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="165" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#14532D">SQLite WAL + FTS5 Neural Index:</text>
-      <text x="165" y="44" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#166534">Recalls exact relevant facts in 24ms with 0 bloat</text>
-      <path d="M 165 0 Q 165 -15 165 -65" fill="none" stroke="#16A34A" stroke-width="2" />
-      <polygon points="165,-65 160,-55 170,-55" fill="#16A34A" />
+    <g transform="translate(530, 635)">
+      <rect x="0" y="0" width="340" height="58" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="170" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#14532D">SQLite WAL + FTS5 Neural Index:</text>
+      <text x="170" y="44" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#166534">Recalls exact relevant facts in 24ms with 0 bloat</text>
+      <path d="M 170 0 Q 170 -15 170 -58" fill="none" stroke="#16A34A" stroke-width="2" />
+      <polygon points="170,-58 165,-48 175,-48" fill="#16A34A" />
     </g>
     """
     
     # Footer Signature
-    svg += footer_signature(755, w)
+    svg += footer_signature(770, w)
     svg += "</svg>"
     
     output_path = ASSETS_DIR / "infographic-learning-curve.svg"
@@ -1016,8 +1018,8 @@ def build_mobile_pipeline():
       <rect x="0" y="0" width="{card_w}" height="{card_h}" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Badge -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#BAE6FD" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#0369A1">1. TELEGRAM MOBILE BRIDGE</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#BAE6FD" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#0369A1">1. Telegram Mobile Bridge</text>
       
       <!-- Smartphone Silhouette -->
       <g transform="translate(20, 28)">
@@ -1071,17 +1073,17 @@ def build_mobile_pipeline():
       <rect x="0" y="0" width="{card_w}" height="{card_h}" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Badge -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#FEF08A" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#854D0E">2. 24/7 DAEMON KEEPALIVE</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#FEF08A" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#854D0E">2. 24/7 Daemon KeepAlive</text>
       
       <!-- Cylinder Database -->
-      <g transform="translate(112, 75)">
-        {cylinder_3d(0, 0, 60, 16, 60, "#FEF9C3", "#FEF08A", "aegis.server", "127.0.0.1:8765")}
+      <g transform="translate(112, 55)">
+        {cylinder_3d(0, 0, 65, 13, 72, "#FEF9C3", "#FEF08A", "aegis.server", "127.0.0.1:8765")}
       </g>
       
       <!-- Bullet Points Box -->
-      <g transform="translate(15, 175)">
-        <rect x="0" y="0" width="195" height="215" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+      <g transform="translate(15, 165)">
+        <rect x="0" y="0" width="195" height="225" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
         <text x="12" y="26" class="text-heading" font-size="14" fill="#0369A1">Windows Scheduled Task</text>
         <text x="12" y="46" class="text-body" font-size="12">• AegisBrainKeepAlive</text>
         <text x="12" y="66" class="text-body" font-size="12">• Runs every 5 mins silently</text>
@@ -1092,7 +1094,7 @@ def build_mobile_pipeline():
         <text x="12" y="156" class="text-body" font-size="12">• Survives PC reboots</text>
         
         <text x="12" y="186" class="text-body" font-size="12">• Async inbox queue</text>
-        <text x="12" y="204" class="text-body" font-size="12">• SQLite telegram_inbox</text>
+        <text x="12" y="206" class="text-body" font-size="12">• SQLite telegram_inbox</text>
       </g>
       
       <!-- Bottom Badge -->
@@ -1112,8 +1114,8 @@ def build_mobile_pipeline():
       <rect x="0" y="0" width="{card_w}" height="{card_h}" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Badge -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#FED7AA" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#C2410C">3. FFMPEG AUDIO CHUNKER</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#FED7AA" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#C2410C">3. FFmpeg Sub-30s Audio</text>
       
       <!-- Hand-Drawn Audio Slices Diagram -->
       <g transform="translate(15, 30)">
@@ -1168,8 +1170,8 @@ def build_mobile_pipeline():
       <rect x="0" y="0" width="{card_w}" height="{card_h}" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Badge -->
-      <rect x="12" y="-14" width="201" height="28" rx="14" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#6B21A8">4. WHISPER &amp; WIN32 SHIELD</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#6B21A8">4. Whisper &amp; Win32 Shield</text>
       
       <!-- Whisper Greedy Decoding Box -->
       <g transform="translate(15, 28)">
@@ -1290,8 +1292,9 @@ def build_universal_agents():
     </g>
     """
     
-    # Connecting Arrows 1 -> Bus (lands cleanly on top ribbon without cutting through)
-    svg += hand_arrow(520, 240, 520, 261, curve_dx=0)
+    # Connecting Dual Side Arrows 1 -> Bus (Leaves center title ribbon completely unobstructed)
+    svg += hand_arrow(200, 240, 200, 275, curve_dx=0)
+    svg += hand_arrow(840, 240, 840, 275, curve_dx=0)
     
     # ---------------- Row 2: Standardized Execution Bus ----------------
     svg += """
@@ -1336,8 +1339,9 @@ def build_universal_agents():
     </g>
     """
     
-    # Connecting Arrows Bus -> 3 (lands cleanly on top ribbon without cutting through)
-    svg += hand_arrow(520, 390, 520, 411, curve_dx=0)
+    # Connecting Dual Side Arrows Bus -> 3 (Leaves center title ribbon completely unobstructed)
+    svg += hand_arrow(200, 390, 200, 425, curve_dx=0)
+    svg += hand_arrow(840, 390, 840, 425, curve_dx=0)
     
     # ---------------- Row 3: Tier 3 Worker Candidates ----------------
     svg += """
@@ -1345,8 +1349,8 @@ def build_universal_agents():
     <g transform="translate(40, 425)">
       <rect x="0" y="0" width="960" height="120" rx="14" fill="#F0FDF4" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
       
-      <!-- Top Title Ribbon (Generous width to prevent text overflow) -->
-      <rect x="150" y="-14" width="660" height="28" rx="14" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
+      <!-- Top Title Ribbon (Unobstructed Center Placement) -->
+      <rect x="200" y="-14" width="560" height="28" rx="14" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
       <text x="480" y="5" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#15803D">TIER 3: WORKER CANDIDATES (100% RAW CODE &amp; TESTS) — FREE LOCAL TOKENS</text>
       
       <!-- 4 Worker Candidates -->
@@ -1434,8 +1438,8 @@ def build_quality_gate():
       <rect x="0" y="0" width="{card_w}" height="{card_h}" rx="14" fill="#EFF6FF" stroke="#2563EB" stroke-width="2.4" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Ribbon -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#15803D">1. SURGICAL SIMPLICITY</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12.5" font-weight="700" fill="#15803D">1. Surgical Simplicity</text>
       
       <text x="112" y="36" text-anchor="middle" class="text-heading" font-size="15" fill="#1E40AF">Karpathy Doctrine</text>
       <line x1="25" y1="46" x2="200" y2="46" stroke="#93C5FD" stroke-width="1.6" />
@@ -1468,8 +1472,8 @@ def build_quality_gate():
       <rect x="0" y="0" width="{card_w}" height="{card_h}" rx="14" fill="#FAF5FF" stroke="#7C3AED" stroke-width="2.4" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Ribbon -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#6B21A8">2. UNSLOP MASTER</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12.5" font-weight="700" fill="#6B21A8">2. Unslop Master</text>
       
       <text x="112" y="36" text-anchor="middle" class="text-heading" font-size="15" fill="#5B21B6">TurnItOut Engine</text>
       <line x1="25" y1="46" x2="200" y2="46" stroke="#D8B4FE" stroke-width="1.6" />
@@ -1502,8 +1506,8 @@ def build_quality_gate():
       <rect x="0" y="0" width="{card_w}" height="{card_h}" rx="14" fill="#FFF1F2" stroke="#E11D48" stroke-width="2.4" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Ribbon -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#FECDD3" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#9F1239">3. RED-TEAM SECURITY</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#FECDD3" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12.5" font-weight="700" fill="#9F1239">3. Red-Team Security</text>
       
       <text x="112" y="36" text-anchor="middle" class="text-heading" font-size="15" fill="#9F1239">Vulnerability Guard</text>
       <line x1="25" y1="46" x2="200" y2="46" stroke="#FDA4AF" stroke-width="1.6" />
@@ -1536,8 +1540,8 @@ def build_quality_gate():
       <rect x="0" y="0" width="{card_w}" height="{card_h}" rx="14" fill="#ECFDF5" stroke="#059669" stroke-width="2.4" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Ribbon -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#15803D">4. DUAL-ENV VERIFY</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12.5" font-weight="700" fill="#15803D">4. Dual-Env Verification</text>
       
       <text x="112" y="36" text-anchor="middle" class="text-heading" font-size="15" fill="#065F46">Deterministic Check</text>
       <line x1="25" y1="46" x2="200" y2="46" stroke="#6EE7B7" stroke-width="1.6" />

@@ -45,8 +45,8 @@
       <rect x="0" y="0" width="225" height="490" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Badge -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#BAE6FD" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#0369A1">1. TELEGRAM MOBILE BRIDGE</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#BAE6FD" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#0369A1">1. Telegram Mobile Bridge</text>
       
       <!-- Smartphone Silhouette -->
       <g transform="translate(20, 28)">
@@ -96,40 +96,40 @@
       <rect x="0" y="0" width="225" height="490" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Badge -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#FEF08A" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#854D0E">2. 24/7 DAEMON KEEPALIVE</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#FEF08A" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#854D0E">2. 24/7 Daemon KeepAlive</text>
       
       <!-- Cylinder Database -->
-      <g transform="translate(112, 75)">
+      <g transform="translate(112, 55)">
         
     <g>
       <!-- Cylinder Shadow -->
-      <ellipse cx="3" cy="63" rx="60" ry="16" fill="#E2E8F0" opacity="0.6" />
+      <ellipse cx="3" cy="75" rx="65" ry="13" fill="#E2E8F0" opacity="0.6" />
       
       <!-- Cylinder Body -->
-      <path d="M -60 0 L -60 60 A 60 16 0 0 0 60 60 L 60 0 Z" 
+      <path d="M -65 0 L -65 72 A 65 13 0 0 0 65 72 L 65 0 Z" 
             fill="#FEF08A" stroke="#22252A" stroke-width="2.8" stroke-linejoin="round" />
       
       <!-- Cylinder Bottom Highlight Curve -->
-      <path d="M -56 58 A 56 14 0 0 0 56 58" 
+      <path d="M -61 70 A 61 11 0 0 0 61 70" 
             fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.6" />
             
       <!-- Cylinder Top Ellipse -->
-      <ellipse cx="0" cy="0" rx="60" ry="16" fill="#FEF9C3" stroke="#22252A" stroke-width="2.8" />
+      <ellipse cx="0" cy="0" rx="65" ry="13" fill="#FEF9C3" stroke="#22252A" stroke-width="2.8" />
       
       <!-- Highlight Reflection on Top -->
-      <path d="M -30.0 -5.333333333333333 A 30.0 8.0 0 0 1 20.0 -5.333333333333333" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
+      <path d="M -32.5 -4.333333333333333 A 32.5 6.5 0 0 1 21.666666666666668 -4.333333333333333" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
       
-      <!-- Labels positioned cleanly inside cylinder body without touching top or bottom caps -->
-      <text x="0" y="31.0" text-anchor="middle" class="text-heading" font-size="15">aegis.server</text>
-      <text x="0" y="51.0" text-anchor="middle" class="text-body" font-size="12" fill="#52525B">127.0.0.1:8765</text>
+      <!-- Labels positioned cleanly inside cylinder body with generous breathing room -->
+      <text x="0" y="35" text-anchor="middle" class="text-heading" font-size="14.5">aegis.server</text>
+      <text x="0" y="52" text-anchor="middle" class="text-body" font-size="11.5" fill="#52525B">127.0.0.1:8765</text>
     </g>
     
       </g>
       
       <!-- Bullet Points Box -->
-      <g transform="translate(15, 175)">
-        <rect x="0" y="0" width="195" height="215" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+      <g transform="translate(15, 165)">
+        <rect x="0" y="0" width="195" height="225" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
         <text x="12" y="26" class="text-heading" font-size="14" fill="#0369A1">Windows Scheduled Task</text>
         <text x="12" y="46" class="text-body" font-size="12">• AegisBrainKeepAlive</text>
         <text x="12" y="66" class="text-body" font-size="12">• Runs every 5 mins silently</text>
@@ -140,7 +140,7 @@
         <text x="12" y="156" class="text-body" font-size="12">• Survives PC reboots</text>
         
         <text x="12" y="186" class="text-body" font-size="12">• Async inbox queue</text>
-        <text x="12" y="204" class="text-body" font-size="12">• SQLite telegram_inbox</text>
+        <text x="12" y="206" class="text-body" font-size="12">• SQLite telegram_inbox</text>
       </g>
       
       <!-- Bottom Badge -->
@@ -156,8 +156,8 @@
       <rect x="0" y="0" width="225" height="490" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Badge -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#FED7AA" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#C2410C">3. FFMPEG AUDIO CHUNKER</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#FED7AA" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#C2410C">3. FFmpeg Sub-30s Audio</text>
       
       <!-- Hand-Drawn Audio Slices Diagram -->
       <g transform="translate(15, 30)">
@@ -208,8 +208,8 @@
       <rect x="0" y="0" width="225" height="490" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Badge -->
-      <rect x="12" y="-14" width="201" height="28" rx="14" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#6B21A8">4. WHISPER &amp; WIN32 SHIELD</text>
+      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#6B21A8">4. Whisper &amp; Win32 Shield</text>
       
       <!-- Whisper Greedy Decoding Box -->
       <g transform="translate(15, 28)">

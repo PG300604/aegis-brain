@@ -6,7 +6,7 @@ This chapter describes AegisBrain's **Division of Cognition** — a strict hiera
 
 ## 1. The Division of Cognition Rationale
 
-In conventional AI workflows, developers task a single frontier model (e.g., Claude 3.7 Sonnet or Gemini 3.8 Flash) with both high-level system architecture and low-level code generation. This creates two failure modes:
+In conventional AI workflows, developers task a single frontier model (e.g., Opus 5.5, Gemini 4, or Fable 5.1) with both high-level system architecture and low-level code generation. This creates two failure modes:
 
 1. **Frontier Token Burn**: High-cognition reasoning tokens are wasted generating repetitive boilerplate, serialization routines, and unit tests.
 2. **Cognitive Fatigue & Hallucination**: When a model simultaneously manages multi-file dependencies, architectural invariants, and line-by-line syntax, attention is divided, leading to subtle logic inversions and edge-case omissions.
@@ -15,7 +15,7 @@ AegisBrain resolves this by establishing three distinct tiers with enforced resp
 
 ```
                                   TIER 1: SENIOR BOSS
-                       (Gemini 3.8 Flash / Claude 3.7 / OpenCode GPT-6)
+                       (Fable 5.1 / Opus 5.5 / Gemini 4 / Argon)
                ┌─────────────────────────────────────────────────────────────┐
                │ - System Architecture & Invariants Definition               │
                │ - Options Exploration Matrix (Pros & Cons)                  │
@@ -49,7 +49,7 @@ AegisBrain resolves this by establishing three distinct tiers with enforced resp
 
 | Tier | Role | Supported Engines | Responsibilities | Direct Code Invariant |
 | :--- | :--- | :--- | :--- | :--- |
-| **Tier 1: Senior Boss** | Supreme Orchestrator & Strategic Brain | Gemini 3.8 Flash, Claude 3.7 Sonnet, OpenCode (GPT-6 Astra), Codex | Architecture planning, options analysis (Options 1/2/3 with pros/cons), strict invariants definition, test review, error detection, final sign-off. | **Zero Direct Code by default**. Writes implementation code *only* if Tier 2 issues a formal Escalation Dossier. |
+| **Tier 1: Senior Boss** | Supreme Orchestrator & Strategic Brain | Fable 5.1, Opus 5.5, Gemini 4, Argon | Architecture planning, options analysis (Options 1/2/3 with pros/cons), strict invariants definition, test review, error detection, final sign-off. | **Zero Direct Code by default**. Writes implementation code *only* if Tier 2 issues a formal Escalation Dossier. |
 | **Tier 2: Junior Bosses** | Domain Tech Leads (Backend, Frontend, Sec, QA) | Subagents spawned via `invoke_subagent` | Scoping task boundaries, dispatching commands to Tier 3 workers, bottom-to-top 4-Gate auditing, coaching error-reduction loops. | **Zero Direct Code**. Formulates coaching prompts; never writes code drafts directly. |
 | **Tier 3: Execution Workers** | Code Synthesis Muscle | Hermes CLI, OpenCode Free, Codex CLI, Claude Code CLI, Ollama MoE | Writes all raw code drafts, functions, boilerplate, and implementations using free/local tokens. | **Writes 100% of candidate code**. Subject to iterative coaching loops until 0 errors remain. |
 

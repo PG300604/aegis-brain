@@ -48,13 +48,14 @@
       <text x="147" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#15803D">SPEED &amp; RETRIEVAL LATENCY</text>
       
       <!-- Hand-Drawn Analog Stopwatches -->
-      <g transform="translate(35, 45)">
+      <g transform="translate(25, 45)">
         <!-- Stopwatch 1: Traditional -->
-        <g transform="translate(15, 0)">
+        <g transform="translate(10, 0)">
           <rect x="30" y="-8" width="10" height="8" rx="2" fill="#E2E8F0" stroke="#22252A" stroke-width="1.8" />
           <circle cx="35" cy="35" r="32" fill="#FEE2E2" stroke="#22252A" stroke-width="2.4" />
-          <path d="M 68 20 Q 78 15 72 5" fill="none" stroke="#EF4444" stroke-width="1.8" stroke-linecap="round" />
-          <path d="M 72 32 Q 84 30 80 18" fill="none" stroke="#EF4444" stroke-width="1.8" stroke-linecap="round" />
+          <!-- Subtle motion lines on outer left margin only -->
+          <path d="M 2 20 Q -6 15 -2 5" fill="none" stroke="#EF4444" stroke-width="1.8" stroke-linecap="round" />
+          <path d="M -2 32 Q -10 30 -6 18" fill="none" stroke="#EF4444" stroke-width="1.8" stroke-linecap="round" />
           <line x1="35" y1="35" x2="58" y2="22" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round" />
           <circle cx="35" cy="35" r="3" fill="#22252A" />
           <text x="35" y="80" text-anchor="middle" class="text-heading" font-size="18" fill="#DC2626">12,400 ms</text>
@@ -62,12 +63,12 @@
         </g>
         
         <!-- Stopwatch 2: AegisBrain -->
-        <g transform="translate(150, 0)">
+        <g transform="translate(160, 0)">
           <rect x="30" y="-8" width="10" height="8" rx="2" fill="#E2E8F0" stroke="#22252A" stroke-width="1.8" />
           <circle cx="35" cy="35" r="32" fill="#DCFCE7" stroke="#22252A" stroke-width="2.4" />
           <line x1="35" y1="35" x2="35" y2="10" stroke="#16A34A" stroke-width="2.6" stroke-linecap="round" />
           <circle cx="35" cy="35" r="3" fill="#22252A" />
-          <text x="65" y="15" font-size="16" fill="#16A34A">★</text>
+          <text x="62" y="16" font-size="15" fill="#16A34A">★</text>
           <text x="35" y="80" text-anchor="middle" class="text-heading" font-size="18" fill="#16A34A">24 ms</text>
           <text x="35" y="96" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#14532D">AegisBrain FTS5</text>
         </g>
@@ -169,22 +170,22 @@
       <text x="147" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#6B21A8">HARDWARE &amp; RAM FOOTPRINT</text>
       
       <!-- Hand-Drawn Balance Scale (Raised to give ample clearance above stat box) -->
-      <g transform="translate(45, 40)">
-        <polygon points="100,45 85,72 115,72" fill="#CBD5E1" stroke="#22252A" stroke-width="2.2" />
-        <line x1="20" y1="62" x2="180" y2="28" stroke="#22252A" stroke-width="3" stroke-linecap="round" />
+      <g transform="translate(45, 25)">
+        <polygon points="100,35 85,58 115,58" fill="#CBD5E1" stroke="#22252A" stroke-width="2.2" />
+        <line x1="20" y1="50" x2="180" y2="18" stroke="#22252A" stroke-width="3" stroke-linecap="round" />
         
         <!-- Left Pan (Dumbbell) -->
-        <line x1="20" y1="62" x2="20" y2="72" stroke="#22252A" stroke-width="1.6" />
-        <rect x="5" y="70" width="30" height="12" rx="4" fill="#64748B" stroke="#22252A" stroke-width="1.8" />
-        <text x="20" y="94" text-anchor="middle" class="text-heading" font-size="14" fill="#DC2626">&gt; 1.2 GB</text>
-        <text x="20" y="106" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#7F1D1D">RAM Bloat</text>
+        <line x1="20" y1="50" x2="20" y2="58" stroke="#22252A" stroke-width="1.6" />
+        <rect x="5" y="58" width="30" height="12" rx="4" fill="#64748B" stroke="#22252A" stroke-width="1.8" />
+        <text x="20" y="82" text-anchor="middle" class="text-heading" font-size="14" fill="#DC2626">&gt; 1.2 GB</text>
+        <text x="20" y="94" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#7F1D1D">RAM Bloat</text>
         
         <!-- Right Pan (Feather) -->
-        <line x1="180" y1="28" x2="180" y2="38" stroke="#22252A" stroke-width="1.6" />
-        <path d="M 170 30 Q 185 18 195 32 Q 185 38 170 30" fill="#BAE6FD" stroke="#0284C7" stroke-width="1.6" />
-        <line x1="170" y1="30" x2="195" y2="32" stroke="#0284C7" stroke-width="1.2" />
-        <text x="180" y="60" text-anchor="middle" class="text-heading" font-size="14" fill="#16A34A">&lt; 25 MB</text>
-        <text x="180" y="72" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#14532D">RAM Light</text>
+        <line x1="180" y1="18" x2="180" y2="26" stroke="#22252A" stroke-width="1.6" />
+        <path d="M 170 20 Q 185 8 195 22 Q 185 28 170 20" fill="#BAE6FD" stroke="#0284C7" stroke-width="1.6" />
+        <line x1="170" y1="20" x2="195" y2="22" stroke="#0284C7" stroke-width="1.2" />
+        <text x="180" y="50" text-anchor="middle" class="text-heading" font-size="14" fill="#16A34A">&lt; 25 MB</text>
+        <text x="180" y="62" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#14532D">RAM Light</text>
       </g>
       
       <!-- Big Handwritten Stat -->

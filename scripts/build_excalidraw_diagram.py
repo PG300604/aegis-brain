@@ -116,7 +116,7 @@ def build_diagram():
     <g transform="translate(12, 74)">
       <rect width="207" height="42" rx="7" fill="#FFFFFF" stroke="#BAE6FD" stroke-width="1.2" class="dark-pill-bg" />
       <text x="12" y="22" fill="#0369A1" font-family="'Virgil', 'Comic Sans MS', sans-serif" font-size="13" font-weight="700" class="dark-pill-title">✦ Google Antigravity</text>
-      <text x="12" y="35" fill="#0284C7" font-family="ui-monospace, monospace" font-size="10" class="dark-pill-sub">Claude 3.7 / Gemini 2.5</text>
+      <text x="12" y="35" fill="#0284C7" font-family="ui-monospace, monospace" font-size="10" class="dark-pill-sub">Gemini 4 / Opus 5.5 / Fable 5.1</text>
     </g>
 
     <!-- Agent 2: Claude Code -->

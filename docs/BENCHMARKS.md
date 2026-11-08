@@ -36,7 +36,7 @@ AegisBrain rejects monolithic model execution in favor of a specialized **Divisi
 
 ```mermaid
 flowchart TD
-    User([Developer / Task Input]) --> T1[Tier 1: Senior Boss - Frontier Manager<br/>Gemini 3.8 Flash / Claude 3.7<br/>High Cognition, System Architecture, Options Matrix]
+    User([Developer / Task Input]) --> T1[Tier 1: Senior Boss - Frontier Manager<br/>Fable 5.1 / Opus 5.5 / Gemini 4 / Argon<br/>High Cognition, System Architecture, Options Matrix]
     
     T1 -->|Scoping & Invariants Directive| T2[Tier 2: Junior Bosses - Domain Subagents<br/>Backend Lead, Security Auditor, QA Lead<br/>Supervision & 4-Gate Quality Auditing]
     
@@ -54,7 +54,7 @@ flowchart TD
 ```
 
 ### 1. Transformer Reasoning Dynamics (Tier 1 Frontier Manager)
-- **Primary Models**: Gemini 3.8 Flash (High), Claude 3.7 Sonnet.
+- **Primary Models**: Fable 5.1, Opus 5.5, Gemini 4, Argon.
 - **Architectural Role**: Cognitive planning, invariant definition, trade-off evaluation, and security boundary verification.
 - **Token Arbitrage Invariant**: Tier 1 is strictly forbidden from generating boilerplate or writing code directly. Conserving frontier reasoning tokens for planning and verification eliminates token exhaustion while keeping cognitive quality at maximum headroom.
 
