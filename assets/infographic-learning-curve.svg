@@ -5,12 +5,12 @@
     
     .paper-bg { fill: #FDFBF7; }
     .ink { stroke: #22252A; stroke-linecap: round; stroke-linejoin: round; }
-    .text-title { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 28px; font-weight: 700; fill: #22252A; }
-    .text-subtitle { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 16px; fill: #52525B; }
-    .text-heading { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 20px; font-weight: 700; fill: #22252A; }
-    .text-body { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 15px; fill: #27272A; }
+    .text-title { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 26px; font-weight: 700; fill: #22252A; }
+    .text-subtitle { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 15px; fill: #52525B; }
+    .text-heading { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 18px; font-weight: 700; fill: #22252A; }
+    .text-body { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 14px; fill: #27272A; }
     .text-badge { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 13px; font-weight: 700; }
-    .text-mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; }
+    .text-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; }
     .text-metric { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 46px; font-weight: 700; }
 ]]>
     </style>
@@ -21,85 +21,65 @@
 
   <!-- Warm Sketchpad Canvas Card -->
   <rect width="1040" height="830" rx="20" class="paper-bg ink" stroke="#22252A" stroke-width="3" />
-<!-- Top Playful Block Letters (Data Professor Style) -->
+<!-- Top Block Letters -->
 <g transform="translate(0, 30)">
 
         <g transform="translate(295, 0)">
-          <!-- Shadow -->
           <rect x="2" y="2" width="42" height="46" rx="6" fill="#22252A" opacity="0.15" />
-          <!-- Letter Box -->
           <rect x="0" y="0" width="42" height="46" rx="6" fill="#FFE4E6" stroke="#22252A" stroke-width="2.4" />
           <text x="21.0" y="31.0" text-anchor="middle" font-family="'Patrick Hand', 'Comic Sans MS', cursive" font-size="28" font-weight="700" fill="#F43F5E">A</text>
         </g>
         
         <g transform="translate(341, 0)">
-          <!-- Shadow -->
           <rect x="2" y="2" width="42" height="46" rx="6" fill="#22252A" opacity="0.15" />
-          <!-- Letter Box -->
           <rect x="0" y="0" width="42" height="46" rx="6" fill="#FFEDD5" stroke="#22252A" stroke-width="2.4" />
           <text x="21.0" y="31.0" text-anchor="middle" font-family="'Patrick Hand', 'Comic Sans MS', cursive" font-size="28" font-weight="700" fill="#F97316">E</text>
         </g>
         
         <g transform="translate(387, 0)">
-          <!-- Shadow -->
           <rect x="2" y="2" width="42" height="46" rx="6" fill="#22252A" opacity="0.15" />
-          <!-- Letter Box -->
           <rect x="0" y="0" width="42" height="46" rx="6" fill="#FEF3C7" stroke="#22252A" stroke-width="2.4" />
           <text x="21.0" y="31.0" text-anchor="middle" font-family="'Patrick Hand', 'Comic Sans MS', cursive" font-size="28" font-weight="700" fill="#F59E0B">G</text>
         </g>
         
         <g transform="translate(433, 0)">
-          <!-- Shadow -->
           <rect x="2" y="2" width="42" height="46" rx="6" fill="#22252A" opacity="0.15" />
-          <!-- Letter Box -->
           <rect x="0" y="0" width="42" height="46" rx="6" fill="#FEF9C3" stroke="#22252A" stroke-width="2.4" />
           <text x="21.0" y="31.0" text-anchor="middle" font-family="'Patrick Hand', 'Comic Sans MS', cursive" font-size="28" font-weight="700" fill="#EAB308">I</text>
         </g>
         
         <g transform="translate(479, 0)">
-          <!-- Shadow -->
           <rect x="2" y="2" width="42" height="46" rx="6" fill="#22252A" opacity="0.15" />
-          <!-- Letter Box -->
           <rect x="0" y="0" width="42" height="46" rx="6" fill="#DCFCE7" stroke="#22252A" stroke-width="2.4" />
           <text x="21.0" y="31.0" text-anchor="middle" font-family="'Patrick Hand', 'Comic Sans MS', cursive" font-size="28" font-weight="700" fill="#22C55E">S</text>
         </g>
         
         <g transform="translate(525, 0)">
-          <!-- Shadow -->
           <rect x="2" y="2" width="42" height="46" rx="6" fill="#22252A" opacity="0.15" />
-          <!-- Letter Box -->
           <rect x="0" y="0" width="42" height="46" rx="6" fill="#D1FAE5" stroke="#22252A" stroke-width="2.4" />
           <text x="21.0" y="31.0" text-anchor="middle" font-family="'Patrick Hand', 'Comic Sans MS', cursive" font-size="28" font-weight="700" fill="#10B981">B</text>
         </g>
         
         <g transform="translate(571, 0)">
-          <!-- Shadow -->
           <rect x="2" y="2" width="42" height="46" rx="6" fill="#22252A" opacity="0.15" />
-          <!-- Letter Box -->
           <rect x="0" y="0" width="42" height="46" rx="6" fill="#CFFAFE" stroke="#22252A" stroke-width="2.4" />
           <text x="21.0" y="31.0" text-anchor="middle" font-family="'Patrick Hand', 'Comic Sans MS', cursive" font-size="28" font-weight="700" fill="#06B6D4">R</text>
         </g>
         
         <g transform="translate(617, 0)">
-          <!-- Shadow -->
           <rect x="2" y="2" width="42" height="46" rx="6" fill="#22252A" opacity="0.15" />
-          <!-- Letter Box -->
           <rect x="0" y="0" width="42" height="46" rx="6" fill="#E0F2FE" stroke="#22252A" stroke-width="2.4" />
           <text x="21.0" y="31.0" text-anchor="middle" font-family="'Patrick Hand', 'Comic Sans MS', cursive" font-size="28" font-weight="700" fill="#0EA5E9">A</text>
         </g>
         
         <g transform="translate(663, 0)">
-          <!-- Shadow -->
           <rect x="2" y="2" width="42" height="46" rx="6" fill="#22252A" opacity="0.15" />
-          <!-- Letter Box -->
           <rect x="0" y="0" width="42" height="46" rx="6" fill="#EDE9FE" stroke="#22252A" stroke-width="2.4" />
           <text x="21.0" y="31.0" text-anchor="middle" font-family="'Patrick Hand', 'Comic Sans MS', cursive" font-size="28" font-weight="700" fill="#8B5CF6">I</text>
         </g>
         
         <g transform="translate(709, 0)">
-          <!-- Shadow -->
           <rect x="2" y="2" width="42" height="46" rx="6" fill="#22252A" opacity="0.15" />
-          <!-- Letter Box -->
           <rect x="0" y="0" width="42" height="46" rx="6" fill="#F3E8FF" stroke="#22252A" stroke-width="2.4" />
           <text x="21.0" y="31.0" text-anchor="middle" font-family="'Patrick Hand', 'Comic Sans MS', cursive" font-size="28" font-weight="700" fill="#A855F7">N</text>
         </g>
@@ -107,101 +87,90 @@
 
     <g transform="translate(520, 110)">
       <text x="0" y="0" text-anchor="middle" class="text-heading" font-size="24" fill="#22252A">CONTEXT RETENTION &amp; TOKEN BURN CURVE</text>
-      <text x="0" y="22" text-anchor="middle" class="text-subtitle" fill="#71717A">By: Chanin Nantasenamat (Data Professor) Style Architecture</text>
+      <text x="0" y="22" text-anchor="middle" class="text-subtitle" fill="#52525B">Deterministic Token Arbitrage vs. Traditional Context Bloat</text>
     </g>
     
     <!-- Hand-Drawn Coordinate Axes -->
     <g>
       <!-- X-Axis -->
-      <line x1="160" y1="640" x2="920" y2="640" stroke="#22252A" stroke-width="3.2" stroke-linecap="round" />
-      <polygon points="920,640 906,634 906,646" fill="#22252A" />
-      <text x="540.0" y="678" text-anchor="middle" class="text-heading" font-size="22" fill="#22252A">CONVERSATION DEPTH / SESSION TURNS</text>
+      <line x1="140" y1="640" x2="950" y2="640" stroke="#22252A" stroke-width="3.2" stroke-linecap="round" />
+      <polygon points="950,640 936,634 936,646" fill="#22252A" />
+      <text x="545.0" y="678" text-anchor="middle" class="text-heading" font-size="22" fill="#22252A">CONVERSATION DEPTH / SESSION TURNS</text>
       
       <!-- Y-Axis -->
-      <line x1="160" y1="640" x2="160" y2="170" stroke="#22252A" stroke-width="3.2" stroke-linecap="round" />
-      <polygon points="160,170 154,184 166,184" fill="#22252A" />
+      <line x1="140" y1="640" x2="140" y2="170" stroke="#22252A" stroke-width="3.2" stroke-linecap="round" />
+      <polygon points="140,170 134,184 146,184" fill="#22252A" />
       
       <!-- Rotated Y-Axis Label -->
-      <text transform="translate(125, 405.0) rotate(-90)" text-anchor="middle" class="text-heading" font-size="22" fill="#22252A">CONTEXT PRESSURE / TOKEN BURN</text>
+      <text transform="translate(105, 405.0) rotate(-90)" text-anchor="middle" class="text-heading" font-size="22" fill="#22252A">CONTEXT PRESSURE / TOKEN BURN</text>
     </g>
     
-    <!-- Curve 1: Traditional Unbounded Context Bloat -->
-    <!-- Soft Red Marker Highlight Under Stroke -->
-    <path d="M 160 610 Q 320 570 480 430 T 750 250 T 870 200" fill="none" stroke="#FCA5A5" stroke-width="12" stroke-linecap="round" opacity="0.6" />
-    <!-- Charcoal Ink Stroke -->
-    <path d="M 160 610 Q 320 570 480 430 T 750 250 T 870 200" fill="none" stroke="#DC2626" stroke-width="3.6" stroke-linecap="round" />
+    <!-- Curve 1: Traditional Context Bloat -->
+    <path d="M 140 610 Q 320 570 480 430 T 750 250 T 870 200" fill="none" stroke="#FCA5A5" stroke-width="12" stroke-linecap="round" opacity="0.6" />
+    <path d="M 140 610 Q 320 570 480 430 T 750 250 T 870 200" fill="none" stroke="#DC2626" stroke-width="3.6" stroke-linecap="round" />
     
-    <!-- End dots / exclamation -->
+    <!-- End dots -->
     <circle cx="875" cy="198" r="4" fill="#DC2626" />
     <circle cx="887" cy="196" r="4" fill="#DC2626" />
     <circle cx="899" cy="194" r="4" fill="#DC2626" />
     
     <!-- Traditional Callout Box 1 (Early slope) -->
-    <g transform="translate(220, 470)">
-      <rect x="0" y="0" width="180" height="60" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="90" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#9A3412">Turn 5 to 10:</text>
-      <text x="90" y="42" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#7C2D12">Full transcript re-read slows down.</text>
-      <!-- Pointer arrow -->
-      <path d="M 90 60 Q 95 75 110 85" fill="none" stroke="#EA580C" stroke-width="2" />
-      <polygon points="110,85 102,80 106,75" fill="#EA580C" />
+    <g transform="translate(190, 470)">
+      <rect x="0" y="0" width="200" height="60" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="100" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#9A3412">Turn 5 to 10 Slowdown:</text>
+      <text x="100" y="42" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#7C2D12">Full transcript re-read latency</text>
+      <path d="M 100 60 Q 105 75 120 85" fill="none" stroke="#EA580C" stroke-width="2" />
+      <polygon points="120,85 112,80 116,75" fill="#EA580C" />
     </g>
     
     <!-- Traditional Callout Box 2 (Steep rise) -->
-    <g transform="translate(430, 260)">
-      <rect x="0" y="0" width="200" height="70" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="100" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#991B1B">Turn 20+ Explosion:</text>
-      <text x="100" y="42" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#7F1D1D">60k+ tokens resent every prompt.</text>
-      <text x="100" y="58" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#B91C1C">Frontier token costs skyrocket!</text>
-      <!-- Pointer arrow -->
-      <path d="M 100 70 Q 105 85 115 100" fill="none" stroke="#DC2626" stroke-width="2" />
-      <polygon points="115,100 107,95 111,90" fill="#DC2626" />
+    <g transform="translate(420, 270)">
+      <rect x="0" y="0" width="220" height="70" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="110" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#991B1B">Turn 20+ Explosion:</text>
+      <text x="110" y="42" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#7F1D1D">60k+ tokens resent every prompt</text>
+      <text x="110" y="58" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#B91C1C">Frontier token costs skyrocket!</text>
+      <path d="M 110 70 Q 115 85 125 100" fill="none" stroke="#DC2626" stroke-width="2" />
+      <polygon points="125,100 117,95 121,90" fill="#DC2626" />
     </g>
     
     <!-- Traditional Callout Box 3 (Top peak) -->
-    <g transform="translate(680, 110)">
-      <rect x="0" y="0" width="220" height="75" rx="8" fill="#FFE4E6" stroke="#E11D48" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="110" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#9F1239">Context Overflow!</text>
-      <text x="110" y="44" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#881337">Hallucination loops begin,</text>
-      <text x="110" y="60" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#881337">rules forgotten, agent crashes.</text>
-      <!-- Pointer arrow -->
-      <path d="M 110 75 Q 115 85 125 95" fill="none" stroke="#E11D48" stroke-width="2" />
-      <polygon points="125,95 117,90 121,85" fill="#E11D48" />
+    <g transform="translate(720, 140)">
+      <rect x="0" y="0" width="230" height="75" rx="8" fill="#FFE4E6" stroke="#E11D48" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="115" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#9F1239">Context Overflow Crash:</text>
+      <text x="115" y="44" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#881337">Hallucinations begin, rules</text>
+      <text x="115" y="60" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#881337">forgotten, model degrades</text>
+      <path d="M 115 75 Q 120 85 130 95" fill="none" stroke="#E11D48" stroke-width="2" />
+      <polygon points="130,95 122,90 126,85" fill="#E11D48" />
     </g>
     
-    <!-- Curve 2: AegisBrain Pinned Active Context (<= 400 Tokens) -->
-    <!-- Green Shaded Band Underneath -->
-    <rect x="160" y="595" width="760" height="45" fill="#DCFCE7" opacity="0.4" />
+    <!-- Curve 2: AegisBrain Pinned Active Context -->
+    <rect x="140" y="595" width="810" height="45" fill="#DCFCE7" opacity="0.4" />
     
-    <!-- Marker Highlight on Line -->
-    <line x1="160" y1="600" x2="920" y2="600" stroke="#86EFAC" stroke-width="12" stroke-linecap="round" />
-    <!-- Charcoal Ink Line -->
-    <line x1="160" y1="600" x2="920" y2="600" stroke="#16A34A" stroke-width="3.6" stroke-linecap="round" />
+    <line x1="140" y1="600" x2="950" y2="600" stroke="#86EFAC" stroke-width="12" stroke-linecap="round" />
+    <line x1="140" y1="600" x2="950" y2="600" stroke="#16A34A" stroke-width="3.6" stroke-linecap="round" />
     
     <!-- AegisBrain Callout Box 1 (Left) -->
-    <g transform="translate(200, 675)">
-      <rect x="0" y="0" width="260" height="58" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="130" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#14532D">Turn 1 to Turn 1,000 Pinned:</text>
-      <text x="130" y="44" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#166534">Active working context strictly pinned ≤ 400 t!</text>
-      <!-- Upward pointer arrow -->
-      <path d="M 130 0 Q 130 -15 130 -65" fill="none" stroke="#16A34A" stroke-width="2" />
-      <polygon points="130,-65 125,-55 135,-55" fill="#16A34A" />
+    <g transform="translate(180, 675)">
+      <rect x="0" y="0" width="290" height="58" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="145" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#14532D">Turn 1 to Turn 1,000+ Pinned:</text>
+      <text x="145" y="44" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#166534">Active working context strictly pinned ≤ 400 t</text>
+      <path d="M 145 0 Q 145 -15 145 -65" fill="none" stroke="#16A34A" stroke-width="2" />
+      <polygon points="145,-65 140,-55 150,-55" fill="#16A34A" />
     </g>
     
     <!-- AegisBrain Callout Box 2 (Right) -->
-    <g transform="translate(560, 675)">
-      <rect x="0" y="0" width="310" height="58" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="155" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#14532D">SQLite WAL + FTS5 Neural Index:</text>
-      <text x="155" y="44" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#166534">Recalls exact relevant facts in 24ms with 0 bloat.</text>
-      <!-- Upward pointer arrow -->
-      <path d="M 155 0 Q 155 -15 155 -65" fill="none" stroke="#16A34A" stroke-width="2" />
-      <polygon points="155,-65 150,-55 160,-55" fill="#16A34A" />
+    <g transform="translate(550, 675)">
+      <rect x="0" y="0" width="330" height="58" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="165" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#14532D">SQLite WAL + FTS5 Neural Index:</text>
+      <text x="165" y="44" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#166534">Recalls exact relevant facts in 24ms with 0 bloat</text>
+      <path d="M 165 0 Q 165 -15 165 -65" fill="none" stroke="#16A34A" stroke-width="2" />
+      <polygon points="165,-65 160,-55 170,-55" fill="#16A34A" />
     </g>
     
-    <!-- Hand-Drawn Footer Signature (Chanin Nantasenamat / Data Professor style) -->
+    <!-- Clean Brand Signature -->
     <g transform="translate(40, 755)">
-      <text x="0" y="24" class="text-heading" fill="#22252A">By: AegisBrain Architecture Core</text>
+      <text x="0" y="24" class="text-heading" fill="#22252A">AegisBrain Autonomous Architecture</text>
       
-      <!-- Hand-drawn brand mark badge -->
       <g transform="translate(0, 34)">
         <rect x="0" y="0" width="60" height="26" rx="4" fill="#0284C7" stroke="#22252A" stroke-width="2" />
         <text x="30" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">AEGIS</text>
@@ -210,6 +179,6 @@
         <text x="96" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">BRAIN</text>
       </g>
       
-      <text x="960" y="44" text-anchor="end" class="text-subtitle" fill="#71717A">Verified Production 2026 • Hand-Drawn Educational Infographics</text>
+      <text x="960" y="44" text-anchor="end" class="text-mono" font-size="12" fill="#71717A">github.com/PG300604/aegis-brain</text>
     </g>
     </svg>

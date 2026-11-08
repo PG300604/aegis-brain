@@ -152,7 +152,7 @@ The Subagent marks its status as `escalated_to_senior_boss` and signals Tier 1. 
 AegisBrain is tool-agnostic. Any supported agent can act as **Tier 1 Boss** or **Tier 3 Execution Worker**:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/universal-agent-matrix.svg" alt="Universal Agent Interchangeability Architecture" width="100%">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/infographic-universal-agents.svg" alt="Universal Agent Interchangeability Standardizing Protocol Hand-Drawn Infographic" width="100%">
 </p>
 
 - **OpenCode as Boss with Codex as Worker**:
@@ -181,7 +181,7 @@ Every transaction is normalized through the **Universal Execution Envelope (`Uni
 Before any candidate draft reaches the user or repository, it must pass all 4 quality gates:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/quality-architecture-gate.svg" alt="4-Decision Quality Architecture Gate" width="100%">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/infographic-quality-gate.svg" alt="4-Decision Quality Architecture Gate Hand-Drawn Infographic" width="100%">
 </p>
 
 1. **Karpathy Simplicity Doctrine**: Surgical, minimal code with zero speculative abstractions, unused wrappers, or premature flexibility.

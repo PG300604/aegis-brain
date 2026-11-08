@@ -1,26 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="100%" height="100%">
   <defs>
     <style>
-      .bg { fill: #FAFAFA; }
-      .brand-text { fill: #111827; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-weight: 800; font-size: 82px; letter-spacing: -2px; }
+      .bg { fill: #FDFBF7; }
+      .brand-text { fill: #22252A; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-weight: 800; font-size: 82px; letter-spacing: -2px; }
       .tagline-text { fill: #4B5563; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-weight: 500; font-size: 22px; letter-spacing: -0.3px; }
       .sketch-purple { stroke: #6366F1; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
       .sketch-blue { stroke: #3B82F6; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
       .sketch-coral { stroke: #FB923C; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; fill: none; }
-
-      @media (prefers-color-scheme: dark) {
-        .bg { fill: #0B0D11; }
-        .brand-text { fill: #F9FAFB; }
-        .tagline-text { fill: #9CA3AF; }
-        .sketch-purple { stroke: #818CF8; }
-        .sketch-blue { stroke: #60A5FA; }
-        .sketch-coral { stroke: #FDBA74; }
-      }
     </style>
   </defs>
 
-  <!-- Clean Minimal Canvas Background -->
-  <rect width="1200" height="320" class="bg" />
+  <!-- Warm Light Canvas with Clean Charcoal Border -->
+  <rect width="1200" height="320" rx="16" class="bg" stroke="#22252A" stroke-width="2.5" />
 
   <!-- Main Composition Center Group -->
   <g transform="translate(600, 145)">
@@ -29,13 +20,12 @@
       Aegis<tspan id="brain-part">Brain.</tspan>
     </text>
 
-    <!-- Hand-Drawn Sketch Accents matching the Pinterest Reference -->
+    <!-- Hand-Drawn Sketch Accents matching the Hand-Drawn Reference -->
     <!-- 1. Purple double underline under "Aegis" (x: -240 to -50, y: 14 to 22) -->
     <path class="sketch-purple" d="M -235,16 C -190,14 -130,18 -55,15" />
     <path class="sketch-purple" d="M -225,23 C -175,20 -115,24 -65,22" opacity="0.75" />
 
     <!-- 2. Blue organic scribble loop circled around "Brain." (x: -30 to 240, y: -80 to 25) -->
-    <!-- Drawn twice in an imperfect loop like a ballpoint/felt pen gesture -->
     <path class="sketch-blue" d="M 90,-78 C 170,-76 250,-55 255,-22 C 262,22 195,34 95,30 C -15,26 -40,10 -35,-25 C -30,-62 30,-80 110,-78 C 185,-75 252,-48 245,-15 C 238,20 170,28 75,26 C -5,24 -30,8 -25,-20" />
 
     <!-- 3. Short Tagline below -->

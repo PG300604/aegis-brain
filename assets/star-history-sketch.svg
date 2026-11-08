@@ -28,7 +28,7 @@
 
   <!-- Title & Header -->
   <text x="40" y="52" class="title">&#9733; GitHub Star Trajectory &amp; Community Velocity</text>
-  <text x="40" y="74" class="subtitle">Handcrafted benchmark timeline &bull; Autonomous agent adoption metrics</text>
+  <text x="40" y="74" class="subtitle">Handcrafted benchmark timeline &#8226; Autonomous agent adoption metrics</text>
 
   <!-- Star Badge Callout -->
   <g transform="translate(680, 32)">
@@ -206,7 +206,7 @@
   <!-- Handwritten Margin Sketch Note -->
   <g transform="translate(550, 370)">
     <text x="0" y="0" font-family="'Caveat', cursive" font-size="20" font-weight="700" fill="#E2E8F0">
-      &#10002; Pure organic viral growth &mdash; zero paid ads, 100% developer love
+      &#10002; Pure organic viral growth &#8212; zero paid ads, 100% developer love
     </text>
     <!-- Hand-drawn curved underline -->
     <path d="M 0.0 8.0 L 25.9 8.1 L 50.8 8.2 L 77.8 7.2 L 103.6 6.4 L 130.1 7.5 L 154.8 7.5 L 181.8 6.7 L 205.7 6.2 L 232.5 6.5 L 258.5 6.5 L 284.1 5.9 L 310.0 6.0" stroke="#F59E0B" stroke-width="2" fill="none" />
