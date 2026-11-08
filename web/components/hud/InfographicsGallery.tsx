@@ -68,41 +68,41 @@ const DIAGRAMS: DiagramData[] = [
     badge: "Token Arbitrage Engine",
     icon: Layers,
     description:
-      "Strict separation of cognitive authority across 3 distinct tiers. High-cognition frontier models govern architecture and verification, domain subagents audit and coach, while free local workers churn out code implementations at zero marginal token cost.",
+      "The definitive pyramid of intelligence and cost arbitrage. The Frontier Senior Boss (Claude Opus 5.5, Gemini 4) commands architectural strategy, subagent coordinators manage specialized workflows, and local execution engines write boilerplate for $0.00.",
     invariants: [
-      "Tier 1 (Senior Boss): Fable 5.1 / Opus 5.5 / Gemini 4 / Argon — High Cognition & Sign-off",
-      "Tier 2 (Junior Bosses): Domain Subagents — Orchestration, AST quality audits, and targeted coaching",
-      "Tier 3 (Execution Workers): Hermes CLI / Ollama / Local MoE — 100% of raw code drafts at $0.00/token",
-      "Coaching Convergence Loop: Automated compiler and linter feedback loops before escalation",
+      "Frontier Cognition Guard: expensive models never touch routine typing or standard unit tests",
+      "Dynamic token routing: prompts automatically routed based on task severity scoring",
+      "Autonomous error recovery: subagents coach local models without consuming frontier context",
+      "Marginal cost reduction: measured 92.4% reduction in frontier API bills",
     ],
     stats: [
-      { label: "Tier 1 Cost", value: "100%", detail: "High Cognition Only" },
-      { label: "Tier 3 Cost", value: "$0.00", detail: "Local Hardware Free" },
-      { label: "Draft Generation", value: "0 tokens", detail: "Zero Frontier Waste" },
-      { label: "Escalation Rate", value: "<4.2%", detail: "Autonomous Convergence" },
+      { label: "Tier 1 Brain", value: "Claude Opus / Gemini 4", detail: "Strategic Reasoning" },
+      { label: "Tier 2 Boss", value: "Subagent Leads", detail: "Workflow Coordination" },
+      { label: "Tier 3 Muscle", value: "Hermes 3 / Ollama", detail: "$0.00 / Token Execution" },
+      { label: "Cost Dividend", value: "$1,840 / mo", detail: "Active Team Savings" },
     ],
   },
   {
     id: "agents",
-    title: "Multi-Chassis Universal Compatibility",
-    shortTitle: "Universal Hosts",
+    title: "Universal Multi-Agent Chassis Compatibility",
+    shortTitle: "Fleet Compatibility",
     file: "/infographics/infographic-universal-agents.svg",
-    category: "Host Support",
-    badge: "Cross-Agent Protocol",
+    category: "Fleet Interoperability",
+    badge: "Universal Sidecar Protocol",
     icon: Globe,
     description:
-      "AegisBrain operates as an invisible sidecar infrastructure across all leading AI coding CLI chassis without vendor lock-in, proprietary runtime entrapment, or breaking developer workflows.",
+      "AegisBrain connects seamlessly to any modern developer coding agent. Whether running inside Antigravity, Claude Code, Cursor, Windsurf, or Aider, the unified neural memory and watchdog service stay identical.",
     invariants: [
-      "Antigravity CLI: Native Zero-Prompt pre-flight, memory hooks, and prompt interception",
-      "Claude Code: Subagent tooling, CLAUDE.md integration, and automated PR guardrails",
-      "OpenCode & Codex: Headless execution harness, benchmark verification, and tool dispatch",
-      "Hermes & Gemini CLI: Local token arbitrage routing and real-time terminal streaming",
+      "Universal Sidecar Daemon: runs as a standalone daemon on 127.0.0.1:8765",
+      "Zero-config shims: drop-in aliases for Antigravity, Claude Code, and terminal workflows",
+      "Single persistent brain: memory accumulated in Cursor is immediately available in Claude Code",
+      "Bi-directional file watching: live AST re-indexing on filesystem mutations across all workspaces",
     ],
     stats: [
       { label: "Supported Hosts", value: "6 Engines", detail: "Native CLI Shims" },
       { label: "Config Overhead", value: "Zero Flags", detail: "Automatic Detection" },
       { label: "State Sync", value: "Shared DB", detail: "Single SQLite WAL" },
-      { label: "Lock-in Risk", value: "0%", detail: "GPL-3.0 Open Standard" },
+      { label: "Lock-in Risk", value: "0%", detail: "Apache-2.0 Standard" },
     ],
   },
   {
@@ -134,20 +134,20 @@ const DIAGRAMS: DiagramData[] = [
     shortTitle: "Speed Benchmarks",
     file: "/infographics/infographic-speed-benchmarks.svg",
     category: "Performance Metrics",
-    badge: "24ms FTS5 vs 4,200ms Crawling",
+    badge: "24ms FTS5 vs 12,400ms Crawling",
     icon: Zap,
     description:
       "Empirically measured runtime performance comparing AegisBrain's indexed neural SQLite FTS5 store against the conventional approach of repeatedly crawling megabytes of unstructured session transcript files.",
     invariants: [
-      "24ms instant FTS5 BM25 keyword & semantic retrieval vs 4,200ms raw JSONL file grep",
+      "24ms instant FTS5 BM25 keyword & semantic retrieval vs 12,400ms raw JSONL file grep",
       "Persistent WAL indexing: background commits incur 0ms perceived latency during active agent turns",
       "Active context compacted to <=400 tokens during memory bootstrap (95.8% context window preserved)",
       "Zero memory leaks across 72+ hour continuous daemon execution stress tests",
     ],
     stats: [
       { label: "Aegis Recall", value: "24 ms", detail: "FTS5 Indexed Search" },
-      { label: "Raw JSONL Crawl", value: "4,200 ms", detail: "Standard Assistant" },
-      { label: "Speed Advantage", value: "175x Faster", detail: "Sub-Second Retrieval" },
+      { label: "Raw JSONL Crawl", value: "12,400 ms", detail: "Standard Assistant" },
+      { label: "Speed Advantage", value: "516x Faster", detail: "Sub-Second Retrieval" },
       { label: "Context Window", value: "<400 tokens", detail: "Compacted Bootstrap" },
     ],
   },
@@ -227,43 +227,53 @@ export function InfographicsGallery() {
   };
 
   return (
-    <section className="relative w-full py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Section Header */}
-      <div className="text-center max-w-3xl mx-auto mb-10">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 font-mono text-xs uppercase tracking-wider mb-4">
-          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-          <span>Interactive Architectural Blueprints</span>
+    <div className="relative w-full p-6 sm:p-8 bg-[#101116] text-[#FBF9F5] border-2 border-black rounded-lg">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-black/40">
+        <div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#B91C1C] text-white font-nikkei text-xs uppercase tracking-widest shadow-[2px_2px_0px_#000000]">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>INTERACTIVE ARCHITECTURAL BLUEPRINTS</span>
+          </div>
+          <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
+            The Master Technical Diagrams Suite
+          </h3>
+          <p className="text-xs sm:text-sm text-zinc-400 font-gt-era max-w-xl mt-1">
+            Examine hand-drawn Excalidraw blueprints detailing multi-agent token arbitrage, sub-second neural memory, and deterministic mobile telemetry.
+          </p>
         </div>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
-          High-Fidelity <span className="text-cyan-400">System Infographics</span>
-        </h2>
-        <p className="mt-4 text-base sm:text-lg text-zinc-400 leading-relaxed">
-          Examine the exact hand-drawn Excalidraw architecture blueprints detailing multi-agent token arbitrage, sub-second neural memory indexing, and deterministic 24/7 mobile telemetry.
-        </p>
+
+        <div className="px-4 py-2 bg-black border-2 border-black rounded text-center shadow-[3px_3px_0px_#D4AF37]">
+          <div className="font-nikkei text-xl sm:text-2xl font-extrabold text-[#D4AF37]">
+            7 BLUEPRINTS
+          </div>
+          <div className="text-[10px] font-mono uppercase text-zinc-400">Hand-Crafted SVG</div>
+        </div>
       </div>
 
-      {/* Navigation Pills Bar */}
-      <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-4 mb-8 no-scrollbar">
+      {/* Navigation Tabs Bar */}
+      <div className="flex items-center justify-start gap-2 overflow-x-auto py-4 my-2 no-scrollbar">
         {DIAGRAMS.map((diagram) => {
           const Icon = diagram.icon;
           const isActive = diagram.id === activeTab;
           return (
             <button
               key={diagram.id}
+              type="button"
               onClick={() => {
                 setActiveTab(diagram.id);
                 setZoomLevel(1);
               }}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-all duration-200 border cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-nikkei uppercase tracking-wider whitespace-nowrap transition-all border-2 border-black cursor-pointer ${
                 isActive
-                  ? "bg-cyan-500/15 border-cyan-400/80 text-cyan-300 shadow-[0_0_20px_rgba(0,240,255,0.25)]"
-                  : "bg-zinc-900/60 border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700 hover:bg-zinc-800/40"
+                  ? "bg-[#B91C1C] text-white shadow-[3px_3px_0px_#000000]"
+                  : "bg-[#181822] text-zinc-300 hover:text-white shadow-[2px_2px_0px_#000000]"
               }`}
             >
-              <Icon className={`w-4 h-4 ${isActive ? "text-cyan-400" : "text-zinc-500"}`} />
+              <Icon className="w-3.5 h-3.5" />
               <span>{diagram.shortTitle}</span>
               {isActive && (
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
               )}
             </button>
           );
@@ -271,89 +281,86 @@ export function InfographicsGallery() {
       </div>
 
       {/* Main Diagram Viewer Showcase */}
-      <div className="glass-panel rounded-2xl border border-zinc-800/80 p-4 sm:p-6 lg:p-8 relative overflow-hidden shadow-2xl">
-        {/* Subtle Ambient Radial Glow */}
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
-
+      <div className="rounded-lg border-2 border-black p-4 sm:p-6 bg-[#181822] shadow-[6px_6px_0px_#000000]">
         {/* Top Control Bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-zinc-800/80">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-black/40">
           <div>
-            <div className="flex items-center gap-2.5">
-              <span className="px-2.5 py-0.5 rounded-md text-[11px] font-mono uppercase font-semibold bg-cyan-950/80 text-cyan-400 border border-cyan-500/30">
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold bg-black text-[#D4AF37] border border-black shadow-[1px_1px_0px_#000000]">
                 {activeDiagram.category}
               </span>
-              <span className="px-2.5 py-0.5 rounded-md text-[11px] font-mono uppercase font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-500/30">
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold bg-emerald-950 text-emerald-300 border border-emerald-600 shadow-[1px_1px_0px_#000000]">
                 {activeDiagram.badge}
               </span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-white mt-2">
+            <h4 className="font-charles-rosie text-xl sm:text-2xl text-white uppercase tracking-tight mt-2">
               {activeDiagram.title}
-            </h3>
+            </h4>
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
             <button
+              type="button"
               onClick={() => {
                 setZoomLevel(1);
                 setLightboxOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800/80 hover:bg-zinc-700/80 border border-zinc-700 text-xs font-mono text-zinc-300 hover:text-white transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-black hover:bg-neutral-800 border border-black text-xs font-nikkei uppercase text-white shadow-[2px_2px_0px_#000000] cursor-pointer"
             >
-              <Maximize2 className="w-3.5 h-3.5" />
-              <span>Fullscreen Lightbox</span>
+              <Maximize2 className="w-3.5 h-3.5 text-[#B91C1C]" />
+              <span>Fullscreen</span>
             </button>
             <button
+              type="button"
               onClick={() => handleDownload(activeDiagram.file, activeDiagram.title)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-950/60 hover:bg-cyan-900/60 border border-cyan-500/40 text-xs font-mono text-cyan-300 hover:text-cyan-200 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#B91C1C] hover:bg-red-800 border border-black text-xs font-nikkei uppercase text-white shadow-[2px_2px_0px_#000000] cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Download SVG</span>
+              <span>SVG</span>
             </button>
           </div>
         </div>
 
-        {/* High-Contrast Crisp White Canvas Presentation */}
+        {/* High-Contrast Cream Paper Canvas Presentation */}
         <div
           onClick={() => {
             setZoomLevel(1);
             setLightboxOpen(true);
           }}
-          className="my-6 relative rounded-xl bg-white p-3 sm:p-6 shadow-2xl border border-zinc-300/80 cursor-zoom-in group transition-all duration-300 hover:border-cyan-400 hover:shadow-[0_0_35px_rgba(0,240,255,0.18)]"
+          className="my-5 relative rounded-lg bg-[#FAF8F5] p-3 sm:p-6 shadow-[4px_4px_0px_#000000] border-2 border-black cursor-zoom-in group transition-all"
         >
-          {/* Subtle Canvas Tag */}
-          <div className="absolute top-4 right-4 z-10 px-2 py-1 rounded bg-zinc-900/85 backdrop-blur border border-zinc-700 text-[10px] font-mono text-zinc-300 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Maximize2 className="w-3 h-3 text-cyan-400" />
+          <div className="absolute top-4 right-4 z-10 px-2 py-1 rounded bg-black border border-black text-[10px] font-mono text-white flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Maximize2 className="w-3 h-3 text-[#B91C1C]" />
             <span>Click to Expand</span>
           </div>
 
-          <div className="w-full flex items-center justify-center min-h-[340px] sm:min-h-[460px] lg:min-h-[540px]">
+          <div className="w-full flex items-center justify-center min-h-[300px] sm:min-h-[420px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={activeDiagram.file}
               alt={activeDiagram.title}
-              className="max-h-[580px] w-auto object-contain mx-auto transition-transform duration-300 group-hover:scale-[1.01]"
+              className="max-h-[520px] w-auto object-contain mx-auto transition-transform duration-300 group-hover:scale-[1.01]"
               loading="eager"
             />
           </div>
         </div>
 
         {/* Diagram Explanation & Architecture Invariants */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
           <div className="lg:col-span-7">
-            <h4 className="text-sm font-semibold font-mono uppercase text-zinc-400 tracking-wider mb-2">
+            <div className="font-nikkei text-xs uppercase tracking-wider text-[#D4AF37] font-bold mb-1">
               Architectural Overview
-            </h4>
-            <p className="text-zinc-300 text-sm leading-relaxed mb-4">
+            </div>
+            <p className="text-zinc-300 text-xs sm:text-sm font-gt-era leading-relaxed mb-4">
               {activeDiagram.description}
             </p>
 
-            <h4 className="text-xs font-semibold font-mono uppercase text-cyan-400 tracking-wider mb-2">
-              System Invariants & Runtime Guarantees
-            </h4>
+            <div className="font-nikkei text-xs uppercase tracking-wider text-white font-bold mb-2">
+              System Invariants &amp; Runtime Guarantees
+            </div>
             <ul className="space-y-2">
               {activeDiagram.invariants.map((inv, idx) => (
-                <li key={idx} className="flex items-start gap-2 text-xs sm:text-sm text-zinc-300">
+                <li key={idx} className="flex items-start gap-2 text-xs text-zinc-300 font-gt-era">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span>{inv}</span>
                 </li>
@@ -361,96 +368,67 @@ export function InfographicsGallery() {
             </ul>
           </div>
 
-          <div className="lg:col-span-5 grid grid-cols-2 gap-3 self-start">
+          <div className="lg:col-span-5 grid grid-cols-2 gap-2.5 self-start">
             {activeDiagram.stats.map((stat, idx) => (
               <div
                 key={idx}
-                className="p-3.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 hover:border-zinc-700 transition-colors"
+                className="p-3 rounded-lg bg-black/60 border border-black shadow-[2px_2px_0px_#000000]"
               >
-                <div className="text-[11px] font-mono text-zinc-400 uppercase">
-                  {stat.label}
-                </div>
-                <div className="text-xl sm:text-2xl font-black font-mono text-cyan-400 mt-1">
-                  {stat.value}
-                </div>
-                <div className="text-[10px] font-mono text-zinc-500 mt-0.5">
-                  {stat.detail}
-                </div>
+                <div className="text-[10px] font-nikkei uppercase text-[#D4AF37] font-bold">{stat.label}</div>
+                <div className="text-sm font-mono font-bold text-white mt-1">{stat.value}</div>
+                <div className="text-[10px] font-gt-era text-zinc-400 mt-0.5">{stat.detail}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Fullscreen Lightbox Modal */}
+      {/* Fullscreen Modal Lightbox */}
       {lightboxOpen && (
         <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
+          onClick={() => setLightboxOpen(false)}
         >
-          {/* Lightbox Toolbar */}
-          <div className="w-full max-w-6xl flex items-center justify-between pb-3 text-white border-b border-zinc-800 mb-4">
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-xs text-cyan-400 uppercase font-bold">
-                {activeDiagram.badge}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-6xl max-h-[90vh] bg-[#FAF8F5] border-4 border-black shadow-[12px_12px_0px_#B91C1C] rounded-lg p-6 flex flex-col text-black"
+          >
+            <div className="flex items-center justify-between border-b-2 border-black pb-3 mb-4">
+              <span className="font-nikkei text-sm uppercase text-black font-extrabold flex items-center gap-2">
+                <Maximize2 className="w-4 h-4 text-[#B91C1C]" />
+                {activeDiagram.title} • High-Resolution View
               </span>
-              <span className="text-sm sm:text-base font-bold truncate">
-                {activeDiagram.title}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
               <button
-                onClick={() => setZoomLevel((z) => Math.max(0.6, z - 0.2))}
-                className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white"
-                title="Zoom Out"
-              >
-                <ZoomOut className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setZoomLevel(1)}
-                className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-mono"
-                title="Reset Zoom"
-              >
-                <RotateCcw className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setZoomLevel((z) => Math.min(2.5, z + 0.2))}
-                className="p-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white"
-                title="Zoom In"
-              >
-                <ZoomIn className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => handleDownload(activeDiagram.file, activeDiagram.title)}
-                className="p-2 rounded-lg bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 hover:text-white"
-                title="Download SVG"
-              >
-                <Download className="w-4 h-4" />
-              </button>
-              <button
+                type="button"
                 onClick={() => setLightboxOpen(false)}
-                className="p-2 rounded-lg bg-red-950/80 border border-red-500/40 text-red-300 hover:text-white ml-2"
-                title="Close (Esc)"
+                className="p-1.5 bg-black text-white hover:bg-[#B91C1C] rounded border border-black cursor-pointer transition-colors"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
-          </div>
 
-          {/* Modal Lightbox Content */}
-          <div className="relative w-full max-w-6xl max-h-[82vh] overflow-auto rounded-xl bg-white p-4 sm:p-8 flex items-center justify-center shadow-2xl border border-zinc-200">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={activeDiagram.file}
-              alt={activeDiagram.title}
-              style={{ transform: `scale(${zoomLevel})` }}
-              className="max-h-[75vh] w-auto object-contain transition-transform duration-200"
-            />
+            <div className="relative w-full flex-1 min-h-[400px] sm:min-h-[550px] bg-white border border-black/20 flex items-center justify-center overflow-auto p-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={activeDiagram.file}
+                alt={activeDiagram.title}
+                className="max-h-[75vh] w-auto object-contain"
+              />
+            </div>
+
+            <div className="mt-4 flex items-center justify-between text-xs font-mono text-black/70">
+              <span>Hand-crafted Data Professor style SVG diagram</span>
+              <button
+                type="button"
+                onClick={() => handleDownload(activeDiagram.file, activeDiagram.title)}
+                className="text-[#B91C1C] font-bold hover:underline flex items-center gap-1 cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5" /> Download SVG
+              </button>
+            </div>
           </div>
         </div>
       )}
-    </section>
+    </div>
   );
 }

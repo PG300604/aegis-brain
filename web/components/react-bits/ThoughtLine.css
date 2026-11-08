@@ -1,9 +1,9 @@
-/* ThoughtLine.css - React Bits Animated Thought Line (Santioni Editorial Edition) */
+/* ThoughtLine.css - React Bits Animated Thought Line (Santioni Spirits Editorial Edition) */
 
 .thought-line-container {
   width: 100%;
   border-radius: 8px;
-  background: #14141C;
+  background: #FAF8F5;
   border: 2px solid #000000;
   box-shadow: 4px 4px 0px #000000;
   overflow: hidden;
@@ -12,6 +12,7 @@
 
 .thought-line-container:hover {
   border-color: #B91C1C;
+  box-shadow: 4px 4px 0px #B91C1C;
 }
 
 .thought-shimmer-sweep {
@@ -23,11 +24,11 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(185, 28, 28, 0.12) 50%,
+    rgba(185, 28, 28, 0.08) 50%,
     transparent 100%
   );
   transform: translateX(-100%);
-  animation: shimmer-sweep 2.5s infinite;
+  animation: shimmer-sweep 2.8s infinite;
   pointer-events: none;
 }
 
@@ -39,15 +40,15 @@
 @keyframes sparkle-breathe {
   0%, 100% {
     transform: scale(1) rotate(0deg);
-    opacity: 0.8;
+    opacity: 0.85;
   }
   50% {
-    transform: scale(1.2) rotate(10deg);
+    transform: scale(1.15) rotate(8deg);
     opacity: 1;
-    filter: drop-shadow(0 0 6px #B91C1C);
+    filter: drop-shadow(0 0 4px #D4AF37);
   }
 }
 
 .sparkle-breathe-glyph {
-  animation: sparkle-breathe 2.2s ease-in-out infinite;
+  animation: sparkle-breathe 2.4s ease-in-out infinite;
 }

@@ -12,10 +12,10 @@ interface SceneTransitionProps {
 }
 
 export function SceneTransition({
-  fromAct = "CHAPTER I",
-  toAct = "CHAPTER II",
+  fromAct = "FEATURE 01",
+  toAct = "FEATURE 02",
   badge = "CONVERGENCE → NEURAL PERSISTENCE",
-  dark = false,
+  dark = true,
 }: SceneTransitionProps) {
   return (
     <div className="relative w-full py-12 sm:py-16 flex flex-col items-center justify-center pointer-events-none select-none">

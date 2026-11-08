@@ -113,12 +113,12 @@ export function TerminalInstall() {
       await navigator.clipboard.writeText(selected.command);
       setCopied(true);
 
-      // Trigger celebratory confetti
+      // Trigger celebratory confetti in Santioni Spirits colors
       confetti({
         particleCount: 45,
         spread: 60,
         origin: { y: 0.8 },
-        colors: ["#00F0FF", "#10B981", "#38BDF8", "#F8FAFC"],
+        colors: ["#B91C1C", "#D4AF37", "#10B981", "#FBF9F5"],
       });
 
       setTimeout(() => setCopied(false), 2500);
@@ -138,57 +138,64 @@ export function TerminalInstall() {
   };
 
   return (
-    <section id="install" className="relative py-20 px-4 sm:px-6 max-w-5xl mx-auto">
-      {/* Decorative ambient aura */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[350px] bg-cyan-500/10 blur-[120px] rounded-full pointer-events-none" />
-
-      {/* Section Header */}
-      <div className="text-center mb-10 space-y-3">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-400 font-mono text-xs">
-          <Terminal className="w-3.5 h-3.5" />
-          <span>ZERO-CONFIG DEPLOYMENT</span>
+    <div className="relative p-6 sm:p-8 bg-[#101116] text-[#FBF9F5] border-2 border-black rounded-lg">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-black/40">
+        <div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#B91C1C] text-white font-nikkei text-xs uppercase tracking-widest shadow-[2px_2px_0px_#000000]">
+            <Terminal className="w-3.5 h-3.5" />
+            <span>ZERO-CONFIG SOVEREIGN DEPLOYMENT</span>
+          </div>
+          <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
+            One-Line Installation Cockpit
+          </h3>
+          <p className="text-xs sm:text-sm text-zinc-400 font-gt-era max-w-xl mt-1">
+            One script initializes the 24/7 background daemon, configures the sub-second SQLite FTS5 neural index,
+            and connects the Telegram remote listener.
+          </p>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-mono">
-          Install AegisBrain In <span className="text-cyan-400 text-glow-cyan">Seconds</span>
-        </h2>
-        <p className="text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto">
-          One script initializes the 24/7 background daemon, configures the sub-second SQLite FTS5 neural index,
-          and connects the Telegram remote listener.
-        </p>
+
+        <div className="px-4 py-2 bg-black border-2 border-black rounded text-center shadow-[3px_3px_0px_#D4AF37]">
+          <div className="font-nikkei text-xl sm:text-2xl font-extrabold text-[#D4AF37]">
+            V2.4.0
+          </div>
+          <div className="text-[10px] font-mono uppercase text-zinc-400">Stable Release</div>
+        </div>
       </div>
 
       {/* Main Terminal Window */}
-      <div className="glass-panel-glow rounded-2xl overflow-hidden shadow-2xl border border-cyan-500/30">
+      <div className="my-6 rounded-lg overflow-hidden border-2 border-black shadow-[6px_6px_0px_#000000] bg-[#181822]">
         {/* Terminal Chrome Bar */}
-        <div className="px-4 py-3 bg-[#0a0c14]/90 border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
+        <div className="px-4 py-3 bg-black border-b-2 border-black flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-rose-500/80 border border-rose-600/40" />
-            <div className="w-3 h-3 rounded-full bg-amber-500/80 border border-amber-600/40" />
-            <div className="w-3 h-3 rounded-full bg-emerald-500/80 border border-emerald-600/40" />
-            <span className="ml-3 font-mono text-xs text-zinc-400 flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-[#B91C1C] border border-black" />
+            <div className="w-3 h-3 rounded-full bg-[#D4AF37] border border-black" />
+            <div className="w-3 h-3 rounded-full bg-[#10B981] border border-black" />
+            <span className="ml-3 font-mono text-xs text-zinc-300 flex items-center gap-1.5">
               <span>aegis-brain</span>
               <span className="text-zinc-600">/</span>
-              <span className="text-cyan-400">install</span>
+              <span className="text-[#D4AF37] font-bold">install</span>
             </span>
           </div>
 
           <div className="flex items-center gap-2 font-mono text-[11px] text-zinc-400">
-            <span className="px-2 py-0.5 rounded bg-zinc-800/80 text-zinc-300 border border-white/5">
+            <span className="px-2 py-0.5 rounded bg-[#101116] text-[#D4AF37] border border-black shadow-[1px_1px_0px_#000000]">
               {selected.osBadge}
             </span>
           </div>
         </div>
 
         {/* Tab Selector */}
-        <div className="flex items-center border-b border-white/5 bg-[#05060a]/60 px-2 sm:px-4 overflow-x-auto no-scrollbar">
+        <div className="flex items-center border-b border-black/40 bg-black/40 px-2 sm:px-4 overflow-x-auto no-scrollbar">
           {TABS.map((tab) => (
             <button
               key={tab.id}
+              type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`px-3 sm:px-4 py-2.5 font-mono text-xs whitespace-nowrap transition-all border-b-2 font-medium flex items-center gap-2 ${
+              className={`px-3 sm:px-4 py-2.5 font-nikkei text-xs uppercase tracking-wider whitespace-nowrap transition-all border-b-2 font-extrabold flex items-center gap-2 cursor-pointer ${
                 activeTab === tab.id
-                  ? "border-cyan-400 text-cyan-400 bg-cyan-400/5 shadow-[0_2px_8px_rgba(0,240,255,0.15)]"
-                  : "border-transparent text-zinc-400 hover:text-zinc-200 hover:border-zinc-700"
+                  ? "border-[#B91C1C] text-white bg-black/60 shadow-[inset_0_-2px_0px_#B91C1C]"
+                  : "border-transparent text-zinc-400 hover:text-white"
               }`}
             >
               <span>{tab.label}</span>
@@ -197,139 +204,94 @@ export function TerminalInstall() {
         </div>
 
         {/* Command Body */}
-        <div className="p-5 sm:p-7 bg-[#030408]/95 font-mono text-sm relative">
-          <div className="text-zinc-500 text-xs mb-2 select-none">
+        <div className="p-5 sm:p-7 bg-[#101116] font-mono text-sm relative">
+          <div className="text-zinc-500 text-xs mb-3 font-mono select-none">
             {selected.comment}
           </div>
 
-          <div className="flex items-start justify-between gap-4 py-2">
-            <div className="flex items-center gap-3 overflow-x-auto text-emerald-300 font-mono text-xs sm:text-sm py-1">
-              <span className="text-cyan-500 select-none font-bold text-base">❯</span>
-              <span className="break-all selection:bg-cyan-500 selection:text-black">
+          <div className="flex items-center justify-between gap-4 bg-black p-4 rounded border-2 border-black shadow-[inset_2px_2px_4px_rgba(0,0,0,0.6)]">
+            <div className="flex items-center gap-3 overflow-x-auto">
+              <span className="text-[#B91C1C] select-none font-bold text-base">&gt;</span>
+              <code className="text-[#FBF9F5] font-semibold text-xs sm:text-sm whitespace-nowrap">
                 {selected.command}
-              </span>
+              </code>
             </div>
 
             <button
+              type="button"
               onClick={handleCopy}
-              className={`flex-shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg font-mono text-xs transition-all duration-200 border ${
+              className={`p-2 rounded font-nikkei text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shrink-0 cursor-pointer border-2 border-black ${
                 copied
-                  ? "bg-emerald-500 text-black border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.4)]"
-                  : "bg-cyan-950/70 hover:bg-cyan-900/90 text-cyan-300 border-cyan-500/40 hover:border-cyan-400 shadow-[0_0_12px_rgba(0,240,255,0.2)]"
+                  ? "bg-emerald-600 text-white shadow-[2px_2px_0px_#000000]"
+                  : "bg-[#B91C1C] hover:bg-red-800 text-white shadow-[3px_3px_0px_#000000]"
               }`}
             >
               {copied ? (
                 <>
                   <Check className="w-3.5 h-3.5" />
-                  <span className="font-semibold">Copied!</span>
+                  <span className="hidden sm:inline">COPIED!</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-3.5 h-3.5" />
-                  <span>Copy</span>
+                  <span className="hidden sm:inline">COPY</span>
                 </>
               )}
             </button>
           </div>
-
-          {/* Quick verification callout */}
-          <div className="mt-4 pt-4 border-t border-white/5 flex flex-wrap items-center justify-between text-[11px] text-zinc-400 gap-2">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Signed release binaries • PGP & SHA-256 verifiable</span>
-            </div>
-            <button
-              onClick={() => setShowDryRun(!showDryRun)}
-              className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-mono transition-colors"
-            >
-              <span>{showDryRun ? "Hide Dry-Run Output" : "View Dry-Run Preview"}</span>
-              {showDryRun ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-            </button>
-          </div>
-
-          {/* Dry Run Simulation Dropdown */}
-          {showDryRun && (
-            <div className="mt-3 p-3.5 rounded-lg bg-black/60 border border-white/10 font-mono text-xs text-zinc-300 space-y-1">
-              <div className="text-zinc-500"># AegisBrain v0.4.0 Self-Bootstrap Dry-Run:</div>
-              <div className="text-emerald-400">[✓] SQLite FTS5 Neural Memory schema verified (~/.aegis/brain.db)</div>
-              <div className="text-emerald-400">[✓] FastText embeddings index mapped (1.8ms query latency)</div>
-              <div className="text-emerald-400">[✓] Telegram Bot listener hooked (@HHAACLIBot / polling active)</div>
-              <div className="text-emerald-400">[✓] In-flight Antigravity injector hooked (/type /alt+m ready)</div>
-              <div className="text-cyan-400">[✓] Daemon running 24/7 on http://127.0.0.1:8765</div>
-              <div className="text-amber-400">✨ AegisBrain successfully installed. Type `aegis briefing` to start.</div>
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Direct Download Assets Matrix */}
-      <div className="mt-10">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <HardDrive className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-sm font-bold tracking-wider uppercase text-zinc-300 font-mono">
-              Direct Binary & Release Downloads
-            </h3>
-          </div>
-          <span className="font-mono text-xs text-zinc-500">v0.4.0 Stable</span>
+      {/* Release Artifacts & SHA-256 Checksums */}
+      <div className="p-5 rounded-lg bg-[#FAF8F5] text-black border-2 border-black shadow-[4px_4px_0px_#000000] space-y-4">
+        <div className="flex items-center justify-between border-b-2 border-black pb-2">
+          <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black">
+            Verified Release Artifacts &amp; SHA-256 Checksums
+          </span>
+          <span className="text-[10px] font-mono bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">
+            286 TESTS PASSING
+          </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="space-y-2 font-mono text-xs">
           {ASSETS.map((asset) => (
             <div
               key={asset.name}
-              className="glass-panel p-4 rounded-xl border border-white/5 hover:border-cyan-500/30 transition-all group"
+              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 p-2.5 bg-white border border-black shadow-[2px_2px_0px_#000000] rounded"
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-white/5 border border-white/10 group-hover:border-cyan-400/40 transition-colors">
-                    <FileCode className="w-4 h-4 text-cyan-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-mono text-xs font-semibold text-white group-hover:text-cyan-300 transition-colors">
-                      {asset.name}
-                    </h4>
-                    <p className="text-[11px] text-zinc-400">{asset.type} • {asset.size}</p>
-                  </div>
+              <div>
+                <div className="font-bold text-black flex items-center gap-2">
+                  <FileCode className="w-3.5 h-3.5 text-[#B91C1C]" />
+                  <span>{asset.name}</span>
+                  <span className="text-[10px] text-zinc-500 font-normal">({asset.size})</span>
                 </div>
+                <div className="text-[10px] text-zinc-600 mt-0.5 truncate max-w-md">
+                  SHA-256: {asset.sha256}
+                </div>
+              </div>
 
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleCopyHash(asset.sha256)}
+                  className="px-2 py-1 bg-[#101116] hover:bg-black text-white text-[10px] font-nikkei uppercase rounded border border-black shadow-[1px_1px_0px_#000000] cursor-pointer"
+                >
+                  {copiedHash === asset.sha256 ? "COPIED" : "COPY HASH"}
+                </button>
                 <a
                   href={asset.url}
                   target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-1.5 rounded-lg bg-white/5 hover:bg-cyan-500 hover:text-black text-zinc-400 hover:border-cyan-400 border border-white/10 transition-all"
-                  title="Download Asset"
+                  rel="noreferrer"
+                  className="px-2 py-1 bg-[#B91C1C] hover:bg-red-800 text-white text-[10px] font-nikkei uppercase rounded border border-black shadow-[1px_1px_0px_#000000] flex items-center gap-1"
                 >
-                  <Download className="w-4 h-4" />
+                  <Download className="w-3 h-3" />
+                  <span>GET</span>
                 </a>
-              </div>
-
-              {/* SHA256 Hash Row */}
-              <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-[10px] font-mono">
-                <div className="flex items-center gap-1.5 text-zinc-500 truncate mr-2">
-                  <span className="text-zinc-600 font-semibold">SHA256:</span>
-                  <span className="truncate">{asset.sha256}</span>
-                </div>
-                <button
-                  onClick={() => handleCopyHash(asset.sha256)}
-                  className="flex-shrink-0 text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1"
-                  title="Copy SHA256 Hash"
-                >
-                  {copiedHash === asset.sha256 ? (
-                    <span className="text-emerald-400 font-bold flex items-center gap-0.5">
-                      <Check className="w-3 h-3" /> Copied
-                    </span>
-                  ) : (
-                    <span>Copy Hash</span>
-                  )}
-                </button>
               </div>
             </div>
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 }
-
-export default TerminalInstall;

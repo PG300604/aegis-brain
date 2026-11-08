@@ -1,4 +1,4 @@
-/* PromptBar.css - React Bits AI Prompt Bar (Santioni Editorial Edition) */
+/* PromptBar.css - React Bits AI Prompt Bar (Santioni Spirits Editorial Edition) */
 
 .prompt-bar-container {
   position: relative;
@@ -8,23 +8,23 @@
 }
 
 .prompt-bar-glass {
-  background: #121217;
+  background: #101116;
   border: 3px solid #000000;
-  border-radius: 14px;
-  box-shadow: 8px 8px 0px #000000;
+  border-radius: 12px;
+  box-shadow: 6px 6px 0px #000000;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .prompt-bar-glass:focus-within {
   border-color: #B91C1C;
-  box-shadow: 8px 8px 0px #B91C1C;
+  box-shadow: 6px 6px 0px #B91C1C;
 }
 
 .effort-slider-track {
   position: relative;
   height: 6px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   border: 1px solid #000000;
   overflow: hidden;
 }
@@ -34,16 +34,16 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: linear-gradient(90deg, #10B981, #F59E0B, #B91C1C);
+  background: linear-gradient(90deg, #10B981, #D4AF37, #B91C1C);
   transition: width 0.2s ease-out;
 }
 
 @keyframes effort-sparks {
   0%, 100% {
-    filter: drop-shadow(0 0 4px #F59E0B) brightness(1);
+    filter: drop-shadow(0 0 4px #D4AF37) brightness(1);
   }
   50% {
-    filter: drop-shadow(0 0 10px #B91C1C) brightness(1.3);
+    filter: drop-shadow(0 0 8px #B91C1C) brightness(1.2);
   }
 }
 
@@ -52,10 +52,10 @@
 }
 
 .model-dropdown-menu {
-  background: #101116;
+  background: #14141C;
   border: 2px solid #000000;
   box-shadow: 6px 6px 0px #000000;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .command-item-hover:hover {

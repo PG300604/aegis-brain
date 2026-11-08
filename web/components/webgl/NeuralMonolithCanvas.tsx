@@ -6,6 +6,7 @@ import * as THREE from "three";
 /**
  * Procedural circular soft radial glow texture for token particles.
  * Eliminates external texture asset dependencies while ensuring high-performance additive blending.
+ * Styled with Santioni Spirits antique gold and blood red palette.
  */
 function createParticleTexture(): THREE.CanvasTexture | null {
   if (typeof document === "undefined") return null;
@@ -17,8 +18,8 @@ function createParticleTexture(): THREE.CanvasTexture | null {
 
   const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
   gradient.addColorStop(0, "rgba(255, 255, 255, 1.0)");
-  gradient.addColorStop(0.25, "rgba(0, 240, 255, 0.85)");
-  gradient.addColorStop(0.65, "rgba(168, 85, 247, 0.35)");
+  gradient.addColorStop(0.25, "rgba(212, 175, 55, 0.9)"); // Gold
+  gradient.addColorStop(0.65, "rgba(185, 28, 28, 0.45)"); // Crimson
   gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
 
   ctx.fillStyle = gradient;
@@ -44,7 +45,7 @@ export default function NeuralMonolithCanvas() {
     const height = container.clientHeight || window.innerHeight;
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x030305, 0.035);
+    scene.fog = new THREE.FogExp2(0x070709, 0.038);
 
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(0, 0, 9.5);
@@ -58,21 +59,21 @@ export default function NeuralMonolithCanvas() {
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.25;
+    renderer.toneMappingExposure = 1.35;
 
-    // --- 2. Lighting ---
-    const ambientLight = new THREE.AmbientLight(0x080914, 1.4);
+    // --- 2. Lighting (Warm Gold & Blood Red Editorial Tone) ---
+    const ambientLight = new THREE.AmbientLight(0x0e0c0a, 1.6);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0x00f0ff, 2.8);
+    const keyLight = new THREE.DirectionalLight(0xd4af37, 3.2); // Antique Gold
     keyLight.position.set(7, 9, 6);
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0xa855f7, 2.2);
+    const rimLight = new THREE.DirectionalLight(0xb91c1c, 2.8); // Blood Red
     rimLight.position.set(-7, -5, -4);
     scene.add(rimLight);
 
-    const fillLight = new THREE.DirectionalLight(0x00e5ff, 1.2);
+    const fillLight = new THREE.DirectionalLight(0xf59e0b, 1.5); // Warm Amber
     fillLight.position.set(0, -6, 5);
     scene.add(fillLight);
 
@@ -85,48 +86,48 @@ export default function NeuralMonolithCanvas() {
     monolithGeo.scale(1.0, 1.48, 1.0);
 
     const monolithMat = new THREE.MeshPhysicalMaterial({
-      color: 0x050508,
-      metalness: 0.94,
-      roughness: 0.07,
+      color: 0x07070a,
+      metalness: 0.95,
+      roughness: 0.08,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.09,
-      reflectivity: 0.95,
+      clearcoatRoughness: 0.08,
+      reflectivity: 0.98,
       flatShading: true,
     });
     const monolithMesh = new THREE.Mesh(monolithGeo, monolithMat);
     monolithGroup.add(monolithMesh);
 
-    // Cyan Neon Edge Lattice Overlay
+    // Warm Gold Inked Wireframe Edge Lattice Overlay
     const wireframeGeo = new THREE.WireframeGeometry(monolithGeo);
     const wireframeMat = new THREE.LineBasicMaterial({
-      color: 0x00f0ff,
+      color: 0xd4af37,
       transparent: true,
-      opacity: 0.72,
+      opacity: 0.85,
       blending: THREE.AdditiveBlending,
       linewidth: 1,
     });
     const wireframeMesh = new THREE.LineSegments(wireframeGeo, wireframeMat);
     monolithGroup.add(wireframeMesh);
 
-    // Internal Pulsating Reactor Core
+    // Internal Pulsating Crimson Reactor Core
     const coreGeo = new THREE.IcosahedronGeometry(0.85, 1);
     const coreMat = new THREE.MeshBasicMaterial({
-      color: 0xa855f7,
+      color: 0xb91c1c,
       wireframe: true,
       transparent: true,
-      opacity: 0.65,
+      opacity: 0.85,
       blending: THREE.AdditiveBlending,
     });
     const coreMesh = new THREE.Mesh(coreGeo, coreMat);
     monolithGroup.add(coreMesh);
 
-    const reactorLight = new THREE.PointLight(0x00f0ff, 3.2, 14, 2);
+    const reactorLight = new THREE.PointLight(0xb91c1c, 4.0, 14, 2);
     monolithGroup.add(reactorLight);
 
-    const reactorPurpleLight = new THREE.PointLight(0xa855f7, 2.0, 8, 2);
-    monolithGroup.add(reactorPurpleLight);
+    const reactorGoldLight = new THREE.PointLight(0xd4af37, 2.5, 9, 2);
+    monolithGroup.add(reactorGoldLight);
 
-    // --- 4. Token Fluid Particle Vortex ---
+    // --- 4. Token Fluid Particle Vortex (Gold, Crimson, Amber, Emerald, Cream) ---
     const particleCount = 1600;
     const particleGeo = new THREE.BufferGeometry();
 
@@ -139,10 +140,11 @@ export default function NeuralMonolithCanvas() {
     const turbulences = new Float32Array(particleCount);
 
     const palette = [
-      new THREE.Color(0x00f0ff), // Cyan
-      new THREE.Color(0xa855f7), // Purple
-      new THREE.Color(0x00e5ff), // Teal
-      new THREE.Color(0x10b981), // Emerald
+      new THREE.Color(0xd4af37), // Antique Gold
+      new THREE.Color(0xb91c1c), // Blood Red
+      new THREE.Color(0xf59e0b), // Amber
+      new THREE.Color(0x10b981), // Mint Emerald
+      new THREE.Color(0xfbf9f5), // Cream Paper
     ];
 
     for (let i = 0; i < particleCount; i++) {
@@ -171,7 +173,7 @@ export default function NeuralMonolithCanvas() {
 
     const particleTexture = createParticleTexture();
     const particleMat = new THREE.PointsMaterial({
-      size: 0.12,
+      size: 0.14,
       vertexColors: true,
       transparent: true,
       opacity: 0.85,
@@ -251,7 +253,7 @@ export default function NeuralMonolithCanvas() {
 
     // --- 7. Animation Loop ---
     let animationFrameId: number;
-    let clock = new THREE.Clock();
+    const clock = new THREE.Clock();
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
@@ -285,8 +287,8 @@ export default function NeuralMonolithCanvas() {
       coreMesh.rotation.y -= 0.012;
       coreMesh.rotation.x += 0.008;
 
-      reactorLight.intensity = 3.2 + Math.sin(time * 4.0) * 1.2;
-      reactorPurpleLight.intensity = 2.0 + Math.cos(time * 3.5) * 0.8;
+      reactorLight.intensity = 4.0 + Math.sin(time * 4.0) * 1.5;
+      reactorGoldLight.intensity = 2.5 + Math.cos(time * 3.5) * 1.0;
 
       // Token fluid particle vortex advection
       const posAttr = particleGeo.attributes.position as THREE.BufferAttribute;
@@ -343,12 +345,12 @@ export default function NeuralMonolithCanvas() {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 pointer-events-none z-0 overflow-hidden"
+      className="absolute inset-0 pointer-events-none z-0 overflow-hidden"
       aria-hidden="true"
     >
       <canvas ref={canvasRef} className="w-full h-full block" />
-      {/* Subtle vignette radial mask to blend canvas into background */}
-      <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#030305]/40 to-[#030305] pointer-events-none" />
+      {/* Subtle vignette radial mask to blend canvas into dark lacquer background */}
+      <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#070709]/50 to-[#070709] pointer-events-none" />
     </div>
   );
 }

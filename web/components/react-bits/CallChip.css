@@ -1,4 +1,4 @@
-/* CallChip.css - React Bits Tool Execution Chip (Santioni Editorial Edition) */
+/* CallChip.css - React Bits Tool Execution Chip (Santioni Spirits Editorial Edition) */
 
 .call-chip-container {
   display: inline-flex;
@@ -6,25 +6,25 @@
   position: relative;
   overflow: hidden;
   border-radius: 6px;
-  background: #14141B;
+  background: #FAF8F5;
   border: 2px solid #000000;
   box-shadow: 3px 3px 0px #000000;
   transition: all 0.2s ease;
 }
 
 .call-chip-container.running {
-  border-color: #B91C1C;
-  box-shadow: 3px 3px 0px #B91C1C;
+  border-color: #D4AF37;
+  box-shadow: 3px 3px 0px #D4AF37;
 }
 
 .call-chip-container.done {
-  border-color: #10B981;
-  box-shadow: 3px 3px 0px #10B981;
+  border-color: #000000;
+  box-shadow: 3px 3px 0px #000000;
 }
 
 .call-chip-container.error {
-  border-color: #EF4444;
-  box-shadow: 3px 3px 0px #EF4444;
+  border-color: #B91C1C;
+  box-shadow: 3px 3px 0px #B91C1C;
 }
 
 .wipe-fill-progress {
@@ -32,17 +32,6 @@
   top: 0;
   left: 0;
   bottom: 0;
-  background: linear-gradient(90deg, rgba(185, 28, 28, 0.2), rgba(16, 185, 129, 0.25));
   transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
-}
-
-@keyframes glyph-roll {
-  0% { transform: translateY(-100%); opacity: 0; }
-  50% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(100%); opacity: 0; }
-}
-
-.tool-glyph-roll {
-  transition: transform 0.2s ease;
 }

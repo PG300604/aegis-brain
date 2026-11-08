@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { Mic, MicOff, Square, Send, ChevronLeft, Volume2, Sparkles, Check } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Mic, Square, Sparkles } from "lucide-react";
 import "./VoicePill.css";
 
 interface VoicePillProps {
@@ -61,12 +60,6 @@ export function VoicePill({ onTranscriptionComplete, className = "" }: VoicePill
     }
   };
 
-  const handleCancel = () => {
-    setIsRecording(false);
-    setSeconds(0);
-    setTranscribedText(null);
-  };
-
   const formatTime = (sec: number) => {
     const mins = Math.floor(sec / 60);
     const remaining = sec % 60;
@@ -80,10 +73,10 @@ export function VoicePill({ onTranscriptionComplete, className = "" }: VoicePill
         <button
           type="button"
           onClick={handleToggle}
-          className={`p-2 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+          className={`p-2 rounded-full flex items-center justify-center transition-all cursor-pointer border-2 border-black ${
             isRecording
-              ? "bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.8)] animate-pulse"
-              : "bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40"
+              ? "bg-[#B91C1C] text-white shadow-[2px_2px_0px_#000000] animate-pulse"
+              : "bg-[#FBF9F5] hover:bg-neutral-100 text-black shadow-[2px_2px_0px_#000000]"
           }`}
           title={isRecording ? "Finish Recording" : "Dictate Audio via Whisper Shield"}
         >
@@ -103,63 +96,31 @@ export function VoicePill({ onTranscriptionComplete, className = "" }: VoicePill
             <span className="waveform-bar active anim-wave-8" />
           </div>
         ) : (
-          <div className="flex items-center gap-1 h-4 px-1 opacity-50">
-            <span className="waveform-bar" style={{ height: "4px" }} />
-            <span className="waveform-bar" style={{ height: "8px" }} />
-            <span className="waveform-bar" style={{ height: "14px" }} />
-            <span className="waveform-bar" style={{ height: "6px" }} />
-            <span className="waveform-bar" style={{ height: "10px" }} />
-          </div>
+          <span className="text-xs font-nikkei uppercase tracking-wider text-black font-bold">
+            Whisper Voice Shield
+          </span>
         )}
 
-        {/* Elapsed Timer & Whisper Shield Indicator */}
-        <div className="font-mono text-xs font-semibold">
+        {/* Status / Timer */}
+        <div className="font-mono text-xs font-bold text-black flex items-center gap-1.5 pl-1 border-l-2 border-black/20">
           {isRecording ? (
-            <span className="text-red-400">
-              {formatTime(seconds)}{" "}
-              <span className="text-[10px] text-zinc-400 font-normal">/ 00:25s shield</span>
+            <span className="text-[#B91C1C] flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-[#B91C1C] animate-ping" />
+              {formatTime(seconds)} / 00:25s
             </span>
           ) : (
-            <span className="text-zinc-400">25s Whisper Shield</span>
+            <span className="text-black/60 text-[11px]">25s Max Chunk</span>
           )}
         </div>
-
-        {/* Slide-to-cancel or Action button */}
-        {isRecording ? (
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="slide-cancel-text hover:text-red-300 transition-colors cursor-pointer"
-          >
-            <ChevronLeft className="w-3.5 h-3.5 text-zinc-400" />
-            <span>Cancel</span>
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={handleToggle}
-            className="font-mono text-[11px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 cursor-pointer"
-          >
-            <span>Record Voice Memo</span>
-          </button>
-        )}
       </div>
 
-      {/* Transcription Banner Result */}
-      <AnimatePresence>
-        {transcribedText && (
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 6 }}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/70 border border-emerald-500/30 text-emerald-300 text-xs font-mono"
-          >
-            <Check className="w-3 h-3 text-emerald-400" />
-            <span>Transcribed: &ldquo;{transcribedText}&rdquo;</span>
-            <span className="text-[10px] text-zinc-400">(&lt;1.2s transcode)</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Real-time Transcription Chip */}
+      {transcribedText && (
+        <div className="flex items-center gap-2 px-3 py-1 bg-[#FBF9F5] border-2 border-black rounded-lg shadow-[3px_3px_0px_#000000] text-xs font-mono text-black animate-in fade-in slide-in-from-bottom-1">
+          <Sparkles className="w-3.5 h-3.5 text-[#B91C1C]" />
+          <span>Whisper STT: <strong className="text-[#B91C1C]">&ldquo;{transcribedText}&rdquo;</strong></span>
+        </div>
+      )}
     </div>
   );
 }

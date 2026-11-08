@@ -39,36 +39,41 @@ export function ArbitrageCalculator() {
   ];
 
   return (
-    <section id="arbitrage" className="relative py-20 px-4 sm:px-6 max-w-6xl mx-auto">
-      {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-emerald-500/10 blur-[140px] rounded-full pointer-events-none" />
-
-      {/* Section Header */}
-      <div className="text-center mb-12 space-y-3">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 font-mono text-xs">
-          <Calculator className="w-3.5 h-3.5" />
-          <span>TOKEN ARBITRAGE SIMULATOR</span>
+    <div className="relative p-6 sm:p-8 bg-[#101116] text-[#FBF9F5] border-2 border-black rounded-lg">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-black/40">
+        <div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#B91C1C] text-white font-nikkei text-xs uppercase tracking-widest shadow-[2px_2px_0px_#000000]">
+            <Calculator className="w-3.5 h-3.5" />
+            <span>TOKEN ARBITRAGE SIMULATOR</span>
+          </div>
+          <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
+            Dynamic Token Arbitrage Calculator
+          </h3>
+          <p className="text-xs sm:text-sm text-zinc-400 font-gt-era max-w-xl mt-1">
+            Offload 92% of verbose boilerplate to free local workers. Reserve precious frontier cognition exclusively for architecture.
+          </p>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-mono">
-          Dynamic Token Arbitrage Calculator
-        </h2>
-        <p className="text-sm sm:text-base text-zinc-400 max-w-2xl mx-auto">
-          Offload 92% of verbose boilerplate generation to free local workers (Hermes, Ollama, OpenCode).
-          Reserve precious frontier cognition exclusively for architecture, invariants, and coaching.
-        </p>
+
+        <div className="px-4 py-2 bg-emerald-950/80 border-2 border-emerald-500 rounded text-center shadow-[3px_3px_0px_#000000]">
+          <div className="font-nikkei text-xl sm:text-2xl font-extrabold text-emerald-400">
+            {reductionPercentage}%
+          </div>
+          <div className="text-[10px] font-mono uppercase text-emerald-300">Frontier Cost Reduction</div>
+        </div>
       </div>
 
       {/* Main Calculator Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
         {/* Left Controller Panel (7 cols) */}
-        <div className="lg:col-span-7 glass-panel p-6 sm:p-8 rounded-2xl border border-white/10 space-y-8 shadow-2xl">
+        <div className="lg:col-span-7 p-6 rounded-lg bg-[#181822] border-2 border-black shadow-[4px_4px_0px_#000000] space-y-6">
           {/* Turns Slider */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <label htmlFor={sliderId} className="font-mono text-xs font-semibold uppercase tracking-wider text-zinc-300">
+              <label htmlFor={sliderId} className="font-nikkei text-xs uppercase tracking-wider text-white">
                 Daily Developer Interaction Turns
               </label>
-              <div className="font-mono text-base font-bold text-cyan-400 px-3 py-1 rounded-lg bg-cyan-950/60 border border-cyan-500/30">
+              <div className="font-mono text-sm font-bold text-[#D4AF37] px-3 py-1 rounded bg-black border border-black shadow-[2px_2px_0px_#000000]">
                 {turns.toLocaleString()} turns / day
               </div>
             </div>
@@ -82,7 +87,7 @@ export function ArbitrageCalculator() {
               value={turns}
               aria-label="Daily developer turns slider"
               onChange={(e) => setTurns(Number(e.target.value))}
-              className="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-cyan-400 hover:accent-cyan-300 transition-all"
+              className="w-full h-2.5 bg-black rounded appearance-none cursor-pointer accent-[#B91C1C]"
             />
 
             <div className="flex justify-between text-[11px] font-mono text-zinc-500 mt-2">
@@ -95,7 +100,7 @@ export function ArbitrageCalculator() {
 
           {/* Local Worker Engine Selector */}
           <div>
-            <span className="block font-mono text-xs font-semibold uppercase tracking-wider text-zinc-300 mb-3">
+            <span className="block font-nikkei text-xs uppercase tracking-wider text-white mb-3">
               Active Tier 3 Execution Worker
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -104,19 +109,20 @@ export function ArbitrageCalculator() {
                 return (
                   <button
                     key={w.id}
+                    type="button"
                     onClick={() => setSelectedWorker(w.id)}
-                    className={`p-3 rounded-xl border font-mono text-left transition-all ${
+                    className={`p-3 rounded-lg border-2 border-black font-mono text-left transition-all cursor-pointer ${
                       active
-                        ? "bg-cyan-500/10 border-cyan-400/80 shadow-[0_0_15px_rgba(0,240,255,0.15)]"
-                        : "bg-black/40 border-white/5 hover:border-white/10 hover:bg-white/5"
+                        ? "bg-[#B91C1C]/20 border-[#B91C1C] shadow-[3px_3px_0px_#B91C1C]"
+                        : "bg-black/60 hover:bg-black/80 shadow-[2px_2px_0px_#000000]"
                     }`}
                   >
-                    <div className="text-xs font-bold text-white flex items-center justify-between">
-                      <span className={active ? "text-cyan-300" : ""}>{w.name}</span>
-                      {active && <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />}
+                    <div className="text-xs font-bold text-white flex items-center justify-between font-nikkei uppercase">
+                      <span className={active ? "text-[#D4AF37]" : ""}>{w.name}</span>
+                      {active && <span className="h-2 w-2 rounded-full bg-[#B91C1C] animate-ping" />}
                     </div>
                     <div className="text-[10px] text-zinc-400 mt-0.5">{w.model}</div>
-                    <div className="text-[10px] text-emerald-400 font-semibold mt-1">{w.cost}</div>
+                    <div className="text-[10px] text-emerald-400 font-bold mt-1">{w.cost}</div>
                   </button>
                 );
               })}
@@ -129,105 +135,68 @@ export function ArbitrageCalculator() {
               <span className="text-zinc-400">Token Workload Distribution</span>
               <span className="text-emerald-400 font-bold">92% Free Local • 8% Frontier</span>
             </div>
-            <div className="h-3 w-full rounded-full bg-zinc-800 overflow-hidden flex">
+            <div className="h-3 w-full rounded bg-black border border-black overflow-hidden flex">
               <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-cyan-400 transition-all duration-300 relative group"
+                className="h-full bg-emerald-500 transition-all duration-300"
                 style={{ width: "92%" }}
                 title="Tier 3 Local Workers (92% free execution)"
               />
               <div
-                className="h-full bg-gradient-to-r from-purple-500 to-rose-500 transition-all duration-300"
+                className="h-full bg-[#B91C1C] transition-all duration-300"
                 style={{ width: "8%" }}
                 title="Tier 1 Frontier Senior Boss (8% high-cognition guidance)"
               />
             </div>
-            <div className="flex items-center justify-between text-[11px] font-mono text-zinc-500 mt-1.5">
-              <span className="flex items-center gap-1 text-emerald-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" /> Tier 3 Local Boilerplate
+            <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400 mt-2">
+              <span className="flex items-center gap-1.5 text-emerald-400">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" /> Tier 3 Free Local Workers
               </span>
-              <span className="flex items-center gap-1 text-purple-400">
-                <span className="w-2 h-2 rounded-full bg-purple-400" /> Tier 1 Architectural Brain
+              <span className="flex items-center gap-1.5 text-red-400">
+                <span className="w-2 h-2 rounded-full bg-[#B91C1C]" /> Tier 1 Frontier Cognition
               </span>
             </div>
           </div>
         </div>
 
-        {/* Right Metric Summary Card (5 cols) */}
-        <div className="lg:col-span-5 glass-panel-glow p-6 sm:p-8 rounded-2xl border border-emerald-500/30 space-y-6 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
-          {/* Big Green Glowing Counter */}
-          <div className="space-y-1">
-            <span className="font-mono text-xs text-emerald-400 uppercase tracking-widest font-semibold flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
-              MONTHLY NET SAVINGS
+        {/* Right Financial Ledger Readout (5 cols) */}
+        <div className="lg:col-span-5 p-6 sm:p-8 rounded-lg bg-[#FAF8F5] text-black border-2 border-black shadow-[6px_6px_0px_#000000] space-y-6">
+          <div className="flex items-center justify-between border-b-2 border-black pb-3">
+            <span className="font-nikkei text-xs uppercase tracking-wider text-black font-extrabold">
+              Audited Savings Ledger
             </span>
-            <div className="text-5xl sm:text-6xl font-extrabold font-mono text-emerald-400 text-glow-emerald tracking-tight">
-              ${monthlySavings.toLocaleString()}
-              <span className="text-xl font-normal text-zinc-400"> /mo</span>
-            </div>
-            <p className="text-xs font-mono text-zinc-400">
-              Equivalent to <span className="text-emerald-400 font-bold">${annualSavings.toLocaleString()} / year</span> saved across developer seats.
-            </p>
+            <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold">
+              ESTIMATED ROI
+            </span>
           </div>
 
-          {/* Direct Spend Comparison Box */}
-          <div className="p-4 rounded-xl bg-black/60 border border-white/5 space-y-3 font-mono text-xs">
-            <div className="flex items-center justify-between">
-              <span className="text-zinc-400">Direct Frontier Spend:</span>
-              <span className="text-rose-400 line-through font-semibold">
-                ${frontierMonthly.toLocaleString()} /mo
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-zinc-400">Aegis 3-Tier Arbitrage:</span>
-              <span className="text-cyan-400 font-bold">
-                ${aegisMonthly.toLocaleString()} /mo
-              </span>
-            </div>
-            <div className="pt-2 border-t border-white/10 flex items-center justify-between text-emerald-400 font-bold">
-              <span>Cost Reduction:</span>
-              <span>{reductionPercentage}% Less Spend</span>
-            </div>
-          </div>
-
-          {/* 3-Tier Explanation Pills */}
-          <div className="space-y-2 pt-2 border-t border-white/10">
-            <div className="text-[11px] font-mono uppercase tracking-wider text-zinc-400 font-semibold mb-2">
-              Autonomous Division of Labor:
-            </div>
-
-            <div className="flex items-start gap-2.5 p-2 rounded-lg bg-white/5 border border-white/5 text-xs">
-              <span className="px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono text-[10px] font-bold mt-0.5">
-                T1
-              </span>
-              <div className="text-zinc-300 text-[11px]">
-                <strong className="text-white">Senior Boss:</strong> High cognition, system invariants, coaching loop, final verification.
+          <div className="space-y-4 font-mono">
+            <div>
+              <div className="text-[11px] text-black/60 uppercase">Traditional Frontier API Spend</div>
+              <div className="text-2xl font-bold text-[#B91C1C] line-through mt-0.5">
+                ${frontierMonthly.toLocaleString()} / month
               </div>
             </div>
 
-            <div className="flex items-start gap-2.5 p-2 rounded-lg bg-white/5 border border-white/5 text-xs">
-              <span className="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono text-[10px] font-bold mt-0.5">
-                T2
-              </span>
-              <div className="text-zinc-300 text-[11px]">
-                <strong className="text-white">Junior Bosses:</strong> Subagent domain gatekeepers enforcing the 4-Decision Quality Gates.
+            <div>
+              <div className="text-[11px] text-black/60 uppercase">Aegis 3-Tier Arbitrage Spend</div>
+              <div className="text-xl font-bold text-black mt-0.5">
+                ${aegisMonthly.toLocaleString()} / month
               </div>
             </div>
 
-            <div className="flex items-start gap-2.5 p-2 rounded-lg bg-white/5 border border-white/5 text-xs">
-              <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold mt-0.5">
-                T3
-              </span>
-              <div className="text-zinc-300 text-[11px]">
-                <strong className="text-white">Local Workers:</strong> Free boilerplate generation via Hermes CLI, Ollama & OpenCode.
+            <div className="p-4 bg-white border-2 border-black rounded shadow-[3px_3px_0px_#10B981]">
+              <div className="text-[11px] text-emerald-800 font-nikkei uppercase font-extrabold">Net Monthly Savings</div>
+              <div className="text-3xl font-extrabold text-emerald-700 mt-1">
+                +${monthlySavings.toLocaleString()}
+                <span className="text-xs text-black/60 font-normal"> / mo</span>
+              </div>
+              <div className="text-[11px] text-black/70 mt-1">
+                Annual runway dividend: <strong>+${annualSavings.toLocaleString()} / yr</strong>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
-
-export default ArbitrageCalculator;

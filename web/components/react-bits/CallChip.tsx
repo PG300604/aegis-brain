@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "motion/react";
 import {
   Terminal,
   FileCode,
@@ -10,7 +9,6 @@ import {
   AlertTriangle,
   RotateCw,
   Clock,
-  Sparkles,
 } from "lucide-react";
 import "./CallChip.css";
 
@@ -51,7 +49,7 @@ export function CallChip({
 
   const getToolIcon = () => {
     if (toolName.includes("recall") || toolName.includes("search")) return Search;
-    if (toolName.includes("pipeline") || toolName.includes("gate")) return FileCode;
+    if (toolName.includes("pipeline") || toolName.includes("gate") || toolName.includes("ast")) return FileCode;
     return Terminal;
   };
 
@@ -66,34 +64,34 @@ export function CallChip({
           width: `${currentProgress}%`,
           background:
             currentStatus === "error"
-              ? "rgba(239, 68, 68, 0.2)"
+              ? "rgba(185, 28, 28, 0.15)"
               : currentStatus === "running"
-              ? "rgba(0, 240, 255, 0.25)"
-              : "rgba(16, 185, 129, 0.2)",
+              ? "rgba(212, 175, 55, 0.2)"
+              : "rgba(16, 185, 129, 0.15)",
         }}
       />
 
       {/* Tool Icon with status indicator */}
       <div className="flex items-center gap-1.5 shrink-0 z-10">
         {currentStatus === "running" ? (
-          <RotateCw className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
+          <RotateCw className="w-3.5 h-3.5 text-[#D4AF37] animate-spin" />
         ) : currentStatus === "error" ? (
-          <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
+          <AlertTriangle className="w-3.5 h-3.5 text-[#B91C1C]" />
         ) : (
-          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
         )}
 
-        <span className="font-bold text-white tracking-wide">{toolName}</span>
+        <span className="font-nikkei font-bold uppercase tracking-wider text-black">{toolName}</span>
       </div>
 
       {/* Command detail snippet */}
-      <div className="hidden sm:inline-block text-[11px] text-zinc-400 truncate max-w-[200px] z-10">
+      <div className="hidden sm:inline-block text-[11px] text-black/60 truncate max-w-[200px] z-10 font-mono">
         {command}
       </div>
 
       {/* Execution duration / latency */}
-      <div className="flex items-center gap-1 text-[10px] text-cyan-400 px-1.5 py-0.5 rounded bg-zinc-900/90 border border-zinc-800 z-10 shrink-0">
-        <Clock className="w-2.5 h-2.5" />
+      <div className="flex items-center gap-1 text-[10px] text-black font-bold px-1.5 py-0.5 rounded bg-white border border-black shadow-[1px_1px_0px_#000000] z-10 shrink-0">
+        <Clock className="w-2.5 h-2.5 text-[#B91C1C]" />
         <span>{duration}</span>
       </div>
 
@@ -102,10 +100,9 @@ export function CallChip({
         <button
           type="button"
           onClick={handleSimulateRetry}
-          className="p-1 rounded hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors z-10 cursor-pointer"
-          title="Retry tool execution"
+          className="ml-auto text-[10px] font-nikkei uppercase px-1.5 py-0.5 rounded bg-[#B91C1C] text-white hover:bg-red-800 z-10 cursor-pointer border border-black shadow-[1px_1px_0px_#000000]"
         >
-          <RotateCw className="w-3 h-3" />
+          RETRY
         </button>
       )}
     </div>
