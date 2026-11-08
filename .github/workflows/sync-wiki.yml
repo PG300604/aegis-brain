@@ -16,34 +16,31 @@ jobs:
     steps:
       - name: Checkout Source Repository
         uses: actions/checkout@v4
-        with:
-          path: repo
 
-      - name: Checkout GitHub Wiki
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ github.repository }}.wiki
-          path: wiki
-          token: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
-
-      - name: Sync Wiki Files
+      - name: Check & Sync to GitHub Wiki
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
-          if [ -d "wiki" ]; then
-            mkdir -p wiki
-            cp -r repo/docs/wiki/* wiki/
-            cd wiki
-            # Ensure Home.md exists for GitHub Wiki default portal
-            cp -f 00-index.md Home.md
+          WIKI_URL="https://x-access-token:${GH_TOKEN}@github.com/${REPO}.wiki.git"
+          echo "Checking if GitHub Wiki repository exists for ${REPO}..."
+          if git ls-remote "${WIKI_URL}" > /dev/null 2>&1; then
+            echo "GitHub Wiki detected. Cloning..."
+            git clone "${WIKI_URL}" wiki_repo
+            cp -r docs/wiki/* wiki_repo/
+            cp -f docs/wiki/00-index.md wiki_repo/Home.md
+            cd wiki_repo
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add .
             if git diff-index --quiet HEAD --; then
-              echo "No wiki changes to commit"
+              echo "Wiki is already up to date. Zero changes."
             else
               git commit -m "docs(wiki): automated sync from docs/wiki"
               git push
+              echo "Successfully synced docs/wiki to GitHub Wiki."
             fi
           else
-            echo "Wiki repo not found or not yet enabled. Enable GitHub Wiki in repository settings first."
+            echo "::notice ::GitHub Wiki is not yet initialized for ${REPO}. To enable automated sync, go to repository Settings -> Features -> enable Wikis, and click 'Create the first page' in the Wiki tab."
+            echo "Skipping sync gracefully (exit 0)."
           fi
