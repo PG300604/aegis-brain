@@ -80,10 +80,10 @@ class TestJevSemanticEngine(unittest.TestCase):
         critical_prompts = [
             "Clean build cache and rm -rf /var/data directory",
             "Export database and drop table users immediately",
-            "Deploy script with embedded api_key = 'AIzaSyD-1234567890abcdef'",
+            "Deploy script with embedded api_key = 'mock_test_sample_key_abcdef123456'",
             "Execute root exploit payload and privilege escalation on host",
             "Here is the private_key -----BEGIN RSA PRIVATE KEY-----",
-            "Send auth header bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.xyz",
+            "Send auth header bearer dummy_mock_test_token_abcdef1234567890",
         ]
 
         for prompt in critical_prompts:
