@@ -142,6 +142,58 @@ def _disable_linux() -> Tuple[bool, str]:
     return True, "Linux systemd autostart disabled."
 
 
+# --- macOS Implementation ---
+
+def _get_macos_launch_agent_file() -> Path:
+    agent_dir = Path.home() / "Library" / "LaunchAgents"
+    agent_dir.mkdir(parents=True, exist_ok=True)
+    return agent_dir / "com.aegis.brain.plist"
+
+
+def _enable_macos() -> Tuple[bool, str]:
+    plist_file = _get_macos_launch_agent_file()
+    python_bin = sys.executable
+    repo_dir = str(REPO_ROOT)
+    log_path = Path.home() / ".aegis-brain" / "daemon.log"
+
+    content = f"""<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.aegis.brain</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>{python_bin}</string>
+        <string>-m</string>
+        <string>aegis.server</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>{repo_dir}</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>{log_path}</string>
+    <key>StandardErrorPath</key>
+    <string>{log_path}</string>
+</dict>
+</plist>
+"""
+    plist_file.write_text(content, encoding="utf-8")
+    subprocess.run(["launchctl", "load", str(plist_file)], capture_output=True)
+    return True, f"macOS autostart enabled via {plist_file}"
+
+
+def _disable_macos() -> Tuple[bool, str]:
+    plist_file = _get_macos_launch_agent_file()
+    subprocess.run(["launchctl", "unload", str(plist_file)], capture_output=True)
+    if plist_file.exists():
+        plist_file.unlink()
+    return True, "macOS autostart disabled."
+
+
 # --- Public Interface ---
 
 def is_autostart_enabled() -> bool:
@@ -150,6 +202,8 @@ def is_autostart_enabled() -> bool:
         return _get_windows_startup_vbs().exists()
     elif system == "Linux":
         return _get_linux_systemd_file().exists()
+    elif system == "Darwin":
+        return _get_macos_launch_agent_file().exists()
     return False
 
 
@@ -159,6 +213,8 @@ def enable_autostart() -> Tuple[bool, str]:
         ok, msg = _enable_windows()
     elif system == "Linux":
         ok, msg = _enable_linux()
+    elif system == "Darwin":
+        ok, msg = _enable_macos()
     else:
         return False, f"Autostart not supported on {system}"
 
@@ -175,6 +231,8 @@ def disable_autostart() -> Tuple[bool, str]:
         ok, msg = _disable_windows()
     elif system == "Linux":
         ok, msg = _disable_linux()
+    elif system == "Darwin":
+        ok, msg = _disable_macos()
     else:
         return False, f"Autostart not supported on {system}"
 

@@ -181,11 +181,23 @@ def main() -> None:
 
     # hierarchy (3-Tier Multi-Agent Power & Quality Structure)
     hier_parser = subparsers.add_parser("hierarchy", help="Display 3-Tier Multi-Agent Hierarchy, bottleneck risk, and active tree")
-    hier_parser.add_argument("task", nargs="?", default="", help="Optional task to plan hierarchy for")
+    hier_parser.add_argument("task", nargs="?", default="", help="Optional task to plan hierarchy for, or subcommand ('set-boss', 'get-boss')")
+    hier_parser.add_argument("boss_arg", nargs="?", default="", help="Boss agent name when using 'set-boss'")
+    hier_parser.add_argument("--model", "-m", default=None, help="Boss model identifier when using 'set-boss'")
     hier_parser.add_argument("--plan", "-p", action="store_true", help="Generate full planning phase, research context, and implementation options with pros/cons")
     hier_parser.add_argument("--execute", "-e", action="store_true", help="Execute hierarchy with worker coaching loop")
     hier_parser.add_argument("--simulate", "-s", action="store_true", help="Simulate worker execution for testing")
-    hier_parser.add_argument("--worker", "-w", choices=["hermes", "claude", "codex", "opencode", "moe", "gemini"], default=None, help="Execution worker model/tool")
+    hier_parser.add_argument("--worker", "-w", default=None, help="Execution worker model/tool")
+
+    # dispatch (Universal Agent Task Dispatcher)
+    disp_parser = subparsers.add_parser("dispatch", help="Universal task dispatch across arbitrary Boss and Worker agent combinations")
+    disp_parser.add_argument("task", help="Task description to dispatch")
+    disp_parser.add_argument("--boss", "-b", default=None, help="Tier 1 Boss agent (e.g. antigravity, opencode, codex, claude, hermes)")
+    disp_parser.add_argument("--boss-model", default=None, help="Model identifier for Boss agent (e.g. gpt-6-astra, claude-opus-5-5)")
+    disp_parser.add_argument("--worker", "-w", default=None, help="Tier 3 Worker agent (e.g. opencode, hermes, ollama, codex, claude)")
+    disp_parser.add_argument("--worker-model", default=None, help="Model identifier for Worker agent")
+    disp_parser.add_argument("--simulate", "-s", action="store_true", help="Simulate worker candidate draft")
+    disp_parser.add_argument("--json", action="store_true", help="Output execution envelope in JSON format")
 
     # coach (Junior Boss Subagent Supervised Coaching Loop)
     coach_parser = subparsers.add_parser("coach", help="Junior Boss Subagent coaches execution workers (Hermes/Claude/Codex/MoE) through the 4 Quality Gates")
@@ -1272,21 +1284,58 @@ def main() -> None:
         print(decision.format_banner())
 
     elif args.command == "hierarchy":
-        from .hierarchy import HierarchicalAgentOrchestrator, WorkerType
-        orch = HierarchicalAgentOrchestrator()
-        task_str = args.task or "General Multi-Agent Operation"
-        if getattr(args, "execute", False):
-            w_type = WorkerType(args.worker) if args.worker else None
-            res = orch.execute_hierarchy(task_str, worker_type=w_type, simulate=args.simulate)
-            print(orch.format_hierarchy_report(task_str))
-            print("\n🚀 Execution & Coaching Summary:")
-            for sub in res["subagent_executions"]:
-                print(f"  • {sub['name']} ({sub['domain']}): Passed={sub['passed']}, Attempts={sub['attempts']}, Error Delta={sub['initial_errors']} ➔ {sub['final_errors']}")
-                if sub["coaching_history"]:
-                    print(f"    Coaching: {sub['coaching_history'][-1]}")
+        subcmd = (args.task or "").strip().lower()
+        if subcmd == "set-boss":
+            from .db import set_active_boss
+            boss_name = args.boss_arg or "antigravity"
+            set_active_boss(boss_name, getattr(args, "model", None))
+            model_info = f" (model: {args.model})" if getattr(args, "model", None) else ""
+            print(f"🏛️ Active Tier 1 Boss updated to: {boss_name}{model_info}")
+        elif subcmd == "get-boss":
+            from .db import get_active_boss
+            active = get_active_boss()
+            model_info = f" (model: {active['model']})" if active.get("model") else ""
+            print(f"🏛️ Current Tier 1 Boss: {active['name']}{model_info}")
+        elif getattr(args, "plan", False):
+            from .hierarchy import HierarchicalAgentOrchestrator
+            orch = HierarchicalAgentOrchestrator()
+            task_str = args.task or "General Multi-Agent Operation"
+            plan_data = orch.plan_with_research_and_options(task_str)
+            print(orch.format_planning_and_options_report(plan_data))
         else:
-            orch.plan_hierarchy(task_str)
-            print(orch.format_hierarchy_report(task_str))
+            from .hierarchy import HierarchicalAgentOrchestrator, WorkerType
+            orch = HierarchicalAgentOrchestrator()
+            task_str = args.task or "General Multi-Agent Operation"
+            if getattr(args, "execute", False):
+                w_type = WorkerType(args.worker) if args.worker else None
+                res = orch.execute_hierarchy(task_str, worker_type=w_type, simulate=args.simulate)
+                print(orch.format_hierarchy_report(task_str))
+                print("\n🚀 Execution & Coaching Summary:")
+                for sub in res["subagent_executions"]:
+                    print(f"  • {sub['name']} ({sub['domain']}): Passed={sub['passed']}, Attempts={sub['attempts']}, Error Delta={sub['initial_errors']} ➔ {sub['final_errors']}")
+                    if sub["coaching_history"]:
+                        print(f"    Coaching: {sub['coaching_history'][-1]}")
+            else:
+                orch.plan_hierarchy(task_str)
+                print(orch.format_hierarchy_report(task_str))
+
+    elif args.command == "dispatch":
+        from .agent_adapters import dispatch_universal_task
+        envelope = dispatch_universal_task(
+            task=args.task,
+            boss_name=args.boss,
+            boss_model=args.boss_model,
+            worker_name=args.worker,
+            worker_model=args.worker_model,
+            simulate=args.simulate,
+        )
+        if getattr(args, "json", False):
+            print(envelope.to_json())
+        else:
+            print(f"🏛️ Universal Dispatch: Boss=`{envelope.boss_name}` | Worker=`{envelope.worker_name}`")
+            print(f"Status: {envelope.status.upper()} | 4 Gates Passed: {'✅' if envelope.quality_gate_passed else '❌'}")
+            print(f"Tokens Saved: +{envelope.tokens_saved} tokens | Duration: {envelope.execution_response.duration_ms}ms")
+            print("\n" + envelope.executive_deliverable)
 
     elif args.command == "coach":
         from .hierarchy import SubagentNode, WorkerType

@@ -122,6 +122,13 @@ CREATE TABLE IF NOT EXISTS worker_models (
     UNIQUE(tool_name, model_name)
 );
 
+CREATE TABLE IF NOT EXISTS active_agent_config (
+    role TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    model TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 """
 
 
@@ -492,4 +499,72 @@ def get_worker_cascade() -> Dict[str, Any]:
         "primary": primary_model,
         "total_count": len(all_models),
     }
+
+
+def set_active_boss(name: str, model: Optional[str] = None) -> bool:
+    """Persist active Tier 1 Boss agent and model configuration."""
+    init_db()
+    with get_connection() as conn:
+        conn.execute(
+            """
+            INSERT INTO active_agent_config (role, name, model, updated_at)
+            VALUES ('boss', ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT(role) DO UPDATE SET
+                name = excluded.name,
+                model = excluded.model,
+                updated_at = CURRENT_TIMESTAMP
+            """,
+            (name, model or ""),
+        )
+    return True
+
+
+def get_active_boss() -> Dict[str, Any]:
+    """Retrieve active Tier 1 Boss agent configuration (default: antigravity)."""
+    init_db()
+    with get_connection() as conn:
+        row = conn.execute(
+            "SELECT name, model, updated_at FROM active_agent_config WHERE role = 'boss'"
+        ).fetchone()
+        if row:
+            return {
+                "name": row["name"],
+                "model": row["model"] or None,
+                "updated_at": row["updated_at"],
+            }
+        return {"name": "antigravity", "model": None, "updated_at": None}
+
+
+def set_active_worker(name: str, model: Optional[str] = None) -> bool:
+    """Persist active Tier 3 Worker agent and model configuration."""
+    init_db()
+    with get_connection() as conn:
+        conn.execute(
+            """
+            INSERT INTO active_agent_config (role, name, model, updated_at)
+            VALUES ('worker', ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT(role) DO UPDATE SET
+                name = excluded.name,
+                model = excluded.model,
+                updated_at = CURRENT_TIMESTAMP
+            """,
+            (name, model or ""),
+        )
+    return True
+
+
+def get_active_worker() -> Dict[str, Any]:
+    """Retrieve active Tier 3 Worker agent configuration (default: hermes)."""
+    init_db()
+    with get_connection() as conn:
+        row = conn.execute(
+            "SELECT name, model, updated_at FROM active_agent_config WHERE role = 'worker'"
+        ).fetchone()
+        if row:
+            return {
+                "name": row["name"],
+                "model": row["model"] or None,
+                "updated_at": row["updated_at"],
+            }
+        return {"name": "hermes", "model": None, "updated_at": None}
 

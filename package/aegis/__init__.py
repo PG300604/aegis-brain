@@ -121,5 +121,13 @@ from .workers import (
     format_worker_cascade_report,
     run_fast_test,
 )
+from .agent_adapters import (
+    AgentRole,
+    AgentDescriptor,
+    AgentExecutionResponse,
+    UniversalAgentEnvelope,
+    dispatch_universal_task,
+)
+
 
 

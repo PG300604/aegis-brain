@@ -553,8 +553,29 @@ def evaluate_system_capacity() -> HierarchyCapacity:
 class HierarchicalAgentOrchestrator:
     """Master orchestrator implementing the 3-Tier Multi-Agent System."""
 
-    def __init__(self, main_engine_name: str = "Main Engine (Antigravity CLI)"):
-        self.main_engine_name = main_engine_name
+    def __init__(
+        self,
+        main_engine_name: Optional[str] = None,
+        boss_model: Optional[str] = None,
+        default_workers: Optional[List[WorkerType]] = None,
+    ):
+        from .db import get_active_boss
+        active_boss = get_active_boss()
+        if main_engine_name:
+            raw_boss = main_engine_name
+        elif active_boss.get("name") and active_boss.get("name") != "antigravity":
+            raw_boss = active_boss["name"]
+        else:
+            raw_boss = "Main Engine (Antigravity CLI)"
+
+        self.boss_name = raw_boss
+        self.boss_model = boss_model if boss_model is not None else active_boss.get("model")
+        self.main_engine_name = (
+            f"{self.boss_name} ({self.boss_model})"
+            if self.boss_model and "(" not in self.boss_name
+            else self.boss_name
+        )
+        self.default_workers = default_workers
         self.subagents: List[SubagentNode] = []
         self.capacity = evaluate_system_capacity()
 
@@ -564,15 +585,16 @@ class HierarchicalAgentOrchestrator:
         triage = judge_task_severity(task)
 
         nodes: List[SubagentNode] = []
+        default_w = self.default_workers or [WorkerType.HERMES, WorkerType.MOE]
 
         # If bottleneck risk is high, throttle to a single focused subagent
         if self.capacity.is_bottleneck_risk:
             nodes.append(
                 SubagentNode(
                     subagent_id="subagent-1",
-                    name="Antigravity Subagent 1 (Focused Execution)",
+                    name=f"{self.boss_name} Subagent 1 (Focused Execution)",
                     domain="core_execution",
-                    allowed_workers=[WorkerType.HERMES, WorkerType.MOE],
+                    allowed_workers=default_w,
                 )
             )
             self.subagents = nodes
@@ -583,36 +605,62 @@ class HierarchicalAgentOrchestrator:
         nodes.append(
             SubagentNode(
                 subagent_id="subagent-1",
-                name="Antigravity Subagent 1 (Core Code & Systems)",
+                name=f"{self.boss_name} Subagent 1 (Core Code & Systems)",
                 domain="backend_systems",
-                allowed_workers=[WorkerType.HERMES, WorkerType.MOE],
+                allowed_workers=default_w,
             )
         )
 
         # Subagent 2: Research & Analysis (controls Gemini & Hermes)
         if self.capacity.max_safe_subagents >= 2:
+            sa2_workers = self.default_workers or [WorkerType.GEMINI, WorkerType.HERMES]
             nodes.append(
                 SubagentNode(
                     subagent_id="subagent-2",
-                    name="Antigravity Subagent 2 (Analysis & Research)",
+                    name=f"{self.boss_name} Subagent 2 (Analysis & Research)",
                     domain="research_analysis",
-                    allowed_workers=[WorkerType.GEMINI, WorkerType.HERMES],
+                    allowed_workers=sa2_workers,
                 )
             )
 
         # Subagent 3: QA & Testing (controls Gemini / local tests)
         if self.capacity.max_safe_subagents >= 3:
+            sa3_workers = self.default_workers or [WorkerType.GEMINI, WorkerType.LOCAL_COMPILER]
             nodes.append(
                 SubagentNode(
                     subagent_id="subagent-3",
-                    name="Antigravity Subagent 3 (QA & Security Audit)",
+                    name=f"{self.boss_name} Subagent 3 (QA & Security Audit)",
                     domain="qa_security",
-                    allowed_workers=[WorkerType.GEMINI, WorkerType.LOCAL_COMPILER],
+                    allowed_workers=sa3_workers,
                 )
             )
 
         self.subagents = nodes
         return nodes
+
+    def dispatch_universal_task(
+        self,
+        task: str,
+        boss_name: Optional[str] = None,
+        boss_model: Optional[str] = None,
+        worker_name: Optional[str] = None,
+        worker_model: Optional[str] = None,
+        simulate: bool = False,
+        **kwargs: Any,
+    ):
+        """Dispatch universal task returning UniversalAgentEnvelope."""
+        from .agent_adapters import dispatch_universal_task as _dispatch
+        b_name = boss_name or self.boss_name
+        b_model = boss_model if boss_model is not None else self.boss_model
+        return _dispatch(
+            task=task,
+            boss_name=b_name,
+            boss_model=b_model,
+            worker_name=worker_name,
+            worker_model=worker_model,
+            simulate=simulate,
+            **kwargs,
+        )
 
     def top_engine_quality_audit(self) -> Dict[str, Any]:
         """Top Level Quality Gate (Supreme Power):
@@ -993,3 +1041,26 @@ class HierarchicalAgentOrchestrator:
             "```",
         ])
         return "\n".join(lines)
+
+
+def dispatch_universal_task(
+    task: str,
+    boss_name: Optional[str] = None,
+    boss_model: Optional[str] = None,
+    worker_name: Optional[str] = None,
+    worker_model: Optional[str] = None,
+    simulate: bool = False,
+    **kwargs: Any,
+):
+    """Module-level universal task dispatcher returning UniversalAgentEnvelope."""
+    from .agent_adapters import dispatch_universal_task as _dispatch
+    return _dispatch(
+        task=task,
+        boss_name=boss_name,
+        boss_model=boss_model,
+        worker_name=worker_name,
+        worker_model=worker_model,
+        simulate=simulate,
+        **kwargs,
+    )
+

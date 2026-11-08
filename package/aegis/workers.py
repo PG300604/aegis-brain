@@ -90,13 +90,60 @@ def _parse_jsonc(content: str) -> Optional[Dict[str, Any]]:
         return None
 
 
-def detect_opencode_models() -> Dict[str, Any]:
+def is_free_model(model_name: str) -> bool:
+    """Check if model is free tier (ends in -free, contains 'free', or is 'big-pickle')."""
+    low = model_name.lower().strip()
+    return low.endswith("-free") or ":free" in low or "-free" in low or "big-pickle" in low or "free" in low
+
+
+def _run_opencode_models_cli() -> Optional[List[str]]:
+    """Execute `opencode models` via CLI across platforms with a 5s timeout."""
+    opencode_bin = (
+        shutil.which("opencode")
+        or shutil.which("opencode.cmd")
+        or shutil.which("opencode.ps1")
+        or shutil.which("opencode.exe")
+    )
+    if not opencode_bin:
+        return None
+
+    try:
+        if str(opencode_bin).lower().endswith(".ps1"):
+            cmd = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(opencode_bin), "models"]
+        else:
+            cmd = [str(opencode_bin), "models"]
+
+        res = subprocess.run(
+            cmd,
+            stdin=subprocess.DEVNULL,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=5.0,
+        )
+        if res.returncode == 0 and res.stdout.strip():
+            raw_lines = res.stdout.splitlines()
+            models = [
+                line.strip()
+                for line in raw_lines
+                if line.strip() and not line.strip().startswith("#") and not line.strip().startswith("Query:")
+            ]
+            if models:
+                return list(dict.fromkeys(models))
+    except Exception as e:
+        logger.debug("OpenCode CLI models execution failed: %s", e)
+    return None
+
+
+def detect_opencode_models(use_cli: bool = True) -> Dict[str, Any]:
     """Detect OpenCode installation and configured models with Strict No-Guesswork Rule."""
     # Check execution binary or npm shim
     has_binary = bool(
         shutil.which("opencode")
         or shutil.which("opencode.cmd")
         or shutil.which("opencode.ps1")
+        or shutil.which("opencode.exe")
     )
 
     config_paths = _find_opencode_config_paths()
@@ -107,12 +154,29 @@ def detect_opencode_models() -> Dict[str, Any]:
             "status": "not_installed",
             "installed": False,
             "models": [],
+            "free_models": [],
             "needs_user_input": False,
             "prompt_message": "",
             "suggested_free_models": OPENCODE_SUGGESTED_FREE_MODELS,
         }
 
-    # Inspect config files for explicit model declarations
+    # 1. Dynamic CLI Discovery
+    if use_cli and has_binary:
+        cli_models = _run_opencode_models_cli()
+        if cli_models:
+            free_models = [m for m in cli_models if is_free_model(m)]
+            return {
+                "status": "detected",
+                "installed": True,
+                "models": cli_models,
+                "free_models": free_models,
+                "needs_user_input": False,
+                "prompt_message": "",
+                "suggested_free_models": OPENCODE_SUGGESTED_FREE_MODELS,
+                "source": "cli",
+            }
+
+    # 2. Inspect config files for explicit model declarations
     found_models: List[str] = []
     for p in config_paths:
         if p.exists() and p.is_file():
@@ -132,6 +196,7 @@ def detect_opencode_models() -> Dict[str, Any]:
 
     # Deduplicate
     unique_models = list(dict.fromkeys(found_models))
+    free_models = [m for m in unique_models if is_free_model(m)]
 
     # STRICT NO-GUESSWORK RULE:
     # If OpenCode exists, but models are selected interactively via TUI and not in JSON:
@@ -146,6 +211,7 @@ def detect_opencode_models() -> Dict[str, Any]:
             "status": "installed_unconfirmed",
             "installed": True,
             "models": [],
+            "free_models": [],
             "needs_user_input": True,
             "prompt_message": msg,
             "suggested_free_models": OPENCODE_SUGGESTED_FREE_MODELS,
@@ -155,6 +221,7 @@ def detect_opencode_models() -> Dict[str, Any]:
         "status": "detected",
         "installed": True,
         "models": unique_models,
+        "free_models": free_models,
         "needs_user_input": False,
         "prompt_message": "",
         "suggested_free_models": OPENCODE_SUGGESTED_FREE_MODELS,
@@ -182,8 +249,57 @@ def _find_hermes_config_paths() -> List[Path]:
     return paths
 
 
-def detect_hermes_fallbacks() -> Dict[str, Any]:
-    """Detect Hermes primary model and fallback chain from config.yaml."""
+def _parse_hermes_cli_fallback_list(output: str) -> Tuple[Optional[str], List[str]]:
+    """Parse primary model and fallback chain from `hermes fallback list` CLI output."""
+    primary = None
+    m_prim = re.search(r"Primary:\s*([^\s\(\)]+)", output)
+    if m_prim:
+        primary = m_prim.group(1).strip()
+
+    fallbacks: List[str] = []
+    # Match lines with numbering: "    1. thinkingmachines/inkling:free  (via nvidia)"
+    matches = re.findall(r"^\s*\d+\.\s*([^\s\(\)]+)", output, re.MULTILINE)
+    for m in matches:
+        clean = m.strip()
+        if clean and clean not in fallbacks:
+            fallbacks.append(clean)
+
+    return primary, fallbacks
+
+
+def detect_hermes_fallbacks(use_cli: bool = True) -> Dict[str, Any]:
+    """Detect Hermes primary model and fallback chain via CLI when available, falling back to config.yaml."""
+    hermes_bin = shutil.which("hermes") or shutil.which("hermes.exe")
+    if use_cli and hermes_bin:
+        try:
+            res = subprocess.run(
+                [hermes_bin, "fallback", "list"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=5.0,
+            )
+            if res.returncode == 0 and ("Primary:" in res.stdout or "Fallback chain" in res.stdout):
+                primary, fallbacks = _parse_hermes_cli_fallback_list(res.stdout)
+                all_models: List[str] = []
+                if primary:
+                    all_models.append(primary)
+                for fb in fallbacks:
+                    if fb not in all_models:
+                        all_models.append(fb)
+                if all_models:
+                    return {
+                        "status": "detected",
+                        "primary": primary,
+                        "fallbacks": fallbacks,
+                        "models": all_models,
+                        "config_path": "cli:hermes fallback list",
+                        "source": "cli",
+                    }
+        except Exception as e:
+            logger.debug("Hermes CLI fallback list execution failed: %s", e)
+
     paths = _find_hermes_config_paths()
     config_file: Optional[Path] = next((p for p in paths if p.exists() and p.is_file()), None)
 

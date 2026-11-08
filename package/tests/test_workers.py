@@ -58,7 +58,7 @@ def test_detect_opencode_with_static_models(tmp_path):
 
 
 def test_detect_hermes_fallbacks(tmp_path):
-    """Verify Hermes config parser extracts primary model and fallback chain."""
+    """Verify Hermes config parser extracts primary model and fallback chain when CLI is absent."""
     fake_yaml = tmp_path / "config.yaml"
     fake_yaml.write_text(
         """
@@ -74,12 +74,39 @@ fallback_providers:
         encoding="utf-8",
     )
 
-    with patch("aegis.workers._find_hermes_config_paths", return_value=[fake_yaml]):
+    with patch("aegis.workers._find_hermes_config_paths", return_value=[fake_yaml]), \
+         patch("shutil.which", return_value=None):
         res = detect_hermes_fallbacks()
         assert res["status"] == "detected"
         assert res["primary"] == "nvidia/nemotron-3.5-bolt-e4b"
         assert "thinkingmachines/inkling:free" in res["fallbacks"]
         assert "cohere/north-mini-code:free" in res["fallbacks"]
+        assert len(res["models"]) == 4
+
+
+def test_detect_hermes_fallbacks_cli():
+    """Verify Hermes CLI execution extracts primary and fallback chain dynamically."""
+    cli_sample = """
+  Primary:   nvidia/nemotron-3.5-bolt-e4b  (via nvidia)
+
+  Fallback chain (3 entries):
+    1. thinkingmachines/inkling:free  (via nvidia)  [https://openrouter.ai/api/v1]
+    2. cohere/north-mini-code:free  (via nvidia)  [https://openrouter.ai/api/v1]
+    3. openrouter/free  (via nvidia)  [https://openrouter.ai/api/v1]
+    """
+    from unittest.mock import MagicMock
+    mock_run = MagicMock()
+    mock_run.returncode = 0
+    mock_run.stdout = cli_sample
+
+    with patch("shutil.which", return_value="C:\\Fake\\hermes.exe"), \
+         patch("subprocess.run", return_value=mock_run):
+        res = detect_hermes_fallbacks()
+        assert res["status"] == "detected"
+        assert res["source"] == "cli"
+        assert res["primary"] == "nvidia/nemotron-3.5-bolt-e4b"
+        assert "thinkingmachines/inkling:free" in res["fallbacks"]
+        assert "openrouter/free" in res["fallbacks"]
         assert len(res["models"]) == 4
 
 
