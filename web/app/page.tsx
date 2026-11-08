@@ -38,7 +38,6 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import NeuralMonolithCanvas from "@/components/webgl/NeuralMonolithCanvas";
 import { PromptBar } from "@/components/react-bits/PromptBar";
 import { ThoughtLine } from "@/components/react-bits/ThoughtLine";
 import { CallChip } from "@/components/react-bits/CallChip";
@@ -142,6 +141,24 @@ export default function Home() {
     setQuotaLatency(21);
   };
 
+  // Autoplay Quota Cliff simulation loop
+  useEffect(() => {
+    let mode: "traditional" | "aegis" = "traditional";
+    runTraditionalSimulation();
+
+    const interval = setInterval(() => {
+      if (mode === "traditional") {
+        runAegisSimulation();
+        mode = "aegis";
+      } else {
+        runTraditionalSimulation();
+        mode = "traditional";
+      }
+    }, 5500);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="relative min-h-screen bg-[#070709] text-[#0D0D11] selection:bg-[#B91C1C] selection:text-white paper-grain">
       {/* 
@@ -162,28 +179,18 @@ export default function Home() {
         ========================================================================
       */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 sm:px-12 py-5 pointer-events-none">
-        {/* Left: Circular Seal Logo */}
+        {/* Left: AegisBrain Lockup matching user screenshot exactly */}
         <div className="pointer-events-auto flex items-center gap-3">
-          <a href="#" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-full border-2 border-black flex items-center justify-center bg-[#FBF9F5] shadow-[3px_3px_0px_#000000] text-black transition-transform group-hover:scale-105">
-              <svg
-                viewBox="0 0 40 40"
-                className="w-6 h-6 text-black fill-none stroke-current"
-                strokeWidth="1.8"
-              >
-                <circle cx="20" cy="20" r="17" strokeDasharray="2 2" />
-                <polygon points="20,8 32,28 8,28" />
-                <circle cx="20" cy="21" r="3" fill="#B91C1C" />
-              </svg>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-charles-rosie text-xl text-white tracking-wider leading-none">
+          <a href="#" className="flex flex-col group select-none">
+            <div className="flex items-baseline">
+              <span className="font-extrabold text-2xl sm:text-3xl text-white tracking-tight group-hover:text-zinc-200 transition-colors">
                 AegisBrain
               </span>
-              <span className="font-gt-era text-[9px] uppercase tracking-[0.25em] text-white/50 leading-tight">
-                Chassis • Neural Memory
-              </span>
+              <span className="font-extrabold text-2xl sm:text-3xl text-[#B91C1C]">.</span>
             </div>
+            <span className="text-[11px] sm:text-xs font-gt-era text-white/60 tracking-wider mt-0.5">
+              Autonomous engineering chassis, neural memory bus &amp; multi-agent governor.
+            </span>
           </a>
         </div>
 
@@ -239,32 +246,29 @@ export default function Home() {
 
       {/* 
         ========================================================================
-        HERO SPREAD: THE AEGIS EXPERIENCE (Three.js Monolith + PromptBar)
+        HERO SPREAD: THE AEGIS EXPERIENCE (Deep Black + Fluid Typography)
         ========================================================================
       */}
       <section
         id="experience"
-        className="relative min-h-screen w-full flex flex-col items-center justify-between pt-32 pb-0 px-4 bg-[#070709] overflow-hidden"
+        className="relative min-h-screen w-full flex flex-col items-center justify-between pt-36 pb-0 px-4 bg-[#070709] overflow-hidden"
       >
-        {/* Animated Three.js Obsidian Monolith running in background with Gold/Crimson Keylines */}
-        <NeuralMonolithCanvas />
-
         {/* Subtle Horizontal Dry-Brush Chalk Streaks */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-20"
+          className="absolute inset-0 pointer-events-none opacity-15"
           style={{
             backgroundImage: `repeating-linear-gradient(
               0deg,
               transparent,
               transparent 3px,
-              rgba(255, 255, 255, 0.08) 3px,
-              rgba(255, 255, 255, 0.08) 4px
+              rgba(255, 255, 255, 0.05) 3px,
+              rgba(255, 255, 255, 0.05) 4px
             )`,
           }}
         />
 
-        {/* Center: Monumental Headline & Authoritative Punchy Copy */}
-        <div className="relative z-10 text-center flex flex-col items-center max-w-5xl mx-auto my-auto select-none pt-6 sm:pt-10">
+        {/* Center: Monumental Headline with Organic Fluid Motion */}
+        <div className="relative z-10 text-center flex flex-col items-center max-w-5xl mx-auto my-auto select-none pt-4 sm:pt-8">
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -274,25 +278,51 @@ export default function Home() {
             The
           </motion.p>
 
-          <motion.h1
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="font-charles-rosie text-white text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] leading-[0.88] tracking-tight uppercase drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)]"
+          {/* Fluid Typography Animation: Gentle sinusoidal breathing */}
+          <motion.div
+            animate={{
+              y: [-4, 4, -4],
+            }}
+            transition={{
+              duration: 5.2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="flex items-center justify-center"
           >
-            Aeg<span className="text-[#B91C1C]">i</span>s
-          </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="font-charles-rosie text-white text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] leading-[0.88] tracking-tight uppercase drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)]"
+            >
+              Aeg<span className="text-[#B91C1C]">i</span>s
+            </motion.h1>
+          </motion.div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="font-charles-rosie text-white text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight tracking-[0.16em] uppercase mt-2"
+          <motion.div
+            animate={{
+              y: [4, -4, 4],
+            }}
+            transition={{
+              duration: 5.8,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 0.2,
+            }}
+            className="flex items-center justify-center"
           >
-            Experience
-          </motion.h2>
+            <motion.h2
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="font-charles-rosie text-white text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight tracking-[0.16em] uppercase mt-2 drop-shadow-[0_8px_25px_rgba(0,0,0,0.95)]"
+            >
+              Experience
+            </motion.h2>
+          </motion.div>
 
-          {/* Punchy, Non-Slop Subhead requested by user */}
+          {/* Punchy, Non-Slop Subhead */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -335,7 +365,7 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Bespoke-Styled React Bits <PromptBar /> */}
+          {/* Autoplay Video/GIF Style Simulation <PromptBar /> */}
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
@@ -343,7 +373,7 @@ export default function Home() {
             className="w-full mt-8 max-w-3xl px-2"
           >
             <div className="text-[10px] font-nikkei text-[#D4AF37] uppercase tracking-[0.2em] mb-2 text-center bg-black/80 py-1 px-4 border border-[#D4AF37]/40 rounded-full inline-block shadow-[2px_2px_0px_#000000]">
-              Interactive AI Prompt Cockpit • Select Model &amp; Run /recall, /challenge, or /briefing
+              Autoplay Live Prompt Simulation • /recall, /challenge, &amp; /briefing
             </div>
             <PromptBar />
           </motion.div>
@@ -404,12 +434,12 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Excalidraw Hand-Drawn Architectural Diagram: Speed Benchmarks */}
+          {/* Sovereign Architectural Diagram: Speed Benchmarks */}
           <div className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group">
             <div className="flex items-center justify-between mb-3 border-b border-black/10 pb-2">
               <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
                 <Clock className="w-4 h-4 text-[#B91C1C]" />
-                EXCALIDRAW ARCHITECTURAL BLUEPRINT • 24MS FTS5 VS 12,400MS RAW CRAWL
+                SOVEREIGN SYSTEM ARCHITECTURE BLUEPRINT • 24MS FTS5 VS 12,400MS RAW CRAWL
               </span>
               <button
                 type="button"
@@ -571,12 +601,12 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Excalidraw Hand-Drawn Architectural Diagram: Hierarchy Pyramid */}
+          {/* Sovereign Architectural Diagram: Hierarchy Pyramid */}
           <div className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group">
             <div className="flex items-center justify-between mb-3 border-b border-black/10 pb-2">
               <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
                 <Cpu className="w-4 h-4 text-[#B91C1C]" />
-                EXCALIDRAW ARCHITECTURAL BLUEPRINT • 3-TIER HIERARCHY PYRAMID
+                SOVEREIGN SYSTEM ARCHITECTURE BLUEPRINT • 3-TIER HIERARCHY PYRAMID
               </span>
               <button
                 type="button"
@@ -789,12 +819,12 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Excalidraw Hand-Drawn Architectural Diagram: Mobile Pipeline */}
+          {/* Sovereign Architectural Diagram: Mobile Pipeline */}
           <div className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group">
             <div className="flex items-center justify-between mb-3 border-b border-black/10 pb-2">
               <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
                 <Smartphone className="w-4 h-4 text-[#B91C1C]" />
-                EXCALIDRAW ARCHITECTURAL BLUEPRINT • 24/7 MOBILE TELEGRAM PIPELINE
+                SOVEREIGN SYSTEM ARCHITECTURE BLUEPRINT • 24/7 MOBILE TELEGRAM PIPELINE
               </span>
               <button
                 type="button"
@@ -863,7 +893,7 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Excalidraw Hand-Drawn Architectural Diagrams Grid */}
+          {/* Sovereign Architectural Diagrams Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Diagram 1: Quality Gate */}
             <div className="border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 flex flex-col justify-between">
@@ -968,12 +998,12 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Excalidraw Hand-Drawn Architectural Diagram: Universal Fleet Compatibility */}
+          {/* Sovereign Architectural Diagram: Universal Fleet Compatibility */}
           <div className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group">
             <div className="flex items-center justify-between mb-3 border-b border-black/10 pb-2">
               <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
                 <Layers className="w-4 h-4 text-[#B91C1C]" />
-                EXCALIDRAW ARCHITECTURAL BLUEPRINT • UNIVERSAL FLEET COMPATIBILITY
+                SOVEREIGN SYSTEM ARCHITECTURE BLUEPRINT • UNIVERSAL FLEET COMPATIBILITY
               </span>
               <button
                 type="button"
@@ -1023,7 +1053,7 @@ export default function Home() {
         >
           <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
             <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
-              <span className="text-[#B91C1C]">DATA PROFESSOR</span> • FULL BLUEPRINTS
+              <span className="text-[#B91C1C]">SYSTEM TOPOLOGY</span> • FULL BLUEPRINTS
             </span>
           </div>
 
@@ -1273,7 +1303,7 @@ export default function Home() {
               </div>
 
               <div className="mt-4 flex items-center justify-between text-xs font-mono text-black/70">
-                <span>Hand-crafted Data Professor style SVG diagram</span>
+                <span>High-resolution luxury editorial SVG blueprint</span>
                 <a
                   href={selectedInfographicModal}
                   download

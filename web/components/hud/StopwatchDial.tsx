@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useId } from "react";
+import React, { useState, useEffect, useId } from "react";
 import {
   Clock,
   Zap,
@@ -12,6 +12,7 @@ import {
   TrendingDown,
   Activity,
   FileCode2,
+  Repeat,
 } from "lucide-react";
 
 interface QueryPreset {
@@ -73,10 +74,28 @@ const PRESETS: Record<string, QueryPreset> = {
   },
 };
 
+const PRESET_KEYS = ["rag", "sqlite", "whisper", "security"];
+
 export function StopwatchDial() {
   const [activeQuery, setActiveQuery] = useState<string>("rag");
   const [customInput, setCustomInput] = useState<string>("");
+  const [isAutoPlaying, setIsAutoPlaying] = useState<boolean>(true);
   const inputId = useId();
+
+  // Autoplay simulation loop: cycle through presets every 3.5s
+  useEffect(() => {
+    if (!isAutoPlaying || customInput) return;
+
+    const interval = setInterval(() => {
+      setActiveQuery((current) => {
+        const idx = PRESET_KEYS.indexOf(current.toLowerCase());
+        const nextIdx = (idx + 1) % PRESET_KEYS.length;
+        return PRESET_KEYS[nextIdx];
+      });
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [isAutoPlaying, customInput]);
 
   // Pick current data or compute dynamic values for custom text
   const currentData: QueryPreset = PRESETS[activeQuery.toLowerCase()] || {
@@ -103,8 +122,10 @@ export function StopwatchDial() {
     setCustomInput(val);
     if (val.trim()) {
       setActiveQuery(val.trim());
+      setIsAutoPlaying(false);
     } else {
       setActiveQuery("rag");
+      setIsAutoPlaying(true);
     }
   };
 
@@ -115,17 +136,21 @@ export function StopwatchDial() {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#B91C1C] text-white font-nikkei text-xs uppercase tracking-widest shadow-[2px_2px_0px_#000000]">
             <Clock className="w-3.5 h-3.5" />
-            <span>SUB-SECOND SPEED BENCHMARK SANDBOX</span>
+            <span>SUB-SECOND SPEED BENCHMARK SIMULATOR</span>
           </div>
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
             24ms SQLite WAL vs 12,400ms Raw Crawl
           </h3>
           <p className="text-xs sm:text-sm text-zinc-400 font-gt-era max-w-xl mt-1">
-            Test live query tokens. Aegis indexes symbols directly into SQLite FTS5 for sub-second retrieval.
+            Empirical benchmark simulation. Aegis indexes all symbols into SQLite FTS5 for sub-second neural retrieval.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-black/60 border border-white/10 text-[10px] font-mono text-zinc-400">
+            <Repeat className="w-3 h-3 text-[#10B981] animate-spin" style={{ animationDuration: "6s" }} />
+            LOOPING SIMULATION
+          </span>
           <div className="px-4 py-2 bg-emerald-950/80 border-2 border-emerald-500 rounded text-center shadow-[3px_3px_0px_#000000]">
             <div className="font-nikkei text-xl sm:text-2xl font-extrabold text-emerald-400">
               {speedupFactor}x
@@ -154,7 +179,7 @@ export function StopwatchDial() {
           {/* Quick presets */}
           <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
             <span className="text-[11px] font-nikkei uppercase text-zinc-400 mr-1 hidden sm:inline">Presets:</span>
-            {Object.keys(PRESETS).map((key) => {
+            {PRESET_KEYS.map((key) => {
               const isSelected = activeQuery.toLowerCase() === key && !customInput;
               return (
                 <button
@@ -226,7 +251,7 @@ export function StopwatchDial() {
               <span className="flex items-center gap-1.5 text-zinc-500">
                 <Layers className="w-3.5 h-3.5" /> Context Waste
               </span>
-              <span className="text-[#B91C1C] font-bold">32,400+ Raw Tokens</span>
+              <span className="text-[#B91C1C] font-bold">54,200 Raw Tokens</span>
             </div>
             <div className="flex items-center justify-between text-zinc-400">
               <span className="flex items-center gap-1.5 text-zinc-500">
@@ -236,9 +261,9 @@ export function StopwatchDial() {
             </div>
             <div className="flex items-center justify-between text-zinc-400">
               <span className="flex items-center gap-1.5 text-zinc-500">
-                <Database className="w-3.5 h-3.5" /> Token Cost
+                <Database className="w-3.5 h-3.5" /> API Gate
               </span>
-              <span className="text-[#B91C1C] font-bold">$0.45 per query</span>
+              <span className="text-[#B91C1C] font-bold">429 RateLimit Triggered</span>
             </div>
           </div>
         </div>
@@ -248,31 +273,31 @@ export function StopwatchDial() {
           <div>
             <div className="flex items-center justify-between mb-4 pb-2 border-b border-black/40">
               <span className="px-2.5 py-0.5 rounded bg-emerald-600 text-white font-nikkei text-xs uppercase font-extrabold">
-                AEGIS NEURAL FTS5 CORE
+                AEGISBRAIN NEURAL FTS5
               </span>
-              <span className="text-xs text-emerald-400 font-bold">Sub-Second Indexed</span>
+              <span className="text-xs text-emerald-400">brain.db WAL</span>
             </div>
 
             <div className="flex items-baseline gap-2 mb-2">
-              <span className="text-5xl sm:text-6xl font-extrabold text-emerald-400">
+              <span className="text-5xl sm:text-6xl font-extrabold text-[#10B981]">
                 {currentData.aegisMs}
               </span>
               <span className="text-xl text-zinc-400">ms</span>
             </div>
 
             <p className="text-xs text-zinc-400 mb-6 font-gt-era leading-relaxed">
-              FTS5 virtual table BM25 lookup over SQLite WAL database with sub-millisecond symbol resolution.
+              Instant symbol retrieval via SQLite FTS5 virtual table with BM25 ranking directly in WAL memory mode.
             </p>
 
             <div className="space-y-1.5 mb-6">
               <div className="flex justify-between text-xs text-zinc-400 font-mono">
-                <span>Latency</span>
-                <span className="text-emerald-400 font-bold">&lt; 25ms Real-Time Snap</span>
+                <span>Sub-Second SLA</span>
+                <span className="text-[#10B981] font-bold">&lt; 25ms Target Met</span>
               </div>
               <div className="w-full h-3 rounded bg-black border border-black overflow-hidden">
                 <div
-                  className="h-full bg-emerald-500 rounded transition-all duration-300"
-                  style={{ width: `${Math.min(100, (currentData.aegisMs / 30) * 100)}%` }}
+                  className="h-full bg-emerald-500 rounded"
+                  style={{ width: `${Math.max(4, Math.round((currentData.aegisMs / 50) * 100))}%` }}
                 />
               </div>
             </div>
@@ -281,21 +306,21 @@ export function StopwatchDial() {
           <div className="pt-4 border-t border-black/40 space-y-2 text-xs">
             <div className="flex items-center justify-between text-zinc-400">
               <span className="flex items-center gap-1.5 text-zinc-500">
-                <Layers className="w-3.5 h-3.5" /> Context Window Load
+                <Layers className="w-3.5 h-3.5" /> Tokens Injected
               </span>
-              <span className="text-emerald-400 font-bold">&lt; 380 Tokens</span>
+              <span className="text-[#10B981] font-bold">380 Tokens (-99.3%)</span>
             </div>
             <div className="flex items-center justify-between text-zinc-400">
               <span className="flex items-center gap-1.5 text-zinc-500">
                 <Cpu className="w-3.5 h-3.5" /> Memory Consumption
               </span>
-              <span className="text-emerald-400 font-bold">{currentData.aegisRam}</span>
+              <span className="text-[#10B981] font-bold">{currentData.aegisRam} (-98.5%)</span>
             </div>
             <div className="flex items-center justify-between text-zinc-400">
               <span className="flex items-center gap-1.5 text-zinc-500">
-                <Database className="w-3.5 h-3.5" /> Token Cost
+                <Database className="w-3.5 h-3.5" /> API Gate
               </span>
-              <span className="text-emerald-400 font-bold">$0.00 / Query</span>
+              <span className="text-[#10B981] font-bold">200 OK (Clean Response)</span>
             </div>
           </div>
         </div>

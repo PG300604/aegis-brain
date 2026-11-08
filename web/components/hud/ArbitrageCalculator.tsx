@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useId } from "react";
+import React, { useState, useEffect, useId } from "react";
 import {
   DollarSign,
   TrendingUp,
@@ -12,12 +12,41 @@ import {
   Zap,
   ArrowRight,
   Calculator,
+  Repeat,
 } from "lucide-react";
 
 export function ArbitrageCalculator() {
   const [turns, setTurns] = useState<number>(250);
   const [selectedWorker, setSelectedWorker] = useState<string>("hermes");
+  const [isAutoPlaying, setIsAutoPlaying] = useState<boolean>(true);
   const sliderId = useId();
+
+  const turnsCycle = [100, 250, 500, 750, 1000];
+  const workers = [
+    { id: "hermes", name: "Hermes Agent CLI", model: "Hermes-3 Llama-3.1 8B", cost: "$0.00 / token" },
+    { id: "ollama", name: "Ollama Local MoE", model: "Qwen2.5-Coder 7B", cost: "$0.00 / token" },
+    { id: "opencode", name: "OpenCode Engine", model: "DeepSeek-Coder V2", cost: "$0.00 / token" },
+  ];
+
+  // Autoplay simulation loop: cycle through workloads every 4s
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+
+    const interval = setInterval(() => {
+      setTurns((current) => {
+        const idx = turnsCycle.indexOf(current);
+        const nextIdx = (idx + 1) % turnsCycle.length;
+        return turnsCycle[nextIdx];
+      });
+      setSelectedWorker((current) => {
+        const workerIds = workers.map((w) => w.id);
+        const idx = workerIds.indexOf(current);
+        return workerIds[(idx + 1) % workerIds.length];
+      });
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [isAutoPlaying]);
 
   // Dynamic pricing formulas:
   // Direct Frontier Spend: ~ $0.128 per turn (assuming ~16k tokens in/out on high reasoning models) * turns * 30 days
@@ -31,12 +60,6 @@ export function ArbitrageCalculator() {
   const monthlySavings = frontierMonthly - aegisMonthly;
   const annualSavings = monthlySavings * 12;
   const reductionPercentage = Math.round(((frontierMonthly - aegisMonthly) / frontierMonthly) * 100);
-
-  const workers = [
-    { id: "hermes", name: "Hermes Agent CLI", model: "Hermes-3 Llama-3.1 8B", cost: "$0.00 / token" },
-    { id: "ollama", name: "Ollama Local MoE", model: "Qwen2.5-Coder 7B", cost: "$0.00 / token" },
-    { id: "opencode", name: "OpenCode Engine", model: "DeepSeek-Coder V2", cost: "$0.00 / token" },
-  ];
 
   return (
     <div className="relative p-6 sm:p-8 bg-[#101116] text-[#FBF9F5] border-2 border-black rounded-lg">
@@ -55,11 +78,17 @@ export function ArbitrageCalculator() {
           </p>
         </div>
 
-        <div className="px-4 py-2 bg-emerald-950/80 border-2 border-emerald-500 rounded text-center shadow-[3px_3px_0px_#000000]">
-          <div className="font-nikkei text-xl sm:text-2xl font-extrabold text-emerald-400">
-            {reductionPercentage}%
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-black/60 border border-white/10 text-[10px] font-mono text-zinc-400">
+            <Repeat className="w-3 h-3 text-[#10B981] animate-spin" style={{ animationDuration: "6s" }} />
+            AUTOPLAY SIMULATION
+          </span>
+          <div className="px-4 py-2 bg-emerald-950/80 border-2 border-emerald-500 rounded text-center shadow-[3px_3px_0px_#000000]">
+            <div className="font-nikkei text-xl sm:text-2xl font-extrabold text-emerald-400">
+              {reductionPercentage}%
+            </div>
+            <div className="text-[10px] font-mono uppercase text-emerald-300">Frontier Cost Reduction</div>
           </div>
-          <div className="text-[10px] font-mono uppercase text-emerald-300">Frontier Cost Reduction</div>
         </div>
       </div>
 
@@ -86,7 +115,10 @@ export function ArbitrageCalculator() {
               step={25}
               value={turns}
               aria-label="Daily developer turns slider"
-              onChange={(e) => setTurns(Number(e.target.value))}
+              onChange={(e) => {
+                setTurns(Number(e.target.value));
+                setIsAutoPlaying(false);
+              }}
               className="w-full h-2.5 bg-black rounded appearance-none cursor-pointer accent-[#B91C1C]"
             />
 
@@ -110,7 +142,10 @@ export function ArbitrageCalculator() {
                   <button
                     key={w.id}
                     type="button"
-                    onClick={() => setSelectedWorker(w.id)}
+                    onClick={() => {
+                      setSelectedWorker(w.id);
+                      setIsAutoPlaying(false);
+                    }}
                     className={`p-3 rounded-lg border-2 border-black font-mono text-left transition-all cursor-pointer ${
                       active
                         ? "bg-[#B91C1C]/20 border-[#B91C1C] shadow-[3px_3px_0px_#B91C1C]"
@@ -158,40 +193,61 @@ export function ArbitrageCalculator() {
           </div>
         </div>
 
-        {/* Right Financial Ledger Readout (5 cols) */}
-        <div className="lg:col-span-5 p-6 sm:p-8 rounded-lg bg-[#FAF8F5] text-black border-2 border-black shadow-[6px_6px_0px_#000000] space-y-6">
-          <div className="flex items-center justify-between border-b-2 border-black pb-3">
-            <span className="font-nikkei text-xs uppercase tracking-wider text-black font-extrabold">
-              Audited Savings Ledger
-            </span>
-            <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold">
-              ESTIMATED ROI
-            </span>
-          </div>
+        {/* Right Output Dashboard (5 cols) */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="comic-plate p-6 rounded-lg text-black space-y-4">
+            <div className="flex items-center justify-between border-b-2 border-black pb-3">
+              <span className="font-nikkei text-xs uppercase tracking-wider text-black font-extrabold">
+                Monthly Spend Comparison
+              </span>
+              <span className="text-[10px] font-mono text-zinc-500">30-Day Billing Cycle</span>
+            </div>
 
-          <div className="space-y-4 font-mono">
-            <div>
-              <div className="text-[11px] text-black/60 uppercase">Traditional Frontier API Spend</div>
-              <div className="text-2xl font-bold text-[#B91C1C] line-through mt-0.5">
-                ${frontierMonthly.toLocaleString()} / month
+            {/* Traditional Direct Cost */}
+            <div className="p-3 bg-red-50 border-2 border-black rounded shadow-[2px_2px_0px_#B91C1C]">
+              <div className="flex justify-between items-center text-xs font-mono text-red-900">
+                <span>Traditional (100% Frontier API)</span>
+                <span className="font-bold text-base text-[#B91C1C]">
+                  ${frontierMonthly.toLocaleString()} / mo
+                </span>
+              </div>
+              <div className="text-[10px] font-mono text-red-700/80 mt-1">
+                Burning expensive tokens on repetitive boilerplate &amp; raw JSON logs.
               </div>
             </div>
 
-            <div>
-              <div className="text-[11px] text-black/60 uppercase">Aegis 3-Tier Arbitrage Spend</div>
-              <div className="text-xl font-bold text-black mt-0.5">
-                ${aegisMonthly.toLocaleString()} / month
+            {/* Aegis 3-Tier Cost */}
+            <div className="p-3 bg-emerald-50 border-2 border-black rounded shadow-[2px_2px_0px_#10B981]">
+              <div className="flex justify-between items-center text-xs font-mono text-emerald-900">
+                <span>AegisBrain 3-Tier Arbitrage</span>
+                <span className="font-bold text-base text-emerald-700">
+                  ${aegisMonthly.toLocaleString()} / mo
+                </span>
+              </div>
+              <div className="text-[10px] font-mono text-emerald-700/80 mt-1">
+                92% generated by free local workers. Only architecture calls frontier APIs.
               </div>
             </div>
 
-            <div className="p-4 bg-white border-2 border-black rounded shadow-[3px_3px_0px_#10B981]">
-              <div className="text-[11px] text-emerald-800 font-nikkei uppercase font-extrabold">Net Monthly Savings</div>
-              <div className="text-3xl font-extrabold text-emerald-700 mt-1">
-                +${monthlySavings.toLocaleString()}
-                <span className="text-xs text-black/60 font-normal"> / mo</span>
-              </div>
-              <div className="text-[11px] text-black/70 mt-1">
-                Annual runway dividend: <strong>+${annualSavings.toLocaleString()} / yr</strong>
+            {/* Realized Savings Highlight */}
+            <div className="pt-2 border-t-2 border-black">
+              <div className="flex items-baseline justify-between">
+                <div>
+                  <div className="text-[10px] uppercase font-nikkei text-black font-extrabold tracking-wider">
+                    Total Realized Savings
+                  </div>
+                  <div className="text-3xl font-nikkei font-extrabold text-[#B91C1C]">
+                    +${monthlySavings.toLocaleString()} <span className="text-xs text-black font-normal font-mono">/ month</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] uppercase font-nikkei text-zinc-500 tracking-wider">
+                    Annual Value
+                  </div>
+                  <div className="text-base font-mono font-bold text-emerald-700">
+                    +${annualSavings.toLocaleString()} / yr
+                  </div>
+                </div>
               </div>
             </div>
           </div>

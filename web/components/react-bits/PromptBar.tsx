@@ -1,342 +1,247 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  Sparkles,
-  Send,
-  Square,
-  Mic,
-  MicOff,
-  Sliders,
-  ChevronDown,
   Terminal,
   Cpu,
   Zap,
-  Flame,
-  Check,
-  Search,
-  Shield,
-  Layers,
+  CheckCircle2,
   Clock,
+  Shield,
+  Send,
+  Sparkles,
+  Database,
+  ArrowRight,
+  Repeat,
 } from "lucide-react";
 import "./PromptBar.css";
 
-interface ModelOption {
-  id: string;
-  name: string;
+interface SimulationStep {
+  command: string;
+  model: string;
   tier: string;
   badge: string;
-  color: string;
+  latency: string;
+  outputTitle: string;
+  outputLines: string[];
+  tokensSaved: string;
 }
 
-const MODELS: ModelOption[] = [
-  { id: "gemini-4", name: "Gemini 4 Flash", tier: "Tier 1 Senior Boss", badge: "Cloud Brain", color: "text-[#D4AF37]" },
-  { id: "opus-5.5", name: "Claude Opus 5.5", tier: "Tier 1 Strategic", badge: "Deep Reasoner", color: "text-[#B91C1C]" },
-  { id: "fable-5.1", name: "Fable 5.1 Orchestrator", tier: "Tier 1 Boss", badge: "Synthesis", color: "text-[#10B981]" },
-  { id: "argon", name: "Argon High-Cognition", tier: "Tier 1 Manager", badge: "Zero-Leak", color: "text-[#F59E0B]" },
-  { id: "hermes-3", name: "Hermes 3 (Local)", tier: "Tier 3 Worker", badge: "$0.00 / Token", color: "text-[#FBF9F5]" },
-];
-
-const COMMANDS = [
-  { cmd: "/recall", desc: "Sub-second SQLite FTS5 neural memory retrieval (<25ms)" },
-  { cmd: "/briefing", desc: "Generate offline task, git status & tech radar briefing" },
-  { cmd: "/challenge", desc: "Run red-team adversarial AST security audit on code" },
-  { cmd: "/snapshot", desc: "Create point-in-time restore point before code mutations" },
-  { cmd: "/pipeline", desc: "Dispatch raw draft through 4-Decision Quality Architecture Gate" },
-];
-
-const EFFORTS = [
-  { level: 1, label: "Low", desc: "Direct worker generation", color: "bg-[#10B981]" },
-  { level: 2, label: "Med", desc: "Tier 2 AST audit", color: "bg-[#D4AF37]" },
-  { level: 3, label: "High", desc: "Coaching convergence loop", color: "bg-[#F59E0B]" },
-  { level: 4, label: "Max", desc: "Full Dual-Env verification + Sparks", color: "bg-[#B91C1C]" },
+const SIMULATION_STEPS: SimulationStep[] = [
+  {
+    command: 'aegis recall "AST parser invariants"',
+    model: "Gemini 4 Flash",
+    tier: "Tier 1 Senior Boss",
+    badge: "Cloud Brain",
+    latency: "22 ms",
+    outputTitle: "✓ 4 AST symbols retrieved from brain.db in 22ms (<25ms SLA)",
+    outputLines: [
+      "• ASTTaintChecker (src/gates/redteam_ast.py:16)",
+      "• InvariantGuard.assert_no_shell(cmd) [PASS]",
+      "• SymbolResolver.find_ast_nodes(\"invariants\") [Node #1409]",
+      "• Zero context bloat: 380 tokens vs 54,200 tokens crawl",
+    ],
+    tokensSaved: "99.3% tokens saved",
+  },
+  {
+    command: "aegis challenge src/engine.py",
+    model: "Claude Opus 5.5",
+    tier: "Tier 2 Subagent Gate",
+    badge: "Security Audit",
+    latency: "18 ms",
+    outputTitle: "✓ 0 vulnerabilities detected (Cloudflare AST audit clean)",
+    outputLines: [
+      "• subprocess.run(shell=False) verified [Gate 03 PASS]",
+      "• 0 API keys / secrets exposed in AST tree [GitGuardian PASS]",
+      "• Karpathy simplicity: 12 lines diff [Fast-Path ≤15 Lines PASS]",
+      "• Dual-env syntax compilation verified in isolated sandbox",
+    ],
+    tokensSaved: "Zero exploit vectors",
+  },
+  {
+    command: "aegis briefing",
+    model: "Fable Orchestrator",
+    tier: "Tier 1 Boss",
+    badge: "State Digest",
+    latency: "24 ms",
+    outputTitle: "✓ Snapshot snap-20261108 active • 24/7 daemon healthy (:8765)",
+    outputLines: [
+      "• 286/286 pytest unit tests passing [100% clean test suite]",
+      "• Telegram bridge @HHAACLIBot active on Win32 host",
+      "• Local worker pool: Hermes CLI (Idle), Ollama 7B (Ready)",
+      "• $1,840/mo token savings active across 3-tier hierarchy",
+    ],
+    tokensSaved: "Host persistent",
+  },
+  {
+    command: 'aegis delegate "Implement token counter"',
+    model: "Hermes 3 (Local)",
+    tier: "Tier 3 Worker",
+    badge: "$0.00 / Token",
+    latency: "180 ms",
+    outputTitle: "✓ Hermes 3 generated candidate on host hardware ($0.00 cost)",
+    outputLines: [
+      "• Directive dispatched via run_command to local hermes CLI",
+      "• 0 frontier tokens consumed • $0.00 billed to developer",
+      "• 4-Decision Quality Architecture Gate: ALL 4 GATES PASSED",
+      "• Coached to 9.4/10 confidence score in 1 verification loop",
+    ],
+    tokensSaved: "100% free tokens",
+  },
 ];
 
 export function PromptBar() {
-  const [prompt, setPrompt] = useState("");
-  const [effort, setEffort] = useState(4); // default Max
-  const [selectedModel, setSelectedModel] = useState<ModelOption>(MODELS[0]);
-  const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
-  const [commandsMenuOpen, setCommandsMenuOpen] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [lastExecuted, setLastExecuted] = useState<{
-    text: string;
-    model: string;
-    latency: string;
-    tokensSaved: string;
-    gatePassed: boolean;
-  } | null>(null);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [typedCommand, setTypedCommand] = useState("");
+  const [phase, setPhase] = useState<"typing" | "dispatching" | "executing" | "complete">("typing");
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  const currentStep = SIMULATION_STEPS[currentStepIndex];
 
-  // Close menus on outside click
   useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setModelDropdownOpen(false);
-        setCommandsMenuOpen(false);
+    let charIndex = 0;
+    const targetText = currentStep.command;
+    setTypedCommand("");
+    setPhase("typing");
+
+    // Phase 1: Typing effect
+    const typingInterval = setInterval(() => {
+      if (charIndex <= targetText.length) {
+        setTypedCommand(targetText.slice(0, charIndex));
+        charIndex++;
+      } else {
+        clearInterval(typingInterval);
+        // Phase 2: Dispatch trigger
+        setPhase("dispatching");
+        setTimeout(() => {
+          // Phase 3: Executing
+          setPhase("executing");
+          setTimeout(() => {
+            // Phase 4: Output Complete
+            setPhase("complete");
+            // Hold for 3.5 seconds then advance
+            setTimeout(() => {
+              setCurrentStepIndex((prev) => (prev + 1) % SIMULATION_STEPS.length);
+            }, 3600);
+          }, 350);
+        }, 450);
       }
-    };
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, []);
+    }, 45);
 
-  const handleSend = () => {
-    if (!prompt.trim() && !isGenerating) return;
-
-    if (isGenerating) {
-      setIsGenerating(false);
-      return;
-    }
-
-    setIsGenerating(true);
-    setLastExecuted(null);
-
-    // Simulate multi-tier execution
-    setTimeout(() => {
-      setIsGenerating(false);
-      setLastExecuted({
-        text: prompt,
-        model: selectedModel.name,
-        latency: "22 ms",
-        tokensSaved: "2,840 tokens ($0.042 saved)",
-        gatePassed: true,
-      });
-      setPrompt("");
-    }, 1100);
-  };
-
-  const handleCommandSelect = (cmd: string) => {
-    setPrompt(`${cmd} `);
-    setCommandsMenuOpen(false);
-  };
+    return () => clearInterval(typingInterval);
+  }, [currentStepIndex]);
 
   return (
-    <div ref={containerRef} className="prompt-bar-container">
-      <div className="relative prompt-bar-glass p-3 sm:p-4 bg-[#101116] border-2 sm:border-3 border-black rounded-xl shadow-[6px_6px_0px_#000000]">
-        {/* Top Control Bar: Model Picker & Effort Dial */}
-        <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-black/40">
-          {/* Model Selector Button */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => {
-                setModelDropdownOpen(!modelDropdownOpen);
-                setCommandsMenuOpen(false);
-              }}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#181822] border-2 border-black hover:border-[#B91C1C] text-xs font-mono text-[#FBF9F5] shadow-[2px_2px_0px_#000000] transition-all cursor-pointer"
-            >
-              <Cpu className={`w-3.5 h-3.5 ${selectedModel.color}`} />
-              <span className="font-nikkei font-bold uppercase tracking-wider">{selectedModel.name}</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-black text-[#D4AF37] border border-[#D4AF37]/30 font-mono">
-                {selectedModel.badge}
-              </span>
-              <ChevronDown className="w-3 h-3 text-white/50" />
-            </button>
+    <div className="w-full max-w-3xl mx-auto rounded-xl border-2 border-black bg-[#101116] shadow-[8px_8px_0px_#000000] overflow-hidden text-white font-mono text-xs">
+      {/* Top Header Pill Bar */}
+      <div className="flex items-center justify-between px-4 py-2.5 bg-[#171822] border-b border-white/10">
+        <div className="flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-[#B91C1C]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#D4AF37]" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[#10B981]" />
+          <span className="ml-2 font-bold text-white text-[11px] tracking-wider uppercase font-nikkei flex items-center gap-1.5">
+            <Terminal className="w-3.5 h-3.5 text-[#D4AF37]" />
+            Aegis Sovereign Prompt Simulator
+          </span>
+        </div>
 
-            {/* Model Dropdown Menu */}
-            <AnimatePresence>
-              {modelDropdownOpen && (
+        <div className="flex items-center gap-2">
+          <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded bg-black/60 border border-white/10 text-[10px] text-zinc-400">
+            <Repeat className="w-3 h-3 text-[#10B981] animate-spin" style={{ animationDuration: "6s" }} />
+            AUTOPLAY SIMULATION
+          </span>
+          <span className="px-2 py-0.5 rounded bg-[#D4AF37]/20 border border-[#D4AF37]/40 text-[#D4AF37] font-bold text-[10px]">
+            {currentStep.model}
+          </span>
+        </div>
+      </div>
+
+      {/* Interactive Command Input Line (Video/GIF Typewriter Simulation) */}
+      <div className="p-4 sm:p-5 bg-[#0D0E14] space-y-3">
+        <div className="flex items-center gap-2.5 px-3.5 py-3 rounded-lg bg-black border border-white/15 shadow-inner">
+          <span className="text-[#D4AF37] font-bold text-sm select-none">&gt;_</span>
+          <div className="flex-1 font-mono text-sm text-white flex items-center">
+            <span>{typedCommand}</span>
+            <span
+              className={`inline-block w-2 h-4 ml-1 bg-[#B91C1C] ${
+                phase === "typing" ? "animate-pulse" : "opacity-0"
+              }`}
+            />
+          </div>
+
+          <motion.div
+            animate={{
+              scale: phase === "dispatching" ? 0.92 : 1,
+              backgroundColor: phase === "dispatching" ? "#B91C1C" : "#1A1B26",
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-white/20 text-[11px] font-bold text-white select-none transition-colors"
+          >
+            <Send className="w-3 h-3 text-[#D4AF37]" />
+            <span className="hidden sm:inline">DISPATCH</span>
+          </motion.div>
+        </div>
+
+        {/* Dynamic Execution Status & Trace */}
+        <AnimatePresence mode="wait">
+          {(phase === "executing" || phase === "complete") && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              className="space-y-2 pt-1"
+            >
+              {/* Shimmer / Latency Header */}
+              <div className="flex items-center justify-between text-[11px] px-2 py-1 rounded bg-[#171924] border border-white/10">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                  </span>
+                  <span className="text-zinc-300 font-bold">{currentStep.tier}</span>
+                  <span className="text-zinc-600">•</span>
+                  <span className="text-[#D4AF37]">{currentStep.badge}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-emerald-400 font-bold">{currentStep.tokensSaved}</span>
+                  <span className="text-white font-bold bg-black px-2 py-0.5 rounded border border-white/10">
+                    {currentStep.latency}
+                  </span>
+                </div>
+              </div>
+
+              {/* Output Content Terminal Box */}
+              {phase === "complete" && (
                 <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                  transition={{ duration: 0.15 }}
-                  className="absolute left-0 top-full mt-2 w-72 model-dropdown-menu z-50 p-2 space-y-1 bg-[#14141C] border-2 border-black shadow-[6px_6px_0px_#000000] rounded-lg"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="p-3.5 rounded-lg bg-[#07080C] border border-emerald-500/30 space-y-1.5 font-mono text-[11px]"
                 >
-                  <div className="px-2 py-1 text-[10px] font-nikkei uppercase text-[#D4AF37] font-bold tracking-wider">
-                    Select Execution Engine
+                  <div className="text-emerald-400 font-bold flex items-center gap-1.5 pb-1 border-b border-white/10">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    {currentStep.outputTitle}
                   </div>
-                  {MODELS.map((m) => (
-                    <button
-                      key={m.id}
-                      onClick={() => {
-                        setSelectedModel(m);
-                        setModelDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between p-2 rounded text-left text-xs font-mono transition-colors cursor-pointer ${
-                        selectedModel.id === m.id
-                          ? "bg-[#B91C1C]/20 text-white border border-[#B91C1C]"
-                          : "text-zinc-300 hover:bg-black/60"
-                      }`}
-                    >
-                      <div>
-                        <div className="font-nikkei font-bold text-white uppercase">{m.name}</div>
-                        <div className="text-[10px] text-zinc-400 font-gt-era">{m.tier}</div>
-                      </div>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-black border border-white/20 text-[#D4AF37]">
-                        {m.badge}
-                      </span>
-                    </button>
+                  {currentStep.outputLines.map((line, idx) => (
+                    <div key={idx} className="text-zinc-300 pl-2">
+                      {line}
+                    </div>
                   ))}
                 </motion.div>
               )}
-            </AnimatePresence>
-          </div>
-
-          {/* Effort Dial (Low -> Max with Inked Sparks) */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 text-[11px] font-nikkei uppercase tracking-wider text-white/70">
-              <Sliders className="w-3.5 h-3.5 text-[#D4AF37]" />
-              <span className="hidden sm:inline">Cognition:</span>
-            </div>
-
-            <div className="flex items-center gap-1 bg-[#181822] p-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000000]">
-              {EFFORTS.map((eff) => {
-                const isActive = eff.level === effort;
-                return (
-                  <button
-                    key={eff.level}
-                    type="button"
-                    onClick={() => setEffort(eff.level)}
-                    title={eff.desc}
-                    className={`px-2.5 py-0.5 rounded text-[11px] font-nikkei uppercase tracking-wider font-extrabold transition-all cursor-pointer ${
-                      isActive
-                        ? eff.level === 4
-                          ? "bg-[#B91C1C] text-white border border-black shadow-[1px_1px_0px_#000000] effort-max-sparks"
-                          : "bg-[#D4AF37] text-black border border-black shadow-[1px_1px_0px_#000000]"
-                        : "text-zinc-400 hover:text-white"
-                    }`}
-                  >
-                    {eff.label}
-                    {eff.level === 4 && isActive && " ★"}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Input Bar Area */}
-        <div className="relative mt-3 flex items-center gap-2">
-          {/* Quick Slash Commands Trigger */}
-          <button
-            type="button"
-            onClick={() => {
-              setCommandsMenuOpen(!commandsMenuOpen);
-              setModelDropdownOpen(false);
-            }}
-            title="Aegis Commands"
-            className="p-2 rounded-lg bg-[#181822] hover:bg-[#20202e] border-2 border-black text-[#D4AF37] hover:text-white shadow-[2px_2px_0px_#000000] transition-colors cursor-pointer"
-          >
-            <Terminal className="w-4 h-4" />
-          </button>
-
-          {/* Prompt Input */}
-          <input
-            type="text"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-            placeholder="Ask AegisBrain to recall memory, audit AST security, or dispatch local workers..."
-            className="flex-1 bg-transparent px-3 py-2 text-sm sm:text-base text-[#FBF9F5] placeholder-white/35 font-gt-era focus:outline-none"
-          />
-
-          {/* Voice Microphone Toggle */}
-          <button
-            type="button"
-            onClick={() => setIsRecording(!isRecording)}
-            title={isRecording ? "Stop Voice Input" : "Dictate via Whisper Voice Shield"}
-            className={`p-2 rounded-lg border-2 border-black transition-all cursor-pointer shadow-[2px_2px_0px_#000000] ${
-              isRecording
-                ? "bg-[#B91C1C] text-white animate-pulse"
-                : "bg-[#181822] hover:bg-[#222230] text-zinc-300"
-            }`}
-          >
-            {isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-          </button>
-
-          {/* Send / Stop Action Button */}
-          <button
-            type="button"
-            onClick={handleSend}
-            disabled={!prompt.trim() && !isGenerating}
-            className={`px-4 py-2 rounded-lg font-nikkei text-xs uppercase tracking-wider font-extrabold flex items-center gap-1.5 border-2 border-black shadow-[3px_3px_0px_#000000] transition-all cursor-pointer ${
-              isGenerating
-                ? "bg-[#B91C1C] text-white animate-pulse"
-                : prompt.trim()
-                ? "bg-[#B91C1C] hover:bg-red-800 text-white hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_#000000]"
-                : "bg-zinc-800 text-zinc-500 cursor-not-allowed border-black/40 shadow-none"
-            }`}
-          >
-            {isGenerating ? (
-              <>
-                <Square className="w-3.5 h-3.5 fill-current" />
-                <span className="hidden sm:inline">HALT</span>
-              </>
-            ) : (
-              <>
-                <Send className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">DISPATCH</span>
-              </>
-            )}
-          </button>
-        </div>
-
-        {/* Slash Commands Dropdown Menu */}
-        <AnimatePresence>
-          {commandsMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -6, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -6, scale: 0.98 }}
-              className="absolute left-4 top-full mt-2 w-80 bg-[#14141C] border-2 border-black rounded-lg shadow-[6px_6px_0px_#000000] z-50 p-2 space-y-1"
-            >
-              <div className="px-2 py-1 text-[10px] font-nikkei uppercase text-[#D4AF37] font-bold tracking-wider">
-                Aegis Autonomous Commands
-              </div>
-              {COMMANDS.map((c) => (
-                <button
-                  key={c.cmd}
-                  onClick={() => handleCommandSelect(c.cmd)}
-                  className="w-full p-2 text-left rounded hover:bg-black/60 transition-colors cursor-pointer group"
-                >
-                  <div className="font-mono text-xs font-bold text-[#D4AF37] group-hover:text-white">
-                    {c.cmd}
-                  </div>
-                  <div className="text-[11px] font-gt-era text-zinc-400 mt-0.5 leading-snug">
-                    {c.desc}
-                  </div>
-                </button>
-              ))}
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
 
-        {/* Real-time Execution Toast / Result Pill */}
-        <AnimatePresence>
-          {lastExecuted && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mt-3 pt-3 border-t border-black/40 flex flex-wrap items-center justify-between gap-2 text-xs font-mono"
-            >
-              <div className="flex items-center gap-2 text-zinc-300">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                <span className="font-nikkei font-bold uppercase text-white">Dispatched:</span>
-                <span className="italic text-zinc-400 truncate max-w-[200px] sm:max-w-xs">
-                  &ldquo;{lastExecuted.text}&rdquo;
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded bg-black border border-[#D4AF37]/40 text-[#D4AF37] text-[11px] font-mono">
-                  {lastExecuted.latency}
-                </span>
-                <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 text-[11px] font-mono">
-                  4-Gate Passed
-                </span>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+      {/* Footer Indicators */}
+      <div className="flex items-center justify-between px-4 py-2 bg-[#14151E] border-t border-white/10 text-[10px] text-zinc-500 font-gt-era">
+        <div className="flex items-center gap-3">
+          <span>Engine: <code className="text-zinc-400">brain.db (WAL)</code></span>
+          <span>•</span>
+          <span>Daemon: <code className="text-emerald-400">127.0.0.1:8765</code></span>
+        </div>
+        <div className="flex items-center gap-1 text-[#D4AF37]">
+          <span>Scenario {currentStepIndex + 1} of {SIMULATION_STEPS.length}</span>
+        </div>
       </div>
     </div>
   );

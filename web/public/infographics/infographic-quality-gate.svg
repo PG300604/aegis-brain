@@ -1,194 +1,157 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 720" width="100%" height="auto">
   <defs>
     <style><![CDATA[
-    @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&amp;family=Caveat:wght@600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap');
-    
-    .paper-bg { fill: #FDFBF7; }
-    .ink { stroke: #22252A; stroke-linecap: round; stroke-linejoin: round; }
-    .text-title { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 26px; font-weight: 700; fill: #22252A; }
-    .text-subtitle { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 15px; fill: #52525B; }
-    .text-heading { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 18px; font-weight: 700; fill: #22252A; }
-    .text-body { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 14px; fill: #27272A; }
-    .text-badge { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 13px; font-weight: 700; }
-    .text-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; }
-    .text-metric { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 46px; font-weight: 700; }
-]]>
-    </style>
-    <filter id="sketch-shadow" x="-5%" y="-5%" width="110%" height="115%">
-      <feDropShadow dx="3" dy="4" stdDeviation="0" flood-color="#22252A" flood-opacity="0.15" />
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+      .font-sans { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+      .font-mono { font-family: 'JetBrains Mono', monospace; }
+    ]]></style>
+    <filter id="brutalist-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="4" dy="4" stdDeviation="0" flood-color="#000000" flood-opacity="0.9" />
     </filter>
   </defs>
 
-  <!-- Warm Sketchpad Canvas Card -->
-  <rect width="1040" height="720" rx="20" class="paper-bg ink" stroke="#22252A" stroke-width="3" />
+  <!-- Background Plate -->
+  <rect width="1040" height="720" rx="16" fill="#090A0F" stroke="#262738" stroke-width="2" />
 
-    <!-- Left Ribbon Tail -->
-    <path d="M 100.0 38 L 60.0 38 L 76.0 64.0 L 60.0 92 L 100.0 92 Z" 
-          fill="#BAE6FD" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
-    <!-- Left Fold Shadow Triangle -->
-    <polygon points="100.0,92 100.0,110 124.0,92" fill="#0284C7" stroke="#22252A" stroke-width="2" />
-    
-    <!-- Right Ribbon Tail -->
-    <path d="M 940.0 38 L 980.0 38 L 964.0 64.0 L 980.0 92 L 940.0 92 Z" 
-          fill="#BAE6FD" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
-    <!-- Right Fold Shadow Triangle -->
-    <polygon points="940.0,92 940.0,110 916.0,92" fill="#0284C7" stroke="#22252A" stroke-width="2" />
-    
-    <!-- Main Center Banner -->
-    <rect x="100.0" y="30" width="840" height="68" rx="6" fill="#F0F9FF" stroke="#22252A" stroke-width="2.8" filter="url(#sketch-shadow)" />
-    <!-- Inner Accent Line -->
-    <rect x="104.0" y="34" width="832" height="60" rx="4" fill="none" stroke="#BAE6FD" stroke-width="1.8" />
-    <text x="520" y="58" text-anchor="middle" class="text-title" fill="#0369A1">4-DECISION QUALITY ARCHITECTURE GATE</text>
-    <text x="520" y="80" text-anchor="middle" class="text-subtitle" fill="#475569">Candidate Code Filter • Zero AI Slop in Git • Red-Team Security &amp; Dual-Env Verification</text>
-    <text x="520" y="115" text-anchor="middle" class="text-subtitle" fill="#52525B">
-      Every worker candidate draft must pass all 4 gates before reaching senior models or git
-    </text>
-    
-    <!-- Gate 1: Surgical Simplicity -->
-    <g transform="translate(35, 135)">
-      <rect x="0" y="0" width="225" height="390" rx="14" fill="#EFF6FF" stroke="#2563EB" stroke-width="2.4" filter="url(#sketch-shadow)" />
-      
-      <!-- Top Title Ribbon -->
-      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12.5" font-weight="700" fill="#15803D">1. Surgical Simplicity</text>
-      
-      <text x="112" y="36" text-anchor="middle" class="text-heading" font-size="15" fill="#1E40AF">Karpathy Doctrine</text>
-      <line x1="25" y1="46" x2="200" y2="46" stroke="#93C5FD" stroke-width="1.6" />
-      
-      <g transform="translate(14, 60)">
-        <text x="0" y="0" class="text-body" font-size="12">• Minimal lines of diff</text>
-        <text x="0" y="24" class="text-body" font-size="12">• Standard library first</text>
-        <text x="0" y="48" class="text-body" font-size="12">• Zero speculative code</text>
-        <text x="0" y="72" class="text-body" font-size="12">• Zero unreachable wrappers</text>
-        <text x="0" y="96" class="text-body" font-size="12">• Touch only what is broken</text>
-        <text x="0" y="120" class="text-body" font-size="12">• Clean up created orphans</text>
-        <text x="0" y="148" class="text-body" font-size="12" font-weight="700" fill="#1E40AF">50-Line Rewrite Rule:</text>
-        <text x="0" y="168" class="text-body" font-size="11" fill="#4B5563">If 200 lines could easily be 50,</text>
-        <text x="0" y="184" class="text-body" font-size="11" fill="#4B5563">rewrite immediately.</text>
+  <!-- Header -->
+  <g transform="translate(40, 28)">
+    <rect x="0" y="0" width="960" height="76" rx="8" fill="#12131C" stroke="#D4AF37" stroke-width="1.8" filter="url(#brutalist-shadow)" />
+    <!-- Seal Badge -->
+    <rect x="18" y="14" width="48" height="48" rx="6" fill="#1C1D2B" stroke="#D4AF37" stroke-width="1.2" />
+    <path d="M 42 22 L 56 30 L 56 46 L 42 54 L 28 46 L 28 30 Z" fill="none" stroke="#D4AF37" stroke-width="1.5" />
+    <circle cx="42" cy="38" r="4" fill="#B91C1C" />
+
+    <text x="82" y="34" class="font-sans" font-size="11" font-weight="700" fill="#D4AF37" letter-spacing="2">ZERO-DEFECT QUALITY AUDIT // ADVERSARIAL GATES</text>
+    <text x="82" y="58" class="font-sans" font-size="20" font-weight="800" fill="#FFFFFF" letter-spacing="0.5">THE 4-DECISION QUALITY ARCHITECTURE GATE</text>
+    <text x="880" y="46" text-anchor="end" class="font-mono" font-size="12" font-weight="700" fill="#10B981">100% INVARIANT PASS</text>
+  </g>
+
+  <!-- 4 QUALITY GATES IN HORIZONTAL PIPELINE -->
+  <g transform="translate(40, 130)">
+    <!-- GATE 1: KARPATHY SIMPLICITY -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="220" height="460" rx="8" fill="#12131C" stroke="#D4AF37" stroke-width="1.6" filter="url(#brutalist-shadow)" />
+      <rect x="14" y="16" width="90" height="24" rx="4" fill="#3D3012" stroke="#D4AF37" stroke-width="1" />
+      <text x="59" y="32" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#FDE047">GATE 01</text>
+
+      <text x="14" y="66" class="font-sans" font-size="15" font-weight="700" fill="#FFFFFF">Karpathy Simplicity</text>
+      <text x="14" y="86" class="font-mono" font-size="10" fill="#D4AF37">Zero Speculative Code</text>
+
+      <rect x="14" y="110" width="192" height="150" rx="6" fill="#1A1812" stroke="#3D3012" stroke-width="1" />
+      <text x="20" y="132" class="font-mono" font-size="10" font-weight="700" fill="#EF4444">❌ REJECTED:</text>
+      <text x="20" y="148" class="font-mono" font-size="9" fill="#FCA5A5">AbstractFactorySingleton</text>
+      <text x="20" y="162" class="font-mono" font-size="9" fill="#9CA3AF">Unused generic wrappers</text>
+      <line x1="20" y1="174" x2="190" y2="174" stroke="#332814" stroke-width="1" />
+      <text x="20" y="196" class="font-mono" font-size="10" font-weight="700" fill="#10B981">✓ APPROVED:</text>
+      <text x="20" y="212" class="font-mono" font-size="9" fill="#A7F3D0">connect_db(url: str)</text>
+      <text x="20" y="226" class="font-mono" font-size="9" fill="#6EE7B7">Surgical, minimal diff</text>
+
+      <g transform="translate(14, 280)">
+        <text x="0" y="0" class="font-mono" font-size="10" font-weight="700" fill="#E4E4E7">Surgical Invariant:</text>
+        <text x="0" y="18" class="font-mono" font-size="9" fill="#9CA3AF">• Touch only requested lines</text>
+        <text x="0" y="34" class="font-mono" font-size="9" fill="#9CA3AF">• Fast-path ≤15 lines</text>
+        <text x="0" y="50" class="font-mono" font-size="9" fill="#9CA3AF">• Standard library first</text>
+        <text x="0" y="66" class="font-mono" font-size="9" fill="#9CA3AF">• Zero single-use wrappers</text>
       </g>
-      
-      <rect x="25" y="340" width="175" height="26" rx="13" fill="#BBF7D0" stroke="#15803D" stroke-width="1.4" />
-      <text x="112" y="357" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#15803D">Zero Over-Engineering</text>
+
+      <rect x="14" y="405" width="192" height="38" rx="4" fill="#3D3012" />
+      <text x="110" y="429" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#FDE047">PASSED: SIMPLICITY</text>
     </g>
-    
-    <path d="M 260 310.0 Q 272.5 310.0 285 310.0" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
-    <polygon points="285,310.0 274.60769515458674,316.0 274.60769515458674,304.0" fill="#22252A" stroke="#22252A" stroke-width="1" />
-    
-    <!-- Gate 2: Unslop Master -->
-    <g transform="translate(285, 135)">
-      <rect x="0" y="0" width="225" height="390" rx="14" fill="#FAF5FF" stroke="#7C3AED" stroke-width="2.4" filter="url(#sketch-shadow)" />
-      
-      <!-- Top Title Ribbon -->
-      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12.5" font-weight="700" fill="#6B21A8">2. Unslop Master</text>
-      
-      <text x="112" y="36" text-anchor="middle" class="text-heading" font-size="15" fill="#5B21B6">TurnItOut Engine</text>
-      <line x1="25" y1="46" x2="200" y2="46" stroke="#D8B4FE" stroke-width="1.6" />
-      
-      <g transform="translate(14, 60)">
-        <text x="0" y="0" class="text-body" font-size="12">• Strips conversational slop</text>
-        <text x="0" y="24" class="text-body" font-size="12">• Removes "Certainly!", "Here is"</text>
-        <text x="0" y="48" class="text-body" font-size="12">• Prunes polite preambles</text>
-        <text x="0" y="72" class="text-body" font-size="12">• Removes chatty comments</text>
-        <text x="0" y="96" class="text-body" font-size="12">• Eliminates sycophancy filler</text>
-        <text x="0" y="120" class="text-body" font-size="12">• Pure executable code</text>
-        <text x="0" y="148" class="text-body" font-size="12" font-weight="700" fill="#5B21B6">Zero Slop Guarantee:</text>
-        <text x="0" y="168" class="text-body" font-size="11" fill="#4B5563">Zero AI watermarks or slop</text>
-        <text x="0" y="184" class="text-body" font-size="11" fill="#4B5563">ever committed into git.</text>
+
+    <!-- GATE 2: UNSLOP / TURNITOUT -->
+    <g transform="translate(246, 0)">
+      <rect x="0" y="0" width="220" height="460" rx="8" fill="#12131C" stroke="#F59E0B" stroke-width="1.6" filter="url(#brutalist-shadow)" />
+      <rect x="14" y="16" width="90" height="24" rx="4" fill="#3D2908" stroke="#F59E0B" stroke-width="1" />
+      <text x="59" y="32" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#FDE68A">GATE 02</text>
+
+      <text x="14" y="66" class="font-sans" font-size="15" font-weight="700" fill="#FFFFFF">Ponytail Unslop</text>
+      <text x="14" y="86" class="font-mono" font-size="10" fill="#F59E0B">Anti-Slop Filter</text>
+
+      <rect x="14" y="110" width="192" height="150" rx="6" fill="#1C1814" stroke="#422E10" stroke-width="1" />
+      <text x="20" y="132" class="font-mono" font-size="10" font-weight="700" fill="#EF4444">❌ STRIPPED SLOP:</text>
+      <text x="20" y="148" class="font-mono" font-size="9" fill="#FCA5A5">"Certainly! Here is..."</text>
+      <text x="20" y="162" class="font-mono" font-size="9" fill="#9CA3AF">"In this solution, we..."</text>
+      <line x1="20" y1="174" x2="190" y2="174" stroke="#422E10" stroke-width="1" />
+      <text x="20" y="196" class="font-mono" font-size="10" font-weight="700" fill="#10B981">✓ CLEAN RESULT:</text>
+      <text x="20" y="212" class="font-mono" font-size="9" fill="#A7F3D0">Pure functional code</text>
+      <text x="20" y="226" class="font-mono" font-size="9" fill="#6EE7B7">Zero polite chatter</text>
+
+      <g transform="translate(14, 280)">
+        <text x="0" y="0" class="font-mono" font-size="10" font-weight="700" fill="#E4E4E7">Watermark Purge:</text>
+        <text x="0" y="18" class="font-mono" font-size="9" fill="#9CA3AF">• Regex scans for AI filler</text>
+        <text x="0" y="34" class="font-mono" font-size="9" fill="#9CA3AF">• Strips apologies &amp; preambles</text>
+        <text x="0" y="50" class="font-mono" font-size="9" fill="#9CA3AF">• Removes obvious docstring slop</text>
+        <text x="0" y="66" class="font-mono" font-size="9" fill="#9CA3AF">• Preserves author intent</text>
       </g>
-      
-      <rect x="25" y="340" width="175" height="26" rx="13" fill="#E9D5FF" stroke="#6B21A8" stroke-width="1.4" />
-      <text x="112" y="357" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#6B21A8">Human-Grade Code</text>
+
+      <rect x="14" y="405" width="192" height="38" rx="4" fill="#2E210A" />
+      <text x="110" y="429" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#FDE68A">PASSED: ZERO SLOP</text>
     </g>
-    
-    <path d="M 510 310.0 Q 522.5 310.0 535 310.0" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
-    <polygon points="535,310.0 524.6076951545867,316.0 524.6076951545867,304.0" fill="#22252A" stroke="#22252A" stroke-width="1" />
-    
-    <!-- Gate 3: Red-Team Security -->
-    <g transform="translate(535, 135)">
-      <rect x="0" y="0" width="225" height="390" rx="14" fill="#FFF1F2" stroke="#E11D48" stroke-width="2.4" filter="url(#sketch-shadow)" />
-      
-      <!-- Top Title Ribbon -->
-      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#FECDD3" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12.5" font-weight="700" fill="#9F1239">3. Red-Team Security</text>
-      
-      <text x="112" y="36" text-anchor="middle" class="text-heading" font-size="15" fill="#9F1239">Vulnerability Guard</text>
-      <line x1="25" y1="46" x2="200" y2="46" stroke="#FDA4AF" stroke-width="1.6" />
-      
-      <g transform="translate(14, 60)">
-        <text x="0" y="0" class="text-body" font-size="12">• Blocks shell=True execution</text>
-        <text x="0" y="24" class="text-body" font-size="12">• Blocks os.system() payloads</text>
-        <text x="0" y="48" class="text-body" font-size="12">• Path traversal prevention</text>
-        <text x="0" y="72" class="text-body" font-size="12">• GitGuardian secret scanner</text>
-        <text x="0" y="96" class="text-body" font-size="12">• Injection vulnerability audit</text>
-        <text x="0" y="120" class="text-body" font-size="12">• Host perimeter protection</text>
-        <text x="0" y="148" class="text-body" font-size="12" font-weight="700" fill="#9F1239">Hard Boundary Defense:</text>
-        <text x="0" y="168" class="text-body" font-size="11" fill="#4B5563">Blocks unverified network</text>
-        <text x="0" y="184" class="text-body" font-size="11" fill="#4B5563">calls &amp; privilege elevation.</text>
+
+    <!-- GATE 3: RED-TEAM AST AUDIT -->
+    <g transform="translate(492, 0)">
+      <rect x="0" y="0" width="220" height="460" rx="8" fill="#12131C" stroke="#B91C1C" stroke-width="1.6" filter="url(#brutalist-shadow)" />
+      <rect x="14" y="16" width="90" height="24" rx="4" fill="#3B1214" stroke="#B91C1C" stroke-width="1" />
+      <text x="59" y="32" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#FCA5A5">GATE 03</text>
+
+      <text x="14" y="66" class="font-sans" font-size="15" font-weight="700" fill="#FFFFFF">Red-Team AST Audit</text>
+      <text x="14" y="86" class="font-mono" font-size="10" fill="#B91C1C">Security &amp; Secret Scan</text>
+
+      <rect x="14" y="110" width="192" height="150" rx="6" fill="#1A151C" stroke="#381D23" stroke-width="1" />
+      <text x="20" y="132" class="font-mono" font-size="10" font-weight="700" fill="#EF4444">❌ BLOCKED ATTACKS:</text>
+      <text x="20" y="148" class="font-mono" font-size="9" fill="#FCA5A5">subprocess.run(shell=True)</text>
+      <text x="20" y="162" class="font-mono" font-size="9" fill="#9CA3AF">api_key="sk-proj-..."</text>
+      <line x1="20" y1="174" x2="190" y2="174" stroke="#381D23" stroke-width="1" />
+      <text x="20" y="196" class="font-mono" font-size="10" font-weight="700" fill="#10B981">✓ HARDENED CODE:</text>
+      <text x="20" y="212" class="font-mono" font-size="9" fill="#A7F3D0">cmd = shlex.split(arg)</text>
+      <text x="20" y="226" class="font-mono" font-size="9" fill="#6EE7B7">os.environ["API_KEY"]</text>
+
+      <g transform="translate(14, 280)">
+        <text x="0" y="0" class="font-mono" font-size="10" font-weight="700" fill="#E4E4E7">AST Security Visitors:</text>
+        <text x="0" y="18" class="font-mono" font-size="9" fill="#9CA3AF">• ASTTaintChecker node scan</text>
+        <text x="0" y="34" class="font-mono" font-size="9" fill="#9CA3AF">• Cloudflare security checks</text>
+        <text x="0" y="50" class="font-mono" font-size="9" fill="#9CA3AF">• GitGuardian entropy scan</text>
+        <text x="0" y="66" class="font-mono" font-size="9" fill="#9CA3AF">• Path traversal rejection</text>
       </g>
-      
-      <rect x="25" y="340" width="175" height="26" rx="13" fill="#FECDD3" stroke="#9F1239" stroke-width="1.4" />
-      <text x="112" y="357" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#9F1239">Strict Perimeter Safety</text>
+
+      <rect x="14" y="405" width="192" height="38" rx="4" fill="#3B1214" />
+      <text x="110" y="429" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#FCA5A5">PASSED: ZERO EXPLOITS</text>
     </g>
-    
-    <path d="M 760 310.0 Q 772.5 310.0 785 310.0" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
-    <polygon points="785,310.0 774.6076951545867,316.0 774.6076951545867,304.0" fill="#22252A" stroke="#22252A" stroke-width="1" />
-    
-    <!-- Gate 4: Dual-Env Verification -->
-    <g transform="translate(785, 135)">
-      <rect x="0" y="0" width="225" height="390" rx="14" fill="#ECFDF5" stroke="#059669" stroke-width="2.4" filter="url(#sketch-shadow)" />
-      
-      <!-- Top Title Ribbon -->
-      <rect x="10" y="-14" width="205" height="28" rx="8" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12.5" font-weight="700" fill="#15803D">4. Dual-Env Verification</text>
-      
-      <text x="112" y="36" text-anchor="middle" class="text-heading" font-size="15" fill="#065F46">Deterministic Check</text>
-      <line x1="25" y1="46" x2="200" y2="46" stroke="#6EE7B7" stroke-width="1.6" />
-      
-      <g transform="translate(14, 60)">
-        <text x="0" y="0" class="text-body" font-size="12">• AST syntax compilation</text>
-        <text x="0" y="24" class="text-body" font-size="12">• Isolated sandbox dry-run</text>
-        <text x="0" y="48" class="text-body" font-size="12">• Local host test execution</text>
-        <text x="0" y="72" class="text-body" font-size="12">• 100% pytest pass check</text>
-        <text x="0" y="96" class="text-body" font-size="12">• Zero runtime/syntax errors</text>
-        <text x="0" y="120" class="text-body" font-size="12">• Zero state residue</text>
-        <text x="0" y="148" class="text-body" font-size="12" font-weight="700" fill="#065F46">Dual-Env Invariant:</text>
-        <text x="0" y="168" class="text-body" font-size="11" fill="#4B5563">Sandbox dry-run first,</text>
-        <text x="0" y="184" class="text-body" font-size="11" fill="#4B5563">local verification second.</text>
+
+    <!-- GATE 4: DUAL-ENVIRONMENT VERIFICATION -->
+    <g transform="translate(738, 0)">
+      <rect x="0" y="0" width="222" height="460" rx="8" fill="#12131C" stroke="#10B981" stroke-width="1.6" filter="url(#brutalist-shadow)" />
+      <rect x="14" y="16" width="90" height="24" rx="4" fill="#083820" stroke="#10B981" stroke-width="1" />
+      <text x="59" y="32" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#6EE7B7">GATE 04</text>
+
+      <text x="14" y="66" class="font-sans" font-size="15" font-weight="700" fill="#FFFFFF">Dual-Env Verification</text>
+      <text x="14" y="86" class="font-mono" font-size="10" fill="#10B981">Host &amp; Sandbox Tests</text>
+
+      <rect x="14" y="110" width="194" height="150" rx="6" fill="#101F18" stroke="#1D4A35" stroke-width="1" />
+      <text x="20" y="132" class="font-mono" font-size="10" font-weight="700" fill="#6EE7B7">ENV 1: SANDBOX</text>
+      <text x="20" y="148" class="font-mono" font-size="9" fill="#A7F3D0">Syntax &amp; imports compile</text>
+      <text x="20" y="162" class="font-mono" font-size="9" fill="#A7F3D0">Mock unit tests pass</text>
+      <line x1="20" y1="174" x2="190" y2="174" stroke="#1D4A35" stroke-width="1" />
+      <text x="20" y="196" class="font-mono" font-size="10" font-weight="700" fill="#6EE7B7">ENV 2: HOST MACHINE</text>
+      <text x="20" y="212" class="font-mono" font-size="9" fill="#A7F3D0">286/286 pytest tests pass</text>
+      <text x="20" y="226" class="font-mono" font-size="9" fill="#34D399">0 git working tree stains</text>
+
+      <g transform="translate(14, 280)">
+        <text x="0" y="0" class="font-mono" font-size="10" font-weight="700" fill="#E4E4E7">Pytest Test Matrix:</text>
+        <text x="0" y="18" class="font-mono" font-size="9" fill="#9CA3AF">• test_memory_fts5.py [PASS]</text>
+        <text x="0" y="34" class="font-mono" font-size="9" fill="#9CA3AF">• test_keepalive_daemon.py [PASS]</text>
+        <text x="0" y="50" class="font-mono" font-size="9" fill="#9CA3AF">• test_arbitrage_triage.py [PASS]</text>
+        <text x="0" y="66" class="font-mono" font-size="9" fill="#9CA3AF">• test_whisper_chunker.py [PASS]</text>
       </g>
-      
-      <rect x="25" y="340" width="175" height="26" rx="13" fill="#BBF7D0" stroke="#059669" stroke-width="1.4" />
-      <text x="112" y="357" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#059669">Verified Production Safe</text>
+
+      <rect x="14" y="405" width="194" height="38" rx="4" fill="#0C4A2D" />
+      <text x="111" y="429" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#6EE7B7">ALL 286 TESTS PASS</text>
     </g>
-    
-    <path d="M 260 525 Q 275.0 545.0 260 565" fill="none" stroke="#15803D" stroke-width="2.6" stroke-linecap="round" />
-    <polygon points="260,565 261.43538290724797,553.0861561236694 271.03538290724794,560.2861561236693" fill="#15803D" stroke="#15803D" stroke-width="1" />
-    <text x="257.0" y="549.0" text-anchor="end" class="text-body" fill="#3F3F46">100% Tests Pass</text>
-    <g>
-      <rect x="140" y="580" width="270" height="36" rx="18.0" fill="#BBF7D0" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="275.0" y="603.0" text-anchor="middle" class="text-badge" fill="#15803D">✓ Verified Clean Git Commit</text>
-    </g>
-    
-    <path d="M 780 525 Q 795.0 545.0 780 565" fill="none" stroke="#EA580C" stroke-width="2.6" stroke-linecap="round" />
-    <polygon points="780,565 781.4353829072479,553.0861561236694 791.0353829072479,560.2861561236693" fill="#EA580C" stroke="#EA580C" stroke-width="1" />
-    <text x="813.0" y="549.0" text-anchor="start" class="text-body" fill="#3F3F46">Flaw Detected?</text>
-    <g>
-      <rect x="630" y="580" width="290" height="36" rx="18.0" fill="#FED7AA" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="775.0" y="603.0" text-anchor="middle" class="text-badge" fill="#C2410C">✕ Autonomous Coaching Loop</text>
-    </g>
-    
-    <!-- Clean Brand Signature -->
-    <g transform="translate(40, 640)">
-      <text x="0" y="24" class="text-heading" fill="#22252A">AegisBrain Autonomous Architecture</text>
-      
-      <g transform="translate(0, 34)">
-        <rect x="0" y="0" width="60" height="26" rx="4" fill="#0284C7" stroke="#22252A" stroke-width="2" />
-        <text x="30" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">AEGIS</text>
-        
-        <rect x="64" y="0" width="64" height="26" rx="4" fill="#22252A" stroke="#22252A" stroke-width="2" />
-        <text x="96" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">BRAIN</text>
-      </g>
-      
-      <text x="960" y="44" text-anchor="end" class="text-mono" font-size="12" fill="#71717A">github.com/PG300604/aegis-brain</text>
-    </g>
-    </svg>
+  </g>
+
+  <!-- Bottom Specs -->
+  <g transform="translate(40, 680)">
+    <text x="0" y="0" class="font-mono" font-size="10" fill="#71717A">QUALITY GATE SPEC: 4-Decision Gate • AST Taint Analysis • Secret Entropy Scanner • Dual Sandbox Verifier</text>
+    <text x="960" y="0" text-anchor="end" class="font-mono" font-size="10" fill="#D4AF37">P:\open-sourceegis-brain\packageegis\gates\pipeline.py</text>
+  </g>
+</svg>

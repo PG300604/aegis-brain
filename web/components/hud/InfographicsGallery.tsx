@@ -239,7 +239,7 @@ export function InfographicsGallery() {
             The Master Technical Diagrams Suite
           </h3>
           <p className="text-xs sm:text-sm text-zinc-400 font-gt-era max-w-xl mt-1">
-            Examine hand-drawn Excalidraw blueprints detailing multi-agent token arbitrage, sub-second neural memory, and deterministic mobile telemetry.
+            Examine high-resolution sovereign system blueprints detailing multi-agent token arbitrage, sub-second neural memory, and deterministic mobile telemetry.
           </p>
         </div>
 
@@ -417,7 +417,7 @@ export function InfographicsGallery() {
             </div>
 
             <div className="mt-4 flex items-center justify-between text-xs font-mono text-black/70">
-              <span>Hand-crafted Data Professor style SVG diagram</span>
+              <span>High-resolution luxury editorial SVG blueprint</span>
               <button
                 type="button"
                 onClick={() => handleDownload(activeDiagram.file, activeDiagram.title)}
