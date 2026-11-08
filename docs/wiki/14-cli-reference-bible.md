@@ -240,4 +240,4 @@ Generates an anti-slop developer briefing: offline PR activity, completed milest
 Executes graceful session termination: creates a restore-point snapshot, compiles working context to `ACTIVE_CONTEXT.md`, and archives session metrics into `brain.db`.
 - **Options**:
   - `--summary <TEXT>`: Executive summary of accomplishments.
-- **Example**: `aegis bye --summary "Completed 3-Tier Multi-Agent Arch Wiki"`
+- **Example**: `aegis bye --summary "Completed 3-Tier Multi-Agent Wiki Portal"`

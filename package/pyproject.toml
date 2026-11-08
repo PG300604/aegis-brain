@@ -29,10 +29,6 @@ fast = [
     "fastapi>=0.110.0",
     "uvicorn>=0.28.0",
 ]
-vector = [
-    "lancedb>=0.6.0",
-    "fastembed>=0.2.0",
-]
 
 [project.scripts]
 aegis = "aegis.cli:main"
