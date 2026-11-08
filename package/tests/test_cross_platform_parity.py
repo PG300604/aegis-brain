@@ -53,16 +53,16 @@ class TestCrossPlatformParity(unittest.TestCase):
         win_str = r"P:\open-source\aegis-brain\package\aegis\db.py"
         posix_str = "P:/open-source/aegis-brain/package/aegis/db.py"
 
-        # Conversion to PurePosixPath / as_posix
-        p_from_win = Path(win_str).as_posix()
+        # Conversion to PureWindowsPath / as_posix
+        p_from_win = PureWindowsPath(win_str).as_posix()
         p_from_posix = Path(posix_str).as_posix()
         self.assertEqual(p_from_win, p_from_posix)
         self.assertEqual(p_from_win, "P:/open-source/aegis-brain/package/aegis/db.py")
 
         # Roundtrip via Path handles both separators interchangeably
-        self.assertEqual(Path(win_str).name, "db.py")
+        self.assertEqual(PureWindowsPath(win_str).name, "db.py")
         self.assertEqual(Path(posix_str).name, "db.py")
-        self.assertEqual(Path(win_str).suffix, ".py")
+        self.assertEqual(PureWindowsPath(win_str).suffix, ".py")
         self.assertEqual(Path(posix_str).suffix, ".py")
 
     def test_config_paths_cross_platform_resolution(self, monkeypatch=None):
@@ -83,11 +83,10 @@ class TestCrossPlatformParity(unittest.TestCase):
 
     def test_shell_script_generation_windows(self, tmp_path_factory=None):
         """Verify Windows autostart generates clean VBScript with pythonw.exe and zero console window."""
-        with patch("aegis.service._get_windows_startup_vbs") as mock_vbs, \
+        import tempfile
+        fake_vbs = Path(tempfile.gettempdir()) / "test_aegis_startup.vbs"
+        with patch("aegis.service._get_windows_startup_vbs", return_value=fake_vbs), \
              patch("aegis.service._get_python_runner", return_value=Path("C:/Python312/python.exe")):
-            fake_vbs = Path(os.environ.get("TEMP", "C:/Temp")) / "test_aegis_startup.vbs"
-            mock_vbs.return_value = fake_vbs
-
             try:
                 ok, msg = _enable_windows()
                 self.assertTrue(ok)
@@ -103,7 +102,8 @@ class TestCrossPlatformParity(unittest.TestCase):
 
     def test_shell_script_generation_linux(self):
         """Verify Linux autostart generates valid systemd user service unit file."""
-        fake_unit = Path(os.environ.get("TEMP", "C:/Temp")) / "test_aegis.service"
+        import tempfile
+        fake_unit = Path(tempfile.gettempdir()) / "test_aegis.service"
         with patch("aegis.service._get_linux_systemd_file", return_value=fake_unit), \
              patch("shutil.which", return_value="/bin/systemctl"), \
              patch("subprocess.run"):
@@ -124,7 +124,8 @@ class TestCrossPlatformParity(unittest.TestCase):
 
     def test_shell_script_generation_macos(self):
         """Verify macOS autostart generates valid LaunchAgent plist file."""
-        fake_plist = Path(os.environ.get("TEMP", "C:/Temp")) / "test_com.aegis.brain.plist"
+        import tempfile
+        fake_plist = Path(tempfile.gettempdir()) / "test_com.aegis.brain.plist"
         with patch("aegis.service._get_macos_launch_agent_file", return_value=fake_plist), \
              patch("shutil.which", return_value="/bin/launchctl"), \
              patch("subprocess.run"):
@@ -144,17 +145,23 @@ class TestCrossPlatformParity(unittest.TestCase):
 
     def test_detect_host_platform_across_os(self):
         """Verify detect_host_platform correctly classifies Windows, macOS, and Linux."""
-        with patch("sys.platform", "win32"), patch("os.environ", {"PSModulePath": "C:\\PS"}):
+        with patch("sys.platform", "win32"), \
+             patch("os.environ", {"PSModulePath": "C:\\PS"}), \
+             patch("shutil.which", return_value=None):
             p = detect_host_platform()
             self.assertEqual(p["os"], "windows")
             self.assertEqual(p["shell"], "powershell")
 
-        with patch("sys.platform", "darwin"), patch("os.environ", {"SHELL": "/bin/zsh"}):
+        with patch("sys.platform", "darwin"), \
+             patch("os.environ", {"SHELL": "/bin/zsh"}), \
+             patch("shutil.which", return_value=None):
             p = detect_host_platform()
             self.assertEqual(p["os"], "macos")
             self.assertEqual(p["shell"], "zsh")
 
-        with patch("sys.platform", "linux"), patch("os.environ", {"SHELL": "/bin/bash"}):
+        with patch("sys.platform", "linux"), \
+             patch("os.environ", {"SHELL": "/bin/bash"}), \
+             patch("shutil.which", return_value=None):
             p = detect_host_platform()
             self.assertEqual(p["os"], "linux")
             self.assertEqual(p["shell"], "bash")
