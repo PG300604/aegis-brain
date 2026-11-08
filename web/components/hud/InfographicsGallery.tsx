@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { triggerSoundEffect } from "@/components/audio/SoundtrackController";
 import {
   Cpu,
@@ -277,13 +278,15 @@ export function InfographicsGallery() {
           </div>
         </div>
 
-        {/* High-Contrast Cream Paper Canvas Presentation */}
-        <div
+        {/* High-Contrast Cream Paper Canvas Presentation with 3D Depth */}
+        <motion.div
+          whileHover={{ scale: 1.012, y: -4 }}
+          transition={{ type: "spring", stiffness: 260, damping: 20 }}
           onClick={() => {
             setLightboxOpen(true);
             triggerSoundEffect("transition");
           }}
-          className="my-5 relative rounded-lg bg-[#FAF8F5] p-3 sm:p-6 shadow-[4px_4px_0px_#000000] border-2 border-black cursor-zoom-in group transition-all"
+          className="my-5 relative rounded-lg bg-[#FAF8F5] p-3 sm:p-6 shadow-[6px_6px_0px_#000000] border-2 border-black cursor-zoom-in group transition-all"
         >
           <div className="absolute top-4 right-4 z-10 px-2 py-1 rounded bg-black border border-black text-[10px] font-mono text-white flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <Maximize2 className="w-3 h-3 text-[#B91C1C]" />
@@ -299,7 +302,7 @@ export function InfographicsGallery() {
               loading="eager"
             />
           </div>
-        </div>
+        </motion.div>
 
         {/* Diagram Explanation & Architecture Invariants */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">

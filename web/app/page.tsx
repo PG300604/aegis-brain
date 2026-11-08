@@ -1,46 +1,23 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import Image from "next/image";
+import React, { useState, useEffect, useRef } from "react";
 import {
-  Volume2,
   VolumeX,
   Copy,
   Check,
-  Download,
-  Terminal,
-  ExternalLink,
   ChevronDown,
   ArrowRight,
-  Shield,
-  Cpu,
-  Database,
-  Radio,
   FileCode,
-  HardDrive,
   Sparkles,
-  Zap,
-  Activity,
-  Layers,
-  Search,
   CheckCircle2,
   AlertTriangle,
-  ZoomIn,
-  X,
-  Smartphone,
   Flame,
-  Clock,
-  Maximize2,
   Star,
-  DollarSign,
-  TrendingUp,
   ShieldCheck,
-  RotateCcw,
 } from "lucide-react";
-import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { ThoughtLine } from "@/components/react-bits/ThoughtLine";
 import { CallChip } from "@/components/react-bits/CallChip";
-import { VoicePill } from "@/components/react-bits/VoicePill";
 import { StopwatchDial } from "@/components/hud/StopwatchDial";
 import { TerminalInstall } from "@/components/hud/TerminalInstall";
 import { ArbitrageCalculator } from "@/components/hud/ArbitrageCalculator";
@@ -48,14 +25,15 @@ import { QualityGateCards } from "@/components/hud/QualityGateCards";
 import { TelegramSimulator } from "@/components/hud/TelegramSimulator";
 import { InfographicsGallery } from "@/components/hud/InfographicsGallery";
 import { FluidWaterWave } from "@/components/motion/FluidWaterWave";
-import { SceneTransition } from "@/components/motion/SceneTransition";
+import { ParallaxCard } from "@/components/motion/ParallaxCard";
+import { LoadingScreen } from "@/components/motion/LoadingScreen";
+import { InteractiveTierDiagram } from "@/components/hud/InteractiveTierDiagram";
 import { SoundtrackController, triggerSoundEffect } from "@/components/audio/SoundtrackController";
 
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [soundActive, setSoundActive] = useState(false);
   const [copiedClone, setCopiedClone] = useState(false);
-  const [selectedInfographicModal, setSelectedInfographicModal] = useState<string | null>(null);
 
   // Hero section scroll-driven fluid wave reveal
   const heroRef = useRef<HTMLElement>(null);
@@ -139,6 +117,9 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-[#070709] text-[#0D0D11] selection:bg-[#B91C1C] selection:text-white paper-grain">
+      {/* Cinematic Sovereign Preloader with AegisBrain Logo Top-Left */}
+      <LoadingScreen />
+
       {/* 
         ========================================================================
         VERTICAL RED SCROLL PROGRESS LINE (Right Margin Laser Tracker)
@@ -304,22 +285,8 @@ export default function Home() {
         FEATURE 01: SUB-SECOND NEURAL MEMORY CORE (SQLite WAL + FTS5)
         ========================================================================
       */}
-      <div id="memory">
-        <SceneTransition
-          fromAct="ARCHITECTURE"
-          toAct="FEATURE 01"
-          badge="SUB-SECOND NEURAL MEMORY CORE"
-        />
-      </div>
-
-      <section id="features" className="relative py-16 px-4 sm:px-8 bg-[#0B0B0E] flex flex-col items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="comic-plate relative w-full max-w-5xl p-6 sm:p-10 my-8"
-        >
+      <ParallaxCard index={0} id="memory">
+        <div className="comic-plate relative w-full p-6 sm:p-10">
           {/* Top-Right Badge */}
           <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
             <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
@@ -338,35 +305,6 @@ export default function Home() {
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
               Instead of crashing into 429 quota cliffs and burning 50,000 tokens reading raw unindexed JSONL logs, AegisBrain indexes all codebase symbols, memories, and invariants into SQLite WAL mode with BM25 ranking (<code className="font-mono bg-black/10 px-1 py-0.5 rounded">brain.db</code>).
             </p>
-          </div>
-
-          {/* Sovereign Architectural Diagram: Speed Benchmarks */}
-          <div
-            onClick={() => setSelectedInfographicModal("/infographics/infographic-speed-benchmarks.svg")}
-            className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group cursor-zoom-in"
-          >
-            <div className="flex items-center justify-between mb-3 border-b border-black/10 pb-2">
-              <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
-                <Clock className="w-4 h-4 text-[#B91C1C]" />
-                SPEED BENCHMARKS • 24MS FTS5 VS 12,400MS RAW CRAWL
-              </span>
-              <span className="font-mono text-[11px] text-[#B91C1C] flex items-center gap-1 group-hover:underline">
-                <ZoomIn className="w-3.5 h-3.5" /> Click to inspect
-              </span>
-            </div>
-
-            <div className="relative w-full h-[280px] sm:h-[420px] bg-[#FAF8F5] flex items-center justify-center overflow-hidden border border-black/10">
-              <Image
-                src="/infographics/infographic-speed-benchmarks.svg"
-                alt="AegisBrain Speed Benchmarks: 24ms SQLite FTS5 vs 12,400ms raw crawl"
-                fill
-                className="object-contain p-2 hover:scale-[1.02] transition-transform duration-300"
-              />
-            </div>
-            <div className="mt-3 flex items-center justify-between text-[11px] font-mono text-black/60">
-              <span>Engine: P:\open-source\aegis-brain\package\aegis\memory\fts5.py</span>
-              <span className="text-emerald-700 font-bold">516x Measured Speedup</span>
-            </div>
           </div>
 
           {/* React Bits Component: Bespoke-Styled <ThoughtLine /> */}
@@ -464,30 +402,16 @@ export default function Home() {
               </div>
             )}
           </div>
-        </motion.div>
-      </section>
+        </div>
+      </ParallaxCard>
 
       {/* 
         ========================================================================
         FEATURE 02: DETERMINISTIC 3-TIER LOCAL TOKEN ARBITRAGE ENGINE
         ========================================================================
       */}
-      <div id="arbitrage">
-        <SceneTransition
-          fromAct="FEATURE 01"
-          toAct="FEATURE 02"
-          badge="DETERMINISTIC 3-TIER TOKEN ARBITRAGE"
-        />
-      </div>
-
-      <section className="relative py-16 px-4 sm:px-8 bg-[#070709] flex flex-col items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="comic-plate relative w-full max-w-5xl p-6 sm:p-10 my-8"
-        >
+      <ParallaxCard index={1} id="arbitrage">
+        <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
             <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
               <span className="text-[#B91C1C]">ZERO TOKEN WASTE</span> • $1,840+/MO SAVINGS
@@ -504,35 +428,6 @@ export default function Home() {
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
               Frontier models (Gemini 4, Claude Opus, Fable) are strategic brains, not construction workers. AegisBrain enforces strict division of labor: high-cognition models architect and coach, while local CLI workers (Hermes, Ollama, Qwen) execute implementations for free.
             </p>
-          </div>
-
-          {/* Sovereign Architectural Diagram: Hierarchy Pyramid */}
-          <div
-            onClick={() => setSelectedInfographicModal("/infographics/infographic-hierarchy-pyramid.svg")}
-            className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group cursor-zoom-in"
-          >
-            <div className="flex items-center justify-between mb-3 border-b border-black/10 pb-2">
-              <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
-                <Cpu className="w-4 h-4 text-[#B91C1C]" />
-                3-TIER MULTI-AGENT HIERARCHY PYRAMID
-              </span>
-              <span className="font-mono text-[11px] text-[#B91C1C] flex items-center gap-1 group-hover:underline">
-                <ZoomIn className="w-3.5 h-3.5" /> Click to inspect
-              </span>
-            </div>
-
-            <div className="relative w-full h-[280px] sm:h-[420px] bg-[#FAF8F5] flex items-center justify-center overflow-hidden border border-black/10">
-              <Image
-                src="/infographics/infographic-hierarchy-pyramid.svg"
-                alt="3-Tier Multi-Agent Hierarchy Pyramid: Senior Boss, Subagents, and Free Execution Workers"
-                fill
-                className="object-contain p-2 hover:scale-[1.02] transition-transform duration-300"
-              />
-            </div>
-            <div className="mt-3 flex items-center justify-between text-[11px] font-mono text-black/60">
-              <span>Dynamic Workload Triage: Micro-tasks direct, Macro-tasks delegated to local workers</span>
-              <span className="text-emerald-700 font-bold">$1,840/mo Measured Savings</span>
-            </div>
           </div>
 
           {/* Bespoke-Styled React Bits <CallChip /> */}
@@ -569,32 +464,25 @@ export default function Home() {
             </div>
           </div>
 
+          {/* 3D Interactive Topology & Signal Flow Diagram (Framer / MotionSites Style) */}
+          <div className="mb-8">
+            <InteractiveTierDiagram />
+          </div>
+
           {/* Arbitrage Engine: ArbitrageCalculator */}
           <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
             <ArbitrageCalculator />
           </div>
-        </motion.div>
-      </section>
+        </div>
+      </ParallaxCard>
 
       {/* 
         ========================================================================
         FEATURE 03: 24/7 WIN32 KEEPALIVE SHIELD & PROCESS RESURRECTION
         ========================================================================
       */}
-      <SceneTransition
-        fromAct="FEATURE 02"
-        toAct="FEATURE 03"
-        badge="24/7 WIN32 KEEPALIVE SHIELD"
-      />
-
-      <section className="relative py-16 px-4 sm:px-8 bg-[#0B0B0E] flex flex-col items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="comic-plate relative w-full max-w-5xl p-6 sm:p-10 my-8"
-        >
+      <ParallaxCard index={2} id="keepalive">
+        <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
             <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
               <span className="text-emerald-700">99.98% UPTIME</span> • WIN32 WATCHDOG
@@ -683,28 +571,16 @@ export default function Home() {
               286/286 PYTEST TESTS PASSING • 100% CLEAN
             </div>
           </div>
-        </motion.div>
-      </section>
+        </div>
+      </ParallaxCard>
 
       {/* 
         ========================================================================
         FEATURE 04: DETERMINISTIC MOBILE TELEGRAM TELEMETRY & WHISPER SHIELD
         ========================================================================
       */}
-      <SceneTransition
-        fromAct="FEATURE 03"
-        toAct="FEATURE 04"
-        badge="24/7 MOBILE TELEGRAM TELEMETRY"
-      />
-
-      <section className="relative py-16 px-4 sm:px-8 bg-[#070709] flex flex-col items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="comic-plate relative w-full max-w-5xl p-6 sm:p-10 my-8"
-        >
+      <ParallaxCard index={3} id="mobile">
+        <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
             <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
               <span className="text-[#B91C1C]">IN-FLIGHT INTERRUPT</span> • /type /alt+m
@@ -723,57 +599,20 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Sovereign Architectural Diagram: Mobile Pipeline */}
-          <div
-            onClick={() => setSelectedInfographicModal("/infographics/infographic-mobile-pipeline.svg")}
-            className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group cursor-zoom-in"
-          >
-            <div className="flex items-center justify-between mb-3 border-b border-black/10 pb-2">
-              <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
-                <Smartphone className="w-4 h-4 text-[#B91C1C]" />
-                24/7 MOBILE TELEGRAM PIPELINE BLUEPRINT
-              </span>
-              <span className="font-mono text-[11px] text-[#B91C1C] flex items-center gap-1 group-hover:underline">
-                <ZoomIn className="w-3.5 h-3.5" /> Click to inspect
-              </span>
-            </div>
-
-            <div className="relative w-full h-[280px] sm:h-[420px] bg-[#FAF8F5] flex items-center justify-center overflow-hidden border border-black/10">
-              <Image
-                src="/infographics/infographic-mobile-pipeline.svg"
-                alt="24/7 Mobile Telegram Ingestion Pipeline: Phone mic to FFmpeg chunking to Whisper STT to Antigravity /type injection"
-                fill
-                className="object-contain p-2 hover:scale-[1.02] transition-transform duration-300"
-              />
-            </div>
-          </div>
-
-          {/* Telegram Simulator: TelegramSimulator with integrated REACT BITS <VoicePill /> */}
+          {/* Telegram Simulator: TelegramSimulator with authentic iPhone 16 Pro iOS */}
           <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116] p-4 sm:p-6">
             <TelegramSimulator />
           </div>
-        </motion.div>
-      </section>
+        </div>
+      </ParallaxCard>
 
       {/* 
         ========================================================================
         FEATURE 05: 4-DECISION QUALITY ARCHITECTURE GATE & AUTONOMOUS LEARNING LOOP
         ========================================================================
       */}
-      <SceneTransition
-        fromAct="FEATURE 04"
-        toAct="FEATURE 05"
-        badge="4-DECISION QUALITY ARCHITECTURE GATE"
-      />
-
-      <section className="relative py-16 px-4 sm:px-8 bg-[#0B0B0E] flex flex-col items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="comic-plate relative w-full max-w-5xl p-6 sm:p-10 my-8"
-        >
+      <ParallaxCard index={4} id="quality">
+        <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
             <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
               <span className="text-[#B91C1C]">ZERO-DEFECT AUDIT</span> • 4 GATES OF STEEL
@@ -796,98 +635,16 @@ export default function Home() {
           <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
             <QualityGateCards />
           </div>
-        </motion.div>
-      </section>
+        </div>
+      </ParallaxCard>
 
       {/* 
         ========================================================================
-        FEATURE 06: UNIVERSAL MULTI-CHASSIS AGENT FLEET PROTOCOL
+        FEATURE 06: MASTER ARCHITECTURAL BLUEPRINTS GALLERY
         ========================================================================
       */}
-      <SceneTransition
-        fromAct="FEATURE 05"
-        toAct="FEATURE 06"
-        badge="UNIVERSAL MULTI-CHASSIS FLEET PROTOCOL"
-      />
-
-      <section className="relative py-16 px-4 sm:px-8 bg-[#070709] flex flex-col items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="comic-plate relative w-full max-w-5xl p-6 sm:p-10 my-8"
-        >
-          <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
-            <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
-              <span className="text-emerald-700">6 ENGINES</span> • ZERO LOCK-IN
-            </span>
-          </div>
-
-          <div className="mb-8 pt-2">
-            <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
-              FEATURE 06 • FLEET INTEROPERABILITY
-            </div>
-            <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
-              Universal Multi-Chassis Agent Fleet
-            </h2>
-            <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
-              Zero vendor lock-in. AegisBrain runs as an autonomous sidecar across Antigravity, Claude Code, Cursor, Windsurf, Aider, and Hermes CLI. Switch IDEs or terminals with shared sub-second neural memory.
-            </p>
-          </div>
-
-          {/* Sovereign Architectural Diagram: Universal Fleet Compatibility */}
-          <div
-            onClick={() => setSelectedInfographicModal("/infographics/infographic-universal-agents.svg")}
-            className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group cursor-zoom-in"
-          >
-            <div className="flex items-center justify-between mb-3 border-b border-black/10 pb-2">
-              <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
-                <Layers className="w-4 h-4 text-[#B91C1C]" />
-                UNIVERSAL FLEET COMPATIBILITY BLUEPRINT
-              </span>
-              <span className="font-mono text-[11px] text-[#B91C1C] flex items-center gap-1 group-hover:underline">
-                <ZoomIn className="w-3.5 h-3.5" /> Click to inspect
-              </span>
-            </div>
-
-            <div className="relative w-full h-[280px] sm:h-[420px] bg-[#FAF8F5] flex items-center justify-center overflow-hidden border border-black/10">
-              <Image
-                src="/infographics/infographic-universal-agents.svg"
-                alt="Universal Multi-Agent Fleet Compatibility across Claude Code, Cursor, Windsurf, Aider, Antigravity"
-                fill
-                className="object-contain p-2 hover:scale-[1.02] transition-transform duration-300"
-              />
-            </div>
-            <div className="mt-3 flex items-center justify-between text-[11px] font-mono text-black/60">
-              <span>Universal Sidecar Protocol: Zero vendor lock-in</span>
-              <span className="text-emerald-700 font-bold">6 Supported Engines</span>
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* 
-        ========================================================================
-        FEATURE 07: MASTER ARCHITECTURAL BLUEPRINTS GALLERY
-        ========================================================================
-      */}
-      <div id="blueprints">
-        <SceneTransition
-          fromAct="FEATURE 06"
-          toAct="FEATURE 07"
-          badge="MASTER ARCHITECTURAL BLUEPRINT GALLERY"
-        />
-      </div>
-
-      <section className="relative py-16 px-4 sm:px-8 bg-[#0B0B0E] flex flex-col items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="comic-plate relative w-full max-w-5xl p-6 sm:p-10 my-8"
-        >
+      <ParallaxCard index={5} id="blueprints">
+        <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
             <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
               <span className="text-[#B91C1C]">SYSTEM BLUEPRINTS</span> • 7 ARCHITECTURAL DIAGRAMS
@@ -896,7 +653,7 @@ export default function Home() {
 
           <div className="mb-8 pt-2">
             <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
-              FEATURE 07 • ARCHITECTURAL BLUEPRINTS
+              FEATURE 06 • ARCHITECTURAL BLUEPRINTS
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
               Architecture &amp; Execution Flow
@@ -910,28 +667,16 @@ export default function Home() {
           <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
             <InfographicsGallery />
           </div>
-        </motion.div>
-      </section>
+        </div>
+      </ParallaxCard>
 
       {/* 
         ========================================================================
-        QUICKSTART & INSTALLATION: ONE-LINE SETUP
+        FEATURE 07: QUICKSTART & INSTALLATION: ONE-LINE SETUP
         ========================================================================
       */}
-      <SceneTransition
-        fromAct="FEATURE 07"
-        toAct="INSTALLATION"
-        badge="ONE-LINE TERMINAL BOOTSTRAP"
-      />
-
-      <section id="install" className="relative py-16 px-4 sm:px-8 bg-[#070709] flex flex-col items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="comic-plate relative w-full max-w-5xl p-6 sm:p-10 my-8"
-        >
+      <ParallaxCard index={6} id="install">
+        <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="mb-8 pt-2">
             <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
               QUICKSTART &amp; INSTALLATION
@@ -948,18 +693,16 @@ export default function Home() {
           <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
             <TerminalInstall />
           </div>
-        </motion.div>
-      </section>
+        </div>
+      </ParallaxCard>
 
       {/* 
         ========================================================================
-        FOOTER: OPEN SOURCE & COMMUNITY HUB + ARCHITECTURAL COMPARISON MATRIX
+        COMMUNITY & COMPARISON: OPEN SOURCE HUB + 7-VECTOR ARCHITECTURAL MATRIX
         ========================================================================
       */}
-      <footer className="relative py-20 px-4 sm:px-8 bg-[#070709] border-t-4 border-black text-white">
-        <div className="max-w-5xl mx-auto space-y-12">
-          {/* Main Community & Open Source Plate */}
-          <div className="comic-plate p-8 sm:p-12 text-black">
+      <ParallaxCard index={7} id="community">
+        <div className="comic-plate relative w-full p-8 sm:p-12 text-black">
             <div className="border-b-2 border-black pb-8">
               <div className="inline-block bg-[#B91C1C] text-white font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-2 shadow-[2px_2px_0px_#000000]">
                 OPEN SOURCE &amp; COMMUNITY
@@ -1102,128 +845,23 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
-            {/* 7-Vector Comparison Matrix */}
-            <div className="mt-8 pt-6 border-t border-black/10">
-              <h4 className="font-nikkei text-xs uppercase tracking-wider text-black mb-3 font-extrabold">
-                7-Vector Architectural Comparison Matrix
-              </h4>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left font-mono text-[11px] border-collapse border border-black">
-                  <thead>
-                    <tr className="bg-black text-white">
-                      <th className="p-2.5 border border-black">Vector</th>
-                      <th className="p-2.5 border border-black text-[#D4AF37]">AegisBrain</th>
-                      <th className="p-2.5 border border-black">LangChain / CrewAI</th>
-                      <th className="p-2.5 border border-black">Raw Cursor Rules</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="bg-white">
-                      <td className="p-2.5 border border-black font-bold">Memory Mechanism</td>
-                      <td className="p-2.5 border border-black text-emerald-700 font-bold">SQLite WAL FTS5 (24ms)</td>
-                      <td className="p-2.5 border border-black text-zinc-500">Crawls raw JSON/RAM</td>
-                      <td className="p-2.5 border border-black text-zinc-500">0 memory across sessions</td>
-                    </tr>
-                    <tr className="bg-[#FAF8F5]">
-                      <td className="p-2.5 border border-black font-bold">Cost Arbitrage</td>
-                      <td className="p-2.5 border border-black text-emerald-700 font-bold">3-Tier (92% savings)</td>
-                      <td className="p-2.5 border border-black text-zinc-500">100% frontier API spend</td>
-                      <td className="p-2.5 border border-black text-zinc-500">User pays per token</td>
-                    </tr>
-                    <tr className="bg-white">
-                      <td className="p-2.5 border border-black font-bold">Host KeepAlive</td>
-                      <td className="p-2.5 border border-black text-emerald-700 font-bold">Win32 Scheduled Task 24/7</td>
-                      <td className="p-2.5 border border-black text-zinc-500">Dies on terminal close</td>
-                      <td className="p-2.5 border border-black text-zinc-500">None</td>
-                    </tr>
-                    <tr className="bg-[#FAF8F5]">
-                      <td className="p-2.5 border border-black font-bold">Quality Gates</td>
-                      <td className="p-2.5 border border-black text-emerald-700 font-bold">4-Stage AST Security + Unslop</td>
-                      <td className="p-2.5 border border-black text-zinc-500">Unfiltered model output</td>
-                      <td className="p-2.5 border border-black text-zinc-500">Manual review</td>
-                    </tr>
-                    <tr className="bg-white">
-                      <td className="p-2.5 border border-black font-bold">Mobile Remote</td>
-                      <td className="p-2.5 border border-black text-emerald-700 font-bold">Telegram /type + Whisper STT</td>
-                      <td className="p-2.5 border border-black text-zinc-500">Desktop terminal only</td>
-                      <td className="p-2.5 border border-black text-zinc-500">IDE bound</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
           </div>
+      </ParallaxCard>
 
-          {/* Luxury Footer Bottom */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-white/10 text-xs font-gt-era text-white/50">
-            <div className="flex items-center gap-3">
-              <span className="font-charles-rosie text-white text-lg">AegisBrain</span>
-              <span>•</span>
-              <span className="italic font-charles-rosie text-white/70">
-                &ldquo;Memoriam Non Perdet, Tempus Non Teret&rdquo;
-              </span>
-            </div>
-            <div>
-              Crafted for sovereign developers. Open-source under Apache-2.0.
-            </div>
-          </div>
+      {/* Luxury Minimal Footer Bottom Bar */}
+      <footer className="relative py-12 px-4 sm:px-8 bg-[#070709] border-t border-white/10 text-xs font-gt-era text-white/50 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-5xl mx-auto">
+        <div className="flex items-center gap-3">
+          <span className="font-charles-rosie text-white text-lg">AegisBrain</span>
+          <span>•</span>
+          <span className="italic font-charles-rosie text-white/70">
+            &ldquo;Memoriam Non Perdet, Tempus Non Teret&rdquo;
+          </span>
+        </div>
+        <div>
+          Crafted for sovereign developers. Open-source under Apache-2.0.
         </div>
       </footer>
 
-      {/* 
-        ========================================================================
-        INFOGRAPHIC FULLSCREEN LIGHTBOX MODAL
-        ========================================================================
-      */}
-      <AnimatePresence>
-        {selectedInfographicModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
-            onClick={() => setSelectedInfographicModal(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.95 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.95 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-6xl max-h-[90vh] bg-[#FAF8F5] border-4 border-black shadow-[12px_12px_0px_#B91C1C] rounded-lg p-6 flex flex-col text-black"
-            >
-              <div className="flex items-center justify-between border-b-2 border-black pb-3 mb-4">
-                <span className="font-nikkei text-sm uppercase text-black font-extrabold flex items-center gap-2">
-                  <Maximize2 className="w-4 h-4 text-[#B91C1C]" />
-                  AegisBrain Architectural Blueprint • High-Resolution View
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setSelectedInfographicModal(null)}
-                  className="p-1.5 bg-black text-white hover:bg-[#B91C1C] rounded border border-black cursor-pointer transition-colors"
-                  aria-label="Close"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="relative w-full flex-1 min-h-[400px] sm:min-h-[600px] bg-white border border-black/20 flex items-center justify-center overflow-auto p-4">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={selectedInfographicModal}
-                  alt="AegisBrain Blueprint Fullscreen View"
-                  className="max-h-[75vh] w-auto object-contain"
-                />
-              </div>
-
-              <div className="mt-4 flex items-center justify-between text-xs font-mono text-black/70">
-                <span>High-resolution luxury editorial SVG blueprint</span>
-                <span className="text-black/50 text-[11px]">Press ESC or click outside to close</span>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
       {/* Atmospheric Audio Soundtrack & Sfx Engine */}
       <SoundtrackController
         soundActive={soundActive}
