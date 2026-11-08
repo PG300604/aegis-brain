@@ -490,3 +490,220 @@ def format_armory_status(conn: Optional[sqlite3.Connection] = None) -> str:
             f"Pending Mining Count: {pending}",
         ]
         return "\n".join(lines)
+
+
+# Role-Based Dynamic Arsenal Archetype System
+ARSENAL_ARCHETYPES: Dict[str, Dict[str, Any]] = {
+    "developer": {
+        "name": "Developer",
+        "description": "Core systems, testing, git, AST code graph, and token arbitrage workers (Hermes, OpenCode, uv).",
+        "skills": [
+            "andrej-karpathy-skills",
+            "ecc",
+            "superpowers",
+            "unslop-master",
+            "unslop",
+            "diagram-design",
+            "python",
+            "typescript",
+        ],
+        "tools": ["git", "python", "sqlite3", "uv", "hermes", "opencode"],
+        "tags": ["dev", "system", "testing", "code", "ast", "arbitrage", "git"],
+    },
+    "creator": {
+        "name": "Creator",
+        "description": "Sensory perception (FFmpeg, Whisper speech-to-text, keyframe extraction), OpenMontage, design-taste, UI-UX Pro Max, reel-ingest, comment-gate-bypass.",
+        "skills": [
+            "ui-ux-pro-max-skill",
+            "remotion-best-practices",
+            "openmontage",
+            "unslop-master",
+            "sensory-accelerators",
+            "diagram-design",
+        ],
+        "tools": ["ffmpeg", "whisper", "satori"],
+        "tags": ["media", "video", "audio", "ui", "ux", "design", "reel", "sensory", "creator", "transcribe"],
+    },
+    "security": {
+        "name": "Security",
+        "description": "Artemis scanner, DAST scanning, AST vulnerability auditor, red-team sandbox, GitGuardian secret scanning.",
+        "skills": [
+            "artemis",
+            "dast-scanning",
+            "sandbox-vulnerability",
+            "gitguardian",
+            "penetration-testing",
+            "unslop-master",
+        ],
+        "tools": ["artemis", "secret-scanner", "dast-scanner"],
+        "tags": ["security", "pentest", "redteam", "vulnerability", "audit", "cve", "dast", "secret"],
+    },
+    "omni": {
+        "name": "Omni",
+        "description": "All system capabilities, media engines, and security auditing tools fully mounted.",
+        "skills": [
+            "andrej-karpathy-skills",
+            "ecc",
+            "superpowers",
+            "unslop-master",
+            "unslop",
+            "diagram-design",
+            "python",
+            "typescript",
+            "ui-ux-pro-max-skill",
+            "remotion-best-practices",
+            "openmontage",
+            "sensory-accelerators",
+            "artemis",
+            "dast-scanning",
+            "sandbox-vulnerability",
+            "gitguardian",
+            "penetration-testing",
+        ],
+        "tools": ["git", "python", "sqlite3", "uv", "hermes", "opencode", "ffmpeg", "whisper", "artemis"],
+        "tags": ["omni", "all", "full"],
+    },
+}
+
+
+def get_active_archetype(conn: Optional[sqlite3.Connection] = None, db_path: Optional[Path] = None) -> str:
+    """Return active archetype profile name (defaults to 'developer')."""
+    try:
+        from .config import get_db_path
+        brain_path = db_path or get_db_path()
+        if brain_path.exists():
+            with sqlite3.connect(str(brain_path)) as c:
+                c.row_factory = sqlite3.Row
+                cols = {row["name"] for row in c.execute("PRAGMA table_info(host_capabilities)").fetchall()}
+                if "archetype" in cols:
+                    row = c.execute("SELECT archetype FROM host_capabilities WHERE id = 1").fetchone()
+                    if row and row["archetype"]:
+                        return str(row["archetype"]).lower()
+    except Exception:
+        pass
+    return "developer"
+
+
+def apply_archetype_profile(
+    profile_name: str,
+    target_agent: str = "claude",
+    target_dir: Optional[Path] = None,
+    armory_dir: Optional[Path] = None,
+    conn: Optional[sqlite3.Connection] = None,
+) -> Dict[str, Any]:
+    """Mounts skills in archetype profile and updates armory.db and host_capabilities."""
+    norm = profile_name.strip().lower()
+    if norm not in ARSENAL_ARCHETYPES:
+        valid_keys = ", ".join(ARSENAL_ARCHETYPES.keys())
+        raise ValueError(f"Unknown archetype profile '{profile_name}'. Available profiles: {valid_keys}")
+
+    archetype_info = ARSENAL_ARCHETYPES[norm]
+    armory_root = armory_dir or get_armory_dir()
+
+    mounted: List[str] = []
+    with get_armory_connection(conn, armory_root / "armory.db") as c:
+        for skill_name in archetype_info["skills"]:
+            existing = c.execute("SELECT id FROM armory_skills WHERE name = ?", (skill_name,)).fetchone()
+            if not existing:
+                content = (
+                    f"---\nname: {skill_name}\ndescription: {archetype_info['name']} capability\ncategory: {norm}\n---\n"
+                    f"# {skill_name}\nStandard active capability provided by the {archetype_info['name']}."
+                )
+                register_skill(
+                    name=skill_name,
+                    description=f"{archetype_info['name']} capability",
+                    category=norm,
+                    content=content,
+                    source="archetype",
+                    armory_dir=armory_root,
+                    conn=c,
+                )
+            res = project_skill(
+                skill_name,
+                target_agent=target_agent,
+                target_dir=target_dir,
+                armory_dir=armory_root,
+                conn=c,
+            )
+            if res.get("status") != "error":
+                mounted.append(skill_name)
+
+    # Update host_capabilities in brain.db
+    try:
+        from .config import get_db_path
+        brain_path = get_db_path()
+        if brain_path.exists():
+            with sqlite3.connect(str(brain_path)) as c_brain:
+                cols = {row[1] for row in c_brain.execute("PRAGMA table_info(host_capabilities)").fetchall()}
+                if cols and "archetype" not in cols:
+                    c_brain.execute("ALTER TABLE host_capabilities ADD COLUMN archetype TEXT DEFAULT 'developer'")
+                cur = c_brain.execute("UPDATE host_capabilities SET archetype = ?, updated_at = CURRENT_TIMESTAMP WHERE id = 1", (norm,))
+                if cur.rowcount == 0:
+                    c_brain.execute("INSERT INTO host_capabilities (id, os, shell, pkg_manager, archetype, updated_at) VALUES (1, 'unknown', 'unknown', 'unknown', ?, CURRENT_TIMESTAMP)", (norm,))
+                c_brain.commit()
+    except Exception:
+        pass
+
+    # Invalidate environment cache
+    try:
+        from . import environment
+        environment._HOST_CAPABILITIES_CACHE = None
+    except Exception:
+        pass
+    try:
+        import sys
+        if "aegis.environment" in sys.modules:
+            sys.modules["aegis.environment"]._HOST_CAPABILITIES_CACHE = None
+    except Exception:
+        pass
+
+    return {
+        "profile": norm,
+        "name": archetype_info["name"],
+        "description": archetype_info["description"],
+        "status": "active",
+        "mounted_skills": mounted,
+        "tools": archetype_info.get("tools", []),
+        "message": f"Successfully activated '{archetype_info['name']}' pack ({len(mounted)} skills mounted).",
+    }
+
+
+def recommend_archetype_for_prompt(prompt: str, active_profile: Optional[str] = None) -> Optional[str]:
+    """Detect if prompt demands skills outside the active archetype pack (Just-In-Time skill expansion)."""
+    active = (active_profile or get_active_archetype()).strip().lower()
+    if active == "omni":
+        return None
+
+    p_lower = prompt.lower()
+
+    # Creator triggers
+    creator_triggers = [
+        "video", "ffmpeg", "whisper", "transcribe", "speech", "animation",
+        "remotion", "ui-ux", "reel", "montage", "canvas", "keyframes",
+        "audio extraction", "subtitles", "voiceover", "openmontage"
+    ]
+    if active != "creator":
+        if any(w in p_lower for w in creator_triggers):
+            return "creator"
+
+    # Security triggers
+    security_triggers = [
+        "pentest", "vulnerability", "cve", "dast", "artemis", "redteam", "red team",
+        "injection", "secret leak", "reverse shell", "port scan", "exploit",
+        "security audit", "gitguardian"
+    ]
+    if active != "security":
+        if any(w in p_lower for w in security_triggers):
+            return "security"
+
+    # Developer triggers
+    dev_triggers = [
+        "git pr", "pytest", "ast graph", "token arbitrage", "benchmark bottleneck",
+        "backend", "sqlite", "fastapi", "django"
+    ]
+    if active not in ("developer", "omni"):
+        if any(w in p_lower for w in dev_triggers):
+            return "developer"
+
+    return None
+

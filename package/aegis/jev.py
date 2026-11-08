@@ -42,6 +42,7 @@ class JevDecision:
     latency_ms: float
     rationale: str
     risk_factors: List[str] = field(default_factory=list)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -54,6 +55,7 @@ class JevDecision:
             "latency_ms": round(self.latency_ms, 3),
             "rationale": self.rationale,
             "risk_factors": self.risk_factors,
+            "metadata": self.metadata,
         }
 
     def format_banner(self) -> str:
@@ -74,8 +76,11 @@ class JevDecision:
             f"  • Execution Time: {self.latency_ms:.2f} ms (Sub-100ms Invariant: PASSED ✅)",
             f"  • Pruned Skills:  {skills_str} (Context Pruned: 1-3 max)",
             f"  • Rationale:      {self.rationale}",
-            "",
         ]
+        if self.metadata and self.metadata.get("expansion_recommendation"):
+            rec = self.metadata["expansion_recommendation"]
+            lines.append(f"  • Skill Expansion: JIT Mount Recommended -> {rec.get('command')}")
+        lines.append("")
         return "\n".join(lines)
 
 
@@ -221,17 +226,17 @@ class JevDecisionEngine:
         if available_skills:
             skills_to_evaluate = list(available_skills)
         else:
-            # Attempt to discover active armory skills
+            # Combine builtin skills with active armory skills
+            known = set(self.BUILTIN_SKILLS.keys())
             try:
                 from .armory import list_armory_skills
                 arm_skills = list_armory_skills(status="active")
                 if arm_skills:
-                    skills_to_evaluate = [s["name"] for s in arm_skills]
+                    for s in arm_skills:
+                        known.add(s["name"])
             except Exception:
                 pass
-
-            if not skills_to_evaluate:
-                skills_to_evaluate = list(self.BUILTIN_SKILLS.keys())
+            skills_to_evaluate = list(known)
 
         prompt_lower = prompt.lower()
         prompt_tokens = self._extract_tokens(prompt)
@@ -300,6 +305,22 @@ class JevDecisionEngine:
         self._decision_count += 1
         self._total_latency_ms += latency_ms
 
+        # Check Just-In-Time Skill Expansion
+        metadata: Dict[str, Any] = {}
+        try:
+            from .armory import recommend_archetype_for_prompt, get_active_archetype
+            active_arch = get_active_archetype()
+            recommended_arch = recommend_archetype_for_prompt(prompt, active_profile=active_arch)
+            if recommended_arch:
+                metadata["expansion_recommendation"] = {
+                    "active_archetype": active_arch,
+                    "target_archetype": recommended_arch,
+                    "command": f"aegis armory profile {recommended_arch}",
+                    "reason": f"Prompt requires {recommended_arch} pack capabilities outside current {active_arch} profile.",
+                }
+        except Exception:
+            pass
+
         return JevDecision(
             prompt=prompt,
             model_tier=tier,
@@ -310,6 +331,7 @@ class JevDecisionEngine:
             latency_ms=latency_ms,
             rationale=rationale,
             risk_factors=risk_factors,
+            metadata=metadata,
         )
 
     def get_status(self) -> Dict[str, Any]:
@@ -332,6 +354,7 @@ class JevDecisionEngine:
 
 
 _global_engine = JevDecisionEngine()
+JevSemanticEngine = JevDecisionEngine
 
 
 def decide(prompt: str, available_skills: Optional[List[str]] = None) -> JevDecision:

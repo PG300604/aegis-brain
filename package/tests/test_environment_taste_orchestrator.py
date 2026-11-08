@@ -10,6 +10,7 @@ from aegis.environment import (
     save_host_capabilities,
     format_doctor_report,
     install_tool,
+    run_arsenal_wizard,
 )
 from aegis.taste import load_taste_profile, format_taste_prompt, format_taste_display
 from aegis.planner import format_suggestion_panel, create_default_suggestions_for_task
@@ -126,6 +127,8 @@ class TestEnvironmentTasteOrchestrator(unittest.TestCase):
         self.assertIn("has_hermes", caps)
         self.assertIn("has_tiling", caps)
         self.assertIn("has_vim", caps)
+        self.assertIn("archetype", caps)
+        self.assertIn(caps["archetype"], ["developer", "creator", "security", "omni"])
         self.assertIn("standard_desktop_mode", caps)
         self.assertIsInstance(caps["has_ffmpeg"], bool)
         self.assertIsInstance(caps["standard_desktop_mode"], bool)
@@ -138,10 +141,28 @@ class TestEnvironmentTasteOrchestrator(unittest.TestCase):
         self.assertIn("Sensory Perception Accelerators", report)
         self.assertIn("Token Arbitrage Workers", report)
         self.assertIn("Workstation & Terminal Modifiers", report)
+        self.assertIn("Active Arsenal Archetype", report)
         self.assertIn("Recommended Next Actions", report)
 
         report_fix = format_doctor_report(doc, show_fix=True)
         self.assertIn("Scorecard", report_fix)
+
+    def test_run_arsenal_wizard(self):
+        res_dev = run_arsenal_wizard(profile="developer")
+        self.assertEqual(res_dev["profile"], "developer")
+        self.assertEqual(res_dev["status"], "active")
+        self.assertGreater(len(res_dev["mounted_skills"]), 0)
+
+        res_sec = run_arsenal_wizard(profile="security")
+        self.assertEqual(res_sec["profile"], "security")
+        self.assertEqual(res_sec["status"], "active")
+        self.assertGreater(len(res_sec["mounted_skills"]), 0)
+
+        caps = get_host_capabilities()
+        self.assertEqual(caps["archetype"], "security")
+
+        # Reset back to developer
+        run_arsenal_wizard(profile="developer")
 
 
 if __name__ == "__main__":

@@ -266,6 +266,21 @@ class TestJevSemanticEngine(unittest.TestCase):
         parsed4 = json.loads(res4.stdout)
         self.assertEqual(parsed4["engine"], "JevSemanticDecisionEngine")
 
+    def test_jit_skill_expansion_recommendation(self):
+        """Test Jev attaching expansion_recommendation in metadata on cross-domain prompts."""
+        from aegis.armory import apply_archetype_profile
+        apply_archetype_profile("developer")
+
+        decision = self.engine.decide("Extract video frames using ffmpeg and transcribe audio with whisper")
+        self.assertIn("metadata", decision.to_dict())
+        rec = decision.metadata.get("expansion_recommendation")
+        self.assertIsNotNone(rec)
+        self.assertEqual(rec["target_archetype"], "creator")
+        self.assertIn("aegis armory profile creator", rec["command"])
+
+        banner = decision.format_banner()
+        self.assertIn("Skill Expansion: JIT Mount Recommended", banner)
+
 
 if __name__ == "__main__":
     unittest.main()

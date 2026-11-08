@@ -29,6 +29,10 @@ from aegis.armory import (
     list_armory_skills,
     get_skill,
     format_armory_status,
+    ARSENAL_ARCHETYPES,
+    apply_archetype_profile,
+    get_active_archetype,
+    recommend_archetype_for_prompt,
 )
 
 # Define the path to the test file
@@ -273,3 +277,80 @@ def test_format_armory_status(armory_env):
     assert "Active Skills:" in status
     assert "Quarantined Skills:" in status
     assert "Pending Mining Count: 1" in status # Based on one queued skill
+
+# 9. test_arsenal_archetypes_definitions
+def test_arsenal_archetypes_definitions():
+    assert "developer" in ARSENAL_ARCHETYPES
+    assert "creator" in ARSENAL_ARCHETYPES
+    assert "security" in ARSENAL_ARCHETYPES
+    assert "omni" in ARSENAL_ARCHETYPES
+
+    for key in ("developer", "creator", "security", "omni"):
+        arch = ARSENAL_ARCHETYPES[key]
+        assert "name" in arch
+        assert "description" in arch
+        assert "skills" in arch
+        assert "tools" in arch
+        assert "tags" in arch
+        assert len(arch["skills"]) > 0
+
+    assert "andrej-karpathy-skills" in ARSENAL_ARCHETYPES["developer"]["skills"]
+    assert "ui-ux-pro-max-skill" in ARSENAL_ARCHETYPES["creator"]["skills"]
+    assert "openmontage" in ARSENAL_ARCHETYPES["creator"]["skills"]
+    assert "artemis" in ARSENAL_ARCHETYPES["security"]["skills"]
+    assert "dast-scanning" in ARSENAL_ARCHETYPES["security"]["skills"]
+
+    # omni contains union
+    dev_skills = set(ARSENAL_ARCHETYPES["developer"]["skills"])
+    creator_skills = set(ARSENAL_ARCHETYPES["creator"]["skills"])
+    security_skills = set(ARSENAL_ARCHETYPES["security"]["skills"])
+    omni_skills = set(ARSENAL_ARCHETYPES["omni"]["skills"])
+    assert dev_skills.issubset(omni_skills)
+    assert creator_skills.issubset(omni_skills)
+    assert security_skills.issubset(omni_skills)
+
+# 10. test_apply_archetype_profile_and_mounting
+def test_apply_archetype_profile_and_mounting(armory_env, monkeypatch):
+    target_dir = armory_env["dir"] / "agent_skills"
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    # Invalid profile
+    with pytest.raises(ValueError, match="Unknown archetype profile"):
+        apply_archetype_profile("invalid_profile", armory_dir=armory_env["dir"])
+
+    # Apply developer archetype
+    res = apply_archetype_profile("developer", target_agent="claude", target_dir=target_dir, armory_dir=armory_env["dir"])
+    assert res["status"] == "active"
+    assert res["profile"] == "developer"
+    assert len(res["mounted_skills"]) > 0
+    assert "andrej-karpathy-skills" in res["mounted_skills"]
+
+    # Apply creator archetype
+    res_creator = apply_archetype_profile("creator", target_agent="claude", target_dir=target_dir, armory_dir=armory_env["dir"])
+    assert res_creator["status"] == "active"
+    assert res_creator["profile"] == "creator"
+    assert "ui-ux-pro-max-skill" in res_creator["mounted_skills"]
+
+# 11. test_recommend_archetype_for_prompt_jit
+def test_recommend_archetype_for_prompt_jit():
+    # When active is developer
+    rec_creator = recommend_archetype_for_prompt("Generate video montage using ffmpeg and transcribe audio with whisper", active_profile="developer")
+    assert rec_creator == "creator"
+
+    rec_sec = recommend_archetype_for_prompt("Audit repository for secret leak and pentest vulnerabilities", active_profile="developer")
+    assert rec_sec == "security"
+
+    rec_none = recommend_archetype_for_prompt("Write clean simple python function with pytest", active_profile="developer")
+    assert rec_none is None
+
+    # When active is creator
+    rec_dev = recommend_archetype_for_prompt("Fix git pr merge conflict and test backend with pytest", active_profile="creator")
+    assert rec_dev == "developer"
+
+    rec_sec_from_creator = recommend_archetype_for_prompt("Scan for cve exploit and artemis injection", active_profile="creator")
+    assert rec_sec_from_creator == "security"
+
+    # When active is omni
+    rec_omni = recommend_archetype_for_prompt("Render ffmpeg video and audit pentest cve vulnerabilities", active_profile="omni")
+    assert rec_omni is None
+

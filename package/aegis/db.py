@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS host_capabilities (
     has_hermes INTEGER DEFAULT 0,
     has_tiling INTEGER DEFAULT 0,
     has_vim INTEGER DEFAULT 0,
+    archetype TEXT DEFAULT 'developer',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 """
@@ -137,6 +138,12 @@ def init_db() -> None:
         ]:
             if col_name not in cols:
                 conn.execute(f"ALTER TABLE tracked_prs ADD COLUMN {col_name} {col_type}")
+
+        # Migrate host_capabilities schema if archetype column is missing
+        c.execute("PRAGMA table_info(host_capabilities)")
+        hc_cols = {row["name"] for row in c.fetchall()}
+        if "archetype" not in hc_cols and len(hc_cols) > 0:
+            conn.execute("ALTER TABLE host_capabilities ADD COLUMN archetype TEXT DEFAULT 'developer'")
 
 
 def record_session(session_id: str, agent_name: str, workspace_path: str, summary: str = "") -> bool:

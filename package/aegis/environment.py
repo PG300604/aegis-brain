@@ -309,13 +309,20 @@ def init_host_capabilities_table() -> None:
                 has_hermes INTEGER DEFAULT 0,
                 has_tiling INTEGER DEFAULT 0,
                 has_vim INTEGER DEFAULT 0,
+                archetype TEXT DEFAULT 'developer',
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        # Safe migration if table already existed without archetype column
+        c = conn.cursor()
+        c.execute("PRAGMA table_info(host_capabilities)")
+        hc_cols = {row[1] for row in c.fetchall()}
+        if "archetype" not in hc_cols and len(hc_cols) > 0:
+            conn.execute("ALTER TABLE host_capabilities ADD COLUMN archetype TEXT DEFAULT 'developer'")
         conn.commit()
 
 
-def save_host_capabilities(doctor_results: Dict[str, Any]) -> None:
+def save_host_capabilities(doctor_results: Dict[str, Any], archetype: Optional[str] = None) -> None:
     """Save doctor evaluation results to host_capabilities table and update memory cache."""
     global _HOST_CAPABILITIES_CACHE
     init_host_capabilities_table()
@@ -337,12 +344,23 @@ def save_host_capabilities(doctor_results: Dict[str, Any]) -> None:
     has_vim = 1 if modifiers.get("vim", {}).get("status") == "INSTALLED" else 0
 
     db_p = get_db_path()
+    active_archetype = archetype or doctor_results.get("archetype")
+    if not active_archetype:
+        try:
+            with sqlite3.connect(db_p) as conn:
+                r = conn.execute("SELECT archetype FROM host_capabilities WHERE id = 1").fetchone()
+                if r and r[0]:
+                    active_archetype = r[0]
+        except Exception:
+            pass
+    active_archetype = (active_archetype or "developer").lower()
+
     with sqlite3.connect(db_p) as conn:
         conn.execute("""
             INSERT INTO host_capabilities (
                 id, os, shell, pkg_manager,
-                has_ffmpeg, has_whisper, has_ollama, has_hermes, has_tiling, has_vim, updated_at
-            ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                has_ffmpeg, has_whisper, has_ollama, has_hermes, has_tiling, has_vim, archetype, updated_at
+            ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
             ON CONFLICT(id) DO UPDATE SET
                 os = excluded.os,
                 shell = excluded.shell,
@@ -353,12 +371,13 @@ def save_host_capabilities(doctor_results: Dict[str, Any]) -> None:
                 has_hermes = excluded.has_hermes,
                 has_tiling = excluded.has_tiling,
                 has_vim = excluded.has_vim,
+                archetype = excluded.archetype,
                 updated_at = CURRENT_TIMESTAMP
         """, (
             platform_info.get("os", "unknown"),
             platform_info.get("shell", "unknown"),
             platform_info.get("pkg_manager", "unknown"),
-            has_ffmpeg, has_whisper, has_ollama, has_hermes, has_tiling, has_vim
+            has_ffmpeg, has_whisper, has_ollama, has_hermes, has_tiling, has_vim, active_archetype
         ))
         conn.commit()
 
@@ -372,6 +391,7 @@ def save_host_capabilities(doctor_results: Dict[str, Any]) -> None:
         "has_hermes": bool(has_hermes),
         "has_tiling": bool(has_tiling),
         "has_vim": bool(has_vim),
+        "archetype": active_archetype,
         "standard_desktop_mode": (not bool(has_tiling) or not bool(has_vim)),
         "updated_at": "CURRENT_TIMESTAMP",
     }
@@ -396,6 +416,7 @@ def get_host_capabilities() -> Dict[str, Any]:
 
     has_t = bool(row["has_tiling"])
     has_v = bool(row["has_vim"])
+    arch = row["archetype"] if ("archetype" in row.keys() and row["archetype"]) else "developer"
     _HOST_CAPABILITIES_CACHE = {
         "os": row["os"],
         "shell": row["shell"],
@@ -406,6 +427,7 @@ def get_host_capabilities() -> Dict[str, Any]:
         "has_hermes": bool(row["has_hermes"]),
         "has_tiling": has_t,
         "has_vim": has_v,
+        "archetype": arch,
         "standard_desktop_mode": (not has_t or not has_v),
         "updated_at": str(row["updated_at"]) if "updated_at" in row.keys() else "",
     }
@@ -622,8 +644,23 @@ def run_doctor() -> Dict[str, Any]:
     has_tiling = modifier_items["komorebi"]["status"] == "INSTALLED"
     has_vim = modifier_items["vim"]["status"] == "INSTALLED"
 
+    active_arch = "developer"
+    if _HOST_CAPABILITIES_CACHE and _HOST_CAPABILITIES_CACHE.get("archetype"):
+        active_arch = _HOST_CAPABILITIES_CACHE["archetype"]
+    else:
+        try:
+            db_p = get_db_path()
+            if db_p.exists():
+                with sqlite3.connect(db_p) as c_arch:
+                    r = c_arch.execute("SELECT archetype FROM host_capabilities WHERE id = 1").fetchone()
+                    if r and r[0]:
+                        active_arch = r[0]
+        except Exception:
+            pass
+
     return {
         "platform": plat,
+        "archetype": active_arch,
         "tiers": all_tiers,
         "core_essentials": core_items,
         "sensory_accelerators": sensory_items,
@@ -644,6 +681,7 @@ def format_doctor_report(doctor_results: Dict[str, Any], show_fix: bool = False)
     """Format structured doctor report as a clean markdown scorecard."""
     plat = doctor_results.get("platform", {})
     summary = doctor_results.get("summary", {})
+    active_arch = doctor_results.get("archetype") or plat.get("archetype") or "developer"
 
     lines = [
         "# 🩺 AegisBrain Doctor & Host Capabilities Scorecard",
@@ -652,6 +690,7 @@ def format_doctor_report(doctor_results: Dict[str, Any], show_fix: bool = False)
         f"- **Shell:** `{plat.get('shell', 'unknown')}`",
         f"- **Package Manager:** `{plat.get('pkg_manager', 'unknown')}`",
         f"- **Operational Mode:** `{'Standard Desktop Mode' if summary.get('standard_desktop_mode', True) else 'Modal Tiling Mode'}`",
+        f"- **Active Arsenal Archetype:** `{active_arch.capitalize()}` ([1] Developer | [2] Creator | [3] Security | [4] Omni)",
         "",
     ]
 
@@ -740,3 +779,43 @@ def install_tool(tool_name: str) -> bool:
         return False
     except Exception:
         return False
+
+
+def run_arsenal_wizard(profile: Optional[str] = None) -> Dict[str, Any]:
+    """Role-based dynamic arsenal installation & archetype setup wizard."""
+    from .armory import ARSENAL_ARCHETYPES, apply_archetype_profile
+
+    selected = profile
+    if not selected:
+        print("\n" + "=" * 68)
+        print("🛡️  AegisBrain Arsenal Installation & Capability Setup Wizard")
+        print("=" * 68)
+        print("Mount only what you need. Aegis JIT expansion auto-mounts the rest.\n")
+        print("  [1] Developer  (Lean systems, git, AST code graph, testing, token workers)")
+        print("  [2] Creator    (Sensory perception, FFmpeg, Whisper, UI-UX Pro Max, Montage)")
+        print("  [3] Security   (Artemis scanner, DAST, sandbox audit, secret scanning)")
+        print("  [4] Omni       (All capabilities and packs fully mounted)")
+        print("=" * 68)
+        try:
+            choice = input("Select Archetype [1-4 or name] (default: 1): ").strip()
+        except (EOFError, KeyboardInterrupt):
+            choice = "1"
+        mapping = {
+            "1": "developer",
+            "2": "creator",
+            "3": "security",
+            "4": "omni",
+            "developer": "developer",
+            "creator": "creator",
+            "security": "security",
+            "omni": "omni",
+        }
+        selected = mapping.get(choice.lower(), "developer")
+
+    selected = selected.strip().lower()
+    if selected not in ARSENAL_ARCHETYPES:
+        selected = "developer"
+
+    result = apply_archetype_profile(selected)
+    return result
+

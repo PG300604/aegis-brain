@@ -385,6 +385,13 @@ def main() -> None:
     arm_delete = armory_sub.add_parser("delete", help="Delete a skill (core native skills are protected)")
     arm_delete.add_argument("name", help="Skill name")
 
+    arm_profile = armory_sub.add_parser("profile", help="View or switch active arsenal archetype profile")
+    arm_profile.add_argument("name", nargs="?", choices=["developer", "creator", "security", "omni"], help="Target archetype profile name")
+
+    # setup (Role-Based Dynamic Arsenal Installation Wizard)
+    setup_parser = subparsers.add_parser("setup", help="Role-based Arsenal Installation & Archetype Setup Wizard")
+    setup_parser.add_argument("--profile", "-p", choices=["developer", "creator", "security", "omni"], help="Target archetype profile name")
+
     # unslop
     unslop_parser = subparsers.add_parser(
         "unslop",
@@ -458,6 +465,17 @@ def main() -> None:
         "--json",
         action="store_true",
         help="Output machine-readable JSON for AI agents",
+    )
+    doc_parser.add_argument(
+        "--setup",
+        action="store_true",
+        help="Launch Role-based Arsenal Installation & Archetype Setup Wizard",
+    )
+    doc_parser.add_argument(
+        "--profile",
+        "-p",
+        choices=["developer", "creator", "security", "omni"],
+        help="Directly select archetype pack during doctor/setup",
     )
     doc_parser.add_argument(
         "tool",
@@ -1273,6 +1291,21 @@ def main() -> None:
                 print(f"Deleted skill '{args.name}': {'SUCCESS' if ok else 'NOT FOUND'}")
             except ValueError as e:
                 print(f"PROTECTED INVARIANT: {e}")
+        elif action == "profile":
+            from .armory import ARSENAL_ARCHETYPES, apply_archetype_profile, get_active_archetype
+            target_profile = getattr(args, "name", None)
+            if target_profile:
+                res = apply_archetype_profile(target_profile)
+                print(f"✅ {res['message']}")
+                print(f"Mounted Skills ({len(res['mounted_skills'])}): {', '.join(res['mounted_skills'])}")
+            else:
+                current = get_active_archetype()
+                print("=== Aegis Arsenal Archetype Profile ===")
+                print(f"Active Profile: {current.upper()}")
+                print("\nAvailable Archetypes:")
+                for k, v in ARSENAL_ARCHETYPES.items():
+                    active_marker = " [ACTIVE]" if k == current else ""
+                    print(f"• {k.capitalize()}{active_marker}: {v['description']}")
 
     elif args.command in ("unslop", "deslop"):
         from .unslop_master import UnslopMaster
@@ -1352,8 +1385,22 @@ def main() -> None:
                 for k, v in status.items():
                     print(f"• {k}: {v}")
 
+    elif args.command == "setup":
+        from .environment import run_arsenal_wizard
+        prof = getattr(args, "profile", None)
+        res = run_arsenal_wizard(profile=prof)
+        print(f"\n✅ {res['message']}")
+        print(f"Mounted Skills ({len(res['mounted_skills'])}): {', '.join(res['mounted_skills'])}")
+
     elif args.command in ("doctor", "check", "install"):
-        from .environment import run_doctor, format_doctor_report, save_host_capabilities, install_tool
+        from .environment import run_doctor, format_doctor_report, save_host_capabilities, install_tool, run_arsenal_wizard
+
+        if getattr(args, "setup", False) or getattr(args, "profile", None):
+            prof = getattr(args, "profile", None)
+            res = run_arsenal_wizard(profile=prof)
+            print(f"\n✅ {res['message']}")
+            print(f"Mounted Skills ({len(res['mounted_skills'])}): {', '.join(res['mounted_skills'])}")
+            return
 
         target_tool = getattr(args, "tool", None)
         if target_tool:

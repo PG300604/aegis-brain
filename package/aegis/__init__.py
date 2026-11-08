@@ -86,12 +86,24 @@ from .armory import (
     list_armory_skills,
     get_skill,
     format_armory_status,
+    ARSENAL_ARCHETYPES,
+    apply_archetype_profile,
+    get_active_archetype,
+    recommend_archetype_for_prompt,
 )
 from .jev import (
     ModelTier,
     RiskLevel,
     JevDecision,
     JevDecisionEngine,
+    JevSemanticEngine,
     decide,
     route,
+)
+from .environment import (
+    run_arsenal_wizard,
+    run_doctor,
+    format_doctor_report,
+    get_host_capabilities,
+    save_host_capabilities,
 )
