@@ -1,102 +1,151 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Charles Rosie";
+  src: url("/fonts/CharlesRosie.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PPNikkeiMaru";
+  src: url("/fonts/PPNikkeiMaru-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "PPNikkeiMaru";
+  src: url("/fonts/PPNikkeiMaru-Ultrabold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GT-Era";
+  src: url("/fonts/GT-Era-Text-Light.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+}
+
 @layer base {
   :root {
-    --bg-obsidian: #030305;
-    --bg-card: #08090E;
-    --bg-card-subtle: #0D0F18;
-    --border-subtle: rgba(255, 255, 255, 0.08);
-    --border-glow: rgba(0, 240, 255, 0.3);
-    --cyan-glow: #00F0FF;
-    --emerald-glow: #10B981;
-    --amber-glow: #F59E0B;
-    --purple-glow: #A855F7;
+    --bg-ink: #070709;
+    --paper-cream: #F9F8F5;
+    --paper-card: #FFFFFF;
+    --ink-black: #0D0D11;
+    --blood-red: #B91C1C;
+    --monk-ochre: #C8A87D;
+    --border-ink: #000000;
   }
 
   body {
-    background-color: var(--bg-obsidian);
-    color: #E2E8F0;
+    background-color: var(--bg-ink);
+    color: #0D0D11;
     overflow-x: hidden;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-family: "GT-Era", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #030305;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 240, 255, 0.4);
+/* Typography Utility Classes */
+.font-charles-rosie {
+  font-family: "Charles Rosie", Georgia, serif;
 }
 
-/* Glass Acrylic Container */
-.glass-panel {
-  background: rgba(8, 9, 14, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+.font-nikkei {
+  font-family: "PPNikkeiMaru", Impact, "Arial Black", sans-serif;
 }
 
-.glass-panel-glow {
-  background: rgba(8, 9, 14, 0.85);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 240, 255, 0.25);
-  box-shadow: 0 0 35px rgba(0, 240, 255, 0.12), inset 0 0 20px rgba(0, 240, 255, 0.04);
+.font-gt-era {
+  font-family: "GT-Era", -apple-system, sans-serif;
 }
 
-/* Neon Text Glow */
-.text-glow-cyan {
-  text-shadow: 0 0 12px rgba(0, 240, 255, 0.6), 0 0 24px rgba(0, 240, 255, 0.2);
+/* Comic Book Graphic Novel Aesthetics */
+.comic-card {
+  background: #FFFFFF;
+  border: 3px solid #000000;
+  box-shadow: 6px 6px 0px #000000;
 }
 
-.text-glow-emerald {
-  text-shadow: 0 0 12px rgba(16, 185, 129, 0.6), 0 0 24px rgba(16, 185, 129, 0.2);
+.comic-card-red {
+  background: #FFFFFF;
+  border: 3px solid #000000;
+  box-shadow: 6px 6px 0px #B91C1C;
 }
 
-.text-glow-amber {
-  text-shadow: 0 0 12px rgba(245, 158, 11, 0.6), 0 0 24px rgba(245, 158, 11, 0.2);
+.comic-narration-box {
+  background: #FFFFFF;
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  font-family: "PPNikkeiMaru", sans-serif;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
 }
 
-/* Subtle Scanlines Background */
-.cyber-scanlines {
-  background: linear-gradient(
-    rgba(18, 16, 16, 0) 50%, 
-    rgba(0, 0, 0, 0.25) 50%
-  ), linear-gradient(
-    90deg,
-    rgba(255, 0, 0, 0.03),
-    rgba(0, 255, 0, 0.01),
-    rgba(0, 0, 255, 0.03)
-  );
-  background-size: 100% 3px, 6px 100%;
+.comic-inset-box {
+  background: #FFFFFF;
+  border: 2px solid #000000;
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.7);
+}
+
+/* Red Progress Scroll Tracker */
+.scroll-progress-line {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.1);
+  z-index: 100;
   pointer-events: none;
 }
 
-/* Radial Dark Gradient Mask */
-.hero-radial-mask {
-  mask-image: radial-gradient(circle at center, black 40%, transparent 95%);
-  -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 95%);
+.scroll-progress-fill {
+  width: 100%;
+  background: #B91C1C;
+  transition: height 0.1s ease-out;
 }
 
-/* Monolith 2.5D Mobile CSS Animation */
-@keyframes monolith-float {
-  0%, 100% {
-    transform: translateY(0px) rotateX(15deg) rotateY(0deg);
-  }
-  50% {
-    transform: translateY(-16px) rotateX(20deg) rotateY(180deg);
-  }
+/* Subtle Ink Specks / Paper Grain */
+.paper-grain {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 0);
+  background-size: 8px 8px;
 }
 
-.monolith-mobile-anim {
-  animation: monolith-float 12s ease-in-out infinite;
-  transform-style: preserve-3d;
+.dark-paper-grain {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 0);
+  background-size: 8px 8px;
 }
+
+/* Interlocking Title Ligature Effect */
+.interlocking-oo {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.interlocking-oo span:first-child {
+  position: relative;
+  z-index: 1;
+}
+
+.interlocking-oo span:last-child {
+  margin-left: -0.32em;
+  position: relative;
+  z-index: 2;
+}
+
+/* Sound Wave Animation */
+@keyframes soundwave {
+  0%, 100% { height: 4px; }
+  50% { height: 16px; }
+}
+
+.sound-bar-1 { animation: soundwave 1.2s ease-in-out infinite; }
+.sound-bar-2 { animation: soundwave 0.8s ease-in-out infinite 0.2s; }
+.sound-bar-3 { animation: soundwave 1.5s ease-in-out infinite 0.4s; }
+.sound-bar-4 { animation: soundwave 0.9s ease-in-out infinite 0.1s; }
