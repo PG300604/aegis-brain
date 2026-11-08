@@ -63,65 +63,6 @@ export function FluidWaterWave({
           fill="url(#waveGradient)"
         />
 
-        {/* Floating Splatter Ink Droplets rising upwards */}
-        <g fill="#FFFFFF">
-          <motion.circle
-            cx="280"
-            cy="50"
-            r="14"
-            animate={{ y: [-8, 8, -8], opacity: [0.8, 1, 0.8] }}
-            transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.circle
-            cx="260"
-            cy="20"
-            r="7"
-            animate={{ y: [-5, 7, -5], opacity: [0.6, 0.9, 0.6] }}
-            transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
-          />
-          <motion.circle
-            cx="610"
-            cy="65"
-            r="11"
-            animate={{ y: [-9, 9, -9], opacity: [0.75, 1, 0.75] }}
-            transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut", delay: 0.7 }}
-          />
-          <motion.circle
-            cx="635"
-            cy="35"
-            r="5"
-            animate={{ y: [-4, 6, -4], opacity: [0.5, 0.8, 0.5] }}
-            transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 1.1 }}
-          />
-          <motion.circle
-            cx="985"
-            cy="75"
-            r="16"
-            animate={{ y: [-11, 10, -11], opacity: [0.85, 1, 0.85] }}
-            transition={{ duration: 5.1, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
-          />
-          <motion.circle
-            cx="960"
-            cy="45"
-            r="8"
-            animate={{ y: [-6, 6, -6], opacity: [0.6, 0.9, 0.6] }}
-            transition={{ duration: 3.9, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
-          />
-          <motion.circle
-            cx="1270"
-            cy="85"
-            r="12"
-            animate={{ y: [-8, 7, -8], opacity: [0.7, 1, 0.7] }}
-            transition={{ duration: 4.4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-          />
-          <motion.circle
-            cx="1295"
-            cy="55"
-            r="6"
-            animate={{ y: [-4, 5, -4], opacity: [0.5, 0.85, 0.5] }}
-            transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut", delay: 1.3 }}
-          />
-        </g>
       </svg>
     </div>
   );

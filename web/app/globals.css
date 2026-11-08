@@ -245,7 +245,7 @@
   );
 }
 
-/* Glass Acrylic Panels for Cockpits */
+/* Glass Acrylic Panels */
 .glass-panel {
   background: rgba(14, 15, 22, 0.88);
   backdrop-filter: blur(16px);

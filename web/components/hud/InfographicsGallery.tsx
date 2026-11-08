@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import {
   Cpu,
   Layers,
@@ -11,15 +10,9 @@ import {
   TrendingUp,
   Smartphone,
   Maximize2,
-  Download,
   CheckCircle2,
   X,
-  ZoomIn,
-  ZoomOut,
-  RotateCcw,
   Sparkles,
-  ArrowRight,
-  ExternalLink,
 } from "lucide-react";
 
 interface DiagramData {
@@ -28,7 +21,6 @@ interface DiagramData {
   shortTitle: string;
   file: string;
   category: string;
-  badge: string;
   icon: React.ElementType;
   description: string;
   invariants: string[];
@@ -42,7 +34,6 @@ const DIAGRAMS: DiagramData[] = [
     shortTitle: "System Architecture",
     file: "/infographics/infographic-unified-architecture.svg",
     category: "System Topology",
-    badge: "End-to-End Orchestration",
     icon: Cpu,
     description:
       "Complete topological architecture showing the orchestration flow: Tier 1 Senior Boss dispatches high-level directives to Tier 2 Subagents, who orchestrate free Tier 3 local workers (Hermes CLI, Ollama) while maintaining sub-second SQLite WAL neural memory and 24/7 Telegram telemetry.",
@@ -65,7 +56,6 @@ const DIAGRAMS: DiagramData[] = [
     shortTitle: "Agent Hierarchy",
     file: "/infographics/infographic-hierarchy-pyramid.svg",
     category: "Division of Labor",
-    badge: "Token Arbitrage Engine",
     icon: Layers,
     description:
       "The definitive pyramid of intelligence and cost arbitrage. The Frontier Senior Boss (Claude Opus 5.5, Gemini 4) commands architectural strategy, subagent coordinators manage specialized workflows, and local execution engines write boilerplate for $0.00.",
@@ -88,7 +78,6 @@ const DIAGRAMS: DiagramData[] = [
     shortTitle: "Fleet Compatibility",
     file: "/infographics/infographic-universal-agents.svg",
     category: "Fleet Interoperability",
-    badge: "Universal Sidecar Protocol",
     icon: Globe,
     description:
       "AegisBrain connects seamlessly to any modern developer coding agent. Whether running inside Antigravity, Claude Code, Cursor, Windsurf, or Aider, the unified neural memory and watchdog service stay identical.",
@@ -111,7 +100,6 @@ const DIAGRAMS: DiagramData[] = [
     shortTitle: "Quality Gates",
     file: "/infographics/infographic-quality-gate.svg",
     category: "Verification Pipeline",
-    badge: "Zero-Defect AST Audit",
     icon: ShieldCheck,
     description:
       "Every line of candidate code drafted by local execution workers must navigate a deterministic 4-stage pipeline before ever touching host repositories or reaching the user.",
@@ -134,7 +122,6 @@ const DIAGRAMS: DiagramData[] = [
     shortTitle: "Speed Benchmarks",
     file: "/infographics/infographic-speed-benchmarks.svg",
     category: "Performance Metrics",
-    badge: "24ms FTS5 vs 12,400ms Crawling",
     icon: Zap,
     description:
       "Empirically measured runtime performance comparing AegisBrain's indexed neural SQLite FTS5 store against the conventional approach of repeatedly crawling megabytes of unstructured session transcript files.",
@@ -157,7 +144,6 @@ const DIAGRAMS: DiagramData[] = [
     shortTitle: "Learning Curve",
     file: "/infographics/infographic-learning-curve.svg",
     category: "Worker Convergence",
-    badge: "Confidence Scoring",
     icon: TrendingUp,
     description:
       "Real-time mathematical tracking of local worker accuracy over successive trials. The coaching loop records compiler failures, linter warnings, and AST feedback, proving autonomous convergence from 3.2 initial error spikes down to 0.",
@@ -180,7 +166,6 @@ const DIAGRAMS: DiagramData[] = [
     shortTitle: "Telegram Pipeline",
     file: "/infographics/infographic-mobile-pipeline.svg",
     category: "Remote CLI Telemetry",
-    badge: "Whisper Shield & Keystroke Injection",
     icon: Smartphone,
     description:
       "End-to-end telemetry architecture bridging mobile Telegram audio voice notes, documents, and real-time prompts directly into active terminal coding sessions on your desktop without breaking execution state.",
@@ -202,7 +187,6 @@ const DIAGRAMS: DiagramData[] = [
 export function InfographicsGallery() {
   const [activeTab, setActiveTab] = useState<string>("architecture");
   const [lightboxOpen, setLightboxOpen] = useState<boolean>(false);
-  const [zoomLevel, setZoomLevel] = useState<number>(1);
 
   const activeDiagram = DIAGRAMS.find((d) => d.id === activeTab) || DIAGRAMS[0];
 
@@ -217,15 +201,6 @@ export function InfographicsGallery() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const handleDownload = (file: string, title: string) => {
-    const link = document.createElement("a");
-    link.href = file;
-    link.download = `${title.toLowerCase().replace(/\s+/g, "-")}.svg`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
     <div className="relative w-full p-6 sm:p-8 bg-[#101116] text-[#FBF9F5] border-2 border-black rounded-lg">
       {/* Header */}
@@ -233,13 +208,13 @@ export function InfographicsGallery() {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#B91C1C] text-white font-nikkei text-xs uppercase tracking-widest shadow-[2px_2px_0px_#000000]">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>INTERACTIVE ARCHITECTURAL BLUEPRINTS</span>
+            <span>SYSTEM BLUEPRINTS</span>
           </div>
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
-            The Master Technical Diagrams Suite
+            Architecture &amp; Execution Flow
           </h3>
           <p className="text-xs sm:text-sm text-zinc-400 font-gt-era max-w-xl mt-1">
-            Examine high-resolution sovereign system blueprints detailing multi-agent token arbitrage, sub-second neural memory, and deterministic mobile telemetry.
+            Clear system blueprints detailing multi-agent token arbitrage, sub-second neural memory, and deterministic mobile telemetry.
           </p>
         </div>
 
@@ -260,10 +235,7 @@ export function InfographicsGallery() {
             <button
               key={diagram.id}
               type="button"
-              onClick={() => {
-                setActiveTab(diagram.id);
-                setZoomLevel(1);
-              }}
+              onClick={() => setActiveTab(diagram.id)}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-nikkei uppercase tracking-wider whitespace-nowrap transition-all border-2 border-black cursor-pointer ${
                 isActive
                   ? "bg-[#B91C1C] text-white shadow-[3px_3px_0px_#000000]"
@@ -282,51 +254,21 @@ export function InfographicsGallery() {
 
       {/* Main Diagram Viewer Showcase */}
       <div className="rounded-lg border-2 border-black p-4 sm:p-6 bg-[#181822] shadow-[6px_6px_0px_#000000]">
-        {/* Top Control Bar */}
+        {/* Title Bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-black/40">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold bg-black text-[#D4AF37] border border-black shadow-[1px_1px_0px_#000000]">
-                {activeDiagram.category}
-              </span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold bg-emerald-950 text-emerald-300 border border-emerald-600 shadow-[1px_1px_0px_#000000]">
-                {activeDiagram.badge}
-              </span>
-            </div>
-            <h4 className="font-charles-rosie text-xl sm:text-2xl text-white uppercase tracking-tight mt-2">
+            <h4 className="font-charles-rosie text-xl sm:text-2xl text-white uppercase tracking-tight">
               {activeDiagram.title}
             </h4>
           </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-            <button
-              type="button"
-              onClick={() => {
-                setZoomLevel(1);
-                setLightboxOpen(true);
-              }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-black hover:bg-neutral-800 border border-black text-xs font-nikkei uppercase text-white shadow-[2px_2px_0px_#000000] cursor-pointer"
-            >
-              <Maximize2 className="w-3.5 h-3.5 text-[#B91C1C]" />
-              <span>Fullscreen</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDownload(activeDiagram.file, activeDiagram.title)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#B91C1C] hover:bg-red-800 border border-black text-xs font-nikkei uppercase text-white shadow-[2px_2px_0px_#000000] cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>SVG</span>
-            </button>
+          <div className="text-xs font-mono text-zinc-400">
+            Click diagram to view full size
           </div>
         </div>
 
         {/* High-Contrast Cream Paper Canvas Presentation */}
         <div
-          onClick={() => {
-            setZoomLevel(1);
-            setLightboxOpen(true);
-          }}
+          onClick={() => setLightboxOpen(true)}
           className="my-5 relative rounded-lg bg-[#FAF8F5] p-3 sm:p-6 shadow-[4px_4px_0px_#000000] border-2 border-black cursor-zoom-in group transition-all"
         >
           <div className="absolute top-4 right-4 z-10 px-2 py-1 rounded bg-black border border-black text-[10px] font-mono text-white flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -334,12 +276,12 @@ export function InfographicsGallery() {
             <span>Click to Expand</span>
           </div>
 
-          <div className="w-full flex items-center justify-center min-h-[300px] sm:min-h-[420px]">
+          <div className="w-full flex items-center justify-center min-h-[300px] sm:min-h-[440px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={activeDiagram.file}
               alt={activeDiagram.title}
-              className="max-h-[520px] w-auto object-contain mx-auto transition-transform duration-300 group-hover:scale-[1.01]"
+              className="w-full h-auto max-h-[580px] object-contain mx-auto transition-transform duration-300 group-hover:scale-[1.01]"
               loading="eager"
             />
           </div>
@@ -402,6 +344,7 @@ export function InfographicsGallery() {
                 type="button"
                 onClick={() => setLightboxOpen(false)}
                 className="p-1.5 bg-black text-white hover:bg-[#B91C1C] rounded border border-black cursor-pointer transition-colors"
+                aria-label="Close"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -418,13 +361,7 @@ export function InfographicsGallery() {
 
             <div className="mt-4 flex items-center justify-between text-xs font-mono text-black/70">
               <span>High-resolution luxury editorial SVG blueprint</span>
-              <button
-                type="button"
-                onClick={() => handleDownload(activeDiagram.file, activeDiagram.title)}
-                className="text-[#B91C1C] font-bold hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <Download className="w-3.5 h-3.5" /> Download SVG
-              </button>
+              <span className="text-black/50 text-[11px]">Press ESC or click outside to close</span>
             </div>
           </div>
         </div>

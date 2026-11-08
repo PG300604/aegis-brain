@@ -38,7 +38,6 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { PromptBar } from "@/components/react-bits/PromptBar";
 import { ThoughtLine } from "@/components/react-bits/ThoughtLine";
 import { CallChip } from "@/components/react-bits/CallChip";
 import { VoicePill } from "@/components/react-bits/VoicePill";
@@ -54,10 +53,10 @@ import { SceneTransition } from "@/components/motion/SceneTransition";
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [soundActive, setSoundActive] = useState(false);
-  const [copiedSha, setCopiedSha] = useState<string | null>(null);
+  const [copiedClone, setCopiedClone] = useState(false);
   const [selectedInfographicModal, setSelectedInfographicModal] = useState<string | null>(null);
 
-  // Feature 1: 429 Quota Cliff interactive cockpit state
+  // Feature 1: 429 Quota Cliff interactive simulation state
   const [quotaSimMode, setQuotaSimMode] = useState<"idle" | "traditional" | "aegis">("idle");
   const [quotaTokens, setQuotaTokens] = useState<number>(0);
   const [quotaLatency, setQuotaLatency] = useState<number>(0);
@@ -108,10 +107,10 @@ export default function Home() {
     }
   }, [soundActive]);
 
-  const handleCopySha = (sha: string) => {
-    navigator.clipboard.writeText(sha);
-    setCopiedSha(sha);
-    setTimeout(() => setCopiedSha(null), 2500);
+  const handleCopyClone = () => {
+    navigator.clipboard.writeText("git clone https://github.com/PG300604/aegis-brain.git");
+    setCopiedClone(true);
+    setTimeout(() => setCopiedClone(false), 2500);
   };
 
   const runTraditionalSimulation = () => {
@@ -267,117 +266,38 @@ export default function Home() {
           }}
         />
 
-        {/* Center: Monumental Headline with Organic Fluid Motion */}
-        <div className="relative z-10 text-center flex flex-col items-center max-w-5xl mx-auto my-auto select-none pt-4 sm:pt-8">
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="font-charles-rosie text-white/70 text-lg sm:text-2xl tracking-[0.35em] uppercase mb-1"
-          >
+        {/* Center: Monumental Headline with Pure, Non-Jitter Entrance Animation */}
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="relative z-10 text-center flex flex-col items-center max-w-5xl mx-auto my-auto select-none pt-4 sm:pt-8"
+        >
+          <p className="font-charles-rosie text-white/70 text-lg sm:text-2xl tracking-[0.35em] uppercase mb-1">
             The
-          </motion.p>
+          </p>
 
-          {/* Fluid Typography Animation: Gentle sinusoidal breathing */}
-          <motion.div
-            animate={{
-              y: [-4, 4, -4],
-            }}
-            transition={{
-              duration: 5.2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="flex items-center justify-center"
-          >
-            <motion.h1
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="font-charles-rosie text-white text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] leading-[0.88] tracking-tight uppercase drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)]"
-            >
-              Aeg<span className="text-[#B91C1C]">i</span>s
-            </motion.h1>
-          </motion.div>
+          <h1 className="font-charles-rosie text-white text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] leading-[0.88] tracking-tight uppercase drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)]">
+            Aeg<span className="text-[#B91C1C]">i</span>s
+          </h1>
 
-          <motion.div
-            animate={{
-              y: [4, -4, 4],
-            }}
-            transition={{
-              duration: 5.8,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 0.2,
-            }}
-            className="flex items-center justify-center"
-          >
-            <motion.h2
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="font-charles-rosie text-white text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight tracking-[0.16em] uppercase mt-2 drop-shadow-[0_8px_25px_rgba(0,0,0,0.95)]"
-            >
-              Experience
-            </motion.h2>
-          </motion.div>
+          <h2 className="font-charles-rosie text-white text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight tracking-[0.16em] uppercase mt-2 drop-shadow-[0_8px_25px_rgba(0,0,0,0.95)]">
+            Experience
+          </h2>
 
-          {/* Punchy, Non-Slop Subhead */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="mt-6 max-w-3xl mx-auto px-4 space-y-2"
-          >
+          {/* Punchy, Non-Slop Directives & Sub-description */}
+          <div className="mt-8 max-w-3xl mx-auto px-4 space-y-3">
             <h3 className="font-nikkei text-[#D4AF37] text-base sm:text-xl md:text-2xl uppercase tracking-[0.2em] font-extrabold leading-tight">
               TAKE FULL CONTROL OF YOUR AGENTS
             </h3>
             <p className="font-nikkei text-white text-xs sm:text-sm uppercase tracking-[0.25em] font-bold">
               UNLEASH THE FULL POWER OF AGENTIC PERSISTENCE
             </p>
-            <p className="font-gt-era text-white/75 text-xs sm:text-sm leading-relaxed max-w-2xl mx-auto pt-1">
+            <p className="font-gt-era text-white/75 text-xs sm:text-sm leading-relaxed max-w-2xl mx-auto pt-2">
               Sub-Second Neural Memory (&lt;25ms) • 3-Tier Local Token Arbitrage ($1,840+/mo) • 24/7 Sovereign KeepAlive Shield • 100% Invariant Determinism
             </p>
-          </motion.div>
-
-          {/* 4 Key Feature Metric Pills */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-8 max-w-4xl w-full px-2"
-          >
-            <div className="bg-[#FAF8F5] border-2 border-black p-2.5 shadow-[4px_4px_0px_#000000] text-black text-center transition-transform hover:-translate-y-0.5">
-              <div className="font-nikkei text-lg sm:text-xl font-extrabold text-[#B91C1C]">24 ms</div>
-              <div className="font-gt-era text-[10px] uppercase tracking-wider text-black/70">Neural Recall (FTS5)</div>
-            </div>
-            <div className="bg-[#FAF8F5] border-2 border-black p-2.5 shadow-[4px_4px_0px_#000000] text-black text-center transition-transform hover:-translate-y-0.5">
-              <div className="font-nikkei text-lg sm:text-xl font-extrabold text-emerald-700">95.8%</div>
-              <div className="font-gt-era text-[10px] uppercase tracking-wider text-black/70">Token Savings (3-Tier)</div>
-            </div>
-            <div className="bg-[#FAF8F5] border-2 border-black p-2.5 shadow-[4px_4px_0px_#000000] text-black text-center transition-transform hover:-translate-y-0.5">
-              <div className="font-nikkei text-lg sm:text-xl font-extrabold text-[#D4AF37]">24/7</div>
-              <div className="font-gt-era text-[10px] uppercase tracking-wider text-black/70">Win32 Shield Daemon</div>
-            </div>
-            <div className="bg-[#FAF8F5] border-2 border-black p-2.5 shadow-[4px_4px_0px_#000000] text-black text-center transition-transform hover:-translate-y-0.5">
-              <div className="font-nikkei text-lg sm:text-xl font-extrabold text-[#B91C1C]">0% Drop</div>
-              <div className="font-gt-era text-[10px] uppercase tracking-wider text-black/70">Whisper Voice Chunks</div>
-            </div>
-          </motion.div>
-
-          {/* Autoplay Video/GIF Style Simulation <PromptBar /> */}
-          <motion.div
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="w-full mt-8 max-w-3xl px-2"
-          >
-            <div className="text-[10px] font-nikkei text-[#D4AF37] uppercase tracking-[0.2em] mb-2 text-center bg-black/80 py-1 px-4 border border-[#D4AF37]/40 rounded-full inline-block shadow-[2px_2px_0px_#000000]">
-              Autoplay Live Prompt Simulation • /recall, /challenge, &amp; /briefing
-            </div>
-            <PromptBar />
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
 
         {/* Foreground: Billowing Fluid Liquid Mist Wave */}
         <div className="relative w-full mt-12 z-10">
@@ -435,19 +355,18 @@ export default function Home() {
           </div>
 
           {/* Sovereign Architectural Diagram: Speed Benchmarks */}
-          <div className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group">
+          <div
+            onClick={() => setSelectedInfographicModal("/infographics/infographic-speed-benchmarks.svg")}
+            className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group cursor-zoom-in"
+          >
             <div className="flex items-center justify-between mb-3 border-b border-black/10 pb-2">
               <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
                 <Clock className="w-4 h-4 text-[#B91C1C]" />
-                SOVEREIGN SYSTEM ARCHITECTURE BLUEPRINT • 24MS FTS5 VS 12,400MS RAW CRAWL
+                SPEED BENCHMARKS • 24MS FTS5 VS 12,400MS RAW CRAWL
               </span>
-              <button
-                type="button"
-                onClick={() => setSelectedInfographicModal("/infographics/infographic-speed-benchmarks.svg")}
-                className="flex items-center gap-1 font-mono text-[11px] text-[#B91C1C] hover:underline cursor-pointer"
-              >
-                <Maximize2 className="w-3.5 h-3.5" /> Fullscreen
-              </button>
+              <span className="font-mono text-[11px] text-[#B91C1C] flex items-center gap-1 group-hover:underline">
+                <ZoomIn className="w-3.5 h-3.5" /> Click to inspect
+              </span>
             </div>
 
             <div className="relative w-full h-[280px] sm:h-[420px] bg-[#FAF8F5] flex items-center justify-center overflow-hidden border border-black/10">
@@ -477,12 +396,12 @@ export default function Home() {
             />
           </div>
 
-          {/* AI Tool Cockpit: StopwatchDial */}
+          {/* AI Simulation: StopwatchDial */}
           <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116] mb-8">
             <StopwatchDial />
           </div>
 
-          {/* Interactive 429 Quota Cliff Cockpit */}
+          {/* Interactive 429 Quota Cliff Simulation */}
           <div className="p-5 sm:p-6 rounded-lg bg-[#14141A] text-white border-2 border-black shadow-[4px_4px_0px_#000000] space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
               <div>
@@ -602,19 +521,18 @@ export default function Home() {
           </div>
 
           {/* Sovereign Architectural Diagram: Hierarchy Pyramid */}
-          <div className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group">
+          <div
+            onClick={() => setSelectedInfographicModal("/infographics/infographic-hierarchy-pyramid.svg")}
+            className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group cursor-zoom-in"
+          >
             <div className="flex items-center justify-between mb-3 border-b border-black/10 pb-2">
               <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
                 <Cpu className="w-4 h-4 text-[#B91C1C]" />
-                SOVEREIGN SYSTEM ARCHITECTURE BLUEPRINT • 3-TIER HIERARCHY PYRAMID
+                3-TIER MULTI-AGENT HIERARCHY PYRAMID
               </span>
-              <button
-                type="button"
-                onClick={() => setSelectedInfographicModal("/infographics/infographic-hierarchy-pyramid.svg")}
-                className="flex items-center gap-1 font-mono text-[11px] text-[#B91C1C] hover:underline cursor-pointer"
-              >
-                <Maximize2 className="w-3.5 h-3.5" /> Fullscreen
-              </button>
+              <span className="font-mono text-[11px] text-[#B91C1C] flex items-center gap-1 group-hover:underline">
+                <ZoomIn className="w-3.5 h-3.5" /> Click to inspect
+              </span>
             </div>
 
             <div className="relative w-full h-[280px] sm:h-[420px] bg-[#FAF8F5] flex items-center justify-center overflow-hidden border border-black/10">
@@ -665,7 +583,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* AI Tool Cockpit: ArbitrageCalculator */}
+          {/* Arbitrage Engine: ArbitrageCalculator */}
           <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
             <ArbitrageCalculator />
           </div>
@@ -820,19 +738,18 @@ export default function Home() {
           </div>
 
           {/* Sovereign Architectural Diagram: Mobile Pipeline */}
-          <div className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group">
+          <div
+            onClick={() => setSelectedInfographicModal("/infographics/infographic-mobile-pipeline.svg")}
+            className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group cursor-zoom-in"
+          >
             <div className="flex items-center justify-between mb-3 border-b border-black/10 pb-2">
               <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
                 <Smartphone className="w-4 h-4 text-[#B91C1C]" />
-                SOVEREIGN SYSTEM ARCHITECTURE BLUEPRINT • 24/7 MOBILE TELEGRAM PIPELINE
+                24/7 MOBILE TELEGRAM PIPELINE BLUEPRINT
               </span>
-              <button
-                type="button"
-                onClick={() => setSelectedInfographicModal("/infographics/infographic-mobile-pipeline.svg")}
-                className="flex items-center gap-1 font-mono text-[11px] text-[#B91C1C] hover:underline cursor-pointer"
-              >
-                <Maximize2 className="w-3.5 h-3.5" /> Fullscreen
-              </button>
+              <span className="font-mono text-[11px] text-[#B91C1C] flex items-center gap-1 group-hover:underline">
+                <ZoomIn className="w-3.5 h-3.5" /> Click to inspect
+              </span>
             </div>
 
             <div className="relative w-full h-[280px] sm:h-[420px] bg-[#FAF8F5] flex items-center justify-center overflow-hidden border border-black/10">
@@ -849,7 +766,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* AI Tool Cockpit: TelegramSimulator with integrated REACT BITS <VoicePill /> */}
+          {/* Telegram Simulator: TelegramSimulator with integrated REACT BITS <VoicePill /> */}
           <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116] p-4 sm:p-6">
             <TelegramSimulator />
           </div>
@@ -896,26 +813,25 @@ export default function Home() {
           {/* Sovereign Architectural Diagrams Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Diagram 1: Quality Gate */}
-            <div className="border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 flex flex-col justify-between">
+            <div
+              onClick={() => setSelectedInfographicModal("/infographics/infographic-quality-gate.svg")}
+              className="border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 flex flex-col justify-between cursor-zoom-in group"
+            >
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-nikkei text-xs uppercase text-black font-extrabold">
                     1. The 4-Decision Pipeline
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedInfographicModal("/infographics/infographic-quality-gate.svg")}
-                    className="font-mono text-[10px] text-[#B91C1C] hover:underline cursor-pointer"
-                  >
-                    Zoom
-                  </button>
+                  <span className="font-mono text-[10px] text-[#B91C1C] flex items-center gap-1 group-hover:underline">
+                    <ZoomIn className="w-3 h-3" /> Inspect
+                  </span>
                 </div>
                 <div className="relative w-full h-[220px] bg-[#FAF8F5] border border-black/10 flex items-center justify-center">
                   <Image
                     src="/infographics/infographic-quality-gate.svg"
                     alt="4-Decision Quality Architecture Gate"
                     fill
-                    className="object-contain p-2"
+                    className="object-contain p-2 group-hover:scale-[1.01] transition-transform duration-300"
                   />
                 </div>
               </div>
@@ -925,26 +841,25 @@ export default function Home() {
             </div>
 
             {/* Diagram 2: Learning Curve */}
-            <div className="border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 flex flex-col justify-between">
+            <div
+              onClick={() => setSelectedInfographicModal("/infographics/infographic-learning-curve.svg")}
+              className="border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 flex flex-col justify-between cursor-zoom-in group"
+            >
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-nikkei text-xs uppercase text-black font-extrabold">
                     2. Worker Confidence Curve
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedInfographicModal("/infographics/infographic-learning-curve.svg")}
-                    className="font-mono text-[10px] text-[#B91C1C] hover:underline cursor-pointer"
-                  >
-                    Zoom
-                  </button>
+                  <span className="font-mono text-[10px] text-[#B91C1C] flex items-center gap-1 group-hover:underline">
+                    <ZoomIn className="w-3 h-3" /> Inspect
+                  </span>
                 </div>
                 <div className="relative w-full h-[220px] bg-[#FAF8F5] border border-black/10 flex items-center justify-center">
                   <Image
                     src="/infographics/infographic-learning-curve.svg"
                     alt="Worker Confidence and Error Reduction Curve"
                     fill
-                    className="object-contain p-2"
+                    className="object-contain p-2 group-hover:scale-[1.01] transition-transform duration-300"
                   />
                 </div>
               </div>
@@ -954,7 +869,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* AI Tool Cockpit: QualityGateCards */}
+          {/* Quality Gates: QualityGateCards */}
           <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
             <QualityGateCards />
           </div>
@@ -999,19 +914,18 @@ export default function Home() {
           </div>
 
           {/* Sovereign Architectural Diagram: Universal Fleet Compatibility */}
-          <div className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group">
+          <div
+            onClick={() => setSelectedInfographicModal("/infographics/infographic-universal-agents.svg")}
+            className="relative w-full border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-4 sm:p-6 mb-8 overflow-hidden group cursor-zoom-in"
+          >
             <div className="flex items-center justify-between mb-3 border-b border-black/10 pb-2">
               <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
                 <Layers className="w-4 h-4 text-[#B91C1C]" />
-                SOVEREIGN SYSTEM ARCHITECTURE BLUEPRINT • UNIVERSAL FLEET COMPATIBILITY
+                UNIVERSAL FLEET COMPATIBILITY BLUEPRINT
               </span>
-              <button
-                type="button"
-                onClick={() => setSelectedInfographicModal("/infographics/infographic-universal-agents.svg")}
-                className="flex items-center gap-1 font-mono text-[11px] text-[#B91C1C] hover:underline cursor-pointer"
-              >
-                <Maximize2 className="w-3.5 h-3.5" /> Fullscreen
-              </button>
+              <span className="font-mono text-[11px] text-[#B91C1C] flex items-center gap-1 group-hover:underline">
+                <ZoomIn className="w-3.5 h-3.5" /> Click to inspect
+              </span>
             </div>
 
             <div className="relative w-full h-[280px] sm:h-[420px] bg-[#FAF8F5] flex items-center justify-center overflow-hidden border border-black/10">
@@ -1053,7 +967,7 @@ export default function Home() {
         >
           <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
             <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
-              <span className="text-[#B91C1C]">SYSTEM TOPOLOGY</span> • FULL BLUEPRINTS
+              <span className="text-[#B91C1C]">SYSTEM BLUEPRINTS</span> • 7 ARCHITECTURAL DIAGRAMS
             </span>
           </div>
 
@@ -1062,14 +976,14 @@ export default function Home() {
               FEATURE 07 • ARCHITECTURAL BLUEPRINTS
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
-              The Interactive Infographics Gallery
+              Architecture &amp; Execution Flow
             </h2>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
-              Explore the entire technical system diagram suite. Switch between architecture topologies, speed benchmarks, quality gates, and mobile pipelines with full zoom and inspection.
+              Clear system blueprints detailing multi-agent token arbitrage, sub-second neural memory, and deterministic mobile telemetry.
             </p>
           </div>
 
-          {/* AI Tool Cockpit: InfographicsGallery */}
+          {/* System Diagrams: InfographicsGallery */}
           <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
             <InfographicsGallery />
           </div>
@@ -1078,12 +992,12 @@ export default function Home() {
 
       {/* 
         ========================================================================
-        DEPLOYMENT COCKPIT: ONE-LINE INSTALLATION
+        QUICKSTART & INSTALLATION: ONE-LINE SETUP
         ========================================================================
       */}
       <SceneTransition
         fromAct="FEATURE 07"
-        toAct="DEPLOYMENT"
+        toAct="INSTALLATION"
         badge="ONE-LINE TERMINAL BOOTSTRAP"
       />
 
@@ -1097,17 +1011,17 @@ export default function Home() {
         >
           <div className="mb-8 pt-2">
             <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
-              DEPLOYMENT COCKPIT
+              QUICKSTART &amp; INSTALLATION
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
-              Multi-OS Terminal Cockpit
+              Install in Seconds
             </h2>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-2xl mt-2 leading-relaxed">
-              Zero complicated configurations. AegisBrain is delivered as a sovereign binary with native installer scripts across Linux, macOS, and Windows.
+              Deploy the 24/7 background daemon and global CLI with a single command across macOS, Linux, or Windows.
             </p>
           </div>
 
-          {/* AI Tool Cockpit: TerminalInstall */}
+          {/* Terminal Command Strip: TerminalInstall */}
           <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
             <TerminalInstall />
           </div>
@@ -1116,77 +1030,153 @@ export default function Home() {
 
       {/* 
         ========================================================================
-        FOOTER: OFFICIAL RELEASE ARCHIVE & ARCHITECTURAL COMPARISON MATRIX
+        FOOTER: OPEN SOURCE & COMMUNITY HUB + ARCHITECTURAL COMPARISON MATRIX
         ========================================================================
       */}
       <footer className="relative py-20 px-4 sm:px-8 bg-[#070709] border-t-4 border-black text-white">
         <div className="max-w-5xl mx-auto space-y-12">
-          {/* Main Download Plate */}
+          {/* Main Community & Open Source Plate */}
           <div className="comic-plate p-8 sm:p-12 text-black">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b-2 border-black pb-8">
-              <div>
-                <div className="inline-block bg-[#B91C1C] text-white font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-2 shadow-[2px_2px_0px_#000000]">
-                  OFFICIAL SOVEREIGN RELEASE • V2.4.0
-                </div>
-                <h3 className="font-charles-rosie text-3xl sm:text-4xl text-black tracking-tight uppercase">
-                  AegisBrain Engine Archive
-                </h3>
-                <p className="font-gt-era text-black/70 text-sm mt-1 max-w-lg">
-                  Free and open source under the Apache-2.0 License. Verified against 286 backend unit tests.
-                </p>
+            <div className="border-b-2 border-black pb-8">
+              <div className="inline-block bg-[#B91C1C] text-white font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-2 shadow-[2px_2px_0px_#000000]">
+                OPEN SOURCE &amp; COMMUNITY
               </div>
-
-              <div className="flex flex-wrap items-center gap-3">
-                <a
-                  href="https://github.com/PG300604/aegis-brain/releases"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="px-5 py-2.5 bg-black hover:bg-neutral-800 text-white font-nikkei text-xs uppercase tracking-wider rounded border border-black shadow-[4px_4px_0px_#B91C1C] flex items-center gap-2 cursor-pointer transition-transform hover:-translate-y-0.5"
-                >
-                  <Download className="w-4 h-4 text-[#B91C1C]" />
-                  Download Tarball
-                </a>
-                <a
-                  href="https://github.com/PG300604/aegis-brain"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="px-5 py-2.5 bg-[#FBF9F5] hover:bg-neutral-100 text-black font-nikkei text-xs uppercase tracking-wider rounded border-2 border-black shadow-[4px_4px_0px_#000000] flex items-center gap-2 cursor-pointer transition-transform hover:-translate-y-0.5"
-                >
-                  <Star className="w-4 h-4 text-[#B91C1C] fill-[#B91C1C]" />
-                  Star on GitHub
-                </a>
-              </div>
+              <h3 className="font-charles-rosie text-3xl sm:text-4xl text-black tracking-tight uppercase">
+                Build With AegisBrain
+              </h3>
+              <p className="font-gt-era text-black/75 text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
+                AegisBrain is 100% free and open-source under the Apache-2.0 License. If you believe coding agents deserve deterministic persistence and zero token waste, star the repository, open issues, and join the development.
+              </p>
             </div>
 
-            {/* SHA Hashes and Integrity Badges */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 font-mono text-xs">
-              <div className="p-3 bg-white border border-black shadow-[2px_2px_0px_#000000] flex items-center justify-between">
+            {/* Action Cards Grid: 4 Pillars of Community */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
+              {/* Card 1: Star on GitHub */}
+              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded flex flex-col justify-between">
                 <div>
-                  <div className="text-[10px] text-zinc-500 uppercase">Git Commit SHA</div>
-                  <div className="font-bold text-black mt-0.5">982f05288bb32f7c54d8d17e</div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black flex items-center gap-2">
+                      <Star className="w-4 h-4 text-[#D4AF37] fill-[#D4AF37]" />
+                      Star the Repository
+                    </span>
+                    <span className="text-[10px] font-mono uppercase bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">
+                      GitHub
+                    </span>
+                  </div>
+                  <p className="font-gt-era text-xs text-black/75 leading-relaxed">
+                    Help more developers discover sovereign agentic memory, zero token waste, and 24/7 background persistence.
+                  </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleCopySha("982f05288bb32f7c54d8d17e7469485e533658d7")}
-                  className="p-1.5 hover:bg-zinc-100 rounded border border-black text-black cursor-pointer"
-                  title="Copy Commit SHA"
-                >
-                  {copiedSha === "982f05288bb32f7c54d8d17e7469485e533658d7" ? (
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                  ) : (
-                    <Copy className="w-3.5 h-3.5" />
-                  )}
-                </button>
+                <div className="mt-4 pt-3 border-t border-black/10">
+                  <a
+                    href="https://github.com/PG300604/aegis-brain"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-black hover:bg-neutral-800 text-white font-nikkei text-xs uppercase tracking-wider rounded border border-black shadow-[2px_2px_0px_#B91C1C] transition-transform hover:-translate-y-0.5"
+                  >
+                    <Star className="w-3.5 h-3.5 text-[#D4AF37] fill-[#D4AF37]" />
+                    <span>Star on GitHub</span>
+                    <ArrowRight className="w-3 h-3 text-white/60 ml-1" />
+                  </a>
+                </div>
               </div>
 
-              <div className="p-3 bg-white border border-black shadow-[2px_2px_0px_#000000] flex items-center justify-between">
+              {/* Card 2: Clone Repository */}
+              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded flex flex-col justify-between">
                 <div>
-                  <div className="text-[10px] text-zinc-500 uppercase">GPG Signer Key</div>
-                  <div className="font-bold text-black mt-0.5">0x7F41E8D2 (Priyanshu Ghosh)</div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black flex items-center gap-2">
+                      <FileCode className="w-4 h-4 text-[#B91C1C]" />
+                      Clone Repository
+                    </span>
+                    <span className="text-[10px] font-mono uppercase bg-zinc-100 text-zinc-800 px-2 py-0.5 rounded font-bold">
+                      Local Setup
+                    </span>
+                  </div>
+                  <p className="font-gt-era text-xs text-black/75 leading-relaxed">
+                    Get the source code and start hacking immediately.
+                  </p>
                 </div>
-                <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">
-                  VERIFIED
-                </span>
+                <div className="mt-4 pt-3 border-t border-black/10 flex items-center justify-between gap-2 bg-[#0D0E15] p-2.5 rounded border border-black text-white font-mono text-[11px]">
+                  <span className="text-zinc-300 truncate">
+                    git clone https://github.com/PG300604/aegis-brain.git
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleCopyClone}
+                    className="px-2.5 py-1 bg-[#B91C1C] hover:bg-red-800 text-white font-nikkei text-[10px] uppercase rounded border border-black flex items-center gap-1 cursor-pointer shrink-0"
+                  >
+                    {copiedClone ? (
+                      <>
+                        <Check className="w-3 h-3" />
+                        <span>COPIED</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>COPY</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Card 3: Issues & Discussions */}
+              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 text-[#B91C1C]" />
+                      Issues &amp; Discussions
+                    </span>
+                    <span className="text-[10px] font-mono uppercase bg-red-100 text-[#B91C1C] px-2 py-0.5 rounded font-bold">
+                      Community
+                    </span>
+                  </div>
+                  <p className="font-gt-era text-xs text-black/75 leading-relaxed">
+                    Request a chassis adapter, report an edge case, or propose an invariant.
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-black/10">
+                  <a
+                    href="https://github.com/PG300604/aegis-brain/issues"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#FBF9F5] hover:bg-neutral-100 text-black font-nikkei text-xs uppercase tracking-wider rounded border-2 border-black shadow-[2px_2px_0px_#000000] transition-transform hover:-translate-y-0.5"
+                  >
+                    <span>💬 Open an Issue</span>
+                    <ArrowRight className="w-3 h-3 text-black/50 ml-1" />
+                  </a>
+                </div>
+              </div>
+
+              {/* Card 4: Contribute Code */}
+              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-emerald-700" />
+                      Contribute Code
+                    </span>
+                    <span className="text-[10px] font-mono uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">
+                      Pull Requests
+                    </span>
+                  </div>
+                  <p className="font-gt-era text-xs text-black/75 leading-relaxed">
+                    Submit PRs for new local worker bridges, IDE shims, or benchmark tests.
+                  </p>
+                </div>
+                <div className="mt-4 pt-3 border-t border-black/10">
+                  <a
+                    href="https://github.com/PG300604/aegis-brain/pulls"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-nikkei text-xs uppercase tracking-wider rounded border border-black shadow-[2px_2px_0px_#000000] transition-transform hover:-translate-y-0.5"
+                  >
+                    <span>🔀 Submit Pull Request</span>
+                    <ArrowRight className="w-3 h-3 text-white/60 ml-1" />
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -1277,7 +1267,7 @@ export default function Home() {
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-6xl max-h-[90vh] bg-[#FAF8F5] border-4 border-black shadow-[12px_12px_0px_#B91C1C] rounded-lg p-6 flex flex-col"
+              className="relative w-full max-w-6xl max-h-[90vh] bg-[#FAF8F5] border-4 border-black shadow-[12px_12px_0px_#B91C1C] rounded-lg p-6 flex flex-col text-black"
             >
               <div className="flex items-center justify-between border-b-2 border-black pb-3 mb-4">
                 <span className="font-nikkei text-sm uppercase text-black font-extrabold flex items-center gap-2">
@@ -1288,29 +1278,24 @@ export default function Home() {
                   type="button"
                   onClick={() => setSelectedInfographicModal(null)}
                   className="p-1.5 bg-black text-white hover:bg-[#B91C1C] rounded border border-black cursor-pointer transition-colors"
+                  aria-label="Close"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <div className="relative w-full flex-1 min-h-[400px] sm:min-h-[600px] bg-white border border-black/20 flex items-center justify-center overflow-auto p-4">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={selectedInfographicModal}
                   alt="AegisBrain Blueprint Fullscreen View"
-                  fill
-                  className="object-contain"
+                  className="max-h-[75vh] w-auto object-contain"
                 />
               </div>
 
               <div className="mt-4 flex items-center justify-between text-xs font-mono text-black/70">
                 <span>High-resolution luxury editorial SVG blueprint</span>
-                <a
-                  href={selectedInfographicModal}
-                  download
-                  className="text-[#B91C1C] font-bold hover:underline flex items-center gap-1"
-                >
-                  <Download className="w-3.5 h-3.5" /> Download SVG
-                </a>
+                <span className="text-black/50 text-[11px]">Press ESC or click outside to close</span>
               </div>
             </motion.div>
           </motion.div>

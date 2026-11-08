@@ -1,143 +1,143 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 830" width="100%" height="auto">
-  <defs>
-    <style><![CDATA[
-      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-      .font-sans { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
-      .font-mono { font-family: 'JetBrains Mono', monospace; }
-    ]]></style>
-    <filter id="brutalist-shadow" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="4" dy="4" stdDeviation="0" flood-color="#000000" flood-opacity="0.9" />
-    </filter>
-  </defs>
-
-  <!-- Background Plate -->
-  <rect width="1040" height="830" rx="16" fill="#090A0F" stroke="#262738" stroke-width="2" />
-
-  <!-- Header -->
-  <g transform="translate(40, 28)">
-    <rect x="0" y="0" width="960" height="76" rx="8" fill="#12131C" stroke="#D4AF37" stroke-width="1.8" filter="url(#brutalist-shadow)" />
-    <!-- Seal Badge -->
-    <rect x="18" y="14" width="48" height="48" rx="6" fill="#1C1D2B" stroke="#D4AF37" stroke-width="1.2" />
-    <path d="M 28 48 L 38 40 L 46 44 L 56 26" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" />
-    <circle cx="56" cy="26" r="3" fill="#D4AF37" />
-
-    <text x="82" y="34" class="font-sans" font-size="11" font-weight="700" fill="#D4AF37" letter-spacing="2">AUTONOMOUS COACHING // CONVERGENCE BENCHMARK</text>
-    <text x="82" y="58" class="font-sans" font-size="20" font-weight="800" fill="#FFFFFF" letter-spacing="0.5">LOCAL WORKER CONFIDENCE &amp; ERROR-REDUCTION CONVERGENCE</text>
-    <text x="880" y="46" text-anchor="end" class="font-mono" font-size="12" font-weight="700" fill="#10B981">&gt; 8.0/10 CONVERGED</text>
-  </g>
-
-  <!-- MAIN GRAPH CARD -->
-  <g transform="translate(40, 130)">
-    <rect x="0" y="0" width="960" height="420" rx="10" fill="#12131C" stroke="#10B981" stroke-width="1.8" filter="url(#brutalist-shadow)" />
-    
-    <!-- Title inside graph -->
-    <text x="30" y="36" class="font-sans" font-size="16" font-weight="700" fill="#FFFFFF">Coaching Loop Convergence Curve (Hermes 3 / Qwen 2.5)</text>
-    <text x="30" y="56" class="font-mono" font-size="11" fill="#9CA3AF">Tracking score vs. errors across 3 consecutive coaching iterations</text>
-
-    <!-- Graph Axis Grid -->
-    <g transform="translate(80, 80)">
-      <!-- Grid lines -->
-      <line x1="0" y1="0" x2="800" y2="0" stroke="#222436" stroke-width="1" />
-      <line x1="0" y1="65" x2="800" y2="65" stroke="#222436" stroke-width="1" />
-      <line x1="0" y1="130" x2="800" y2="130" stroke="#222436" stroke-width="1" />
-      <line x1="0" y1="195" x2="800" y2="195" stroke="#222436" stroke-width="1" />
-      <line x1="0" y1="260" x2="800" y2="260" stroke="#33374D" stroke-width="1.5" />
-
-      <!-- Y Axis Labels -->
-      <text x="-15" y="6" text-anchor="end" class="font-mono" font-size="10" fill="#71717A">10.0</text>
-      <text x="-15" y="71" text-anchor="end" class="font-mono" font-size="10" fill="#71717A">7.5</text>
-      <text x="-15" y="136" text-anchor="end" class="font-mono" font-size="10" fill="#71717A">5.0</text>
-      <text x="-15" y="201" text-anchor="end" class="font-mono" font-size="10" fill="#71717A">2.5</text>
-      <text x="-15" y="265" text-anchor="end" class="font-mono" font-size="10" fill="#71717A">0.0</text>
-
-      <!-- Confidence Curve (Green Line) -->
-      <path d="M 80 160 Q 280 110 440 60 T 720 20" fill="none" stroke="#10B981" stroke-width="3.5" stroke-linecap="round" />
-      
-      <!-- Error Count Curve (Red Line) -->
-      <path d="M 80 80 Q 280 180 440 220 T 720 255" fill="none" stroke="#EF4444" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 4" />
-
-      <!-- Data Point 1 (Trial 1) -->
-      <g transform="translate(80, 160)">
-        <circle cx="0" cy="0" r="7" fill="#12131C" stroke="#10B981" stroke-width="3" />
-        <rect x="-60" y="-45" width="120" height="32" rx="4" fill="#0A3320" stroke="#10B981" stroke-width="1" />
-        <text x="0" y="-31" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#6EE7B7">Score: 6.2 / 10</text>
-        <text x="0" y="-19" text-anchor="middle" class="font-mono" font-size="8" fill="#A7F3D0">Initial Raw Draft</text>
-      </g>
-      <g transform="translate(80, 80)">
-        <circle cx="0" cy="0" r="6" fill="#12131C" stroke="#EF4444" stroke-width="2.5" />
-        <text x="14" y="4" class="font-mono" font-size="10" font-weight="700" fill="#FCA5A5">4 Errors</text>
-      </g>
-
-      <!-- Data Point 2 (Trial 2) -->
-      <g transform="translate(440, 60)">
-        <circle cx="0" cy="0" r="7" fill="#12131C" stroke="#10B981" stroke-width="3" />
-        <rect x="-60" y="-45" width="120" height="32" rx="4" fill="#0A3320" stroke="#10B981" stroke-width="1" />
-        <text x="0" y="-31" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#6EE7B7">Score: 7.9 / 10</text>
-        <text x="0" y="-19" text-anchor="middle" class="font-mono" font-size="8" fill="#A7F3D0">Coached Feedback</text>
-      </g>
-      <g transform="translate(440, 220)">
-        <circle cx="0" cy="0" r="6" fill="#12131C" stroke="#EF4444" stroke-width="2.5" />
-        <text x="14" y="4" class="font-mono" font-size="10" font-weight="700" fill="#FCA5A5">1 Error</text>
-      </g>
-
-      <!-- Data Point 3 (Trial 3 - Final) -->
-      <g transform="translate(720, 20)">
-        <circle cx="0" cy="0" r="8" fill="#D4AF37" stroke="#10B981" stroke-width="3.5" />
-        <rect x="-70" y="-48" width="140" height="36" rx="4" fill="#0A3320" stroke="#D4AF37" stroke-width="1.2" />
-        <text x="0" y="-32" text-anchor="middle" class="font-mono" font-size="11" font-weight="800" fill="#FDE047">Score: 9.4 / 10</text>
-        <text x="0" y="-18" text-anchor="middle" class="font-mono" font-size="8" font-weight="700" fill="#6EE7B7">CONVERGED (0 ERRORS)</text>
-      </g>
-      <g transform="translate(720, 255)">
-        <circle cx="0" cy="0" r="6" fill="#12131C" stroke="#EF4444" stroke-width="2.5" />
-        <text x="14" y="4" class="font-mono" font-size="10" font-weight="700" fill="#34D399">0 Errors</text>
-      </g>
-
-      <!-- X Axis Labels -->
-      <text x="80" y="285" text-anchor="middle" class="font-mono" font-size="11" font-weight="700" fill="#E4E4E7">Iteration 1 (Raw)</text>
-      <text x="440" y="285" text-anchor="middle" class="font-mono" font-size="11" font-weight="700" fill="#E4E4E7">Iteration 2 (Coached)</text>
-      <text x="720" y="285" text-anchor="middle" class="font-mono" font-size="11" font-weight="800" fill="#10B981">Iteration 3 (Certified)</text>
-    </g>
-
-    <!-- Legend -->
-    <g transform="translate(700, 30)">
-      <line x1="0" y1="0" x2="24" y2="0" stroke="#10B981" stroke-width="3" />
-      <text x="32" y="4" class="font-mono" font-size="10" fill="#E4E4E7">Confidence Score</text>
-
-      <line x1="140" y1="0" x2="164" y2="0" stroke="#EF4444" stroke-width="3" stroke-dasharray="4 3" />
-      <text x="172" y="4" class="font-mono" font-size="10" fill="#E4E4E7">AST Error Count</text>
-    </g>
-  </g>
-
-  <!-- 3 METRIC BREAKDOWN CARDS -->
-  <g transform="translate(40, 570)">
-    <rect x="0" y="0" width="300" height="200" rx="8" fill="#12131C" stroke="#262738" stroke-width="1.6" filter="url(#brutalist-shadow)" />
-    <text x="20" y="32" class="font-mono" font-size="11" font-weight="700" fill="#D4AF37">CONVERGENCE SPEED</text>
-    <text x="20" y="74" class="font-mono" font-size="36" font-weight="800" fill="#FFFFFF">&le; 2 <tspan font-size="18">Loops</tspan></text>
-    <text x="20" y="102" class="font-mono" font-size="11" fill="#9CA3AF">Average coaching iterations</text>
-    <text x="20" y="130" class="font-mono" font-size="10" fill="#E4E4E7">• AST feedback injected</text>
-    <text x="20" y="148" class="font-mono" font-size="10" fill="#E4E4E7">• Zero manual human intervention</text>
-    <text x="20" y="174" class="font-mono" font-size="10" font-weight="700" fill="#10B981">Autonomous Convergence</text>
-
-    <rect x="330" y="0" width="300" height="200" rx="8" fill="#12131C" stroke="#262738" stroke-width="1.6" filter="url(#brutalist-shadow)" />
-    <text x="20" y="32" class="font-mono" font-size="11" font-weight="700" fill="#10B981">ERROR REDUCTION</text>
-    <text x="20" y="74" class="font-mono" font-size="36" font-weight="800" fill="#10B981">100% <tspan font-size="18">Drop</tspan></text>
-    <text x="20" y="102" class="font-mono" font-size="11" fill="#9CA3AF">From 4 errors down to 0</text>
-    <text x="20" y="130" class="font-mono" font-size="10" fill="#E4E4E7">• Shell injection blocked</text>
-    <text x="20" y="148" class="font-mono" font-size="10" fill="#E4E4E7">• Imports &amp; types corrected</text>
-    <text x="20" y="174" class="font-mono" font-size="10" font-weight="700" fill="#34D399">Production Ready</text>
-
-    <rect x="660" y="0" width="300" height="200" rx="8" fill="#12131C" stroke="#262738" stroke-width="1.6" filter="url(#brutalist-shadow)" />
-    <text x="20" y="32" class="font-mono" font-size="11" font-weight="700" fill="#3B82F6">CONFIDENCE THRESHOLD</text>
-    <text x="20" y="74" class="font-mono" font-size="36" font-weight="800" fill="#60A5FA">&gt; 8.0 <tspan font-size="18">/ 10</tspan></text>
-    <text x="20" y="102" class="font-mono" font-size="11" fill="#9CA3AF">Autonomous delegation gate</text>
-    <text x="20" y="130" class="font-mono" font-size="10" fill="#E4E4E7">• Recorded in brain.db</text>
-    <text x="20" y="148" class="font-mono" font-size="10" fill="#E4E4E7">• Escalates to Boss if &lt; 8.0</text>
-    <text x="20" y="174" class="font-mono" font-size="10" font-weight="700" fill="#60A5FA">Strict Safety Guard</text>
-  </g>
-
-  <!-- Footer Specs -->
-  <g transform="translate(40, 795)">
-    <text x="0" y="0" class="font-mono" font-size="10" fill="#71717A">LEARNING LOOP SPEC: brain.db agent_confidence virtual ledger • &gt;8.0/10 autonomous gate • Pytest verified</text>
-    <text x="960" y="0" text-anchor="end" class="font-mono" font-size="10" fill="#D4AF37">P:\open-sourceegis-brain\packageegis\learning\confidence.py</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 830" width="100%" height="auto">
+  <defs>
+    <style><![CDATA[
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+      .font-sans { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+      .font-mono { font-family: 'JetBrains Mono', monospace; }
+    ]]></style>
+    <filter id="brutalist-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="4" dy="4" stdDeviation="0" flood-color="#000000" flood-opacity="0.9" />
+    </filter>
+  </defs>
+
+  <!-- Background Plate -->
+  <rect width="1040" height="830" rx="16" fill="#090A0F" stroke="#262738" stroke-width="2" />
+
+  <!-- Header -->
+  <g transform="translate(40, 28)">
+    <rect x="0" y="0" width="960" height="76" rx="8" fill="#12131C" stroke="#D4AF37" stroke-width="1.8" filter="url(#brutalist-shadow)" />
+    <!-- Seal Badge -->
+    <rect x="18" y="14" width="48" height="48" rx="6" fill="#1C1D2B" stroke="#D4AF37" stroke-width="1.2" />
+    <path d="M 28 48 L 38 40 L 46 44 L 56 26" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" />
+    <circle cx="56" cy="26" r="3" fill="#D4AF37" />
+
+    <text x="82" y="34" class="font-sans" font-size="11" font-weight="700" fill="#D4AF37" letter-spacing="2">AUTONOMOUS COACHING // CONVERGENCE BENCHMARK</text>
+    <text x="82" y="58" class="font-sans" font-size="20" font-weight="800" fill="#FFFFFF" letter-spacing="0.5">LOCAL WORKER CONFIDENCE &amp; ERROR-REDUCTION CONVERGENCE</text>
+    <text x="880" y="46" text-anchor="end" class="font-mono" font-size="12" font-weight="700" fill="#10B981">&gt; 8.0/10 CONVERGED</text>
+  </g>
+
+  <!-- MAIN GRAPH CARD -->
+  <g transform="translate(40, 130)">
+    <rect x="0" y="0" width="960" height="420" rx="10" fill="#12131C" stroke="#10B981" stroke-width="1.8" filter="url(#brutalist-shadow)" />
+    
+    <!-- Title inside graph -->
+    <text x="30" y="36" class="font-sans" font-size="16" font-weight="700" fill="#FFFFFF">Coaching Loop Convergence Curve (Hermes 3 / Qwen 2.5)</text>
+    <text x="30" y="56" class="font-mono" font-size="11" fill="#9CA3AF">Tracking score vs. errors across 3 consecutive coaching iterations</text>
+
+    <!-- Graph Axis Grid -->
+    <g transform="translate(80, 80)">
+      <!-- Grid lines -->
+      <line x1="0" y1="0" x2="800" y2="0" stroke="#222436" stroke-width="1" />
+      <line x1="0" y1="65" x2="800" y2="65" stroke="#222436" stroke-width="1" />
+      <line x1="0" y1="130" x2="800" y2="130" stroke="#222436" stroke-width="1" />
+      <line x1="0" y1="195" x2="800" y2="195" stroke="#222436" stroke-width="1" />
+      <line x1="0" y1="260" x2="800" y2="260" stroke="#33374D" stroke-width="1.5" />
+
+      <!-- Y Axis Labels -->
+      <text x="-15" y="6" text-anchor="end" class="font-mono" font-size="10" fill="#71717A">10.0</text>
+      <text x="-15" y="71" text-anchor="end" class="font-mono" font-size="10" fill="#71717A">7.5</text>
+      <text x="-15" y="136" text-anchor="end" class="font-mono" font-size="10" fill="#71717A">5.0</text>
+      <text x="-15" y="201" text-anchor="end" class="font-mono" font-size="10" fill="#71717A">2.5</text>
+      <text x="-15" y="265" text-anchor="end" class="font-mono" font-size="10" fill="#71717A">0.0</text>
+
+      <!-- Confidence Curve (Green Line) -->
+      <path d="M 80 160 Q 280 110 440 60 T 720 20" fill="none" stroke="#10B981" stroke-width="3.5" stroke-linecap="round" />
+      
+      <!-- Error Count Curve (Red Line) -->
+      <path d="M 80 80 Q 280 180 440 220 T 720 255" fill="none" stroke="#EF4444" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 4" />
+
+      <!-- Data Point 1 (Trial 1) -->
+      <g transform="translate(80, 160)">
+        <circle cx="0" cy="0" r="7" fill="#12131C" stroke="#10B981" stroke-width="3" />
+        <rect x="-60" y="-45" width="120" height="32" rx="4" fill="#0A3320" stroke="#10B981" stroke-width="1" />
+        <text x="0" y="-31" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#6EE7B7">Score: 6.2 / 10</text>
+        <text x="0" y="-19" text-anchor="middle" class="font-mono" font-size="8" fill="#A7F3D0">Initial Raw Draft</text>
+      </g>
+      <g transform="translate(80, 80)">
+        <circle cx="0" cy="0" r="6" fill="#12131C" stroke="#EF4444" stroke-width="2.5" />
+        <text x="14" y="4" class="font-mono" font-size="10" font-weight="700" fill="#FCA5A5">4 Errors</text>
+      </g>
+
+      <!-- Data Point 2 (Trial 2) -->
+      <g transform="translate(440, 60)">
+        <circle cx="0" cy="0" r="7" fill="#12131C" stroke="#10B981" stroke-width="3" />
+        <rect x="-60" y="-45" width="120" height="32" rx="4" fill="#0A3320" stroke="#10B981" stroke-width="1" />
+        <text x="0" y="-31" text-anchor="middle" class="font-mono" font-size="10" font-weight="700" fill="#6EE7B7">Score: 7.9 / 10</text>
+        <text x="0" y="-19" text-anchor="middle" class="font-mono" font-size="8" fill="#A7F3D0">Coached Feedback</text>
+      </g>
+      <g transform="translate(440, 220)">
+        <circle cx="0" cy="0" r="6" fill="#12131C" stroke="#EF4444" stroke-width="2.5" />
+        <text x="14" y="4" class="font-mono" font-size="10" font-weight="700" fill="#FCA5A5">1 Error</text>
+      </g>
+
+      <!-- Data Point 3 (Trial 3 - Final) -->
+      <g transform="translate(720, 20)">
+        <circle cx="0" cy="0" r="8" fill="#D4AF37" stroke="#10B981" stroke-width="3.5" />
+        <rect x="-70" y="-48" width="140" height="36" rx="4" fill="#0A3320" stroke="#D4AF37" stroke-width="1.2" />
+        <text x="0" y="-32" text-anchor="middle" class="font-mono" font-size="11" font-weight="800" fill="#FDE047">Score: 9.4 / 10</text>
+        <text x="0" y="-18" text-anchor="middle" class="font-mono" font-size="8" font-weight="700" fill="#6EE7B7">CONVERGED (0 ERRORS)</text>
+      </g>
+      <g transform="translate(720, 255)">
+        <circle cx="0" cy="0" r="6" fill="#12131C" stroke="#EF4444" stroke-width="2.5" />
+        <text x="14" y="4" class="font-mono" font-size="10" font-weight="700" fill="#34D399">0 Errors</text>
+      </g>
+
+      <!-- X Axis Labels -->
+      <text x="80" y="285" text-anchor="middle" class="font-mono" font-size="11" font-weight="700" fill="#E4E4E7">Iteration 1 (Raw)</text>
+      <text x="440" y="285" text-anchor="middle" class="font-mono" font-size="11" font-weight="700" fill="#E4E4E7">Iteration 2 (Coached)</text>
+      <text x="720" y="285" text-anchor="middle" class="font-mono" font-size="11" font-weight="800" fill="#10B981">Iteration 3 (Certified)</text>
+    </g>
+
+    <!-- Legend -->
+    <g transform="translate(700, 30)">
+      <line x1="0" y1="0" x2="24" y2="0" stroke="#10B981" stroke-width="3" />
+      <text x="32" y="4" class="font-mono" font-size="10" fill="#E4E4E7">Confidence Score</text>
+
+      <line x1="140" y1="0" x2="164" y2="0" stroke="#EF4444" stroke-width="3" stroke-dasharray="4 3" />
+      <text x="172" y="4" class="font-mono" font-size="10" fill="#E4E4E7">AST Error Count</text>
+    </g>
+  </g>
+
+  <!-- 3 METRIC BREAKDOWN CARDS -->
+  <g transform="translate(40, 570)">
+    <rect x="0" y="0" width="300" height="200" rx="8" fill="#12131C" stroke="#262738" stroke-width="1.6" filter="url(#brutalist-shadow)" />
+    <text x="20" y="32" class="font-mono" font-size="11" font-weight="700" fill="#D4AF37">CONVERGENCE SPEED</text>
+    <text x="20" y="74" class="font-mono" font-size="36" font-weight="800" fill="#FFFFFF">&#8804; 2 <tspan font-size="18">Loops</tspan></text>
+    <text x="20" y="102" class="font-mono" font-size="11" fill="#9CA3AF">Average coaching iterations</text>
+    <text x="20" y="130" class="font-mono" font-size="10" fill="#E4E4E7">• AST feedback injected</text>
+    <text x="20" y="148" class="font-mono" font-size="10" fill="#E4E4E7">• Zero manual human intervention</text>
+    <text x="20" y="174" class="font-mono" font-size="10" font-weight="700" fill="#10B981">Autonomous Convergence</text>
+
+    <rect x="330" y="0" width="300" height="200" rx="8" fill="#12131C" stroke="#262738" stroke-width="1.6" filter="url(#brutalist-shadow)" />
+    <text x="20" y="32" class="font-mono" font-size="11" font-weight="700" fill="#10B981">ERROR REDUCTION</text>
+    <text x="20" y="74" class="font-mono" font-size="36" font-weight="800" fill="#10B981">100% <tspan font-size="18">Drop</tspan></text>
+    <text x="20" y="102" class="font-mono" font-size="11" fill="#9CA3AF">From 4 errors down to 0</text>
+    <text x="20" y="130" class="font-mono" font-size="10" fill="#E4E4E7">• Shell injection blocked</text>
+    <text x="20" y="148" class="font-mono" font-size="10" fill="#E4E4E7">• Imports &amp; types corrected</text>
+    <text x="20" y="174" class="font-mono" font-size="10" font-weight="700" fill="#34D399">Production Ready</text>
+
+    <rect x="660" y="0" width="300" height="200" rx="8" fill="#12131C" stroke="#262738" stroke-width="1.6" filter="url(#brutalist-shadow)" />
+    <text x="20" y="32" class="font-mono" font-size="11" font-weight="700" fill="#3B82F6">CONFIDENCE THRESHOLD</text>
+    <text x="20" y="74" class="font-mono" font-size="36" font-weight="800" fill="#60A5FA">&gt; 8.0 <tspan font-size="18">/ 10</tspan></text>
+    <text x="20" y="102" class="font-mono" font-size="11" fill="#9CA3AF">Autonomous delegation gate</text>
+    <text x="20" y="130" class="font-mono" font-size="10" fill="#E4E4E7">• Recorded in brain.db</text>
+    <text x="20" y="148" class="font-mono" font-size="10" fill="#E4E4E7">• Escalates to Boss if &lt; 8.0</text>
+    <text x="20" y="174" class="font-mono" font-size="10" font-weight="700" fill="#60A5FA">Strict Safety Guard</text>
+  </g>
+
+  <!-- Footer Specs -->
+  <g transform="translate(40, 795)">
+    <text x="0" y="0" class="font-mono" font-size="10" fill="#71717A">LEARNING LOOP SPEC: brain.db agent_confidence virtual ledger • &gt;8.0/10 autonomous gate • Pytest verified</text>
+    <text x="960" y="0" text-anchor="end" class="font-mono" font-size="10" fill="#D4AF37">P:\open-sourceegis-brain\packageegis\learning\confidence.py</text>
+  </g>
 </svg>
