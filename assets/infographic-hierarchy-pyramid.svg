@@ -68,7 +68,7 @@
       
       <!-- Details -->
       <g transform="translate(145, 32)">
-        <text x="0" y="16" class="text-heading" font-size="18" fill="#0369A1">Models: Gemini 3.8 Flash / Claude 3.7 Sonnet</text>
+        <text x="0" y="16" class="text-heading" font-size="17" fill="#0369A1">Models: Fable 5.1 / Opus 5.5 / Gemini 4 / Argon</text>
         <text x="0" y="38" class="text-body">• High Cognition, System Architecture &amp; Strategy</text>
         <text x="0" y="58" class="text-body">• Invariants Definition, Error Detection &amp; Final Production Sign-off</text>
         

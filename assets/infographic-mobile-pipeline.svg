@@ -104,25 +104,25 @@
         
     <g>
       <!-- Cylinder Shadow -->
-      <ellipse cx="3" cy="43" rx="50" ry="16" fill="#E2E8F0" opacity="0.6" />
+      <ellipse cx="3" cy="63" rx="60" ry="16" fill="#E2E8F0" opacity="0.6" />
       
       <!-- Cylinder Body -->
-      <path d="M -50 0 L -50 40 A 50 16 0 0 0 50 40 L 50 0 Z" 
+      <path d="M -60 0 L -60 60 A 60 16 0 0 0 60 60 L 60 0 Z" 
             fill="#FEF08A" stroke="#22252A" stroke-width="2.8" stroke-linejoin="round" />
       
       <!-- Cylinder Bottom Highlight Curve -->
-      <path d="M -46 38 A 46 14 0 0 0 46 38" 
+      <path d="M -56 58 A 56 14 0 0 0 56 58" 
             fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.6" />
             
       <!-- Cylinder Top Ellipse -->
-      <ellipse cx="0" cy="0" rx="50" ry="16" fill="#FEF9C3" stroke="#22252A" stroke-width="2.8" />
+      <ellipse cx="0" cy="0" rx="60" ry="16" fill="#FEF9C3" stroke="#22252A" stroke-width="2.8" />
       
       <!-- Highlight Reflection on Top -->
-      <path d="M -25.0 -5.333333333333333 A 25.0 8.0 0 0 1 16.666666666666668 -5.333333333333333" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
+      <path d="M -30.0 -5.333333333333333 A 30.0 8.0 0 0 1 20.0 -5.333333333333333" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
       
-      <!-- Labels -->
-      <text x="0" y="24.0" text-anchor="middle" class="text-heading">aegis.server</text>
-      <text x="0" y="42.0" text-anchor="middle" class="text-body" fill="#52525B">127.0.0.1:8765</text>
+      <!-- Labels positioned cleanly inside cylinder body without touching top or bottom caps -->
+      <text x="0" y="31.0" text-anchor="middle" class="text-heading" font-size="15">aegis.server</text>
+      <text x="0" y="51.0" text-anchor="middle" class="text-body" font-size="12" fill="#52525B">127.0.0.1:8765</text>
     </g>
     
       </g>
@@ -208,8 +208,8 @@
       <rect x="0" y="0" width="225" height="490" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Badge -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#6B21A8">4. WHISPER &amp; WIN32 SHIELD</text>
+      <rect x="12" y="-14" width="201" height="28" rx="14" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#6B21A8">4. WHISPER &amp; WIN32 SHIELD</text>
       
       <!-- Whisper Greedy Decoding Box -->
       <g transform="translate(15, 28)">

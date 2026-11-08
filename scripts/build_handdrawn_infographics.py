@@ -75,6 +75,10 @@ def ribbon_banner(cx, y, w, h, title, subtitle=None):
     return lt + rt + main
 
 def cylinder_3d(cx, cy, rx, ry, h, fill_top, fill_body, label, sublabel=None):
+    # Safe text vertical area strictly between top ellipse bottom (cy + ry) and cylinder body bottom (cy + h)
+    mid_y = cy + ry + (h - ry) / 2
+    label_y = mid_y - (7 if sublabel else 0)
+    sublabel_y = mid_y + 13
     return f"""
     <g>
       <!-- Cylinder Shadow -->
@@ -94,9 +98,9 @@ def cylinder_3d(cx, cy, rx, ry, h, fill_top, fill_body, label, sublabel=None):
       <!-- Highlight Reflection on Top -->
       <path d="M {cx-rx/2} {cy-ry/3} A {rx/2} {ry/2} 0 0 1 {cx+rx/3} {cy-ry/3}" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
       
-      <!-- Labels -->
-      <text x="{cx}" y="{cy + h/2 + 4}" text-anchor="middle" class="text-heading">{label}</text>
-      {f'<text x="{cx}" y="{cy + h/2 + 22}" text-anchor="middle" class="text-body" fill="#52525B">{sublabel}</text>' if sublabel else ''}
+      <!-- Labels positioned cleanly inside cylinder body without touching top or bottom caps -->
+      <text x="{cx}" y="{label_y}" text-anchor="middle" class="text-heading" font-size="15">{label}</text>
+      {f'<text x="{cx}" y="{sublabel_y}" text-anchor="middle" class="text-body" font-size="12" fill="#52525B">{sublabel}</text>' if sublabel else ''}
     </g>
     """
 
@@ -184,20 +188,20 @@ def build_unified_architecture():
     
     # 2. Stage 1: Raw Session Logs & Transcripts
     svg += hand_badge(360, 125, 280, 36, "#FEF08A", "Raw Session Logs &amp; Transcripts")
-    svg += cylinder_3d(500, 185, 75, 22, 45, "#FEF9C3", "#FEF08A", "transcript.jsonl", "Multi-MB Unstructured")
+    svg += cylinder_3d(500, 185, 85, 18, 65, "#FEF9C3", "#FEF08A", "transcript.jsonl", "Multi-MB Unstructured")
     
     # Exploratory Data Analysis Pill & Callouts
-    svg += hand_arrow(575, 195, 715, 195, curve_dx=0)
-    svg += hand_badge(715, 175, 230, 36, "#FED7AA", "Deterministic AST Parsing")
-    svg += hand_arrow(830, 215, 780, 255, curve_dx=0)
-    svg += hand_arrow(830, 215, 880, 255, curve_dx=0)
-    svg += hand_badge(725, 260, 105, 30, "#E9D5FF", "AST Tree")
-    svg += hand_badge(840, 260, 115, 30, "#BBF7D0", "Call Graph")
+    svg += hand_arrow(585, 205, 715, 205, curve_dx=0)
+    svg += hand_badge(715, 185, 230, 36, "#FED7AA", "Deterministic AST Parsing")
+    svg += hand_arrow(830, 225, 780, 260, curve_dx=0)
+    svg += hand_arrow(830, 225, 880, 260, curve_dx=0)
+    svg += hand_badge(725, 265, 105, 30, "#E9D5FF", "AST Tree")
+    svg += hand_badge(840, 265, 115, 30, "#BBF7D0", "Call Graph")
     
     # Downward Processing Arrows with annotations
-    svg += hand_arrow(500, 255, 500, 345, curve_dx=0)
+    svg += hand_arrow(500, 275, 500, 350, curve_dx=0)
     svg += """
-    <g transform="translate(525, 280)">
+    <g transform="translate(525, 290)">
       <text x="0" y="0" class="text-body" fill="#22252A">↓ 1. Privacy Scrubbing (Zero Secret Leakage)</text>
       <text x="0" y="20" class="text-body" fill="#22252A">↓ 2. Conversational Slop &amp; Filler Pruning</text>
       <text x="0" y="40" class="text-body" fill="#22252A">↓ 3. Deterministic AST &amp; Event Chunking</text>
@@ -205,14 +209,14 @@ def build_unified_architecture():
     """
     
     # 3. Stage 2: Pre-processed Neural Memory (brain.db)
-    svg += hand_badge(360, 350, 280, 36, "#E9D5FF", "Pre-Processed Neural Index")
-    svg += cylinder_3d(500, 410, 85, 24, 50, "#F3E8FF", "#E9D5FF", "SQLite WAL + FTS5", "brain.db (Sub-Second Recall)")
+    svg += hand_badge(360, 355, 280, 36, "#E9D5FF", "Pre-Processed Neural Index")
+    svg += cylinder_3d(500, 415, 95, 18, 65, "#F3E8FF", "#E9D5FF", "SQLite WAL + FTS5", "brain.db (Sub-Second Recall)")
     
     # Zoom-in lines to Fast Semantic Table on the left
     svg += f"""
     <!-- Table Zoom Projection Lines -->
-    <path d="M 415 425 L 350 370" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
-    <path d="M 415 465 L 350 540" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
+    <path d="M 405 435 L 350 370" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
+    <path d="M 405 480 L 350 540" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
     
     <!-- Fast Semantic Token Retrieval Matrix Table -->
     <g transform="translate(40, 360)">
@@ -282,20 +286,20 @@ def build_unified_architecture():
     """
     
     # 4. Stage 3: Severity Scoring & 3-Tier Hierarchy Routing
-    svg += hand_badge(340, 510, 320, 36, "#FED7AA", "Autonomous Severity Scoring &amp; Task Routing")
+    svg += hand_badge(340, 520, 320, 36, "#FED7AA", "Autonomous Severity Scoring &amp; Task Routing")
     
     # 3-Way Split Arrows
-    svg += hand_arrow(430, 550, 180, 620, curve_dx=-15)
-    svg += hand_arrow(500, 550, 500, 620, curve_dx=0)
-    svg += hand_arrow(570, 550, 820, 620, curve_dx=15)
+    svg += hand_arrow(430, 560, 180, 625, curve_dx=-15)
+    svg += hand_arrow(500, 560, 500, 625, curve_dx=0)
+    svg += hand_arrow(570, 560, 820, 625, curve_dx=15)
     
     # Tier 1 (Left): Frontier Manager
-    svg += hand_badge(60, 625, 240, 34, "#FEF08A", "Tier 1: Senior Boss (Brain)")
-    svg += isometric_cube(180, 675, 40, "#FEF08A", "#EAB308", "#CA8A04")
+    svg += hand_badge(60, 630, 240, 34, "#FEF08A", "Tier 1: Senior Boss (Brain)")
+    svg += isometric_cube(180, 680, 40, "#FEF08A", "#EAB308", "#CA8A04")
     svg += """
-    <g transform="translate(60, 765)">
+    <g transform="translate(60, 770)">
       <rect x="0" y="0" width="240" height="100" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="2.2" />
-      <text x="120" y="24" text-anchor="middle" class="text-heading" fill="#0369A1">Gemini 3.8 / Claude 3.7</text>
+      <text x="120" y="24" text-anchor="middle" class="text-heading" font-size="15" fill="#0369A1">Fable 5.1 / Opus 5.5 / Gemini 4 / Argon</text>
       <text x="120" y="46" text-anchor="middle" class="text-body">• High Cognition Architecture</text>
       <text x="120" y="66" text-anchor="middle" class="text-body">• Invariants &amp; Sign-off</text>
       <rect x="15" y="74" width="210" height="20" rx="4" fill="#BBF7D0" stroke="#15803D" stroke-width="1.2" />
@@ -400,16 +404,15 @@ def build_unified_architecture():
     svg += hand_arrow(360, 1150, 360, 1215, label="100% Tests Pass", label_side="left", color="#15803D")
     svg += hand_badge(230, 1220, 260, 36, "#BBF7D0", "Verified Clean Git Commit", "#15803D")
     
-    # Coaching Feedback Loop (Curved back up to Tier 3 Worker)
+    # Coaching Feedback Loop (Curved cleanly on the outside, zero text crossing)
     svg += """
     <!-- Autonomous Coaching Feedback Loop -->
-    <path d="M 850 1040 Q 940 980 940 850 Q 940 780 850 780" fill="none" stroke="#EA580C" stroke-width="2.6" stroke-dasharray="6,4" />
-    <polygon points="850,780 862,774 862,786" fill="#EA580C" stroke="#EA580C" />
-    <g transform="translate(890, 890)">
-      <rect x="-10" y="-15" width="100" height="55" rx="6" fill="#FFF7ED" stroke="#EA580C" stroke-width="1.6" />
-      <text x="40" y="5" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#EA580C">Flaw Detected?</text>
-      <text x="40" y="22" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#7C2D12">Auto-Coaching</text>
-      <text x="40" y="34" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#7C2D12">Worker Loop</text>
+    <path d="M 940 1040 Q 980 925 945 815" fill="none" stroke="#EA580C" stroke-width="2.6" stroke-dasharray="6,4" />
+    <polygon points="940,815 952,809 952,821" fill="#EA580C" stroke="#EA580C" />
+    <g transform="translate(885, 905)">
+      <rect x="0" y="0" width="85" height="48" rx="6" fill="#FFF7ED" stroke="#EA580C" stroke-width="1.6" filter="url(#sketch-shadow)" />
+      <text x="42" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" font-weight="700" fill="#EA580C">Flaw Detected?</text>
+      <text x="42" y="32" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="10" fill="#7C2D12">Auto-Coaching Loop</text>
     </g>
     """
     
@@ -453,7 +456,7 @@ def build_speed_benchmarks():
       <text x="147" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#15803D">SPEED &amp; RETRIEVAL LATENCY</text>
       
       <!-- Hand-Drawn Analog Stopwatches -->
-      <g transform="translate(45, 45)">
+      <g transform="translate(35, 45)">
         <!-- Stopwatch 1: Traditional -->
         <g transform="translate(15, 0)">
           <rect x="30" y="-8" width="10" height="8" rx="2" fill="#E2E8F0" stroke="#22252A" stroke-width="1.8" />
@@ -462,19 +465,19 @@ def build_speed_benchmarks():
           <path d="M 72 32 Q 84 30 80 18" fill="none" stroke="#EF4444" stroke-width="1.8" stroke-linecap="round" />
           <line x1="35" y1="35" x2="58" y2="22" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round" />
           <circle cx="35" cy="35" r="3" fill="#22252A" />
-          <text x="35" y="80" text-anchor="middle" class="text-heading" fill="#DC2626">12,400 ms</text>
-          <text x="35" y="96" text-anchor="middle" class="text-mono" font-size="10" fill="#7F1D1D">Traditional Crawl</text>
+          <text x="35" y="80" text-anchor="middle" class="text-heading" font-size="18" fill="#DC2626">12,400 ms</text>
+          <text x="35" y="96" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#7F1D1D">Traditional Crawl</text>
         </g>
         
         <!-- Stopwatch 2: AegisBrain -->
-        <g transform="translate(130, 0)">
+        <g transform="translate(150, 0)">
           <rect x="30" y="-8" width="10" height="8" rx="2" fill="#E2E8F0" stroke="#22252A" stroke-width="1.8" />
           <circle cx="35" cy="35" r="32" fill="#DCFCE7" stroke="#22252A" stroke-width="2.4" />
           <line x1="35" y1="35" x2="35" y2="10" stroke="#16A34A" stroke-width="2.6" stroke-linecap="round" />
           <circle cx="35" cy="35" r="3" fill="#22252A" />
           <text x="65" y="15" font-size="16" fill="#16A34A">★</text>
-          <text x="35" y="80" text-anchor="middle" class="text-heading" fill="#16A34A">24 ms</text>
-          <text x="35" y="96" text-anchor="middle" class="text-mono" font-size="10" fill="#14532D">AegisBrain FTS5</text>
+          <text x="35" y="80" text-anchor="middle" class="text-heading" font-size="18" fill="#16A34A">24 ms</text>
+          <text x="35" y="96" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#14532D">AegisBrain FTS5</text>
         </g>
       </g>
       
@@ -581,23 +584,23 @@ def build_speed_benchmarks():
       <rect x="25" y="-14" width="245" height="30" rx="15" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
       <text x="147" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#6B21A8">HARDWARE &amp; RAM FOOTPRINT</text>
       
-      <!-- Hand-Drawn Balance Scale -->
-      <g transform="translate(45, 45)">
-        <polygon points="100,55 85,85 115,85" fill="#CBD5E1" stroke="#22252A" stroke-width="2.2" />
-        <line x1="20" y1="75" x2="180" y2="35" stroke="#22252A" stroke-width="3" stroke-linecap="round" />
+      <!-- Hand-Drawn Balance Scale (Raised to give ample clearance above stat box) -->
+      <g transform="translate(45, 40)">
+        <polygon points="100,45 85,72 115,72" fill="#CBD5E1" stroke="#22252A" stroke-width="2.2" />
+        <line x1="20" y1="62" x2="180" y2="28" stroke="#22252A" stroke-width="3" stroke-linecap="round" />
         
         <!-- Left Pan (Dumbbell) -->
-        <line x1="20" y1="75" x2="20" y2="85" stroke="#22252A" stroke-width="1.6" />
-        <rect x="5" y="80" width="30" height="12" rx="4" fill="#64748B" stroke="#22252A" stroke-width="1.8" />
-        <text x="20" y="106" text-anchor="middle" class="text-heading" font-size="15" fill="#DC2626">&gt; 1.2 GB</text>
-        <text x="20" y="118" text-anchor="middle" class="text-mono" font-size="9" fill="#7F1D1D">RAM Bloat</text>
+        <line x1="20" y1="62" x2="20" y2="72" stroke="#22252A" stroke-width="1.6" />
+        <rect x="5" y="70" width="30" height="12" rx="4" fill="#64748B" stroke="#22252A" stroke-width="1.8" />
+        <text x="20" y="94" text-anchor="middle" class="text-heading" font-size="14" fill="#DC2626">&gt; 1.2 GB</text>
+        <text x="20" y="106" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#7F1D1D">RAM Bloat</text>
         
         <!-- Right Pan (Feather) -->
-        <line x1="180" y1="35" x2="180" y2="45" stroke="#22252A" stroke-width="1.6" />
-        <path d="M 170 38 Q 185 25 195 40 Q 185 45 170 38" fill="#BAE6FD" stroke="#0284C7" stroke-width="1.6" />
-        <line x1="170" y1="38" x2="195" y2="40" stroke="#0284C7" stroke-width="1.2" />
-        <text x="180" y="72" text-anchor="middle" class="text-heading" font-size="15" fill="#16A34A">&lt; 25 MB</text>
-        <text x="180" y="84" text-anchor="middle" class="text-mono" font-size="9" fill="#14532D">RAM Light</text>
+        <line x1="180" y1="28" x2="180" y2="38" stroke="#22252A" stroke-width="1.6" />
+        <path d="M 170 30 Q 185 18 195 32 Q 185 38 170 30" fill="#BAE6FD" stroke="#0284C7" stroke-width="1.6" />
+        <line x1="170" y1="30" x2="195" y2="32" stroke="#0284C7" stroke-width="1.2" />
+        <text x="180" y="60" text-anchor="middle" class="text-heading" font-size="14" fill="#16A34A">&lt; 25 MB</text>
+        <text x="180" y="72" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#14532D">RAM Light</text>
       </g>
       
       <!-- Big Handwritten Stat -->
@@ -712,8 +715,8 @@ def build_learning_curve():
       <line x1="{ox}" y1="{oy}" x2="{ox}" y2="{oy-ax_len_y}" stroke="#22252A" stroke-width="3.2" stroke-linecap="round" />
       <polygon points="{ox},{oy-ax_len_y} {ox-6},{oy-ax_len_y+14} {ox+6},{oy-ax_len_y+14}" fill="#22252A" />
       
-      <!-- Rotated Y-Axis Label -->
-      <text transform="translate({ox-35}, {oy-ax_len_y/2}) rotate(-90)" text-anchor="middle" class="text-heading" font-size="22" fill="#22252A">CONTEXT PRESSURE / TOKEN BURN</text>
+      <!-- Rotated Y-Axis Label (Pushed further left with generous margin) -->
+      <text transform="translate({ox-50}, {oy-ax_len_y/2}) rotate(-90)" text-anchor="middle" class="text-heading" font-size="18" fill="#22252A">CONTEXT PRESSURE / TOKEN BURN</text>
     </g>
     """
     
@@ -728,13 +731,13 @@ def build_learning_curve():
     <circle cx="887" cy="196" r="4" fill="#DC2626" />
     <circle cx="899" cy="194" r="4" fill="#DC2626" />
     
-    <!-- Traditional Callout Box 1 (Early slope) -->
-    <g transform="translate(190, 470)">
-      <rect x="0" y="0" width="200" height="60" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2.2" filter="url(#sketch-shadow)" />
+    <!-- Traditional Callout Box 1 (Raised well above the red curve) -->
+    <g transform="translate(195, 380)">
+      <rect x="0" y="0" width="200" height="58" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2.2" filter="url(#sketch-shadow)" />
       <text x="100" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#9A3412">Turn 5 to 10 Slowdown:</text>
       <text x="100" y="42" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#7C2D12">Full transcript re-read latency</text>
-      <path d="M 100 60 Q 105 75 120 85" fill="none" stroke="#EA580C" stroke-width="2" />
-      <polygon points="120,85 112,80 116,75" fill="#EA580C" />
+      <path d="M 100 58 Q 110 85 130 115" fill="none" stroke="#EA580C" stroke-width="2" />
+      <polygon points="130,115 120,110 124,104" fill="#EA580C" />
     </g>
     
     <!-- Traditional Callout Box 2 (Steep rise) -->
@@ -828,7 +831,7 @@ def build_hierarchy_pyramid():
       
       <!-- Details -->
       <g transform="translate(145, 32)">
-        <text x="0" y="16" class="text-heading" font-size="18" fill="#0369A1">Models: Gemini 3.8 Flash / Claude 3.7 Sonnet</text>
+        <text x="0" y="16" class="text-heading" font-size="17" fill="#0369A1">Models: Fable 5.1 / Opus 5.5 / Gemini 4 / Argon</text>
         <text x="0" y="38" class="text-body">• High Cognition, System Architecture &amp; Strategy</text>
         <text x="0" y="58" class="text-body">• Invariants Definition, Error Detection &amp; Final Production Sign-off</text>
         
@@ -1073,7 +1076,7 @@ def build_mobile_pipeline():
       
       <!-- Cylinder Database -->
       <g transform="translate(112, 75)">
-        {cylinder_3d(0, 0, 50, 16, 40, "#FEF9C3", "#FEF08A", "aegis.server", "127.0.0.1:8765")}
+        {cylinder_3d(0, 0, 60, 16, 60, "#FEF9C3", "#FEF08A", "aegis.server", "127.0.0.1:8765")}
       </g>
       
       <!-- Bullet Points Box -->
@@ -1165,8 +1168,8 @@ def build_mobile_pipeline():
       <rect x="0" y="0" width="{card_w}" height="{card_h}" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
       
       <!-- Top Title Badge -->
-      <rect x="15" y="-14" width="195" height="30" rx="15" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
-      <text x="112" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#6B21A8">4. WHISPER &amp; WIN32 SHIELD</text>
+      <rect x="12" y="-14" width="201" height="28" rx="14" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
+      <text x="112" y="4" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#6B21A8">4. WHISPER &amp; WIN32 SHIELD</text>
       
       <!-- Whisper Greedy Decoding Box -->
       <g transform="translate(15, 28)">
@@ -1253,7 +1256,7 @@ def build_universal_agents():
           <rect x="0" y="0" width="215" height="72" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
           <rect x="0" y="0" width="215" height="22" rx="8" fill="#EDE9FE" stroke="#22252A" stroke-width="1.2" />
           <text x="107" y="16" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#6B21A8">OpenCode CLI</text>
-          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Model: gpt-6-astra / opus</text>
+          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Model: opus-5.5 / gpt-6-astra</text>
           <text x="12" y="60" class="text-body" font-size="11" fill="#15803D">✓ Cognition &amp; Planning</text>
         </g>
         
@@ -1262,7 +1265,7 @@ def build_universal_agents():
           <rect x="0" y="0" width="215" height="72" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
           <rect x="0" y="0" width="215" height="22" rx="8" fill="#EDE9FE" stroke="#22252A" stroke-width="1.2" />
           <text x="107" y="16" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#6B21A8">OpenAI Codex</text>
-          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Model: codex-5.4 / gpt-6</text>
+          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Model: codex-5.4 / fable-5.1</text>
           <text x="12" y="60" class="text-body" font-size="11" fill="#15803D">✓ Strategic Architecture</text>
         </g>
         
@@ -1271,7 +1274,7 @@ def build_universal_agents():
           <rect x="0" y="0" width="215" height="72" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
           <rect x="0" y="0" width="215" height="22" rx="8" fill="#EDE9FE" stroke="#22252A" stroke-width="1.2" />
           <text x="107" y="16" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#6B21A8">Google Antigravity</text>
-          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Model: gemini-3.8-flash</text>
+          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Model: gemini-4 / argon</text>
           <text x="12" y="60" class="text-body" font-size="11" fill="#15803D">✓ Autonomous Senior Boss</text>
         </g>
         
@@ -1280,15 +1283,15 @@ def build_universal_agents():
           <rect x="0" y="0" width="215" height="72" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
           <rect x="0" y="0" width="215" height="22" rx="8" fill="#EDE9FE" stroke="#22252A" stroke-width="1.2" />
           <text x="107" y="16" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#6B21A8">Claude Code CLI</text>
-          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Model: claude-3.7-sonnet</text>
+          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Model: opus-5.5 / claude-4</text>
           <text x="12" y="60" class="text-body" font-size="11" fill="#15803D">✓ Invariants &amp; Sign-Off</text>
         </g>
       </g>
     </g>
     """
     
-    # Connecting Arrows 1 -> Bus
-    svg += hand_arrow(520, 240, 520, 275, curve_dx=0)
+    # Connecting Arrows 1 -> Bus (lands cleanly on top ribbon without cutting through)
+    svg += hand_arrow(520, 240, 520, 261, curve_dx=0)
     
     # ---------------- Row 2: Standardized Execution Bus ----------------
     svg += """
@@ -1333,8 +1336,8 @@ def build_universal_agents():
     </g>
     """
     
-    # Connecting Arrows Bus -> 3
-    svg += hand_arrow(520, 390, 520, 425, curve_dx=0)
+    # Connecting Arrows Bus -> 3 (lands cleanly on top ribbon without cutting through)
+    svg += hand_arrow(520, 390, 520, 411, curve_dx=0)
     
     # ---------------- Row 3: Tier 3 Worker Candidates ----------------
     svg += """
@@ -1342,9 +1345,9 @@ def build_universal_agents():
     <g transform="translate(40, 425)">
       <rect x="0" y="0" width="960" height="120" rx="14" fill="#F0FDF4" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
       
-      <!-- Top Title Ribbon -->
-      <rect x="210" y="-14" width="540" height="28" rx="14" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
-      <text x="480" y="5" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#15803D">TIER 3: WORKER CANDIDATES (100% RAW CODE &amp; TESTS) — 100% FREE LOCAL TOKENS</text>
+      <!-- Top Title Ribbon (Generous width to prevent text overflow) -->
+      <rect x="150" y="-14" width="660" height="28" rx="14" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
+      <text x="480" y="5" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#15803D">TIER 3: WORKER CANDIDATES (100% RAW CODE &amp; TESTS) — FREE LOCAL TOKENS</text>
       
       <!-- 4 Worker Candidates -->
       <g transform="translate(25, 28)">

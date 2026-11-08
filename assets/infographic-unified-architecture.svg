@@ -47,91 +47,91 @@
     
     <g>
       <!-- Cylinder Shadow -->
-      <ellipse cx="503" cy="233" rx="75" ry="22" fill="#E2E8F0" opacity="0.6" />
+      <ellipse cx="503" cy="253" rx="85" ry="18" fill="#E2E8F0" opacity="0.6" />
       
       <!-- Cylinder Body -->
-      <path d="M 425 185 L 425 230 A 75 22 0 0 0 575 230 L 575 185 Z" 
+      <path d="M 415 185 L 415 250 A 85 18 0 0 0 585 250 L 585 185 Z" 
             fill="#FEF08A" stroke="#22252A" stroke-width="2.8" stroke-linejoin="round" />
       
       <!-- Cylinder Bottom Highlight Curve -->
-      <path d="M 429 228 A 71 20 0 0 0 571 228" 
+      <path d="M 419 248 A 81 16 0 0 0 581 248" 
             fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.6" />
             
       <!-- Cylinder Top Ellipse -->
-      <ellipse cx="500" cy="185" rx="75" ry="22" fill="#FEF9C3" stroke="#22252A" stroke-width="2.8" />
+      <ellipse cx="500" cy="185" rx="85" ry="18" fill="#FEF9C3" stroke="#22252A" stroke-width="2.8" />
       
       <!-- Highlight Reflection on Top -->
-      <path d="M 462.5 177.66666666666666 A 37.5 11.0 0 0 1 525.0 177.66666666666666" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
+      <path d="M 457.5 179.0 A 42.5 9.0 0 0 1 528.3333333333334 179.0" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
       
-      <!-- Labels -->
-      <text x="500" y="211.5" text-anchor="middle" class="text-heading">transcript.jsonl</text>
-      <text x="500" y="229.5" text-anchor="middle" class="text-body" fill="#52525B">Multi-MB Unstructured</text>
+      <!-- Labels positioned cleanly inside cylinder body without touching top or bottom caps -->
+      <text x="500" y="219.5" text-anchor="middle" class="text-heading" font-size="15">transcript.jsonl</text>
+      <text x="500" y="239.5" text-anchor="middle" class="text-body" font-size="12" fill="#52525B">Multi-MB Unstructured</text>
     </g>
     
-    <path d="M 575 195 Q 645.0 195.0 715 195" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
-    <polygon points="715,195 704.6076951545867,201.0 704.6076951545867,189.0" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    <path d="M 585 205 Q 650.0 205.0 715 205" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="715,205 704.6076951545867,211.0 704.6076951545867,199.0" fill="#22252A" stroke="#22252A" stroke-width="1" />
     
     <g>
-      <rect x="715" y="175" width="230" height="36" rx="18.0" fill="#FED7AA" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="830.0" y="198.0" text-anchor="middle" class="text-badge" fill="#22252A">Deterministic AST Parsing</text>
+      <rect x="715" y="185" width="230" height="36" rx="18.0" fill="#FED7AA" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="830.0" y="208.0" text-anchor="middle" class="text-badge" fill="#22252A">Deterministic AST Parsing</text>
     </g>
     
-    <path d="M 830 215 Q 805.0 235.0 780 255" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
-    <polygon points="780,255 784.3668564266803,243.8227657737363 791.8631969973335,253.19319148705267" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    <path d="M 830 225 Q 805.0 242.5 780 260" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="780,260 785.0729337909472,249.1250129768967 791.9544819233072,258.9557960231252" fill="#22252A" stroke="#22252A" stroke-width="1" />
     
-    <path d="M 830 215 Q 855.0 235.0 880 255" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
-    <polygon points="880,255 868.1368030026665,253.19319148705267 875.6331435733197,243.8227657737363" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    <path d="M 830 225 Q 855.0 242.5 880 260" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="880,260 868.0455180766928,258.9557960231252 874.9270662090528,249.1250129768967" fill="#22252A" stroke="#22252A" stroke-width="1" />
     
     <g>
-      <rect x="725" y="260" width="105" height="30" rx="15.0" fill="#E9D5FF" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="777.5" y="280.0" text-anchor="middle" class="text-badge" fill="#22252A">AST Tree</text>
+      <rect x="725" y="265" width="105" height="30" rx="15.0" fill="#E9D5FF" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="777.5" y="285.0" text-anchor="middle" class="text-badge" fill="#22252A">AST Tree</text>
     </g>
     
     <g>
-      <rect x="840" y="260" width="115" height="30" rx="15.0" fill="#BBF7D0" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="897.5" y="280.0" text-anchor="middle" class="text-badge" fill="#22252A">Call Graph</text>
+      <rect x="840" y="265" width="115" height="30" rx="15.0" fill="#BBF7D0" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="897.5" y="285.0" text-anchor="middle" class="text-badge" fill="#22252A">Call Graph</text>
     </g>
     
-    <path d="M 500 255 Q 500.0 300.0 500 345" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
-    <polygon points="500,345 494.0,334.60769515458674 506.0,334.60769515458674" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    <path d="M 500 275 Q 500.0 312.5 500 350" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="500,350 494.0,339.60769515458674 506.0,339.60769515458674" fill="#22252A" stroke="#22252A" stroke-width="1" />
     
-    <g transform="translate(525, 280)">
+    <g transform="translate(525, 290)">
       <text x="0" y="0" class="text-body" fill="#22252A">↓ 1. Privacy Scrubbing (Zero Secret Leakage)</text>
       <text x="0" y="20" class="text-body" fill="#22252A">↓ 2. Conversational Slop &amp; Filler Pruning</text>
       <text x="0" y="40" class="text-body" fill="#22252A">↓ 3. Deterministic AST &amp; Event Chunking</text>
     </g>
     
     <g>
-      <rect x="360" y="350" width="280" height="36" rx="18.0" fill="#E9D5FF" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="500.0" y="373.0" text-anchor="middle" class="text-badge" fill="#22252A">Pre-Processed Neural Index</text>
+      <rect x="360" y="355" width="280" height="36" rx="18.0" fill="#E9D5FF" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="500.0" y="378.0" text-anchor="middle" class="text-badge" fill="#22252A">Pre-Processed Neural Index</text>
     </g>
     
     <g>
       <!-- Cylinder Shadow -->
-      <ellipse cx="503" cy="463" rx="85" ry="24" fill="#E2E8F0" opacity="0.6" />
+      <ellipse cx="503" cy="483" rx="95" ry="18" fill="#E2E8F0" opacity="0.6" />
       
       <!-- Cylinder Body -->
-      <path d="M 415 410 L 415 460 A 85 24 0 0 0 585 460 L 585 410 Z" 
+      <path d="M 405 415 L 405 480 A 95 18 0 0 0 595 480 L 595 415 Z" 
             fill="#E9D5FF" stroke="#22252A" stroke-width="2.8" stroke-linejoin="round" />
       
       <!-- Cylinder Bottom Highlight Curve -->
-      <path d="M 419 458 A 81 22 0 0 0 581 458" 
+      <path d="M 409 478 A 91 16 0 0 0 591 478" 
             fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.6" />
             
       <!-- Cylinder Top Ellipse -->
-      <ellipse cx="500" cy="410" rx="85" ry="24" fill="#F3E8FF" stroke="#22252A" stroke-width="2.8" />
+      <ellipse cx="500" cy="415" rx="95" ry="18" fill="#F3E8FF" stroke="#22252A" stroke-width="2.8" />
       
       <!-- Highlight Reflection on Top -->
-      <path d="M 457.5 402.0 A 42.5 12.0 0 0 1 528.3333333333334 402.0" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
+      <path d="M 452.5 409.0 A 47.5 9.0 0 0 1 531.6666666666666 409.0" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
       
-      <!-- Labels -->
-      <text x="500" y="439.0" text-anchor="middle" class="text-heading">SQLite WAL + FTS5</text>
-      <text x="500" y="457.0" text-anchor="middle" class="text-body" fill="#52525B">brain.db (Sub-Second Recall)</text>
+      <!-- Labels positioned cleanly inside cylinder body without touching top or bottom caps -->
+      <text x="500" y="449.5" text-anchor="middle" class="text-heading" font-size="15">SQLite WAL + FTS5</text>
+      <text x="500" y="469.5" text-anchor="middle" class="text-body" font-size="12" fill="#52525B">brain.db (Sub-Second Recall)</text>
     </g>
     
     <!-- Table Zoom Projection Lines -->
-    <path d="M 415 425 L 350 370" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
-    <path d="M 415 465 L 350 540" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
+    <path d="M 405 435 L 350 370" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
+    <path d="M 405 480 L 350 540" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
     
     <!-- Fast Semantic Token Retrieval Matrix Table -->
     <g transform="translate(40, 360)">
@@ -200,39 +200,39 @@
     </g>
     
     <g>
-      <rect x="340" y="510" width="320" height="36" rx="18.0" fill="#FED7AA" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="500.0" y="533.0" text-anchor="middle" class="text-badge" fill="#22252A">Autonomous Severity Scoring &amp; Task Routing</text>
+      <rect x="340" y="520" width="320" height="36" rx="18.0" fill="#FED7AA" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="500.0" y="543.0" text-anchor="middle" class="text-badge" fill="#22252A">Autonomous Severity Scoring &amp; Task Routing</text>
     </g>
     
-    <path d="M 430 550 Q 290.0 585.0 180 620" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
-    <polygon points="180,620 188.08387325728935,611.1314604832542 191.72231714461273,622.5665698434133" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    <path d="M 430 560 Q 290.0 592.5 180 625" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="180,625 188.26632752819322,616.3012742774223 191.66648122040203,627.8094867741291" fill="#22252A" stroke="#22252A" stroke-width="1" />
     
-    <path d="M 500 550 Q 500.0 585.0 500 620" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
-    <polygon points="500,620 494.0,609.6076951545867 506.0,609.6076951545867" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    <path d="M 500 560 Q 500.0 592.5 500 625" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="500,625 494.0,614.6076951545867 506.0,614.6076951545867" fill="#22252A" stroke="#22252A" stroke-width="1" />
     
-    <path d="M 570 550 Q 710.0 585.0 820 620" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
-    <polygon points="820,620 808.2776828553873,622.5665698434133 811.9161267427106,611.1314604832542" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    <path d="M 570 560 Q 710.0 592.5 820 625" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="820,625 808.333518779598,627.8094867741291 811.7336724718068,616.3012742774223" fill="#22252A" stroke="#22252A" stroke-width="1" />
     
     <g>
-      <rect x="60" y="625" width="240" height="34" rx="17.0" fill="#FEF08A" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
-      <text x="180.0" y="647.0" text-anchor="middle" class="text-badge" fill="#22252A">Tier 1: Senior Boss (Brain)</text>
+      <rect x="60" y="630" width="240" height="34" rx="17.0" fill="#FEF08A" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="180.0" y="652.0" text-anchor="middle" class="text-badge" fill="#22252A">Tier 1: Senior Boss (Brain)</text>
     </g>
     
     <g>
       <!-- Shadow -->
-      <polygon points="149.36,739.0 180,761.0 218.64,739.0 180,767.0" fill="#CBD5E1" opacity="0.7" />
+      <polygon points="149.36,744.0 180,766.0 218.64,744.0 180,772.0" fill="#CBD5E1" opacity="0.7" />
       <!-- Left Face -->
-      <polygon points="145.36,695.0 180,715.0 180,755.0 145.36,735.0" fill="#EAB308" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      <polygon points="145.36,700.0 180,720.0 180,760.0 145.36,740.0" fill="#EAB308" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
       <!-- Right Face -->
-      <polygon points="180,715.0 214.64,695.0 214.64,735.0 180,755.0" fill="#CA8A04" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      <polygon points="180,720.0 214.64,700.0 214.64,740.0 180,760.0" fill="#CA8A04" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
       <!-- Top Face -->
-      <polygon points="180,675 214.64,695.0 180,715.0 145.36,695.0" fill="#FEF08A" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      <polygon points="180,680 214.64,700.0 180,720.0 145.36,700.0" fill="#FEF08A" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
       
     </g>
     
-    <g transform="translate(60, 765)">
+    <g transform="translate(60, 770)">
       <rect x="0" y="0" width="240" height="100" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="2.2" />
-      <text x="120" y="24" text-anchor="middle" class="text-heading" fill="#0369A1">Gemini 3.8 / Claude 3.7</text>
+      <text x="120" y="24" text-anchor="middle" class="text-heading" font-size="15" fill="#0369A1">Fable 5.1 / Opus 5.5 / Gemini 4 / Argon</text>
       <text x="120" y="46" text-anchor="middle" class="text-body">• High Cognition Architecture</text>
       <text x="120" y="66" text-anchor="middle" class="text-body">• Invariants &amp; Sign-off</text>
       <rect x="15" y="74" width="210" height="20" rx="4" fill="#BBF7D0" stroke="#15803D" stroke-width="1.2" />
@@ -363,13 +363,12 @@
     </g>
     
     <!-- Autonomous Coaching Feedback Loop -->
-    <path d="M 850 1040 Q 940 980 940 850 Q 940 780 850 780" fill="none" stroke="#EA580C" stroke-width="2.6" stroke-dasharray="6,4" />
-    <polygon points="850,780 862,774 862,786" fill="#EA580C" stroke="#EA580C" />
-    <g transform="translate(890, 890)">
-      <rect x="-10" y="-15" width="100" height="55" rx="6" fill="#FFF7ED" stroke="#EA580C" stroke-width="1.6" />
-      <text x="40" y="5" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#EA580C">Flaw Detected?</text>
-      <text x="40" y="22" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#7C2D12">Auto-Coaching</text>
-      <text x="40" y="34" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" fill="#7C2D12">Worker Loop</text>
+    <path d="M 940 1040 Q 980 925 945 815" fill="none" stroke="#EA580C" stroke-width="2.6" stroke-dasharray="6,4" />
+    <polygon points="940,815 952,809 952,821" fill="#EA580C" stroke="#EA580C" />
+    <g transform="translate(885, 905)">
+      <rect x="0" y="0" width="85" height="48" rx="6" fill="#FFF7ED" stroke="#EA580C" stroke-width="1.6" filter="url(#sketch-shadow)" />
+      <text x="42" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" font-weight="700" fill="#EA580C">Flaw Detected?</text>
+      <text x="42" y="32" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="10" fill="#7C2D12">Auto-Coaching Loop</text>
     </g>
     
     <g>

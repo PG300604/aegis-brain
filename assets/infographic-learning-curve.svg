@@ -101,8 +101,8 @@
       <line x1="140" y1="640" x2="140" y2="170" stroke="#22252A" stroke-width="3.2" stroke-linecap="round" />
       <polygon points="140,170 134,184 146,184" fill="#22252A" />
       
-      <!-- Rotated Y-Axis Label -->
-      <text transform="translate(105, 405.0) rotate(-90)" text-anchor="middle" class="text-heading" font-size="22" fill="#22252A">CONTEXT PRESSURE / TOKEN BURN</text>
+      <!-- Rotated Y-Axis Label (Pushed further left with generous margin) -->
+      <text transform="translate(90, 405.0) rotate(-90)" text-anchor="middle" class="text-heading" font-size="18" fill="#22252A">CONTEXT PRESSURE / TOKEN BURN</text>
     </g>
     
     <!-- Curve 1: Traditional Context Bloat -->
@@ -114,13 +114,13 @@
     <circle cx="887" cy="196" r="4" fill="#DC2626" />
     <circle cx="899" cy="194" r="4" fill="#DC2626" />
     
-    <!-- Traditional Callout Box 1 (Early slope) -->
-    <g transform="translate(190, 470)">
-      <rect x="0" y="0" width="200" height="60" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2.2" filter="url(#sketch-shadow)" />
+    <!-- Traditional Callout Box 1 (Raised well above the red curve) -->
+    <g transform="translate(195, 380)">
+      <rect x="0" y="0" width="200" height="58" rx="8" fill="#FFEDD5" stroke="#EA580C" stroke-width="2.2" filter="url(#sketch-shadow)" />
       <text x="100" y="24" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#9A3412">Turn 5 to 10 Slowdown:</text>
       <text x="100" y="42" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#7C2D12">Full transcript re-read latency</text>
-      <path d="M 100 60 Q 105 75 120 85" fill="none" stroke="#EA580C" stroke-width="2" />
-      <polygon points="120,85 112,80 116,75" fill="#EA580C" />
+      <path d="M 100 58 Q 110 85 130 115" fill="none" stroke="#EA580C" stroke-width="2" />
+      <polygon points="130,115 120,110 124,104" fill="#EA580C" />
     </g>
     
     <!-- Traditional Callout Box 2 (Steep rise) -->

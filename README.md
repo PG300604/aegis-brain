@@ -111,7 +111,7 @@ To optimize token usage and maintain code quality, AegisBrain structures executi
 
 | Tier | Role | Supported Engines | Primary Responsibility | Direct Code Invariant |
 | :--- | :--- | :--- | :--- | :--- |
-| **Tier 1: Senior Boss** | Supreme Brain & Orchestrator | Gemini 3.8 Flash, Claude 3.7 Sonnet, OpenCode (GPT-6 Astra), Codex | System architecture, research, option exploration (Pros/Cons), invariants, error detection, test review, final sign-off. | **Zero Direct Code by default** (writes code *only* upon Tier 2 Escalation). |
+| **Tier 1: Senior Boss** | Supreme Brain & Orchestrator | Fable 5.1, Opus 5.5, Gemini 4, Argon, OpenCode (GPT-6 Astra), Codex | System architecture, research, option exploration (Pros/Cons), invariants, error detection, test review, final sign-off. | **Zero Direct Code by default** (writes code *only* upon Tier 2 Escalation). |
 | **Tier 2: Junior Bosses** | Domain Tech Leads / Subagents | Specialized Subagents (`invoke_subagent`) | Scoping boundaries, dispatching tasks to Tier 3 workers, bottom-to-top 4-Gate auditing, coaching error-reduction loops. | **Zero Direct Code**. Coaches workers; never writes code drafts directly. |
 | **Tier 3: Execution Workers** | Code Synthesis Muscle | OpenCode Free Models, Hermes CLI, Codex CLI, Claude Code CLI, Ollama MoE | Writes all raw code drafts, functions, boilerplate, and implementations using free/local tokens (0 frontier tokens). | **Writes 100% of candidate code**. Subject to iterative coaching loops. |
 
@@ -346,14 +346,6 @@ aegis doctor
 - **Daemon Startup Time**: **34 ms** (zero external imports).
 - **Test Suite Coverage**: **285 / 285 passed (100% pass rate)**.
 - **Cross-Platform Parity**: 100% test pass rate across Ubuntu Linux (Python 3.10–3.13), macOS, and Windows.
-
----
-
-## Community Velocity & Star Growth
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/star-history-sketch.svg" alt="AegisBrain Star Trajectory and Milestones" width="100%">
-</p>
 
 ---
 
