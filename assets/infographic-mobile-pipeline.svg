@@ -1,0 +1,279 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 800" width="100%" height="auto">
+  <defs>
+    <style><![CDATA[
+    @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&amp;family=Caveat:wght@600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap');
+    
+    .paper-bg { fill: #FDFBF7; }
+    .ink { stroke: #22252A; stroke-linecap: round; stroke-linejoin: round; }
+    .text-title { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 28px; font-weight: 700; fill: #22252A; }
+    .text-subtitle { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 16px; fill: #52525B; }
+    .text-heading { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 20px; font-weight: 700; fill: #22252A; }
+    .text-body { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 15px; fill: #27272A; }
+    .text-badge { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 13px; font-weight: 700; }
+    .text-mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; }
+    .text-metric { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 46px; font-weight: 700; }
+]]>
+    </style>
+    <filter id="sketch-shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="3" dy="4" stdDeviation="0" flood-color="#22252A" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Warm Sketchpad Canvas Card -->
+  <rect width="1020" height="800" rx="20" class="paper-bg ink" stroke="#22252A" stroke-width="3" />
+
+    <!-- Left Ribbon Tail -->
+    <path d="M 135.0 38 L 95.0 38 L 111.0 64.0 L 95.0 92 L 135.0 92 Z" 
+          fill="#BAE6FD" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+    <!-- Left Fold Shadow Triangle -->
+    <polygon points="135.0,92 135.0,110 159.0,92" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+    
+    <!-- Right Ribbon Tail -->
+    <path d="M 885.0 38 L 925.0 38 L 909.0 64.0 L 925.0 92 L 885.0 92 Z" 
+          fill="#BAE6FD" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+    <!-- Right Fold Shadow Triangle -->
+    <polygon points="885.0,92 885.0,110 861.0,92" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+    
+    <!-- Main Center Banner -->
+    <rect x="135.0" y="30" width="750" height="68" rx="6" fill="#F0F9FF" stroke="#22252A" stroke-width="2.8" filter="url(#sketch-shadow)" />
+    <!-- Inner Accent Line -->
+    <rect x="139.0" y="34" width="742" height="60" rx="4" fill="none" stroke="#BAE6FD" stroke-width="1.8" />
+    <text x="510" y="58" text-anchor="middle" class="text-title" fill="#0369A1">24/7 MOBILE DAEMON &amp; VOICE PIPELINE</text>
+    <text x="510" y="80" text-anchor="middle" class="text-subtitle" fill="#475569">Telegram Remote Operations • Sub-30s Audio Chunks • Win32 Process Shield</text>
+    <!-- Stage 1: Smartphone UI -->
+    <g transform="translate(40, 125)">
+      <rect x="0" y="0" width="215" height="490" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Title Badge -->
+      <rect x="15" y="-14" width="185" height="30" rx="15" fill="#BAE6FD" stroke="#22252A" stroke-width="2" />
+      <text x="107" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#0369A1">1. TELEGRAM MOBILE BRIDGE</text>
+      
+      <!-- Hand-Drawn Smartphone Silhouette -->
+      <g transform="translate(22, 28)">
+        <rect x="0" y="0" width="170" height="370" rx="20" fill="#FFFFFF" stroke="#22252A" stroke-width="2.6" />
+        <!-- Top Speaker Notch -->
+        <rect x="60" y="8" width="50" height="6" rx="3" fill="#22252A" />
+        
+        <!-- Chat Header -->
+        <rect x="6" y="22" width="158" height="28" rx="6" fill="#0284C7" />
+        <text x="85" y="40" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#FFFFFF">@HHAACLIBot (24/7)</text>
+        
+        <!-- Speech Bubble 1: Voice Note -->
+        <g transform="translate(14, 60)">
+          <rect x="0" y="0" width="142" height="65" rx="10" fill="#E0F2FE" stroke="#0284C7" stroke-width="1.4" />
+          <text x="10" y="20" font-size="18">🎙</text>
+          <text x="32" y="20" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#0369A1">Voice Note (2:45)</text>
+          <!-- Audio Waveform -->
+          <path d="M 12 45 L 18 35 L 24 50 L 30 30 L 36 55 L 42 35 L 48 50 L 54 38 L 60 48 L 66 32 L 72 52 L 78 40 L 84 46 L 90 35 L 96 52 L 102 42 L 108 48 L 114 36 L 120 45 L 130 45" 
+                fill="none" stroke="#0284C7" stroke-width="2" stroke-linecap="round" />
+        </g>
+        
+        <!-- Speech Bubble 2: /btw query -->
+        <g transform="translate(14, 135)">
+          <rect x="0" y="0" width="142" height="48" rx="10" fill="#FEF3C7" stroke="#D97706" stroke-width="1.4" />
+          <text x="10" y="20" class="text-mono" font-size="11" fill="#B45309">/btw status</text>
+          <text x="10" y="38" font-family="'Patrick Hand', cursive" font-size="11" fill="#78350F">Instant in-flight memory query</text>
+        </g>
+        
+        <!-- Speech Bubble 3: /type interrupt -->
+        <g transform="translate(14, 195)">
+          <rect x="0" y="0" width="142" height="52" rx="10" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.4" />
+          <text x="10" y="20" class="text-mono" font-size="11" fill="#15803D">/type fix bug /alt+m</text>
+          <text x="10" y="38" font-family="'Patrick Hand', cursive" font-size="11" fill="#14532D">In-flight active session interrupt</text>
+        </g>
+        
+        <!-- Bottom Home Indicator -->
+        <line x1="60" y1="358" x2="110" y2="358" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" />
+      </g>
+      
+      <!-- Bottom Badge -->
+      <rect x="15" y="445" width="185" height="26" rx="13" fill="#BAE6FD" stroke="#0284C7" stroke-width="1.4" />
+      <text x="107" y="462" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#0369A1">Remote Hands-Free Ops</text>
+    </g>
+    
+    <path d="M 255 320.0 Q 272.5 320.0 290 320.0" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="290,320.0 279.60769515458674,326.0 279.60769515458674,314.0" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <!-- Stage 2: 24/7 Daemon KeepAlive -->
+    <g transform="translate(290, 125)">
+      <rect x="0" y="0" width="215" height="490" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Title Badge -->
+      <rect x="15" y="-14" width="185" height="30" rx="15" fill="#FEF08A" stroke="#22252A" stroke-width="2" />
+      <text x="107" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#854D0E">2. 24/7 DAEMON KEEPALIVE</text>
+      
+      <!-- Cylinder Database &amp; Gear Icon -->
+      <g transform="translate(107, 75)">
+        
+    <g>
+      <!-- Cylinder Shadow -->
+      <ellipse cx="3" cy="43" rx="50" ry="16" fill="#E2E8F0" opacity="0.6" />
+      
+      <!-- Cylinder Body -->
+      <path d="M -50 0 L -50 40 A 50 16 0 0 0 50 40 L 50 0 Z" 
+            fill="#FEF08A" stroke="#22252A" stroke-width="2.8" stroke-linejoin="round" />
+      
+      <!-- Cylinder Bottom Highlight Curve -->
+      <path d="M -46 38 A 46 14 0 0 0 46 38" 
+            fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.6" />
+            
+      <!-- Cylinder Top Ellipse -->
+      <ellipse cx="0" cy="0" rx="50" ry="16" fill="#FEF9C3" stroke="#22252A" stroke-width="2.8" />
+      
+      <!-- Highlight Reflection on Top -->
+      <path d="M -25.0 -5.333333333333333 A 25.0 8.0 0 0 1 16.666666666666668 -5.333333333333333" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
+      
+      <!-- Labels -->
+      <text x="0" y="24.0" text-anchor="middle" class="text-heading">aegis.server</text>
+      <text x="0" y="42.0" text-anchor="middle" class="text-body" fill="#52525B">127.0.0.1:8765</text>
+    </g>
+    
+      </g>
+      
+      <!-- Bullet Points Box -->
+      <g transform="translate(15, 175)">
+        <rect x="0" y="0" width="185" height="215" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+        <text x="12" y="26" class="text-heading" font-size="14" fill="#0369A1">Windows Scheduled Task</text>
+        <text x="12" y="46" class="text-body" font-size="12">• AegisBrainDaemonKeepAlive</text>
+        <text x="12" y="66" class="text-body" font-size="12">• Runs every 5 mins silently</text>
+        
+        <text x="12" y="96" class="text-heading" font-size="14" fill="#0369A1">Zero-Disruption Guarantee</text>
+        <text x="12" y="116" class="text-body" font-size="12">• Survives account switch</text>
+        <text x="12" y="136" class="text-body" font-size="12">• Survives terminal close</text>
+        <text x="12" y="156" class="text-body" font-size="12">• Survives PC reboots</text>
+        
+        <text x="12" y="186" class="text-body" font-size="12">• Asynchronous inbox queue</text>
+        <text x="12" y="204" class="text-body" font-size="12">• telegram_inbox in SQLite</text>
+      </g>
+      
+      <!-- Bottom Badge -->
+      <rect x="15" y="445" width="185" height="26" rx="13" fill="#FEF08A" stroke="#854D0E" stroke-width="1.4" />
+      <text x="107" y="462" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#854D0E">Self-Resurrecting Daemon</text>
+    </g>
+    
+    <path d="M 505 320.0 Q 522.5 320.0 540 320.0" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="540,320.0 529.6076951545867,326.0 529.6076951545867,314.0" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <!-- Stage 3: FFmpeg Audio Stream Chunker -->
+    <g transform="translate(540, 125)">
+      <rect x="0" y="0" width="215" height="490" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Title Badge -->
+      <rect x="15" y="-14" width="185" height="30" rx="15" fill="#FED7AA" stroke="#22252A" stroke-width="2" />
+      <text x="107" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#C2410C">3. FFMPEG AUDIO CHUNKER</text>
+      
+      <!-- Hand-Drawn Audio Slices Diagram -->
+      <g transform="translate(18, 30)">
+        <rect x="0" y="0" width="180" height="155" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+        <text x="90" y="22" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#C2410C">30-Second Audio Slices</text>
+        
+        <!-- Slice 1 -->
+        <g transform="translate(12, 34)">
+          <rect x="0" y="0" width="156" height="32" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="1.2" />
+          <text x="8" y="20" class="text-mono" font-size="10">chunk_001.wav [0:00-0:30]</text>
+        </g>
+        
+        <!-- Slice 2 -->
+        <g transform="translate(12, 72)">
+          <rect x="0" y="0" width="156" height="32" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="1.2" />
+          <text x="8" y="20" class="text-mono" font-size="10">chunk_002.wav [0:30-1:00]</text>
+        </g>
+        
+        <!-- Slice 3 -->
+        <g transform="translate(12, 110)">
+          <rect x="0" y="0" width="156" height="32" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="1.2" />
+          <text x="8" y="20" class="text-mono" font-size="10">chunk_003.wav [1:00-1:30]</text>
+        </g>
+      </g>
+      
+      <!-- Why This Matters Callout Box -->
+      <g transform="translate(15, 205)">
+        <rect x="0" y="0" width="185" height="185" rx="8" fill="#FFF7ED" stroke="#EA580C" stroke-width="1.8" />
+        <text x="12" y="26" class="text-heading" font-size="14" fill="#9A3412">Why Chunk Audio?</text>
+        <text x="12" y="50" class="text-body" font-size="12">• Prevents Whisper Out-Of-Memory crashes</text>
+        <text x="12" y="80" class="text-body" font-size="12">• Completely eliminates endless hallucination loops</text>
+        <text x="12" y="115" class="text-body" font-size="12">• Deterministic FFmpeg segmentation</text>
+        <text x="12" y="145" class="text-body" font-size="12">• Zero audio truncation</text>
+        <text x="12" y="170" class="text-body" font-size="12">• 16kHz mono WAV format</text>
+      </g>
+      
+      <!-- Bottom Badge -->
+      <rect x="15" y="445" width="185" height="26" rx="13" fill="#FED7AA" stroke="#C2410C" stroke-width="1.4" />
+      <text x="107" y="462" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#C2410C">Zero Hallucination Audio</text>
+    </g>
+    
+    <path d="M 755 320.0 Q 772.5 320.0 790 320.0" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="790,320.0 779.6076951545867,326.0 779.6076951545867,314.0" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <!-- Stage 4: Whisper Greedy STT &amp; Process Shield -->
+    <g transform="translate(790, 125)">
+      <rect x="0" y="0" width="215" height="490" rx="16" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Title Badge -->
+      <rect x="15" y="-14" width="185" height="30" rx="15" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
+      <text x="107" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#6B21A8">4. WHISPER &amp; WIN32 SHIELD</text>
+      
+      <!-- Whisper Greedy Decoding Box -->
+      <g transform="translate(15, 28)">
+        <rect x="0" y="0" width="185" height="160" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+        <text x="12" y="24" class="text-heading" font-size="14" fill="#6B21A8">Whisper Greedy Flags</text>
+        
+        <rect x="8" y="34" width="168" height="24" rx="4" fill="#F3E8FF" stroke="#A855F7" stroke-width="1" />
+        <text x="14" y="50" class="text-mono" font-size="9" fill="#581C87">condition_on_prev=False</text>
+        
+        <rect x="8" y="64" width="168" height="24" rx="4" fill="#F3E8FF" stroke="#A855F7" stroke-width="1" />
+        <text x="14" y="80" class="text-mono" font-size="9" fill="#581C87">temperature=0 (Greedy)</text>
+        
+        <rect x="8" y="94" width="168" height="24" rx="4" fill="#F3E8FF" stroke="#A855F7" stroke-width="1" />
+        <text x="14" y="110" class="text-mono" font-size="9" fill="#581C87">beam_size=1 (Fast)</text>
+        
+        <text x="12" y="136" class="text-body" font-size="11">• Local whisper.exe execution</text>
+        <text x="12" y="152" class="text-body" font-size="11">• 100% Deterministic STT</text>
+      </g>
+      
+      <!-- Win32 Process-Tree Shield Box -->
+      <g transform="translate(15, 205)">
+        <rect x="0" y="0" width="185" height="185" rx="8" fill="#F0FDF4" stroke="#16A34A" stroke-width="1.8" />
+        <text x="12" y="24" class="text-heading" font-size="14" fill="#15803D">Win32 Process Shield</text>
+        
+        <!-- Shield Icon with Padlock -->
+        <g transform="translate(92, 60)">
+          <path d="M 0 -18 L 18 -10 L 18 10 Q 18 25 0 32 Q -18 25 -18 10 L -18 -10 Z" fill="#DCFCE7" stroke="#16A34A" stroke-width="2" />
+          <circle cx="0" cy="5" r="4" fill="#15803D" />
+          <line x1="0" y1="9" x2="0" y2="15" stroke="#15803D" stroke-width="2" />
+        </g>
+        
+        <rect x="8" y="105" width="168" height="24" rx="4" fill="#FFFFFF" stroke="#16A34A" stroke-width="1" />
+        <text x="14" y="121" class="text-mono" font-size="9" fill="#14532D">taskkill /PID &lt;pid&gt; /T /F</text>
+        
+        <text x="12" y="145" class="text-body" font-size="11">• Win32 Job Objects</text>
+        <text x="12" y="162" class="text-body" font-size="11">• Deep child process reaping</text>
+        <text x="12" y="178" class="text-body" font-size="11" font-weight="700" fill="#15803D">✓ 0 Orphan Zombie Processes</text>
+      </g>
+      
+      <!-- Bottom Badge -->
+      <rect x="15" y="445" width="185" height="26" rx="13" fill="#E9D5FF" stroke="#6B21A8" stroke-width="1.4" />
+      <text x="107" y="462" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#6B21A8">Clean Win32 Lifecycle</text>
+    </g>
+    
+    <g>
+      <rect x="80" y="640" width="860" height="38" rx="19.0" fill="#BBF7D0" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="510.0" y="664.0" text-anchor="middle" class="text-badge" fill="#15803D">Voice notes converted into validated prompts &amp; executed autonomously while away from desk!</text>
+    </g>
+    
+    <!-- Hand-Drawn Footer Signature (Chanin Nantasenamat / Data Professor style) -->
+    <g transform="translate(40, 720)">
+      <text x="0" y="24" class="text-heading" fill="#22252A">By: AegisBrain Architecture Core</text>
+      
+      <!-- Hand-drawn brand mark badge -->
+      <g transform="translate(0, 34)">
+        <rect x="0" y="0" width="60" height="26" rx="4" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+        <text x="30" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">AEGIS</text>
+        
+        <rect x="64" y="0" width="64" height="26" rx="4" fill="#22252A" stroke="#22252A" stroke-width="2" />
+        <text x="96" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">BRAIN</text>
+      </g>
+      
+      <text x="940" y="44" text-anchor="end" class="text-subtitle" fill="#71717A">Verified Production 2026 • Hand-Drawn Educational Infographics</text>
+    </g>
+    </svg>

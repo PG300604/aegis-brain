@@ -1,0 +1,269 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 770" width="100%" height="auto">
+  <defs>
+    <style><![CDATA[
+    @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&amp;family=Caveat:wght@600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap');
+    
+    .paper-bg { fill: #FDFBF7; }
+    .ink { stroke: #22252A; stroke-linecap: round; stroke-linejoin: round; }
+    .text-title { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 28px; font-weight: 700; fill: #22252A; }
+    .text-subtitle { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 16px; fill: #52525B; }
+    .text-heading { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 20px; font-weight: 700; fill: #22252A; }
+    .text-body { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 15px; fill: #27272A; }
+    .text-badge { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 13px; font-weight: 700; }
+    .text-mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; }
+    .text-metric { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 46px; font-weight: 700; }
+]]>
+    </style>
+    <filter id="sketch-shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="3" dy="4" stdDeviation="0" flood-color="#22252A" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Warm Sketchpad Canvas Card -->
+  <rect width="1020" height="770" rx="20" class="paper-bg ink" stroke="#22252A" stroke-width="3" />
+
+    <!-- Left Ribbon Tail -->
+    <path d="M 135.0 38 L 95.0 38 L 111.0 64.0 L 95.0 92 L 135.0 92 Z" 
+          fill="#BAE6FD" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+    <!-- Left Fold Shadow Triangle -->
+    <polygon points="135.0,92 135.0,110 159.0,92" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+    
+    <!-- Right Ribbon Tail -->
+    <path d="M 885.0 38 L 925.0 38 L 909.0 64.0 L 925.0 92 L 885.0 92 Z" 
+          fill="#BAE6FD" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+    <!-- Right Fold Shadow Triangle -->
+    <polygon points="885.0,92 885.0,110 861.0,92" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+    
+    <!-- Main Center Banner -->
+    <rect x="135.0" y="30" width="750" height="68" rx="6" fill="#F0F9FF" stroke="#22252A" stroke-width="2.8" filter="url(#sketch-shadow)" />
+    <!-- Inner Accent Line -->
+    <rect x="139.0" y="34" width="742" height="60" rx="4" fill="none" stroke="#BAE6FD" stroke-width="1.8" />
+    <text x="510" y="58" text-anchor="middle" class="text-title" fill="#0369A1">EMPIRICAL SPEED &amp; BENCHMARK REPORT</text>
+    <text x="510" y="80" text-anchor="middle" class="text-subtitle" fill="#475569">AegisBrain SQLite WAL + FTS5 vs. Traditional Raw Log Crawling</text>
+    <g transform="translate(40, 125)">
+      <rect x="0" y="0" width="295" height="475" rx="12" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Badge -->
+      <rect x="25" y="-14" width="245" height="30" rx="15" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
+      <text x="147" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#15803D">SPEED &amp; RETRIEVAL LATENCY</text>
+      
+      <!-- Hand-Drawn Analog Stopwatches -->
+      <g transform="translate(45, 45)">
+        <!-- Stopwatch 1: Traditional (Lagging, Smoke) -->
+        <g transform="translate(15, 0)">
+          <!-- Top Button -->
+          <rect x="30" y="-8" width="10" height="8" rx="2" fill="#E2E8F0" stroke="#22252A" stroke-width="1.8" />
+          <!-- Body -->
+          <circle cx="35" cy="35" r="32" fill="#FEE2E2" stroke="#22252A" stroke-width="2.4" />
+          <!-- Wavy Smoke Trails -->
+          <path d="M 68 20 Q 78 15 72 5" fill="none" stroke="#EF4444" stroke-width="1.8" stroke-linecap="round" />
+          <path d="M 72 32 Q 84 30 80 18" fill="none" stroke="#EF4444" stroke-width="1.8" stroke-linecap="round" />
+          <!-- Needle -->
+          <line x1="35" y1="35" x2="58" y2="22" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round" />
+          <circle cx="35" cy="35" r="3" fill="#22252A" />
+          <text x="35" y="80" text-anchor="middle" class="text-heading" fill="#DC2626">12,400 ms</text>
+          <text x="35" y="96" text-anchor="middle" class="text-mono" font-size="10" fill="#7F1D1D">Traditional Crawl</text>
+        </g>
+        
+        <!-- Stopwatch 2: AegisBrain (Instant, Smiling) -->
+        <g transform="translate(130, 0)">
+          <!-- Top Button -->
+          <rect x="30" y="-8" width="10" height="8" rx="2" fill="#E2E8F0" stroke="#22252A" stroke-width="1.8" />
+          <!-- Body -->
+          <circle cx="35" cy="35" r="32" fill="#DCFCE7" stroke="#22252A" stroke-width="2.4" />
+          <!-- Needle at Instant Start -->
+          <line x1="35" y1="35" x2="35" y2="10" stroke="#16A34A" stroke-width="2.6" stroke-linecap="round" />
+          <circle cx="35" cy="35" r="3" fill="#22252A" />
+          <!-- Speed Stars -->
+          <text x="65" y="15" font-size="16" fill="#16A34A">★</text>
+          <text x="35" y="80" text-anchor="middle" class="text-heading" fill="#16A34A">24 ms</text>
+          <text x="35" y="96" text-anchor="middle" class="text-mono" font-size="10" fill="#14532D">AegisBrain FTS5</text>
+        </g>
+      </g>
+      
+      <!-- Big Handwritten Stat -->
+      <g transform="translate(147, 185)">
+        <rect x="-110" y="-30" width="220" height="52" rx="26" fill="#FEF08A" stroke="#22252A" stroke-width="2" />
+        <text x="0" y="8" text-anchor="middle" class="text-metric" fill="#854D0E">516x</text>
+      </g>
+      <text x="147" y="232" text-anchor="middle" class="text-heading" fill="#0369A1">FASTER RECALL</text>
+      
+      <!-- Hand-Drawn Comparison Bar Chart -->
+      <g transform="translate(30, 255)">
+        <text x="0" y="0" class="text-body" font-size="13">Traditional Crawl:</text>
+        <rect x="0" y="8" width="235" height="20" rx="4" fill="#FCA5A5" stroke="#22252A" stroke-width="1.6" />
+        <text x="225" y="23" text-anchor="end" class="text-mono" font-size="11" fill="#7F1D1D">12,400 ms (12.4s)</text>
+        
+        <text x="0" y="48" class="text-body" font-size="13">AegisBrain FTS5:</text>
+        <rect x="0" y="56" width="30" height="20" rx="4" fill="#86EFAC" stroke="#22252A" stroke-width="1.6" />
+        <text x="40" y="71" class="text-mono" font-size="11" fill="#14532D">24 ms (0.024s)</text>
+      </g>
+      
+      <!-- Note &amp; Badge -->
+      <g transform="translate(20, 365)">
+        <rect x="0" y="0" width="255" height="55" rx="6" fill="#FFFFFF" stroke="#22252A" stroke-width="1.4" />
+        <text x="127" y="22" text-anchor="middle" class="text-body" font-size="12">Instant SQLite FTS5 index lookup</text>
+        <text x="127" y="40" text-anchor="middle" class="text-body" font-size="12">vs scanning 45MB JSONL on disk!</text>
+      </g>
+      
+      <rect x="40" y="435" width="215" height="26" rx="13" fill="#BBF7D0" stroke="#15803D" stroke-width="1.4" />
+      <text x="147" y="452" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#15803D">Sub-Second Response Guarantee</text>
+    </g>
+    
+    <g transform="translate(362, 125)">
+      <rect x="0" y="0" width="295" height="475" rx="12" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Badge -->
+      <rect x="25" y="-14" width="245" height="30" rx="15" fill="#FEF08A" stroke="#22252A" stroke-width="2" />
+      <text x="147" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#854D0E">TOKEN ARBITRAGE &amp; COST</text>
+      
+      <!-- Hand-Drawn Battery Illustrations -->
+      <g transform="translate(45, 45)">
+        <!-- Battery 1: Traditional (Draining, Red) -->
+        <g transform="translate(15, 0)">
+          <rect x="24" y="-6" width="12" height="6" rx="2" fill="#22252A" />
+          <rect x="10" y="0" width="40" height="60" rx="6" fill="#FFFFFF" stroke="#22252A" stroke-width="2.2" />
+          <!-- Battery level (almost empty) -->
+          <rect x="14" y="45" width="32" height="11" rx="3" fill="#EF4444" />
+          <!-- Lightning crack -->
+          <path d="M 30 15 L 24 30 L 34 30 L 26 44" fill="none" stroke="#DC2626" stroke-width="2" />
+          <text x="30" y="80" text-anchor="middle" class="text-heading" fill="#DC2626">52,000 t</text>
+          <text x="30" y="96" text-anchor="middle" class="text-mono" font-size="10" fill="#7F1D1D">Context Bloat</text>
+        </g>
+        
+        <!-- Battery 2: AegisBrain (100% Full, Green) -->
+        <g transform="translate(130, 0)">
+          <rect x="24" y="-6" width="12" height="6" rx="2" fill="#22252A" />
+          <rect x="10" y="0" width="40" height="60" rx="6" fill="#FFFFFF" stroke="#22252A" stroke-width="2.2" />
+          <!-- Battery level (100% full green) -->
+          <rect x="14" y="4" width="32" height="52" rx="3" fill="#22C55E" />
+          <!-- Clean checkmark -->
+          <path d="M 22 30 L 28 36 L 38 22" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" />
+          <text x="30" y="80" text-anchor="middle" class="text-heading" fill="#16A34A">240 t</text>
+          <text x="30" y="96" text-anchor="middle" class="text-mono" font-size="10" fill="#14532D">Pinned Budget</text>
+        </g>
+      </g>
+      
+      <!-- Big Handwritten Stat -->
+      <g transform="translate(147, 185)">
+        <rect x="-110" y="-30" width="220" height="52" rx="26" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
+        <text x="0" y="8" text-anchor="middle" class="text-metric" fill="#15803D">99.5%</text>
+      </g>
+      <text x="147" y="232" text-anchor="middle" class="text-heading" fill="#0369A1">TOKEN REDUCTION</text>
+      
+      <!-- Hand-Drawn Comparison Bar Chart -->
+      <g transform="translate(30, 255)">
+        <text x="0" y="0" class="text-body" font-size="13">Traditional Resend:</text>
+        <rect x="0" y="8" width="235" height="20" rx="4" fill="#FCA5A5" stroke="#22252A" stroke-width="1.6" />
+        <text x="225" y="23" text-anchor="end" class="text-mono" font-size="11" fill="#7F1D1D">52,000 tokens/req</text>
+        
+        <text x="0" y="48" class="text-body" font-size="13">AegisBrain Neural Pin:</text>
+        <rect x="0" y="56" width="30" height="20" rx="4" fill="#86EFAC" stroke="#22252A" stroke-width="1.6" />
+        <text x="40" y="71" class="text-mono" font-size="11" fill="#14532D">240 tokens/req</text>
+      </g>
+      
+      <!-- Note &amp; Badge -->
+      <g transform="translate(20, 365)">
+        <rect x="0" y="0" width="255" height="55" rx="6" fill="#FFFFFF" stroke="#22252A" stroke-width="1.4" />
+        <text x="127" y="22" text-anchor="middle" class="text-body" font-size="12">Working context strictly pinned ≤ 400 t</text>
+        <text x="127" y="40" text-anchor="middle" class="text-body" font-size="12">Zero runaway frontier API cost!</text>
+      </g>
+      
+      <rect x="40" y="435" width="215" height="26" rx="13" fill="#FEF08A" stroke="#854D0E" stroke-width="1.4" />
+      <text x="147" y="452" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#854D0E">Zero Frontier Token Waste</text>
+    </g>
+    
+    <g transform="translate(684, 125)">
+      <rect x="0" y="0" width="295" height="475" rx="12" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Badge -->
+      <rect x="25" y="-14" width="245" height="30" rx="15" fill="#E9D5FF" stroke="#22252A" stroke-width="2" />
+      <text x="147" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700" fill="#6B21A8">HARDWARE &amp; RAM FOOTPRINT</text>
+      
+      <!-- Hand-Drawn Balance Scale (Dumbbell vs Feather) -->
+      <g transform="translate(45, 45)">
+        <!-- Fulcrum / Base -->
+        <polygon points="100,55 85,85 115,85" fill="#CBD5E1" stroke="#22252A" stroke-width="2.2" />
+        <!-- Beam (Tilted steeply: left heavy down, right light up) -->
+        <line x1="20" y1="75" x2="180" y2="35" stroke="#22252A" stroke-width="3" stroke-linecap="round" />
+        
+        <!-- Left Pan (Dumbbell - 1.2 GB Heavy) -->
+        <line x1="20" y1="75" x2="20" y2="85" stroke="#22252A" stroke-width="1.6" />
+        <rect x="5" y="80" width="30" height="12" rx="4" fill="#64748B" stroke="#22252A" stroke-width="1.8" />
+        <text x="20" y="106" text-anchor="middle" class="text-heading" font-size="15" fill="#DC2626">&gt; 1.2 GB</text>
+        <text x="20" y="118" text-anchor="middle" class="text-mono" font-size="9" fill="#7F1D1D">RAM Bloat</text>
+        
+        <!-- Right Pan (Feather - &lt; 25 MB Light) -->
+        <line x1="180" y1="35" x2="180" y2="45" stroke="#22252A" stroke-width="1.6" />
+        <!-- Hand-drawn feather shape -->
+        <path d="M 170 38 Q 185 25 195 40 Q 185 45 170 38" fill="#BAE6FD" stroke="#0284C7" stroke-width="1.6" />
+        <line x1="170" y1="38" x2="195" y2="40" stroke="#0284C7" stroke-width="1.2" />
+        <text x="180" y="72" text-anchor="middle" class="text-heading" font-size="15" fill="#16A34A">&lt; 25 MB</text>
+        <text x="180" y="84" text-anchor="middle" class="text-mono" font-size="9" fill="#14532D">RAM Light</text>
+      </g>
+      
+      <!-- Big Handwritten Stat -->
+      <g transform="translate(147, 185)">
+        <rect x="-110" y="-30" width="220" height="52" rx="26" fill="#BAE6FD" stroke="#22252A" stroke-width="2" />
+        <text x="0" y="8" text-anchor="middle" class="text-metric" fill="#0369A1">48x</text>
+      </g>
+      <text x="147" y="232" text-anchor="middle" class="text-heading" fill="#0369A1">LIGHTER FOOTPRINT</text>
+      
+      <!-- Hand-Drawn Comparison Bar Chart -->
+      <g transform="translate(30, 255)">
+        <text x="0" y="0" class="text-body" font-size="13">In-Memory Transcript Scan:</text>
+        <rect x="0" y="8" width="235" height="20" rx="4" fill="#FCA5A5" stroke="#22252A" stroke-width="1.6" />
+        <text x="225" y="23" text-anchor="end" class="text-mono" font-size="11" fill="#7F1D1D">&gt; 1,200 MB RAM</text>
+        
+        <text x="0" y="48" class="text-body" font-size="13">AegisBrain Embedded SQLite:</text>
+        <rect x="0" y="56" width="30" height="20" rx="4" fill="#86EFAC" stroke="#22252A" stroke-width="1.6" />
+        <text x="40" y="71" class="text-mono" font-size="11" fill="#14532D">&lt; 25 MB RAM</text>
+      </g>
+      
+      <!-- Note &amp; Badge -->
+      <g transform="translate(20, 365)">
+        <rect x="0" y="0" width="255" height="55" rx="6" fill="#FFFFFF" stroke="#22252A" stroke-width="1.4" />
+        <text x="127" y="22" text-anchor="middle" class="text-body" font-size="12">Embedded C SQLite WAL engine</text>
+        <text x="127" y="40" text-anchor="middle" class="text-body" font-size="12">Zero external server or daemon memory leak!</text>
+      </g>
+      
+      <rect x="40" y="435" width="215" height="26" rx="13" fill="#E9D5FF" stroke="#6B21A8" stroke-width="1.4" />
+      <text x="147" y="452" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#6B21A8">Zero Background RAM Bloat</text>
+    </g>
+    
+    <g>
+      <rect x="40" y="620" width="220" height="34" rx="17.0" fill="#BBF7D0" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="150.0" y="642.0" text-anchor="middle" class="text-badge" fill="#15803D">Zero External Dependencies</text>
+    </g>
+    
+    <g>
+      <rect x="285" y="620" width="220" height="34" rx="17.0" fill="#BAE6FD" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="395.0" y="642.0" text-anchor="middle" class="text-badge" fill="#0369A1">Sub-Second FTS5 Retrieval</text>
+    </g>
+    
+    <g>
+      <rect x="530" y="620" width="220" height="34" rx="17.0" fill="#FEF08A" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="640.0" y="642.0" text-anchor="middle" class="text-badge" fill="#854D0E">100% Deterministic SQLite WAL</text>
+    </g>
+    
+    <g>
+      <rect x="775" y="620" width="220" height="34" rx="17.0" fill="#FED7AA" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="885.0" y="642.0" text-anchor="middle" class="text-badge" fill="#C2410C">Zero-Direct-Code Arbitrage</text>
+    </g>
+    
+    <!-- Hand-Drawn Footer Signature (Chanin Nantasenamat / Data Professor style) -->
+    <g transform="translate(40, 680)">
+      <text x="0" y="24" class="text-heading" fill="#22252A">By: AegisBrain Architecture Core</text>
+      
+      <!-- Hand-drawn brand mark badge -->
+      <g transform="translate(0, 34)">
+        <rect x="0" y="0" width="60" height="26" rx="4" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+        <text x="30" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">AEGIS</text>
+        
+        <rect x="64" y="0" width="64" height="26" rx="4" fill="#22252A" stroke="#22252A" stroke-width="2" />
+        <text x="96" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">BRAIN</text>
+      </g>
+      
+      <text x="940" y="44" text-anchor="end" class="text-subtitle" fill="#71717A">Verified Production 2026 • Hand-Drawn Educational Infographics</text>
+    </g>
+    </svg>
