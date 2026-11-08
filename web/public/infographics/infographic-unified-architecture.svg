@@ -1,0 +1,403 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1380" width="100%" height="auto">
+  <defs>
+    <style><![CDATA[
+    @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&amp;family=Caveat:wght@600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap');
+    
+    .paper-bg { fill: #FDFBF7; }
+    .ink { stroke: #22252A; stroke-linecap: round; stroke-linejoin: round; }
+    .text-title { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 26px; font-weight: 700; fill: #22252A; }
+    .text-subtitle { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 15px; fill: #52525B; }
+    .text-heading { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 18px; font-weight: 700; fill: #22252A; }
+    .text-body { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 14px; fill: #27272A; }
+    .text-badge { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 13px; font-weight: 700; }
+    .text-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; }
+    .text-metric { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 46px; font-weight: 700; }
+]]>
+    </style>
+    <filter id="sketch-shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="3" dy="4" stdDeviation="0" flood-color="#22252A" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Warm Sketchpad Canvas Card -->
+  <rect width="1000" height="1380" rx="20" class="paper-bg ink" stroke="#22252A" stroke-width="3" />
+
+    <!-- Left Ribbon Tail -->
+    <path d="M 130.0 38 L 90.0 38 L 106.0 64.0 L 90.0 92 L 130.0 92 Z" 
+          fill="#BAE6FD" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+    <!-- Left Fold Shadow Triangle -->
+    <polygon points="130.0,92 130.0,110 154.0,92" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+    
+    <!-- Right Ribbon Tail -->
+    <path d="M 870.0 38 L 910.0 38 L 894.0 64.0 L 910.0 92 L 870.0 92 Z" 
+          fill="#BAE6FD" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+    <!-- Right Fold Shadow Triangle -->
+    <polygon points="870.0,92 870.0,110 846.0,92" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+    
+    <!-- Main Center Banner -->
+    <rect x="130.0" y="30" width="740" height="68" rx="6" fill="#F0F9FF" stroke="#22252A" stroke-width="2.8" filter="url(#sketch-shadow)" />
+    <!-- Inner Accent Line -->
+    <rect x="134.0" y="34" width="732" height="60" rx="4" fill="none" stroke="#BAE6FD" stroke-width="1.8" />
+    <text x="500" y="58" text-anchor="middle" class="text-title" fill="#0369A1">AEGISBRAIN AUTONOMOUS ARCHITECTURE</text>
+    <text x="500" y="80" text-anchor="middle" class="text-subtitle" fill="#475569">Deterministic Token Arbitrage, Neural FTS5 Memory &amp; 3-Tier Execution</text>
+    <g>
+      <rect x="360" y="125" width="280" height="36" rx="18.0" fill="#FEF08A" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="500.0" y="148.0" text-anchor="middle" class="text-badge" fill="#22252A">Raw Session Logs &amp; Transcripts</text>
+    </g>
+    
+    <g>
+      <!-- Cylinder Shadow -->
+      <ellipse cx="503" cy="274" rx="90" ry="14" fill="#E2E8F0" opacity="0.6" />
+      
+      <!-- Cylinder Body -->
+      <path d="M 410 180 L 410 270 A 90 14 0 0 0 590 270 L 590 180 Z" 
+            fill="#FEF08A" stroke="#22252A" stroke-width="2.8" stroke-linejoin="round" />
+      
+      <!-- Cylinder Bottom Highlight Curve -->
+      <path d="M 414 268 A 86 12 0 0 0 586 268" 
+            fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.6" />
+            
+      <!-- Cylinder Top Ellipse -->
+      <ellipse cx="500" cy="180" rx="90" ry="14" fill="#FEF9C3" stroke="#22252A" stroke-width="2.8" />
+      
+      <!-- Highlight Reflection on Top -->
+      <path d="M 455.0 175.33333333333334 A 45.0 7.0 0 0 1 530.0 175.33333333333334" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
+      
+      <!-- Labels positioned cleanly inside cylinder body with generous breathing room -->
+      <text x="500" y="232" text-anchor="middle" class="text-heading" font-size="14.5">transcript.jsonl</text>
+      <text x="500" y="252" text-anchor="middle" class="text-body" font-size="11.5" fill="#52525B">Multi-MB Unstructured</text>
+    </g>
+    
+    <path d="M 595 205 Q 655.0 205.0 715 205" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="715,205 704.6076951545867,211.0 704.6076951545867,199.0" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <g>
+      <rect x="715" y="185" width="230" height="36" rx="18.0" fill="#FED7AA" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="830.0" y="208.0" text-anchor="middle" class="text-badge" fill="#22252A">Deterministic AST Parsing</text>
+    </g>
+    
+    <path d="M 830 225 Q 805.0 242.5 780 260" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="780,260 785.0729337909472,249.1250129768967 791.9544819233072,258.9557960231252" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <path d="M 830 225 Q 855.0 242.5 880 260" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="880,260 868.0455180766928,258.9557960231252 874.9270662090528,249.1250129768967" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <g>
+      <rect x="725" y="265" width="105" height="30" rx="15.0" fill="#E9D5FF" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="777.5" y="285.0" text-anchor="middle" class="text-badge" fill="#22252A">AST Tree</text>
+    </g>
+    
+    <g>
+      <rect x="840" y="265" width="115" height="30" rx="15.0" fill="#BBF7D0" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="897.5" y="285.0" text-anchor="middle" class="text-badge" fill="#22252A">Call Graph</text>
+    </g>
+    
+    <path d="M 500 276 Q 500.0 313.0 500 350" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="500,350 494.0,339.60769515458674 506.0,339.60769515458674" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <g transform="translate(525, 290)">
+      <text x="0" y="0" class="text-body" fill="#22252A">↓ 1. Privacy Scrubbing (Zero Secret Leakage)</text>
+      <text x="0" y="20" class="text-body" fill="#22252A">↓ 2. Conversational Slop &amp; Filler Pruning</text>
+      <text x="0" y="40" class="text-body" fill="#22252A">↓ 3. Deterministic AST &amp; Event Chunking</text>
+    </g>
+    
+    <g>
+      <rect x="360" y="355" width="280" height="36" rx="18.0" fill="#E9D5FF" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="500.0" y="378.0" text-anchor="middle" class="text-badge" fill="#22252A">Pre-Processed Neural Index</text>
+    </g>
+    
+    <g>
+      <!-- Cylinder Shadow -->
+      <ellipse cx="503" cy="514" rx="100" ry="14" fill="#E2E8F0" opacity="0.6" />
+      
+      <!-- Cylinder Body -->
+      <path d="M 400 420 L 400 510 A 100 14 0 0 0 600 510 L 600 420 Z" 
+            fill="#E9D5FF" stroke="#22252A" stroke-width="2.8" stroke-linejoin="round" />
+      
+      <!-- Cylinder Bottom Highlight Curve -->
+      <path d="M 404 508 A 96 12 0 0 0 596 508" 
+            fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.6" />
+            
+      <!-- Cylinder Top Ellipse -->
+      <ellipse cx="500" cy="420" rx="100" ry="14" fill="#F3E8FF" stroke="#22252A" stroke-width="2.8" />
+      
+      <!-- Highlight Reflection on Top -->
+      <path d="M 450.0 415.3333333333333 A 50.0 7.0 0 0 1 533.3333333333334 415.3333333333333" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" />
+      
+      <!-- Labels positioned cleanly inside cylinder body with generous breathing room -->
+      <text x="500" y="472" text-anchor="middle" class="text-heading" font-size="14.5">SQLite WAL + FTS5</text>
+      <text x="500" y="492" text-anchor="middle" class="text-body" font-size="11.5" fill="#52525B">brain.db (Sub-Second Recall)</text>
+    </g>
+    
+    <!-- Table Zoom Projection Lines -->
+    <path d="M 395 440 L 350 370" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
+    <path d="M 395 485 L 350 540" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="4,4" />
+    
+    <!-- Fast Semantic Token Retrieval Matrix Table -->
+    <g transform="translate(40, 360)">
+      <rect x="0" y="0" width="300" height="185" rx="10" fill="#FAF7F0" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
+      
+      <!-- Table Header -->
+      <rect x="0" y="0" width="300" height="32" rx="10" fill="#FEF08A" stroke="#22252A" stroke-width="2.2" />
+      <text x="150" y="22" text-anchor="middle" class="text-heading" fill="#22252A">Active Context Retrieval Matrix</text>
+      
+      <!-- Column Headers -->
+      <rect x="0" y="32" width="55" height="26" fill="#FED7AA" stroke="#22252A" stroke-width="1.4" />
+      <text x="27" y="50" text-anchor="middle" class="text-mono">T_ID</text>
+      
+      <rect x="55" y="32" width="60" height="26" fill="#FED7AA" stroke="#22252A" stroke-width="1.4" />
+      <text x="85" y="50" text-anchor="middle" class="text-mono">Score</text>
+      
+      <rect x="115" y="32" width="115" height="26" fill="#FED7AA" stroke="#22252A" stroke-width="1.4" />
+      <text x="172" y="50" text-anchor="middle" class="text-mono">Source</text>
+      
+      <rect x="230" y="32" width="70" height="26" fill="#E9D5FF" stroke="#22252A" stroke-width="1.4" />
+      <text x="265" y="50" text-anchor="middle" class="text-mono">≤ 400 t</text>
+      
+      <!-- Row 1 -->
+      <rect x="0" y="58" width="55" height="26" fill="#FFFFFF" stroke="#22252A" stroke-width="1" />
+      <text x="27" y="76" text-anchor="middle" class="text-mono">T01</text>
+      <rect x="55" y="58" width="60" height="26" fill="#FFFFFF" stroke="#22252A" stroke-width="1" />
+      <text x="85" y="76" text-anchor="middle" class="text-mono">0.99</text>
+      <rect x="115" y="58" width="115" height="26" fill="#FFFFFF" stroke="#22252A" stroke-width="1" />
+      <text x="172" y="76" text-anchor="middle" class="text-mono">FTS5 Memory</text>
+      <rect x="230" y="58" width="70" height="26" fill="#BBF7D0" stroke="#22252A" stroke-width="1" />
+      <text x="265" y="76" text-anchor="middle" class="text-mono">42 t</text>
+      
+      <!-- Row 2 -->
+      <rect x="0" y="84" width="55" height="26" fill="#FAF7F0" stroke="#22252A" stroke-width="1" />
+      <text x="27" y="102" text-anchor="middle" class="text-mono">T02</text>
+      <rect x="55" y="84" width="60" height="26" fill="#FAF7F0" stroke="#22252A" stroke-width="1" />
+      <text x="85" y="102" text-anchor="middle" class="text-mono">0.95</text>
+      <rect x="115" y="84" width="115" height="26" fill="#FAF7F0" stroke="#22252A" stroke-width="1" />
+      <text x="172" y="102" text-anchor="middle" class="text-mono">Invariants</text>
+      <rect x="230" y="84" width="70" height="26" fill="#BBF7D0" stroke="#22252A" stroke-width="1" />
+      <text x="265" y="102" text-anchor="middle" class="text-mono">68 t</text>
+      
+      <!-- Row 3 -->
+      <rect x="0" y="110" width="55" height="26" fill="#FFFFFF" stroke="#22252A" stroke-width="1" />
+      <text x="27" y="128" text-anchor="middle" class="text-mono">T03</text>
+      <rect x="55" y="110" width="60" height="26" fill="#FFFFFF" stroke="#22252A" stroke-width="1" />
+      <text x="85" y="128" text-anchor="middle" class="text-mono">0.91</text>
+      <rect x="115" y="110" width="115" height="26" fill="#FFFFFF" stroke="#22252A" stroke-width="1" />
+      <text x="172" y="128" text-anchor="middle" class="text-mono">AST Symbols</text>
+      <rect x="230" y="110" width="70" height="26" fill="#BBF7D0" stroke="#22252A" stroke-width="1" />
+      <text x="265" y="128" text-anchor="middle" class="text-mono">75 t</text>
+      
+      <!-- Row 4 -->
+      <rect x="0" y="136" width="55" height="26" fill="#FAF7F0" stroke="#22252A" stroke-width="1" />
+      <text x="27" y="154" text-anchor="middle" class="text-mono">T04</text>
+      <rect x="55" y="136" width="60" height="26" fill="#FAF7F0" stroke="#22252A" stroke-width="1" />
+      <text x="85" y="154" text-anchor="middle" class="text-mono">0.88</text>
+      <rect x="115" y="136" width="115" height="26" fill="#FAF7F0" stroke="#22252A" stroke-width="1" />
+      <text x="172" y="154" text-anchor="middle" class="text-mono">Confidence</text>
+      <rect x="230" y="136" width="70" height="26" fill="#BBF7D0" stroke="#22252A" stroke-width="1" />
+      <text x="265" y="154" text-anchor="middle" class="text-mono">55 t</text>
+      
+      <!-- Table Footer Pill -->
+      <rect x="10" y="165" width="280" height="16" rx="8" fill="#BBF7D0" />
+      <text x="150" y="177" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#15803D">Pinned Active Context: 240 Tokens Total</text>
+    </g>
+    
+    <g>
+      <rect x="340" y="520" width="320" height="36" rx="18.0" fill="#FED7AA" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="500.0" y="543.0" text-anchor="middle" class="text-badge" fill="#22252A">Autonomous Severity Scoring &amp; Task Routing</text>
+    </g>
+    
+    <path d="M 430 560 Q 290.0 592.5 180 625" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="180,625 188.26632752819322,616.3012742774223 191.66648122040203,627.8094867741291" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <path d="M 500 560 Q 500.0 592.5 500 625" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="500,625 494.0,614.6076951545867 506.0,614.6076951545867" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <path d="M 570 560 Q 710.0 592.5 820 625" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="820,625 808.333518779598,627.8094867741291 811.7336724718068,616.3012742774223" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <g>
+      <rect x="60" y="630" width="240" height="34" rx="17.0" fill="#FEF08A" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="180.0" y="652.0" text-anchor="middle" class="text-badge" fill="#22252A">Tier 1: Senior Boss (Brain)</text>
+    </g>
+    
+    <g>
+      <!-- Shadow -->
+      <polygon points="149.36,744.0 180,766.0 218.64,744.0 180,772.0" fill="#CBD5E1" opacity="0.7" />
+      <!-- Left Face -->
+      <polygon points="145.36,700.0 180,720.0 180,760.0 145.36,740.0" fill="#EAB308" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      <!-- Right Face -->
+      <polygon points="180,720.0 214.64,700.0 214.64,740.0 180,760.0" fill="#CA8A04" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      <!-- Top Face -->
+      <polygon points="180,680 214.64,700.0 180,720.0 145.36,700.0" fill="#FEF08A" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      
+    </g>
+    
+    <g transform="translate(60, 770)">
+      <rect x="0" y="0" width="240" height="100" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="2.2" />
+      <text x="120" y="24" text-anchor="middle" class="text-heading" font-size="15" fill="#0369A1">Fable 5.1 / Opus 5.5 / Gemini 4 / Argon</text>
+      <text x="120" y="46" text-anchor="middle" class="text-body">• High Cognition Architecture</text>
+      <text x="120" y="66" text-anchor="middle" class="text-body">• Invariants &amp; Sign-off</text>
+      <rect x="15" y="74" width="210" height="20" rx="4" fill="#BBF7D0" stroke="#15803D" stroke-width="1.2" />
+      <text x="120" y="88" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#15803D">ZERO DIRECT CODE (0 Tokens)</text>
+    </g>
+    
+    <g>
+      <rect x="380" y="625" width="240" height="34" rx="17.0" fill="#BAE6FD" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="500.0" y="647.0" text-anchor="middle" class="text-badge" fill="#22252A">Tier 2: Junior Bosses (Leads)</text>
+    </g>
+    
+    <g>
+      <!-- Shadow -->
+      <polygon points="469.36,739.0 500,761.0 538.64,739.0 500,767.0" fill="#CBD5E1" opacity="0.7" />
+      <!-- Left Face -->
+      <polygon points="465.36,695.0 500,715.0 500,755.0 465.36,735.0" fill="#38BDF8" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      <!-- Right Face -->
+      <polygon points="500,715.0 534.64,695.0 534.64,735.0 500,755.0" fill="#0284C7" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      <!-- Top Face -->
+      <polygon points="500,675 534.64,695.0 500,715.0 465.36,695.0" fill="#BAE6FD" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      
+    </g>
+    
+    <g transform="translate(380, 765)">
+      <rect x="0" y="0" width="240" height="100" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="2.2" />
+      <text x="120" y="24" text-anchor="middle" class="text-heading" fill="#0369A1">Domain Specialists</text>
+      <text x="120" y="46" text-anchor="middle" class="text-body">• Backend &amp; Frontend Leads</text>
+      <text x="120" y="66" text-anchor="middle" class="text-body">• Security &amp; QA Auditors</text>
+      <rect x="15" y="74" width="210" height="20" rx="4" fill="#E0F2FE" stroke="#0284C7" stroke-width="1.2" />
+      <text x="120" y="88" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#0284C7">Worker Coaching Loops</text>
+    </g>
+    
+    <g>
+      <rect x="700" y="625" width="240" height="34" rx="17.0" fill="#FED7AA" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="820.0" y="647.0" text-anchor="middle" class="text-badge" fill="#22252A">Tier 3: Execution Workers</text>
+    </g>
+    
+    <g>
+      <!-- Shadow -->
+      <polygon points="789.36,739.0 820,761.0 858.64,739.0 820,767.0" fill="#CBD5E1" opacity="0.7" />
+      <!-- Left Face -->
+      <polygon points="785.36,695.0 820,715.0 820,755.0 785.36,735.0" fill="#FB923C" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      <!-- Right Face -->
+      <polygon points="820,715.0 854.64,695.0 854.64,735.0 820,755.0" fill="#EA580C" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      <!-- Top Face -->
+      <polygon points="820,675 854.64,695.0 820,715.0 785.36,695.0" fill="#FED7AA" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      
+    </g>
+    
+    <g transform="translate(700, 765)">
+      <rect x="0" y="0" width="240" height="100" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="2.2" />
+      <text x="120" y="24" text-anchor="middle" class="text-heading" fill="#C2410C">Hermes / Ollama / OpenCode</text>
+      <text x="120" y="46" text-anchor="middle" class="text-body">• 100% Raw Code Implementation</text>
+      <text x="120" y="66" text-anchor="middle" class="text-body">• Fast Parallel Drafts &amp; Tests</text>
+      <rect x="15" y="74" width="210" height="20" rx="4" fill="#BBF7D0" stroke="#15803D" stroke-width="1.2" />
+      <text x="120" y="88" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#15803D">FREE LOCAL TOKENS ($0.00)</text>
+    </g>
+    
+    <path d="M 500 875 Q 515.0 902.5 500 930" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="500,930 499.7090038804219,918.0035287997515 510.2437507553945,923.7497543679184" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    <text x="533.0" y="906.5" text-anchor="start" class="text-body" fill="#3F3F46">Candidate Code Filter</text>
+    <!-- 4-Decision Quality Architecture Gate Card -->
+    <g transform="translate(60, 935)">
+      <rect x="0" y="0" width="880" height="210" rx="14" fill="#FEF9C3" stroke="#22252A" stroke-width="2.8" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Title Ribbon on Gate -->
+      <rect x="260" y="-16" width="360" height="36" rx="18" fill="#EAB308" stroke="#22252A" stroke-width="2.4" />
+      <text x="440" y="8" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="18" font-weight="700" fill="#FFFFFF">4-Decision Quality Architecture Gate</text>
+      
+      <!-- 4 Pillars Grid -->
+      <g transform="translate(27, 36)">
+        <!-- Gate 1: Karpathy Simplicity -->
+        <g transform="translate(0, 0)">
+          <rect x="0" y="0" width="195" height="150" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="2" />
+          <rect x="0" y="0" width="195" height="28" rx="8" fill="#BBF7D0" stroke="#22252A" stroke-width="1.6" />
+          <text x="97" y="19" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700">1. Simplicity</text>
+          <text x="97" y="48" text-anchor="middle" class="text-mono" font-size="11">Karpathy Doctrine</text>
+          <text x="14" y="70" class="text-body" font-size="12">• Minimal lines of diff</text>
+          <text x="14" y="90" class="text-body" font-size="12">• Zero speculative bloat</text>
+          <text x="14" y="110" class="text-body" font-size="12">• Standard library first</text>
+          <text x="14" y="130" class="text-body" font-size="12">• 50-line rewrite rule</text>
+        </g>
+        
+        <!-- Gate 2: Unslop / TurnItOut -->
+        <g transform="translate(210, 0)">
+          <rect x="0" y="0" width="195" height="150" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="2" />
+          <rect x="0" y="0" width="195" height="28" rx="8" fill="#BAE6FD" stroke="#22252A" stroke-width="1.6" />
+          <text x="97" y="19" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700">2. Unslop Master</text>
+          <text x="97" y="48" text-anchor="middle" class="text-mono" font-size="11">TurnItOut Engine</text>
+          <text x="14" y="70" class="text-body" font-size="12">• Strip conversational slop</text>
+          <text x="14" y="90" class="text-body" font-size="12">• No polite preambles</text>
+          <text x="14" y="110" class="text-body" font-size="12">• Zero sycophancy filler</text>
+          <text x="14" y="130" class="text-body" font-size="12">• Pure executable code</text>
+        </g>
+        
+        <!-- Gate 3: Red-Team Security -->
+        <g transform="translate(420, 0)">
+          <rect x="0" y="0" width="195" height="150" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="2" />
+          <rect x="0" y="0" width="195" height="28" rx="8" fill="#FECDD3" stroke="#22252A" stroke-width="1.6" />
+          <text x="97" y="19" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700">3. Red-Team</text>
+          <text x="97" y="48" text-anchor="middle" class="text-mono" font-size="11">Security Audit</text>
+          <text x="14" y="70" class="text-body" font-size="12">• Block shell=True execution</text>
+          <text x="14" y="90" class="text-body" font-size="12">• No hardcoded credentials</text>
+          <text x="14" y="110" class="text-body" font-size="12">• Path traversal guards</text>
+          <text x="14" y="130" class="text-body" font-size="12">• GitGuardian secret scan</text>
+        </g>
+        
+        <!-- Gate 4: Dual-Env Verification -->
+        <g transform="translate(630, 0)">
+          <rect x="0" y="0" width="195" height="150" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="2" />
+          <rect x="0" y="0" width="195" height="28" rx="8" fill="#E9D5FF" stroke="#22252A" stroke-width="1.6" />
+          <text x="97" y="19" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="14" font-weight="700">4. Dual-Env Test</text>
+          <text x="97" y="48" text-anchor="middle" class="text-mono" font-size="11">Verification Gate</text>
+          <text x="14" y="70" class="text-body" font-size="12">• Isolated sandbox check</text>
+          <text x="14" y="90" class="text-body" font-size="12">• Host pytest test suite</text>
+          <text x="14" y="110" class="text-body" font-size="12">• 100% tests pass check</text>
+          <text x="14" y="130" class="text-body" font-size="12">• Zero residue cleanup</text>
+        </g>
+      </g>
+    </g>
+    
+    <path d="M 360 1150 Q 375.0 1182.5 360 1215" fill="none" stroke="#15803D" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="360,1215 358.90722402114307,1203.0498602242471 369.80273663514845,1208.078558353788" fill="#15803D" stroke="#15803D" stroke-width="1" />
+    <text x="357.0" y="1186.5" text-anchor="end" class="text-body" fill="#3F3F46">100% Tests Pass</text>
+    <g>
+      <rect x="230" y="1220" width="260" height="36" rx="18.0" fill="#BBF7D0" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="360.0" y="1243.0" text-anchor="middle" class="text-badge" fill="#15803D">Verified Clean Git Commit</text>
+    </g>
+    
+    <!-- Autonomous Coaching Feedback Loop -->
+    <path d="M 945 1040 Q 995 925 945 815" fill="none" stroke="#EA580C" stroke-width="2.6" stroke-dasharray="6,4" />
+    <polygon points="940,815 952,809 952,821" fill="#EA580C" stroke="#EA580C" />
+    <g transform="translate(895, 875)">
+      <rect x="0" y="0" width="88" height="46" rx="6" fill="#FFF7ED" stroke="#EA580C" stroke-width="1.6" filter="url(#sketch-shadow)" />
+      <text x="44" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="11" font-weight="700" fill="#EA580C">Flaw Detected?</text>
+      <text x="44" y="32" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="10" fill="#7C2D12">Auto-Coaching Loop</text>
+    </g>
+    
+    <g>
+      <rect x="40" y="1275" width="285" height="34" rx="17.0" fill="#BAE6FD" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="182.5" y="1297.0" text-anchor="middle" class="text-badge" fill="#0369A1">24/7 Mobile Bridge (@HHAACLIBot)</text>
+    </g>
+    
+    <g>
+      <rect x="355" y="1275" width="285" height="34" rx="17.0" fill="#BBF7D0" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="497.5" y="1297.0" text-anchor="middle" class="text-badge" fill="#15803D">Deterministic Code Quality Gate</text>
+    </g>
+    
+    <g>
+      <rect x="675" y="1275" width="285" height="34" rx="17.0" fill="#FEF08A" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="817.5" y="1297.0" text-anchor="middle" class="text-badge" fill="#854D0E">Sub-Second Recall (24ms)</text>
+    </g>
+    
+    <!-- Clean Brand Signature -->
+    <g transform="translate(40, 1320)">
+      <text x="0" y="24" class="text-heading" fill="#22252A">AegisBrain Autonomous Architecture</text>
+      
+      <g transform="translate(0, 34)">
+        <rect x="0" y="0" width="60" height="26" rx="4" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+        <text x="30" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">AEGIS</text>
+        
+        <rect x="64" y="0" width="64" height="26" rx="4" fill="#22252A" stroke="#22252A" stroke-width="2" />
+        <text x="96" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">BRAIN</text>
+      </g>
+      
+      <text x="920" y="44" text-anchor="end" class="text-mono" font-size="12" fill="#71717A">github.com/PG300604/aegis-brain</text>
+    </g>
+    </svg>

@@ -4,3 +4,4 @@ export { StopwatchDial } from "./StopwatchDial";
 export { ArbitrageCalculator } from "./ArbitrageCalculator";
 export { TelegramSimulator } from "./TelegramSimulator";
 export { QualityGateCards } from "./QualityGateCards";
+export { InfographicsGallery } from "./InfographicsGallery";

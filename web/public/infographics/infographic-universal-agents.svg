@@ -1,0 +1,220 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 720" width="100%" height="auto">
+  <defs>
+    <style><![CDATA[
+    @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&amp;family=Caveat:wght@600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap');
+    
+    .paper-bg { fill: #FDFBF7; }
+    .ink { stroke: #22252A; stroke-linecap: round; stroke-linejoin: round; }
+    .text-title { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 26px; font-weight: 700; fill: #22252A; }
+    .text-subtitle { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 15px; fill: #52525B; }
+    .text-heading { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 18px; font-weight: 700; fill: #22252A; }
+    .text-body { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 14px; fill: #27272A; }
+    .text-badge { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 13px; font-weight: 700; }
+    .text-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; }
+    .text-metric { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 46px; font-weight: 700; }
+]]>
+    </style>
+    <filter id="sketch-shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="3" dy="4" stdDeviation="0" flood-color="#22252A" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Warm Sketchpad Canvas Card -->
+  <rect width="1040" height="720" rx="20" class="paper-bg ink" stroke="#22252A" stroke-width="3" />
+
+    <!-- Left Ribbon Tail -->
+    <path d="M 100.0 38 L 60.0 38 L 76.0 64.0 L 60.0 92 L 100.0 92 Z" 
+          fill="#BAE6FD" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+    <!-- Left Fold Shadow Triangle -->
+    <polygon points="100.0,92 100.0,110 124.0,92" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+    
+    <!-- Right Ribbon Tail -->
+    <path d="M 940.0 38 L 980.0 38 L 964.0 64.0 L 980.0 92 L 940.0 92 Z" 
+          fill="#BAE6FD" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+    <!-- Right Fold Shadow Triangle -->
+    <polygon points="940.0,92 940.0,110 916.0,92" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+    
+    <!-- Main Center Banner -->
+    <rect x="100.0" y="30" width="840" height="68" rx="6" fill="#F0F9FF" stroke="#22252A" stroke-width="2.8" filter="url(#sketch-shadow)" />
+    <!-- Inner Accent Line -->
+    <rect x="104.0" y="34" width="832" height="60" rx="4" fill="none" stroke="#BAE6FD" stroke-width="1.8" />
+    <text x="520" y="58" text-anchor="middle" class="text-title" fill="#0369A1">UNIVERSAL AGENT INTERCHANGEABILITY PROTOCOL</text>
+    <text x="520" y="80" text-anchor="middle" class="text-subtitle" fill="#475569">Standardized UniversalAgentEnvelope • Zero Tool Lock-In • Any Model as Boss or Worker</text>
+    <!-- Row 1: Tier 1 Boss Candidates -->
+    <g transform="translate(40, 120)">
+      <rect x="0" y="0" width="960" height="120" rx="14" fill="#FFFBEB" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Title Ribbon -->
+      <rect x="230" y="-14" width="500" height="28" rx="14" fill="#FEF08A" stroke="#22252A" stroke-width="2" />
+      <text x="480" y="5" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#854D0E">TIER 1: SENIOR BOSS (COGNITION &amp; ARCHITECTURE) — SELECT ANY TOOL</text>
+      
+      <!-- 4 Boss Tool Candidates -->
+      <g transform="translate(25, 28)">
+        <!-- Boss 1: OpenCode -->
+        <g transform="translate(0, 0)">
+          <rect x="0" y="0" width="215" height="72" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="215" height="22" rx="8" fill="#EDE9FE" stroke="#22252A" stroke-width="1.2" />
+          <text x="107" y="16" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#6B21A8">OpenCode CLI</text>
+          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Model: opus-5.5 / gpt-6-astra</text>
+          <text x="12" y="60" class="text-body" font-size="11" fill="#15803D">✓ Cognition &amp; Planning</text>
+        </g>
+        
+        <!-- Boss 2: OpenAI Codex -->
+        <g transform="translate(232, 0)">
+          <rect x="0" y="0" width="215" height="72" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="215" height="22" rx="8" fill="#EDE9FE" stroke="#22252A" stroke-width="1.2" />
+          <text x="107" y="16" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#6B21A8">OpenAI Codex</text>
+          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Model: codex-5.4 / fable-5.1</text>
+          <text x="12" y="60" class="text-body" font-size="11" fill="#15803D">✓ Strategic Architecture</text>
+        </g>
+        
+        <!-- Boss 3: Google Antigravity -->
+        <g transform="translate(464, 0)">
+          <rect x="0" y="0" width="215" height="72" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="215" height="22" rx="8" fill="#EDE9FE" stroke="#22252A" stroke-width="1.2" />
+          <text x="107" y="16" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#6B21A8">Google Antigravity</text>
+          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Model: gemini-4 / argon</text>
+          <text x="12" y="60" class="text-body" font-size="11" fill="#15803D">✓ Autonomous Senior Boss</text>
+        </g>
+        
+        <!-- Boss 4: Claude Code CLI -->
+        <g transform="translate(696, 0)">
+          <rect x="0" y="0" width="215" height="72" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="215" height="22" rx="8" fill="#EDE9FE" stroke="#22252A" stroke-width="1.2" />
+          <text x="107" y="16" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#6B21A8">Claude Code CLI</text>
+          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Model: opus-5.5 / claude-4</text>
+          <text x="12" y="60" class="text-body" font-size="11" fill="#15803D">✓ Invariants &amp; Sign-Off</text>
+        </g>
+      </g>
+    </g>
+    
+    <path d="M 200 240 Q 200.0 257.5 200 275" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="200,275 194.0,264.60769515458674 206.0,264.60769515458674" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <path d="M 840 240 Q 840.0 257.5 840 275" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="840,275 834.0,264.60769515458674 846.0,264.60769515458674" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <!-- Row 2: Standardized Execution Protocol Bus -->
+    <g transform="translate(40, 275)">
+      <rect x="0" y="0" width="960" height="115" rx="14" fill="#F0F9FF" stroke="#0284C7" stroke-width="2.6" stroke-dasharray="6,4" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Title Ribbon -->
+      <rect x="250" y="-14" width="460" height="28" rx="14" fill="#BAE6FD" stroke="#22252A" stroke-width="2" />
+      <text x="480" y="5" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#0369A1">STANDARDIZED EXECUTION PROTOCOL (UniversalAgentEnvelope)</text>
+      
+      <!-- 4 Protocol Stages -->
+      <g transform="translate(25, 26)">
+        <g transform="translate(0, 0)">
+          <rect x="0" y="0" width="215" height="66" rx="6" fill="#FFFFFF" stroke="#22252A" stroke-width="1.6" />
+          <text x="10" y="24" class="text-heading" font-size="13" fill="#0284C7">1. Normalized Payload</text>
+          <text x="10" y="44" class="text-body" font-size="11" fill="#475569">Unified JSON schema</text>
+          <text x="10" y="58" class="text-body" font-size="11" fill="#475569">across all agent runners</text>
+        </g>
+        
+        <g transform="translate(232, 0)">
+          <rect x="0" y="0" width="215" height="66" rx="6" fill="#FFFFFF" stroke="#22252A" stroke-width="1.6" />
+          <text x="10" y="24" class="text-heading" font-size="13" fill="#D97706">2. Quality Verification</text>
+          <text x="10" y="44" class="text-body" font-size="11" fill="#475569">4-Gate architectural check</text>
+          <text x="10" y="58" class="text-body" font-size="11" fill="#475569">Karpathy + Security + Test</text>
+        </g>
+        
+        <g transform="translate(464, 0)">
+          <rect x="0" y="0" width="215" height="66" rx="6" fill="#FFFFFF" stroke="#22252A" stroke-width="1.6" />
+          <text x="10" y="24" class="text-heading" font-size="13" fill="#7C3AED">3. Worker Coaching</text>
+          <text x="10" y="44" class="text-body" font-size="11" fill="#475569">Targeted correction loop</text>
+          <text x="10" y="58" class="text-body" font-size="11" fill="#475569">Error feedback dossiers</text>
+        </g>
+        
+        <g transform="translate(696, 0)">
+          <rect x="0" y="0" width="215" height="66" rx="6" fill="#FFFFFF" stroke="#22252A" stroke-width="1.6" />
+          <text x="10" y="24" class="text-heading" font-size="13" fill="#15803D">4. Executive Sign-Off</text>
+          <text x="10" y="44" class="text-body" font-size="11" fill="#475569">Verified git commit</text>
+          <text x="10" y="58" class="text-body" font-size="11" fill="#475569">Production-grade delivery</text>
+        </g>
+      </g>
+    </g>
+    
+    <path d="M 200 390 Q 200.0 407.5 200 425" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="200,425 194.0,414.60769515458674 206.0,414.60769515458674" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <path d="M 840 390 Q 840.0 407.5 840 425" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="840,425 834.0,414.60769515458674 846.0,414.60769515458674" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    
+    <!-- Row 3: Tier 3 Worker Candidates -->
+    <g transform="translate(40, 425)">
+      <rect x="0" y="0" width="960" height="135" rx="14" fill="#F0FDF4" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Title Ribbon (Unobstructed Safe Placement) -->
+      <rect x="180" y="10" width="600" height="26" rx="13" fill="#BBF7D0" stroke="#15803D" stroke-width="1.6" />
+      <text x="480" y="27" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#15803D">TIER 3: WORKER CANDIDATES (100% RAW CODE &amp; TESTS) — FREE LOCAL TOKENS</text>
+      
+      <!-- 4 Worker Candidates -->
+      <g transform="translate(25, 46)">
+        <!-- Worker 1: Hermes CLI -->
+        <g transform="translate(0, 0)">
+          <rect x="0" y="0" width="215" height="72" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="215" height="22" rx="8" fill="#FED7AA" stroke="#22252A" stroke-width="1.2" />
+          <text x="107" y="16" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#9A3412">Hermes CLI</text>
+          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Command: hermes chat -q</text>
+          <text x="12" y="60" class="text-body" font-size="11" fill="#15803D">✓ Fast Boilerplate Drafts</text>
+        </g>
+        
+        <!-- Worker 2: Ollama Local MoE -->
+        <g transform="translate(232, 0)">
+          <rect x="0" y="0" width="215" height="72" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="215" height="22" rx="8" fill="#E9D5FF" stroke="#22252A" stroke-width="1.2" />
+          <text x="107" y="16" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#6B21A8">Ollama (qwen2.5)</text>
+          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Model: qwen2.5-coder:7b</text>
+          <text x="12" y="60" class="text-body" font-size="11" fill="#15803D">✓ 100% Free Offline Tokens</text>
+        </g>
+        
+        <!-- Worker 3: OpenCode Engine -->
+        <g transform="translate(464, 0)">
+          <rect x="0" y="0" width="215" height="72" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="215" height="22" rx="8" fill="#BBF7D0" stroke="#22252A" stroke-width="1.2" />
+          <text x="107" y="16" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#15803D">OpenCode Engine</text>
+          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Command: opencode run</text>
+          <text x="12" y="60" class="text-body" font-size="11" fill="#15803D">✓ Autonomous Subagent</text>
+        </g>
+        
+        <!-- Worker 4: Claude Code / Codex -->
+        <g transform="translate(696, 0)">
+          <rect x="0" y="0" width="215" height="72" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="215" height="22" rx="8" fill="#BAE6FD" stroke="#22252A" stroke-width="1.2" />
+          <text x="107" y="16" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#0369A1">Claude Code / Codex</text>
+          <text x="12" y="42" class="text-mono" font-size="10" fill="#4B5563">Command: claude -p / codex</text>
+          <text x="12" y="60" class="text-body" font-size="11" fill="#15803D">✓ Surgical Diff Execution</text>
+        </g>
+      </g>
+    </g>
+    
+    <g>
+      <rect x="50" y="575" width="290" height="34" rx="17.0" fill="#BAE6FD" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="195.0" y="597.0" text-anchor="middle" class="text-badge" fill="#0369A1">Standardized JSON Payload Envelope</text>
+    </g>
+    
+    <g>
+      <rect x="375" y="575" width="290" height="34" rx="17.0" fill="#BBF7D0" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="520.0" y="597.0" text-anchor="middle" class="text-badge" fill="#15803D">Zero Vendor Lock-In Guarantee</text>
+    </g>
+    
+    <g>
+      <rect x="700" y="575" width="290" height="34" rx="17.0" fill="#FEF08A" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="845.0" y="597.0" text-anchor="middle" class="text-badge" fill="#854D0E">Dynamic Token &amp; Latency Arbitrage</text>
+    </g>
+    
+    <!-- Clean Brand Signature -->
+    <g transform="translate(40, 635)">
+      <text x="0" y="24" class="text-heading" fill="#22252A">AegisBrain Autonomous Architecture</text>
+      
+      <g transform="translate(0, 34)">
+        <rect x="0" y="0" width="60" height="26" rx="4" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+        <text x="30" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">AEGIS</text>
+        
+        <rect x="64" y="0" width="64" height="26" rx="4" fill="#22252A" stroke="#22252A" stroke-width="2" />
+        <text x="96" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">BRAIN</text>
+      </g>
+      
+      <text x="960" y="44" text-anchor="end" class="text-mono" font-size="12" fill="#71717A">github.com/PG300604/aegis-brain</text>
+    </g>
+    </svg>

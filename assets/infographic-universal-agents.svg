@@ -142,14 +142,14 @@
     
     <!-- Row 3: Tier 3 Worker Candidates -->
     <g transform="translate(40, 425)">
-      <rect x="0" y="0" width="960" height="120" rx="14" fill="#F0FDF4" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
+      <rect x="0" y="0" width="960" height="135" rx="14" fill="#F0FDF4" stroke="#22252A" stroke-width="2.6" filter="url(#sketch-shadow)" />
       
-      <!-- Top Title Ribbon (Unobstructed Center Placement) -->
-      <rect x="200" y="-14" width="560" height="28" rx="14" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
-      <text x="480" y="5" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#15803D">TIER 3: WORKER CANDIDATES (100% RAW CODE &amp; TESTS) — FREE LOCAL TOKENS</text>
+      <!-- Top Title Ribbon (Unobstructed Safe Placement) -->
+      <rect x="180" y="10" width="600" height="26" rx="13" fill="#BBF7D0" stroke="#15803D" stroke-width="1.6" />
+      <text x="480" y="27" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#15803D">TIER 3: WORKER CANDIDATES (100% RAW CODE &amp; TESTS) — FREE LOCAL TOKENS</text>
       
       <!-- 4 Worker Candidates -->
-      <g transform="translate(25, 28)">
+      <g transform="translate(25, 46)">
         <!-- Worker 1: Hermes CLI -->
         <g transform="translate(0, 0)">
           <rect x="0" y="0" width="215" height="72" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />

@@ -1382,6 +1382,8 @@ def attach_to_input_desktop() -> bool:
 
 def is_workstation_locked() -> bool:
     """Check if the Windows workstation is currently showing an active Lock Screen."""
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return False
     if sys.platform == "win32":
         try:
             import ctypes

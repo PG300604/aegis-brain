@@ -1,0 +1,47 @@
+/* CallChip.css - React Bits Tool Execution Chip */
+
+.call-chip-container {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(13, 15, 24, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
+}
+
+.call-chip-container.running {
+  border-color: rgba(0, 240, 255, 0.5);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
+}
+
+.call-chip-container.done {
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.call-chip-container.error {
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.wipe-fill-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, rgba(0, 240, 255, 0.15), rgba(16, 185, 129, 0.2));
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+@keyframes glyph-roll {
+  0% { transform: translateY(-100%); opacity: 0; }
+  50% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+.tool-glyph-roll {
+  transition: transform 0.2s ease;
+}

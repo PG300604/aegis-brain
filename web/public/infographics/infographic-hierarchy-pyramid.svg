@@ -1,0 +1,218 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 870" width="100%" height="auto">
+  <defs>
+    <style><![CDATA[
+    @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&amp;family=Caveat:wght@600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap');
+    
+    .paper-bg { fill: #FDFBF7; }
+    .ink { stroke: #22252A; stroke-linecap: round; stroke-linejoin: round; }
+    .text-title { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 26px; font-weight: 700; fill: #22252A; }
+    .text-subtitle { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 15px; fill: #52525B; }
+    .text-heading { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 18px; font-weight: 700; fill: #22252A; }
+    .text-body { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 14px; fill: #27272A; }
+    .text-badge { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 13px; font-weight: 700; }
+    .text-mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; }
+    .text-metric { font-family: 'Patrick Hand', 'Caveat', 'Comic Sans MS', cursive, sans-serif; font-size: 46px; font-weight: 700; }
+]]>
+    </style>
+    <filter id="sketch-shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="3" dy="4" stdDeviation="0" flood-color="#22252A" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Warm Sketchpad Canvas Card -->
+  <rect width="1040" height="870" rx="20" class="paper-bg ink" stroke="#22252A" stroke-width="3" />
+
+    <!-- Left Ribbon Tail -->
+    <path d="M 130.0 38 L 90.0 38 L 106.0 64.0 L 90.0 92 L 130.0 92 Z" 
+          fill="#BAE6FD" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+    <!-- Left Fold Shadow Triangle -->
+    <polygon points="130.0,92 130.0,110 154.0,92" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+    
+    <!-- Right Ribbon Tail -->
+    <path d="M 910.0 38 L 950.0 38 L 934.0 64.0 L 950.0 92 L 910.0 92 Z" 
+          fill="#BAE6FD" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+    <!-- Right Fold Shadow Triangle -->
+    <polygon points="910.0,92 910.0,110 886.0,92" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+    
+    <!-- Main Center Banner -->
+    <rect x="130.0" y="30" width="780" height="68" rx="6" fill="#F0F9FF" stroke="#22252A" stroke-width="2.8" filter="url(#sketch-shadow)" />
+    <!-- Inner Accent Line -->
+    <rect x="134.0" y="34" width="772" height="60" rx="4" fill="none" stroke="#BAE6FD" stroke-width="1.8" />
+    <text x="520" y="58" text-anchor="middle" class="text-title" fill="#0369A1">3-TIER MULTI-AGENT HIERARCHY</text>
+    <text x="520" y="80" text-anchor="middle" class="text-subtitle" fill="#475569">Strict Token Arbitrage Architecture &amp; Autonomous Error-Reduction Coaching Loop</text>
+    <!-- Tier 1 Card: Senior Boss -->
+    <g transform="translate(170.0, 125)">
+      <rect x="0" y="0" width="700" height="155" rx="14" fill="#FFFBEB" stroke="#22252A" stroke-width="2.8" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Title Ribbon -->
+      <rect x="180" y="-14" width="340" height="30" rx="15" fill="#FEF08A" stroke="#22252A" stroke-width="2" />
+      <text x="350" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="15" font-weight="700" fill="#854D0E">TIER 1: SENIOR BOSS (THE BRAIN)</text>
+      
+      <!-- Isometric Gold Cube & Crown Icon on Left -->
+      <g transform="translate(65, 40)">
+        
+    <g>
+      <!-- Shadow -->
+      <polygon points="-23.712,52.0 0,70.0 31.712,52.0 0,76.0" fill="#CBD5E1" opacity="0.7" />
+      <!-- Left Face -->
+      <polygon points="-27.712,16.0 0,32.0 0,64.0 -27.712,48.0" fill="#EAB308" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      <!-- Right Face -->
+      <polygon points="0,32.0 27.712,16.0 27.712,48.0 0,64.0" fill="#CA8A04" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      <!-- Top Face -->
+      <polygon points="0,0 27.712,16.0 0,32.0 -27.712,16.0" fill="#FEF08A" stroke="#22252A" stroke-width="2.6" stroke-linejoin="round" />
+      
+    </g>
+    
+        <text x="0" y="-12" text-anchor="middle" font-size="22">👑</text>
+      </g>
+      
+      <!-- Details -->
+      <g transform="translate(145, 32)">
+        <text x="0" y="16" class="text-heading" font-size="17" fill="#0369A1">Models: Fable 5.1 / Opus 5.5 / Gemini 4 / Argon</text>
+        <text x="0" y="38" class="text-body">• High Cognition, System Architecture &amp; Strategy</text>
+        <text x="0" y="58" class="text-body">• Invariants Definition, Error Detection &amp; Final Production Sign-off</text>
+        
+        <!-- Mandatory Invariant Badge -->
+        <rect x="0" y="70" width="460" height="26" rx="13" fill="#BBF7D0" stroke="#15803D" stroke-width="1.4" />
+        <text x="230" y="87" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" font-weight="700" fill="#15803D">MANDATORY INVARIANT: ZERO DIRECT CODE GENERATED (0 Tokens)</text>
+      </g>
+    </g>
+    
+    <path d="M 440 280 Q 440.0 307.5 440 335" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="440,335 434.0,324.60769515458674 446.0,324.60769515458674" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    <text x="458.0" y="311.5" text-anchor="start" class="text-body" fill="#3F3F46">1. Decomposes tasks into strict invariants &amp; coaching rules</text>
+    <!-- Tier 2 Card: Junior Bosses -->
+    <g transform="translate(110.0, 335)">
+      <rect x="0" y="0" width="820" height="165" rx="14" fill="#F0F9FF" stroke="#22252A" stroke-width="2.8" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Title Ribbon -->
+      <rect x="240" y="-14" width="340" height="30" rx="15" fill="#BAE6FD" stroke="#22252A" stroke-width="2" />
+      <text x="410" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="15" font-weight="700" fill="#0369A1">TIER 2: JUNIOR BOSSES (DOMAIN LEADS)</text>
+      
+      <!-- 3 Domain Specialists Modules -->
+      <g transform="translate(35, 32)">
+        <!-- Module 1: Backend Lead -->
+        <g transform="translate(0, 0)">
+          <rect x="0" y="0" width="235" height="115" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="235" height="24" rx="8" fill="#E0F2FE" stroke="#22252A" stroke-width="1.4" />
+          <text x="117" y="17" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700">Backend &amp; DB Lead</text>
+          <text x="12" y="42" class="text-body" font-size="12">• Schema contracts</text>
+          <text x="12" y="60" class="text-body" font-size="12">• Formats worker prompts</text>
+          <text x="12" y="78" class="text-body" font-size="12">• SQLite FTS5 neural index</text>
+          <text x="12" y="96" class="text-body" font-size="12">• AST graph navigation</text>
+        </g>
+        
+        <!-- Module 2: Frontend & Design Lead -->
+        <g transform="translate(255, 0)">
+          <rect x="0" y="0" width="235" height="115" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="235" height="24" rx="8" fill="#FEF08A" stroke="#22252A" stroke-width="1.4" />
+          <text x="117" y="17" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700">UI-UX Design Lead</text>
+          <text x="12" y="42" class="text-body" font-size="12">• UI UX Pro Max tokens</text>
+          <text x="12" y="60" class="text-body" font-size="12">• Motion &amp; GSAP tiers</text>
+          <text x="12" y="78" class="text-body" font-size="12">• Sketch &amp; vector styles</text>
+          <text x="12" y="96" class="text-body" font-size="12">• Accessibility compliance</text>
+        </g>
+        
+        <!-- Module 3: Security & QA Lead -->
+        <g transform="translate(510, 0)">
+          <rect x="0" y="0" width="235" height="115" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="235" height="24" rx="8" fill="#FECDD3" stroke="#22252A" stroke-width="1.4" />
+          <text x="117" y="17" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700">Security &amp; QA Auditor</text>
+          <text x="12" y="42" class="text-body" font-size="12">• 4-Decision Quality Gate</text>
+          <text x="12" y="60" class="text-body" font-size="12">• Red-Team vulnerability scan</text>
+          <text x="12" y="78" class="text-body" font-size="12">• GitGuardian secret audit</text>
+          <text x="12" y="96" class="text-body" font-size="12">• Dual-env pytest testing</text>
+        </g>
+      </g>
+    </g>
+    
+    <path d="M 440 500 Q 440.0 527.5 440 555" fill="none" stroke="#22252A" stroke-width="2.6" stroke-linecap="round" />
+    <polygon points="440,555 434.0,544.6076951545867 446.0,544.6076951545867" fill="#22252A" stroke="#22252A" stroke-width="1" />
+    <text x="458.0" y="531.5" text-anchor="start" class="text-body" fill="#3F3F46">2. Dispatches CLI worker commands (hermes, ollama, opencode)</text>
+    <!-- Tier 3 Card: Execution Workers -->
+    <g transform="translate(50.0, 555)">
+      <rect x="0" y="0" width="940" height="165" rx="14" fill="#F0FDF4" stroke="#22252A" stroke-width="2.8" filter="url(#sketch-shadow)" />
+      
+      <!-- Top Title Ribbon -->
+      <rect x="280" y="-14" width="380" height="30" rx="15" fill="#BBF7D0" stroke="#22252A" stroke-width="2" />
+      <text x="470" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="15" font-weight="700" fill="#15803D">TIER 3: EXECUTION WORKERS (THE MUSCLE)</text>
+      
+      <!-- 4 Fast Parallel Workers -->
+      <g transform="translate(30, 32)">
+        <!-- Worker 1: Hermes CLI -->
+        <g transform="translate(0, 0)">
+          <rect x="0" y="0" width="205" height="115" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="205" height="24" rx="8" fill="#FED7AA" stroke="#22252A" stroke-width="1.4" />
+          <text x="102" y="17" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#9A3412">Hermes CLI</text>
+          <text x="12" y="44" class="text-body" font-size="12">• Primary code engine</text>
+          <text x="12" y="64" class="text-body" font-size="12">• hermes chat -q</text>
+          <text x="12" y="84" class="text-body" font-size="12">• Rapid CLI execution</text>
+          <text x="12" y="104" class="text-mono" font-size="10" fill="#15803D">✓ 100% Free Tokens</text>
+        </g>
+        
+        <!-- Worker 2: Ollama Local MoE -->
+        <g transform="translate(225, 0)">
+          <rect x="0" y="0" width="205" height="115" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="205" height="24" rx="8" fill="#E9D5FF" stroke="#22252A" stroke-width="1.4" />
+          <text x="102" y="17" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#6B21A8">Ollama (qwen2.5)</text>
+          <text x="12" y="44" class="text-body" font-size="12">• Local MoE worker</text>
+          <text x="12" y="64" class="text-body" font-size="12">• 100% Offline execution</text>
+          <text x="12" y="84" class="text-body" font-size="12">• Zero data egress</text>
+          <text x="12" y="104" class="text-mono" font-size="10" fill="#15803D">✓ 100% Free Tokens</text>
+        </g>
+        
+        <!-- Worker 3: Claude Code CLI / Codex -->
+        <g transform="translate(450, 0)">
+          <rect x="0" y="0" width="205" height="115" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="205" height="24" rx="8" fill="#BAE6FD" stroke="#22252A" stroke-width="1.4" />
+          <text x="102" y="17" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#0369A1">Claude Code / Codex</text>
+          <text x="12" y="44" class="text-body" font-size="12">• Surgical diffs</text>
+          <text x="12" y="64" class="text-body" font-size="12">• Terminal refactoring</text>
+          <text x="12" y="84" class="text-body" font-size="12">• Git commit drafting</text>
+          <text x="12" y="104" class="text-mono" font-size="10" fill="#15803D">✓ Token Arbitrage</text>
+        </g>
+        
+        <!-- Worker 4: OpenCode Engine -->
+        <g transform="translate(675, 0)">
+          <rect x="0" y="0" width="205" height="115" rx="8" fill="#FFFFFF" stroke="#22252A" stroke-width="1.8" />
+          <rect x="0" y="0" width="205" height="24" rx="8" fill="#BBF7D0" stroke="#22252A" stroke-width="1.4" />
+          <text x="102" y="17" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#15803D">OpenCode Engine</text>
+          <text x="12" y="44" class="text-body" font-size="12">• Multi-model fallbacks</text>
+          <text x="12" y="64" class="text-body" font-size="12">• Autonomous task worker</text>
+          <text x="12" y="84" class="text-body" font-size="12">• Pytest generator</text>
+          <text x="12" y="104" class="text-mono" font-size="10" fill="#15803D">✓ 100% Free Tokens</text>
+        </g>
+      </g>
+    </g>
+    
+    <!-- Autonomous Coaching Feedback Loop Curve -->
+    <path d="M 945 610 Q 995 500 995 420 Q 995 360 895 360" fill="none" stroke="#EA580C" stroke-width="3" stroke-dasharray="6,4" />
+    <polygon points="895,360 907,354 907,366" fill="#EA580C" stroke="#EA580C" />
+    
+    <g transform="translate(930, 480)">
+      <rect x="-40" y="-30" width="95" height="60" rx="8" fill="#FFF7ED" stroke="#EA580C" stroke-width="2" filter="url(#sketch-shadow)" />
+      <text x="7" y="-10" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="13" font-weight="700" fill="#EA580C">Loop Until 0</text>
+      <text x="7" y="6" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#9A3412">Errors &amp; 100%</text>
+      <text x="7" y="22" text-anchor="middle" font-family="'Patrick Hand', cursive" font-size="12" fill="#9A3412">Tests Pass!</text>
+    </g>
+    
+    <g>
+      <rect x="240" y="740" width="560" height="36" rx="18.0" fill="#FEF08A" stroke="#22252A" stroke-width="2.2" filter="url(#sketch-shadow)" />
+      <text x="520.0" y="763.0" text-anchor="middle" class="text-badge" fill="#854D0E">Continuous Learning Curve Persisted in brain.db (agent_confidence)</text>
+    </g>
+    
+    <!-- Clean Brand Signature -->
+    <g transform="translate(40, 795)">
+      <text x="0" y="24" class="text-heading" fill="#22252A">AegisBrain Autonomous Architecture</text>
+      
+      <g transform="translate(0, 34)">
+        <rect x="0" y="0" width="60" height="26" rx="4" fill="#0284C7" stroke="#22252A" stroke-width="2" />
+        <text x="30" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">AEGIS</text>
+        
+        <rect x="64" y="0" width="64" height="26" rx="4" fill="#22252A" stroke="#22252A" stroke-width="2" />
+        <text x="96" y="18" text-anchor="middle" font-family="'Patrick Hand', cursive" font-weight="700" font-size="14" fill="#FFFFFF">BRAIN</text>
+      </g>
+      
+      <text x="960" y="44" text-anchor="end" class="text-mono" font-size="12" fill="#71717A">github.com/PG300604/aegis-brain</text>
+    </g>
+    </svg>
