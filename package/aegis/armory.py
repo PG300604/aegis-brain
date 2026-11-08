@@ -601,6 +601,7 @@ def apply_archetype_profile(
     armory_root = armory_dir or get_armory_dir()
 
     mounted: List[str] = []
+    init_armory_db(conn, armory_root / "armory.db")
     with get_armory_connection(conn, armory_root / "armory.db") as c:
         for skill_name in archetype_info["skills"]:
             existing = c.execute("SELECT id FROM armory_skills WHERE name = ?", (skill_name,)).fetchone()

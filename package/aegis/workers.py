@@ -408,9 +408,11 @@ def run_workers_wizard(
     report["hermes"] = hm_res
     report["ollama"] = ol_res
 
-    # If nothing is detected at all, return advice
+    # If nothing is detected at all and no models were confirmed by the user, return advice
+    has_user_models = bool(answers.get("opencode_models") or answers.get("models"))
     if (
-        oc_res.get("status") == "not_installed"
+        not has_user_models
+        and oc_res.get("status") == "not_installed"
         and hm_res.get("status") == "missing"
         and ol_res.get("status") == "missing"
     ):
@@ -421,8 +423,8 @@ def run_workers_wizard(
 
     # Step 3: Strict No-Guesswork Rule for OpenCode
     confirmed_opencode_models: List[str] = []
-    if answers.get("opencode_models"):
-        raw = answers["opencode_models"]
+    if answers.get("opencode_models") or answers.get("models"):
+        raw = answers.get("opencode_models") or answers.get("models")
         if isinstance(raw, str):
             confirmed_opencode_models = [m.strip() for m in raw.split(",") if m.strip()]
         elif isinstance(raw, list):

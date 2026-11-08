@@ -409,6 +409,7 @@ def save_worker_model(
     if not t_name or not m_name:
         return 0
 
+    init_db()
     with get_connection() as conn:
         cur = conn.cursor()
         cur.execute(
@@ -439,6 +440,7 @@ def save_worker_model(
 
 def get_worker_models(tool_name: Optional[str] = None) -> List[Dict[str, Any]]:
     """Retrieve all confirmed worker models, optionally filtered by tool."""
+    init_db()
     with get_connection() as conn:
         if tool_name:
             rows = conn.execute(
@@ -461,6 +463,7 @@ def get_worker_models(tool_name: Optional[str] = None) -> List[Dict[str, Any]]:
 
 def clear_worker_models(tool_name: Optional[str] = None) -> None:
     """Clear worker models from database."""
+    init_db()
     with get_connection() as conn:
         if tool_name:
             conn.execute("DELETE FROM worker_models WHERE tool_name = ?", (tool_name,))
