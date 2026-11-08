@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef } from "react";
 import { motion, useScroll, useTransform, useSpring, useMotionValue } from "motion/react";
 
 interface ParallaxCardProps {
@@ -29,27 +29,27 @@ export function ParallaxCard({
 
   // Framer Card Stack Parallax:
   // As the next card approaches and covers this card, scale down slightly
-  // and dim to create authentic 3D physical card deck depth
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.93]);
-  const opacity = useTransform(scrollYProgress, [0, 0.85, 1], [1, 0.96, 0.82]);
-  const y = useTransform(scrollYProgress, [0, 1], ["0px", "-12px"]);
+  // and dim to create authentic physical card deck depth
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
+  const opacity = useTransform(scrollYProgress, [0, 0.85, 1], [1, 0.97, 0.82]);
+  const y = useTransform(scrollYProgress, [0, 1], ["0px", "-16px"]);
 
   // Interactive 3D Mouse Movement Physics (Santioni Spirits Style)
   const rawMouseX = useMotionValue(0);
   const rawMouseY = useMotionValue(0);
 
   // Spring physics configuration for organic tactile damping
-  const springConfig = { damping: 25, stiffness: 120, mass: 0.5 };
+  const springConfig = { damping: 30, stiffness: 140, mass: 0.6 };
   const smoothMouseX = useSpring(rawMouseX, springConfig);
   const smoothMouseY = useSpring(rawMouseY, springConfig);
 
   // Derive 3D tilt angles from mouse coordinates
-  const rotateX = useTransform(smoothMouseY, [-0.5, 0.5], [6, -6]);
-  const rotateY = useTransform(smoothMouseX, [-0.5, 0.5], [-6, 6]);
-  const shardX = useTransform(smoothMouseX, [-0.5, 0.5], [-24, 24]);
-  const shardY = useTransform(smoothMouseY, [-0.5, 0.5], [-24, 24]);
-  const reverseShardX = useTransform(smoothMouseX, [-0.5, 0.5], [30, -30]);
-  const reverseShardY = useTransform(smoothMouseY, [-0.5, 0.5], [30, -30]);
+  const rotateX = useTransform(smoothMouseY, [-0.5, 0.5], [4.5, -4.5]);
+  const rotateY = useTransform(smoothMouseX, [-0.5, 0.5], [-4.5, 4.5]);
+
+  // Dynamic 3D Lift Shadow offsets: shadow shifts opposite to tilt
+  const shadowX = useTransform(smoothMouseX, [-0.5, 0.5], [18, -18]);
+  const shadowY = useTransform(smoothMouseY, [-0.5, 0.5], [25, 5]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -66,14 +66,14 @@ export function ParallaxCard({
   };
 
   // Card top offset: all cards stack near the top below the header
-  const topOffset = `${74 + index * 4}px`;
+  const topOffset = `${72 + index * 4}px`;
 
   return (
     <div
       id={id}
       ref={containerRef}
-      className={`relative w-full min-h-[96vh] flex justify-center items-start pb-12 sm:pb-24 ${className}`}
-      style={{ perspective: 1400 }}
+      className={`relative w-full min-h-[96vh] flex justify-center items-start pb-16 sm:pb-28 ${className}`}
+      style={{ perspective: 1600 }}
     >
       <motion.div
         ref={cardRef}
@@ -90,37 +90,17 @@ export function ParallaxCard({
           top: topOffset,
           zIndex: 10 + index,
         }}
-        className="sticky w-full max-w-5xl px-3 sm:px-6 transition-transform ease-out"
+        className="sticky w-full max-w-[1360px] px-3 sm:px-6 transition-transform ease-out"
       >
-        {/* Floating 3D Graphic Novel Shards (Santioni Physics Debris) */}
+        {/* Physical 3D Card Shell with Deep Lift Shadows & Graphic Border */}
         <motion.div
-          style={{ x: shardX, y: shardY }}
-          className="absolute -top-4 -left-3 pointer-events-none z-30 hidden md:block"
-          aria-hidden="true"
+          style={{
+            boxShadow: "0 -25px 60px rgba(0,0,0,0.92), 0 35px 80px rgba(0,0,0,0.8)",
+          }}
+          className="w-full rounded-2xl overflow-hidden border-2 border-black/85 bg-[#FAF8F5] transition-shadow duration-300"
         >
-          <div className="w-4 h-9 bg-black/90 rotate-[24deg] border border-[#B91C1C] shadow-[3px_3px_0px_rgba(0,0,0,0.5)]" />
-        </motion.div>
-
-        <motion.div
-          style={{ x: reverseShardX, y: reverseShardY }}
-          className="absolute -bottom-6 -right-4 pointer-events-none z-30 hidden md:block"
-          aria-hidden="true"
-        >
-          <div className="w-5 h-7 bg-[#B91C1C] rotate-[-18deg] border border-black shadow-[4px_4px_0px_rgba(0,0,0,0.6)]" />
-        </motion.div>
-
-        <motion.div
-          style={{ x: reverseShardX, y: shardY }}
-          className="absolute top-1/2 -right-6 pointer-events-none z-30 hidden lg:block"
-          aria-hidden="true"
-        >
-          <div className="w-3 h-5 bg-[#D4AF37] rotate-[42deg] border border-black shadow-[2px_2px_0px_rgba(0,0,0,0.4)]" />
-        </motion.div>
-
-        {/* Physical 3D Card Shell with Depth Shadows */}
-        <div className="w-full shadow-[0_-22px_60px_rgba(0,0,0,0.92)] rounded-2xl overflow-hidden border-2 border-black/85 bg-[#FAF8F5]">
           {children}
-        </div>
+        </motion.div>
       </motion.div>
     </div>
   );

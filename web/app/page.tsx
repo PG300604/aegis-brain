@@ -11,14 +11,12 @@ import {
   Sparkles,
   CheckCircle2,
   AlertTriangle,
-  Flame,
   Star,
   ShieldCheck,
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ThoughtLine } from "@/components/react-bits/ThoughtLine";
 import { CallChip } from "@/components/react-bits/CallChip";
-import { StopwatchDial } from "@/components/hud/StopwatchDial";
 import { TerminalInstall } from "@/components/hud/TerminalInstall";
 import { ArbitrageCalculator } from "@/components/hud/ArbitrageCalculator";
 import { QualityGateCards } from "@/components/hud/QualityGateCards";
@@ -28,6 +26,7 @@ import { FluidWaterWave } from "@/components/motion/FluidWaterWave";
 import { ParallaxCard } from "@/components/motion/ParallaxCard";
 import { LoadingScreen } from "@/components/motion/LoadingScreen";
 import { InteractiveTierDiagram } from "@/components/hud/InteractiveTierDiagram";
+import { LaptopCliFrame } from "@/components/hud/LaptopCliFrame";
 import { SoundtrackController, triggerSoundEffect } from "@/components/audio/SoundtrackController";
 
 export default function Home() {
@@ -44,12 +43,6 @@ export default function Home() {
   const waveY = useTransform(heroScroll, [0, 1], ["0%", "-35%"]);
   const heroOpacity = useTransform(heroScroll, [0, 0.7], [1, 0.15]);
   const heroScale = useTransform(heroScroll, [0, 0.9], [1, 0.94]);
-
-  // Feature 1: 429 Quota Cliff interactive simulation state
-  const [quotaSimMode, setQuotaSimMode] = useState<"idle" | "traditional" | "aegis">("idle");
-  const [quotaTokens, setQuotaTokens] = useState<number>(0);
-  const [quotaLatency, setQuotaLatency] = useState<number>(0);
-  const [quotaError, setQuotaError] = useState<string | null>(null);
 
   // Vertical laser scroll tracker
   useEffect(() => {
@@ -69,51 +62,6 @@ export default function Home() {
     setCopiedClone(true);
     setTimeout(() => setCopiedClone(false), 2500);
   };
-
-  const runTraditionalSimulation = () => {
-    setQuotaSimMode("traditional");
-    setQuotaTokens(8400);
-    setQuotaLatency(1200);
-    setQuotaError(null);
-
-    setTimeout(() => {
-      setQuotaTokens(24800);
-      setQuotaLatency(4600);
-    }, 600);
-
-    setTimeout(() => {
-      setQuotaTokens(54200);
-      setQuotaLatency(12400);
-      setQuotaError(
-        "HTTP 429 RateLimitExceeded: TPM limit reached (50,000 max tokens/min). Request dropped. 60s cooldown enforced by provider API."
-      );
-    }, 1400);
-  };
-
-  const runAegisSimulation = () => {
-    setQuotaSimMode("aegis");
-    setQuotaError(null);
-    setQuotaTokens(380);
-    setQuotaLatency(21);
-  };
-
-  // Autoplay Quota Cliff simulation loop
-  useEffect(() => {
-    let mode: "traditional" | "aegis" = "traditional";
-    runTraditionalSimulation();
-
-    const interval = setInterval(() => {
-      if (mode === "traditional") {
-        runAegisSimulation();
-        mode = "aegis";
-      } else {
-        runTraditionalSimulation();
-        mode = "traditional";
-      }
-    }, 5500);
-
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div className="relative min-h-screen bg-[#070709] text-[#0D0D11] selection:bg-[#B91C1C] selection:text-white paper-grain">
@@ -260,9 +208,6 @@ export default function Home() {
             <p className="font-nikkei text-white text-xs sm:text-sm uppercase tracking-[0.25em] font-bold">
               UNLEASH THE FULL POWER OF AGENTIC PERSISTENCE
             </p>
-            <p className="font-gt-era text-white/75 text-xs sm:text-sm leading-relaxed max-w-2xl mx-auto pt-2">
-              Sub-Second Neural Memory (&lt;25ms) • 3-Tier Local Token Arbitrage ($1,840+/mo) • 24/7 Sovereign KeepAlive Shield • 100% Invariant Determinism
-            </p>
           </div>
         </motion.div>
 
@@ -282,33 +227,41 @@ export default function Home() {
 
       {/* 
         ========================================================================
-        FEATURE 01: SUB-SECOND NEURAL MEMORY CORE (SQLite WAL + FTS5)
+        FEATURE 01: PERMANENT AGENT MEMORY (Real Developer Experience)
         ========================================================================
       */}
       <ParallaxCard index={0} id="memory">
-        <div className="comic-plate relative w-full p-6 sm:p-10">
+        <div className="comic-plate relative w-full p-6 sm:p-12">
           {/* Top-Right Badge */}
           <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
             <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
-              <span className="text-[#B91C1C]">24MS RECALL</span> • ZERO CONTEXT BLOAT
+              <span className="text-[#B91C1C]">ZERO AMNESIA</span> • PERMANENT NEURAL BUS
             </span>
           </div>
 
-          {/* Feature Header */}
+          {/* Feature Header in Human Real-Life Terms */}
           <div className="mb-8 pt-2">
             <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
-              FEATURE 01 • NEURAL PERSISTENCE
+              FEATURE 01 • PERMANENT AGENT MEMORY
             </div>
-            <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
-              Sub-Second Neural Memory Core
+            <h2 className="font-charles-rosie text-4xl sm:text-5xl lg:text-6xl text-black tracking-tight leading-tight uppercase">
+              Never Suffer From Agent Amnesia Again
             </h2>
-            <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
-              Instead of crashing into 429 quota cliffs and burning 50,000 tokens reading raw unindexed JSONL logs, AegisBrain indexes all codebase symbols, memories, and invariants into SQLite WAL mode with BM25 ranking (<code className="font-mono bg-black/10 px-1 py-0.5 rounded">brain.db</code>).
+            <p className="font-gt-era text-black/85 text-base sm:text-lg max-w-4xl mt-3 leading-relaxed">
+              Every time you close your terminal or start a new day, standard AI coding agents forget everything. They waste minutes re-reading your entire project logs from disk—crashing into API token rate limits and freezing right when you&apos;re in the flow.
+            </p>
+            <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-4xl mt-2 leading-relaxed">
+              AegisBrain gives your assistant a permanent photographic notebook. When you say &ldquo;continue where we left off yesterday&rdquo;, it instantly recalls your exact architectural rules, past bug fixes, and project decisions without burning your tokens.
             </p>
           </div>
 
-          {/* React Bits Component: Bespoke-Styled <ThoughtLine /> */}
+          {/* Claude Code Terminal Inside Laptop Display Frame */}
           <div className="mb-8">
+            <LaptopCliFrame />
+          </div>
+
+          {/* Real-Time Memory Retrieval Trace */}
+          <div className="mb-4">
             <div className="text-xs font-nikkei text-black uppercase tracking-wider mb-2 flex items-center gap-2 font-bold">
               <Sparkles className="w-4 h-4 text-[#B91C1C]" />
               Real-Time Memory Retrieval Trace
@@ -316,91 +269,8 @@ export default function Home() {
             <ThoughtLine
               summary="Neural Recall Trace: Retrieved 4 symbols & test invariants from brain.db in 21ms"
               totalTime="21 ms"
-              defaultExpanded={true}
+              defaultExpanded={false}
             />
-          </div>
-
-          {/* AI Simulation: StopwatchDial */}
-          <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116] mb-8">
-            <StopwatchDial />
-          </div>
-
-          {/* Interactive 429 Quota Cliff Simulation */}
-          <div className="p-5 sm:p-6 rounded-lg bg-[#14141A] text-white border-2 border-black shadow-[4px_4px_0px_#000000] space-y-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
-              <div>
-                <h3 className="font-nikkei text-sm uppercase tracking-wider text-white flex items-center gap-2 font-bold">
-                  <Flame className="w-4 h-4 text-[#B91C1C]" />
-                  Live Quota Cliff Simulator
-                </h3>
-                <p className="text-xs text-zinc-400 font-gt-era">
-                  Experience the mechanical difference between crawling raw logs vs indexed neural FTS5.
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={runTraditionalSimulation}
-                  className="px-3.5 py-1.5 bg-[#B91C1C] hover:bg-red-800 text-white font-nikkei uppercase text-xs rounded border border-black shadow-[2px_2px_0px_#000000] cursor-pointer"
-                >
-                  Test Traditional Agent
-                </button>
-                <button
-                  type="button"
-                  onClick={runAegisSimulation}
-                  className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-nikkei uppercase text-xs rounded border border-black shadow-[2px_2px_0px_#000000] cursor-pointer"
-                >
-                  Test Aegis FTS5
-                </button>
-              </div>
-            </div>
-
-            {/* Metrics Readout */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
-              <div className="bg-black/60 p-3 rounded border border-white/10">
-                <div className="text-zinc-500 text-[10px] uppercase">Tokens Injected</div>
-                <div className={`text-xl font-bold mt-1 ${quotaTokens > 30000 ? "text-[#B91C1C]" : "text-white"}`}>
-                  {quotaTokens ? `${quotaTokens.toLocaleString()} tokens` : "Idle (0 tokens)"}
-                </div>
-                <div className="text-[10px] text-zinc-500 mt-1">Context window load</div>
-              </div>
-
-              <div className="bg-black/60 p-3 rounded border border-white/10">
-                <div className="text-zinc-500 text-[10px] uppercase">Search Latency</div>
-                <div className={`text-xl font-bold mt-1 ${quotaLatency > 3000 ? "text-[#B91C1C]" : "text-emerald-400"}`}>
-                  {quotaLatency ? `${quotaLatency} ms` : "0 ms"}
-                </div>
-                <div className="text-[10px] text-zinc-500 mt-1">Wall-clock retrieval time</div>
-              </div>
-
-              <div className="bg-black/60 p-3 rounded border border-white/10">
-                <div className="text-zinc-500 text-[10px] uppercase">Provider Status</div>
-                <div className="text-base font-bold mt-1 text-white">
-                  {quotaError ? (
-                    <span className="text-[#B91C1C] flex items-center gap-1 font-bold">
-                      <AlertTriangle className="w-4 h-4" /> 429 RATE LIMIT
-                    </span>
-                  ) : quotaSimMode === "aegis" ? (
-                    <span className="text-emerald-400 flex items-center gap-1 font-bold">
-                      <CheckCircle2 className="w-4 h-4" /> 200 OK (<span className="text-xs">21ms</span>)
-                    </span>
-                  ) : (
-                    <span className="text-zinc-400">Ready to simulate</span>
-                  )}
-                </div>
-                <div className="text-[10px] text-zinc-500 mt-1">API gateway response</div>
-              </div>
-            </div>
-
-            {quotaError && (
-              <div className="p-3 bg-[#B91C1C]/20 border border-[#B91C1C] rounded text-xs font-mono text-red-200 flex items-start gap-2">
-                <AlertTriangle className="w-4 h-4 text-[#B91C1C] flex-shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-bold text-[#B91C1C]">RATE LIMIT CLIFF TRIGGERED:</div>
-                  <div>{quotaError}</div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </ParallaxCard>
