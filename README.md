@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-285%20Passing-10B981.svg?logo=githubactions&logoColor=white" alt="CI: 285 Passing"></a>
+  <a href="https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-286%20Passing-10B981.svg?logo=githubactions&logoColor=white" alt="CI: 286 Passing"></a>
   <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?logo=python&logoColor=white" alt="Python 3.10+"></a>
   <img src="https://img.shields.io/badge/Dependencies-Zero%20External-F97316.svg" alt="Zero External Dependencies">
   <img src="https://img.shields.io/badge/Memory-%3C%2025%20MB-8B5CF6.svg" alt="Memory: < 25 MB">
@@ -31,7 +31,7 @@
   <a href="#quickstart">Quickstart</a> &bull;
   <a href="#complete-cli-reference">CLI Reference</a> &bull;
   <a href="#verified-benchmarks">Benchmarks</a> &bull;
-  <a href="#community-velocity--star-growth">Star Growth</a>
+  <a href="https://github.com/PG300604/aegis-brain/tree/main/web">Web Landing Page</a>
 </p>
 
 ---
@@ -344,7 +344,7 @@ aegis doctor
 
 - **Daemon RAM Footprint**: **18.4 MB** (idle), **24.2 MB** (active multi-agent routing).
 - **Daemon Startup Time**: **34 ms** (zero external imports).
-- **Test Suite Coverage**: **285 / 285 passed (100% pass rate)**.
+- **Test Suite Coverage**: **286 / 286 passed (100% pass rate)**.
 - **Cross-Platform Parity**: 100% test pass rate across Ubuntu Linux (Python 3.10–3.13), macOS, and Windows.
 
 ---
