@@ -33,6 +33,7 @@ class ExecutionStrategy(str, Enum):
     LOCAL_WORKER_WITH_MANAGER_REVIEW = "LOCAL_WORKER_WITH_MANAGER_REVIEW"
     PARALLEL_SUBAGENTS = "PARALLEL_SUBAGENTS"
     LIGHTWEIGHT_CLI = "LIGHTWEIGHT_CLI"
+    SUBAGENT_DIRECT = "SUBAGENT_DIRECT"
 
 
 @dataclass
@@ -111,6 +112,10 @@ class SeverityTriageEngine:
         r"\b(low\s+priority|trivial|background|p3)\b",
     ]
 
+    MICRO_PATTERNS = [
+        r"\b(typo|spelling|one\s+word|single\s+word|fix\s+typo|fix\s+spelling|rename\s+variable|minor\s+tweak|small\s+tweak|quick\s+fix|1-line|one\s+line)\b",
+    ]
+
     @classmethod
     def evaluate(cls, task: str, context: Optional[str] = None) -> TriageDecision:
         lower_task = (task + " " + (context or "")).lower()
@@ -132,7 +137,8 @@ class SeverityTriageEngine:
         explicit_high = any(re.search(pat, lower_task) for pat in cls.EXPLICIT_HIGH_PRIORITY)
         explicit_low = any(re.search(pat, lower_task) for pat in cls.EXPLICIT_LOW_PRIORITY)
         is_critical = explicit_high or any(re.search(pat, lower_task) for pat in cls.CRITICAL_PATTERNS)
-        is_routine = not explicit_high and (explicit_low or any(re.search(pat, lower_task) for pat in cls.ROUTINE_PATTERNS))
+        is_micro = not explicit_high and any(re.search(pat, lower_task) for pat in cls.MICRO_PATTERNS)
+        is_routine = not explicit_high and not is_micro and (explicit_low or any(re.search(pat, lower_task) for pat in cls.ROUTINE_PATTERNS))
 
         if is_critical:
             severity = SeverityLevel.CRITICAL
@@ -142,6 +148,14 @@ class SeverityTriageEngine:
                 "Zero data leakage: verify no credentials exposed",
                 "Senior engineer audit required before applying diffs",
                 "Require explicit test pass with 100% assertions",
+            ]
+        elif is_micro:
+            severity = SeverityLevel.ROUTINE
+            complexity = 1
+            cognition = "FAST_SURGICAL"
+            invariants = [
+                "Surgical modification: touch only target line or typo",
+                "Zero worker CLI startup overhead: subagent executes directly",
             ]
         elif is_routine:
             severity = SeverityLevel.ROUTINE
@@ -161,7 +175,10 @@ class SeverityTriageEngine:
             ]
 
         # 3. Dynamic Subagent & Worker Count Scaling
-        if bottleneck_risk == "HIGH":
+        if is_micro and not is_critical:
+            subagents_count = 1
+            workers_per_sub = 0
+        elif bottleneck_risk == "HIGH":
             subagents_count = 1
             workers_per_sub = 1
         elif severity == SeverityLevel.CRITICAL:
@@ -179,6 +196,10 @@ class SeverityTriageEngine:
             strategy = ExecutionStrategy.FRONTIER_DIRECT
             recommended_worker = "frontier_manager"
             rationale = "High-security or user-flagged critical priority requires Frontier direct navigation."
+        elif is_micro:
+            strategy = ExecutionStrategy.SUBAGENT_DIRECT
+            recommended_worker = "subagent_direct"
+            rationale = "Micro-task / typo / single-line fix handled directly by subagent to eliminate worker CLI spawn overhead."
         elif bottleneck_risk == "HIGH":
             strategy = ExecutionStrategy.LIGHTWEIGHT_CLI
             recommended_worker = "hermes-cli"
@@ -218,7 +239,13 @@ def judge_task_severity(task: str, context: Optional[str] = None) -> TriageDecis
 
 
 def should_delegate_to_worker(task: str) -> Tuple[bool, TriageDecision]:
-    """Check if task should be pushed to worker/subagent rather than burning frontier tokens."""
+    """Check if task should be pushed to worker rather than handled directly.
+
+    Returns (True, decision) for heavy boilerplate, feature, or testing tasks.
+    Returns (False, decision) for critical frontier tasks OR trivial micro-tasks (typos, 1-word fixes).
+    """
     decision = judge_task_severity(task)
+    if decision.execution_strategy in (ExecutionStrategy.FRONTIER_DIRECT, ExecutionStrategy.SUBAGENT_DIRECT):
+        return False, decision
     delegate = decision.severity in (SeverityLevel.ROUTINE, SeverityLevel.MODERATE)
     return delegate, decision

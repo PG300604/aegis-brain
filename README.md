@@ -74,7 +74,7 @@ Modern AI coding agents (Antigravity, Claude Code, OpenAI Codex, OpenCode, Herme
 AegisBrain runs a zero-external-dependency background daemon connected to a persistent SQLite Write-Ahead Logging store:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/architecture-unified.svg" alt="AegisBrain Unified Architecture Diagram" width="100%">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/infographic-unified-architecture.svg" alt="AegisBrain Unified Architecture Hand-Drawn Infographic" width="100%">
 </p>
 
 <p align="center">
@@ -104,7 +104,7 @@ AegisBrain runs a zero-external-dependency background daemon connected to a pers
 To optimize token usage and maintain code quality, AegisBrain structures execution across three distinct tiers:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/hierarchy-escalation.svg" alt="3-Tier Multi-Agent Power Architecture and Escalation Protocol" width="100%">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/infographic-hierarchy-pyramid.svg" alt="3-Tier Multi-Agent Hierarchy Hand-Drawn Infographic" width="100%">
 </p>
 
 ### Division of Labor & Token Arbitrage
@@ -215,7 +215,7 @@ aegis hands http://localhost:5173 --assert-clean
 Manage, monitor, and steer workstation coding sessions remotely via **Telegram** (`@HHAACLIBot`) or **WhatsApp**:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/mobile-remote-bridge.svg" alt="Mobile Remote Bridge and Whisper Voice Pipeline" width="100%">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/infographic-mobile-pipeline.svg" alt="Mobile Remote Bridge and Whisper Voice Pipeline Hand-Drawn Infographic" width="100%">
 </p>
 
 ### Voice Note Dictation via Local Whisper
@@ -324,11 +324,11 @@ aegis doctor
 ## Verified Benchmarks
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/benchmarks-visual.svg" alt="AegisBrain Verified Benchmarks & Real Metrics" width="100%">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/infographic-speed-benchmarks.svg" alt="AegisBrain Verified Speed Benchmarks Hand-Drawn Infographic" width="100%">
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/pencil-benchmarks-matrix.svg" alt="Hand-Drawn Pencil Teardown: Traditional Crawling vs AegisBrain Neural Memory" width="100%">
+  <img src="https://raw.githubusercontent.com/PG300604/aegis-brain/main/assets/infographic-learning-curve.svg" alt="AegisBrain Context Retention and Token Burn Curve Hand-Drawn Infographic" width="100%">
 </p>
 
 ### Memory Recall Efficiency (AegisBrain vs Raw Transcript Crawling)
