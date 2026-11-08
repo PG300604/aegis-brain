@@ -6,15 +6,14 @@ import {
   Copy,
   Check,
   ChevronDown,
-  Shield,
-  Zap,
   ExternalLink,
-  Sparkles,
   TrendingUp,
   CheckCircle2,
-  Lock,
   Radio,
   BookOpen,
+  Clock,
+  Database,
+  Layers,
 } from "lucide-react";
 
 interface InstallSnippet {
@@ -65,7 +64,7 @@ const METRICS: MetricBadge[] = [
     label: "Sub-Second Recall",
     subtext: "FTS5 vector memory",
     glowClass: "text-[#00F0FF] border-[#00F0FF]/30 bg-[#00F0FF]/5",
-    icon: Zap,
+    icon: Clock,
   },
   {
     value: "$1,840/mo",
@@ -76,10 +75,10 @@ const METRICS: MetricBadge[] = [
   },
   {
     value: "Win32",
-    label: "Whisper Shield",
+    label: "Whisper Daemon",
     subtext: "24/7 background daemon",
     glowClass: "text-[#A855F7] border-[#A855F7]/30 bg-[#A855F7]/5",
-    icon: Shield,
+    icon: Radio,
   },
   {
     value: "4 Gates",
@@ -111,7 +110,7 @@ const ACTS: ActItem[] = [
       "Dynamic session snapshot & restore points",
       "Zero crawler token waste on session logs",
     ],
-    icon: Sparkles,
+    icon: Database,
   },
   {
     id: "act-2",
@@ -124,11 +123,11 @@ const ACTS: ActItem[] = [
       "Autonomous coaching loops with error feedback",
       "Saves up to $1,840/mo in frontier tokens",
     ],
-    icon: Zap,
+    icon: Layers,
   },
   {
     id: "act-3",
-    title: "Act III: Zero-Leak Red-Team Security Shield",
+    title: "Act III: Zero-Leak Red-Team Security Defense",
     tag: "Continuous Audit",
     summary:
       "Every generated line of candidate code passes through strict AST syntax security gates, blocking dangerous shell executions, credential leakage, and path traversals.",
@@ -137,7 +136,7 @@ const ACTS: ActItem[] = [
       "Dual-environment sandbox verification",
       "Integrated GitGuardian secret scanning",
     ],
-    icon: Lock,
+    icon: CheckCircle2,
   },
   {
     id: "act-4",
@@ -404,8 +403,8 @@ export default function MobileExperience() {
           onClick={scrollToInstall}
           className="flex flex-col items-center gap-1 text-[10px] font-mono font-medium text-[#00F0FF] hover:text-white transition-colors"
         >
-          <Zap className="w-4 h-4" />
-          <span>⚡ Install</span>
+          <Terminal className="w-4 h-4" />
+          <span>Install</span>
         </button>
 
         <a

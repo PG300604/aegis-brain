@@ -8,11 +8,9 @@ import {
   ChevronDown,
   ArrowRight,
   FileCode,
-  Sparkles,
   CheckCircle2,
   AlertTriangle,
   Star,
-  ShieldCheck,
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ThoughtLine } from "@/components/react-bits/ThoughtLine";
@@ -232,13 +230,6 @@ export default function Home() {
       */}
       <ParallaxCard index={0} id="memory">
         <div className="comic-plate relative w-full p-6 sm:p-12">
-          {/* Top-Right Badge */}
-          <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
-            <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
-              <span className="text-[#B91C1C]">ZERO AMNESIA</span> • PERMANENT NEURAL BUS
-            </span>
-          </div>
-
           {/* Feature Header in Human Real-Life Terms */}
           <div className="mb-8 pt-2">
             <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
@@ -263,7 +254,7 @@ export default function Home() {
           {/* Real-Time Memory Retrieval Trace */}
           <div className="mb-4">
             <div className="text-xs font-nikkei text-black uppercase tracking-wider mb-2 flex items-center gap-2 font-bold">
-              <Sparkles className="w-4 h-4 text-[#B91C1C]" />
+              <span className="w-2 h-2 rounded-full bg-[#B91C1C]" />
               Real-Time Memory Retrieval Trace
             </div>
             <ThoughtLine
@@ -282,12 +273,6 @@ export default function Home() {
       */}
       <ParallaxCard index={1} id="arbitrage">
         <div className="comic-plate relative w-full p-6 sm:p-10">
-          <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
-            <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
-              <span className="text-[#B91C1C]">ZERO TOKEN WASTE</span> • $1,840+/MO SAVINGS
-            </span>
-          </div>
-
           <div className="mb-8 pt-2">
             <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
               FEATURE 02 • TOKEN ARBITRAGE ENGINE
@@ -304,7 +289,7 @@ export default function Home() {
           <div className="mb-8 p-4 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] space-y-3">
             <div className="flex items-center justify-between border-b border-black/10 pb-2">
               <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
-                <Sparkles className="w-4 h-4 text-[#B91C1C]" />
+                <span className="w-2 h-2 rounded-full bg-[#B91C1C]" />
                 Active Tier 3 Local Worker Invocations
               </span>
               <span className="font-mono text-[10px] text-emerald-700 font-bold">100% Free Hardware Tokens</span>
@@ -353,12 +338,6 @@ export default function Home() {
       */}
       <ParallaxCard index={2} id="keepalive">
         <div className="comic-plate relative w-full p-6 sm:p-10">
-          <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
-            <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
-              <span className="text-emerald-700">99.98% UPTIME</span> • WIN32 WATCHDOG
-            </span>
-          </div>
-
           <div className="mb-8 pt-2">
             <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
               FEATURE 03 • IMMORTAL HOST DAEMON
@@ -426,7 +405,7 @@ export default function Home() {
           <div className="p-4 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded bg-emerald-100 border-2 border-emerald-600 flex items-center justify-center text-emerald-700 font-bold">
-                <ShieldCheck className="w-6 h-6" />
+                <Check className="w-6 h-6 stroke-[3]" />
               </div>
               <div>
                 <div className="font-nikkei text-xs uppercase tracking-wider text-black font-extrabold">
@@ -451,12 +430,6 @@ export default function Home() {
       */}
       <ParallaxCard index={3} id="mobile">
         <div className="comic-plate relative w-full p-6 sm:p-10">
-          <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
-            <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
-              <span className="text-[#B91C1C]">IN-FLIGHT INTERRUPT</span> • /type /alt+m
-            </span>
-          </div>
-
           <div className="mb-8 pt-2">
             <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
               FEATURE 04 • MOBILE TELEGRAM TELEMETRY
@@ -483,12 +456,6 @@ export default function Home() {
       */}
       <ParallaxCard index={4} id="quality">
         <div className="comic-plate relative w-full p-6 sm:p-10">
-          <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
-            <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
-              <span className="text-[#B91C1C]">ZERO-DEFECT AUDIT</span> • 4 GATES OF STEEL
-            </span>
-          </div>
-
           <div className="mb-8 pt-2">
             <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
               FEATURE 05 • PRODUCTION SAFETY GATE
@@ -515,12 +482,6 @@ export default function Home() {
       */}
       <ParallaxCard index={5} id="blueprints">
         <div className="comic-plate relative w-full p-6 sm:p-10">
-          <div className="absolute top-6 right-6 z-20 comic-narration-box p-3 bg-white hidden sm:block">
-            <span className="text-xs text-black font-nikkei tracking-wider uppercase font-extrabold">
-              <span className="text-[#B91C1C]">SYSTEM BLUEPRINTS</span> • 7 ARCHITECTURAL DIAGRAMS
-            </span>
-          </div>
-
           <div className="mb-8 pt-2">
             <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
               FEATURE 06 • ARCHITECTURAL BLUEPRINTS
@@ -691,7 +652,7 @@ export default function Home() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-emerald-700" />
+                      <span className="w-2 h-2 rounded-full bg-emerald-600" />
                       Contribute Code
                     </span>
                     <span className="text-[10px] font-mono uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">

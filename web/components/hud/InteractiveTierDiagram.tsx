@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import { Crown, Network, Cpu, Zap, ArrowDown, Sparkles, CheckCircle2 } from "lucide-react";
+import { Crown, Network, Cpu, ArrowDown, CheckCircle2 } from "lucide-react";
 import { triggerSoundEffect } from "@/components/audio/SoundtrackController";
 
 interface TierNode {
@@ -83,7 +83,7 @@ export function InteractiveTierDiagram() {
       <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-5 border-b border-white/10">
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[#B91C1C] text-white font-nikkei text-[10px] uppercase tracking-widest shadow-[2px_2px_0px_#000000]">
-            <Sparkles className="w-3 h-3" />
+            <span className="font-mono text-[9px] font-bold text-white">[FLOW]</span>
             <span>3D INTERACTIVE ARCHITECTURE</span>
           </div>
           <h3 className="font-charles-rosie text-xl sm:text-2xl text-white uppercase tracking-tight mt-1.5">
@@ -95,7 +95,7 @@ export function InteractiveTierDiagram() {
         </div>
 
         <div className="px-3 py-1.5 bg-black border border-white/20 rounded font-mono text-xs text-emerald-400 flex items-center gap-2 shadow-[2px_2px_0px_#10B981]">
-          <Zap className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>92.4% Token Cost Reduction</span>
         </div>
       </div>

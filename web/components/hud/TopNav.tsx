@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Shield, Star, Menu, X, Terminal, ExternalLink, ArrowRight } from "lucide-react";
+import { Star, Menu, X, Terminal, ExternalLink, ArrowRight } from "lucide-react";
 
 export function TopNav() {
   const [scrolled, setScrolled] = useState(false);

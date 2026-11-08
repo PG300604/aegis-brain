@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  Sparkles,
   ChevronDown,
   ChevronUp,
   Clock,
@@ -11,8 +10,8 @@ import {
   Terminal,
   Cpu,
   Database,
-  Shield,
   Layers,
+  Activity,
 } from "lucide-react";
 import "./ThoughtLine.css";
 
@@ -59,7 +58,7 @@ const DEFAULT_STEPS: TraceStep[] = [
     title: "4-Decision Quality Gate Execution",
     detail: "Karpathy simplicity check passed (0 orphan abstractions). Red-team AST audit clear (0 injection vectors).",
     latency: "14 ms",
-    icon: Shield,
+    icon: CheckCircle2,
   },
 ];
 
@@ -85,7 +84,7 @@ export function ThoughtLine({
       >
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="flex items-center justify-center w-6 h-6 rounded bg-black text-[#D4AF37] shrink-0 border border-black shadow-[1px_1px_0px_#000000]">
-            <Sparkles className="w-3.5 h-3.5 sparkle-breathe-glyph text-[#D4AF37]" />
+            <Activity className="w-3.5 h-3.5 text-[#D4AF37]" />
           </div>
           <span className="text-xs sm:text-sm font-gt-era text-black font-semibold truncate">
             {summary}

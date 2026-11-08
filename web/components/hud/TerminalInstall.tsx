@@ -104,13 +104,6 @@ export function TerminalInstall() {
         </div>
       </div>
 
-      {/* Graphic Novel Narration Box matching Santioni style */}
-      <div className="narration-box my-4">
-        <p className="narration-text">
-          ONE SOVEREIGN SCRIPT CONFIGURES THE PERSISTENT BACKGROUND DAEMON, SUB-SECOND SQLITE WAL INDEX, AND IN-FLIGHT TELEMETRY.
-        </p>
-      </div>
-
       {/* Sleek Brutalist Command Strip / Code Palette */}
       <div className="my-6 rounded-lg overflow-hidden border-2 border-black shadow-[6px_6px_0px_#000000] bg-[#0D0E15]">
         {/* OS Tabs Bar */}

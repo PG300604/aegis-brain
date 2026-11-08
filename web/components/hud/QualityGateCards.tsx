@@ -2,21 +2,14 @@
 
 import React, { useState } from "react";
 import { triggerSoundEffect } from "@/components/audio/SoundtrackController";
-import {
-  ShieldAlert,
-  Sparkles,
-  Zap,
-  CheckCircle2,
-  Lock,
-  Terminal,
-} from "lucide-react";
+import { CheckCircle2, Terminal } from "lucide-react";
 
 interface QualityGate {
   id: string;
   number: string;
   title: string;
   subtitle: string;
-  icon: React.ElementType;
+  tag: string;
   description: string;
   invariants: string[];
   codeDiff: {
@@ -31,7 +24,7 @@ const GATES: QualityGate[] = [
     number: "01",
     title: "Karpathy Simplicity Doctrine",
     subtitle: "Zero Speculative Abstraction",
-    icon: Zap,
+    tag: "SIMPLICITY",
     description:
       "Every single changed line must directly trace to what you asked. For small edits under 15 lines, changes happen surgically with zero heavy tool overhead. No premature factories, no single-use abstractions, and no speculative flexibility.",
     invariants: [
@@ -50,7 +43,7 @@ const GATES: QualityGate[] = [
     number: "02",
     title: "Conversational Watermark Scrubber",
     subtitle: "Dense Human-Grade Code",
-    icon: Sparkles,
+    tag: "UNSLOP",
     description:
       "Removes all artificial AI filler, apologies, 'Certainly!', 'I have updated...', and conversational residue from candidate drafts, delivering clean, production-grade source code indistinguishable from a senior human engineer.",
     invariants: [
@@ -69,7 +62,7 @@ const GATES: QualityGate[] = [
     number: "03",
     title: "Red-Team Security & Injection Defense",
     subtitle: "AST Parameterization & Secret Protection",
-    icon: ShieldAlert,
+    tag: "SECURITY",
     description:
       "Static code analysis catches vulnerabilities before compilation. Zero tolerance for dangerous shell invocations, unsanitized subprocesses, path traversals, or committed secrets and API credentials.",
     invariants: [
@@ -88,7 +81,7 @@ const GATES: QualityGate[] = [
     number: "04",
     title: "Dual-Environment Verification Gate",
     subtitle: "Isolated Sandbox & Local Host Testing",
-    icon: Lock,
+    tag: "VERIFICATION",
     description:
       "No code is committed or delivered until it compiles cleanly in an isolated sandbox, passes all test invariants, and verifies in the host runtime with zero regressions.",
     invariants: [
@@ -115,7 +108,7 @@ export function QualityGateCards() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#B91C1C] text-white font-nikkei text-xs uppercase tracking-widest shadow-[2px_2px_0px_#000000]">
-            <ShieldAlert className="w-3.5 h-3.5" />
+            <CheckCircle2 className="w-3.5 h-3.5" />
             <span>INSPECTION FILTERS</span>
           </div>
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
@@ -134,18 +127,10 @@ export function QualityGateCards() {
         </div>
       </div>
 
-      {/* Graphic Novel Narration Box */}
-      <div className="narration-box my-5">
-        <p className="narration-text">
-          FOUR GATES STAND GUARD. SURGICAL SIMPLICITY, ZERO CONVERSATIONAL RESIDUE, INJECTION BLOCKING, AND DUAL-ENVIRONMENT PROOF.
-        </p>
-      </div>
-
       {/* Gate Panels Selector (Clean Graphic Novel Style - Zero Pills) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 my-6">
         {GATES.map((gate) => {
           const isSelected = selectedGate === gate.id;
-          const Icon = gate.icon;
           return (
             <button
               key={gate.id}
@@ -164,7 +149,11 @@ export function QualityGateCards() {
                 <span className="font-nikkei text-xs font-bold text-[#D4AF37]">
                   STAGE {gate.number}
                 </span>
-                <Icon className={`w-4 h-4 ${isSelected ? "text-[#B91C1C]" : "text-zinc-500"}`} />
+                <span className={`font-mono text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                  isSelected ? "bg-[#B91C1C] text-white" : "bg-black text-zinc-500"
+                }`}>
+                  [{gate.tag}]
+                </span>
               </div>
               <div className="font-nikkei font-bold uppercase text-white text-sm tracking-wide">
                 {gate.title}

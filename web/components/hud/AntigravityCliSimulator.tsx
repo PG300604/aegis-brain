@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Terminal, Search, AlertTriangle, CheckCircle2, Zap, Play, RotateCcw, Flame } from "lucide-react";
+import { Terminal, Search, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { triggerSoundEffect } from "@/components/audio/SoundtrackController";
 
 interface SearchPreset {
@@ -336,42 +336,6 @@ export function AntigravityCliSimulator() {
                 <span className="text-emerald-400 font-bold">200 OK (Clean Response)</span>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* 
-          ======================================================================
-          SIMULATOR CONTROL BAR (Matching User Screenshot Exactly)
-          ======================================================================
-        */}
-        <div className="mt-5 p-4 rounded-lg bg-black border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <div className="font-nikkei text-xs uppercase tracking-wider text-white font-extrabold flex items-center gap-2">
-              <Flame className="w-4 h-4 text-[#B91C1C]" />
-              <span>LIVE QUOTA CLIFF SIMULATOR</span>
-            </div>
-            <p className="text-[11px] font-gt-era text-zinc-400 mt-0.5">
-              Experience the difference between an agent crashing into a token wall vs indexed neural recall.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              disabled={isSimulating}
-              onClick={() => runSimulation("traditional")}
-              className="px-4 py-2 bg-[#B91C1C] hover:bg-red-800 disabled:opacity-50 text-white font-nikkei uppercase text-xs rounded border border-black shadow-[2px_2px_0px_#000000] cursor-pointer transition-transform active:translate-y-0.5"
-            >
-              TEST TRADITIONAL AGENT
-            </button>
-            <button
-              type="button"
-              disabled={isSimulating}
-              onClick={() => runSimulation("aegis")}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-nikkei uppercase text-xs rounded border border-black shadow-[2px_2px_0px_#000000] cursor-pointer transition-transform active:translate-y-0.5"
-            >
-              TEST AEGIS FTS5
-            </button>
           </div>
         </div>
       </div>

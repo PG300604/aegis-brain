@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useId } from "react";
 import {
   Clock,
-  Zap,
   Search,
   Database,
   Cpu,
@@ -136,13 +135,13 @@ export function StopwatchDial() {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#B91C1C] text-white font-nikkei text-xs uppercase tracking-widest shadow-[2px_2px_0px_#000000]">
             <Clock className="w-3.5 h-3.5" />
-            <span>SUB-SECOND SPEED BENCHMARK SIMULATOR</span>
+            <span>SUB-SECOND SPEED BENCHMARK</span>
           </div>
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
             24ms SQLite WAL vs 12,400ms Raw Crawl
           </h3>
           <p className="text-xs sm:text-sm text-zinc-200 font-sans font-medium max-w-xl mt-1 leading-relaxed">
-            Empirical benchmark simulation. Aegis indexes all symbols into SQLite FTS5 for sub-second neural retrieval.
+            Empirical benchmark measurements. Aegis indexes all symbols into SQLite FTS5 for sub-second neural retrieval.
           </p>
         </div>
 
@@ -154,13 +153,6 @@ export function StopwatchDial() {
             <div className="text-[10px] font-mono uppercase text-emerald-300">Measured Speedup</div>
           </div>
         </div>
-      </div>
-
-      {/* Graphic Novel Narration Box matching Santioni style */}
-      <div className="narration-box my-4">
-        <p className="narration-text">
-          THE DAEMON SIFTS MILLIONS OF TOKENS IN 24 MILLISECONDS. ZERO RE-READING OF CUMULATIVE TRANSCRIPTS. PERSISTENCE IN REFINED SQLITE WAL.
-        </p>
       </div>
 
       {/* Live Interactive Query Search Bar */}

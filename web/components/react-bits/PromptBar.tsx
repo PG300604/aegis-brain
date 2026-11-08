@@ -5,12 +5,9 @@ import { motion, AnimatePresence } from "motion/react";
 import {
   Terminal,
   Cpu,
-  Zap,
   CheckCircle2,
   Clock,
-  Shield,
   Send,
-  Sparkles,
   Database,
   ArrowRight,
   Repeat,

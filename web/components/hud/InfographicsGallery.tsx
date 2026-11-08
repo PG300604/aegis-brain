@@ -7,14 +7,13 @@ import {
   Cpu,
   Layers,
   Globe,
-  ShieldCheck,
-  Zap,
   TrendingUp,
   Smartphone,
   Maximize2,
   CheckCircle2,
   X,
-  Sparkles,
+  FileText,
+  Activity,
 } from "lucide-react";
 
 interface DiagramData {
@@ -102,7 +101,7 @@ const DIAGRAMS: DiagramData[] = [
     shortTitle: "Quality Gates",
     file: "/infographics/infographic-quality-gate.svg",
     category: "Verification Pipeline",
-    icon: ShieldCheck,
+    icon: CheckCircle2,
     description:
       "Every line of candidate code drafted by local execution workers must navigate a deterministic 4-stage pipeline before ever touching host repositories or reaching the user.",
     invariants: [
@@ -124,7 +123,7 @@ const DIAGRAMS: DiagramData[] = [
     shortTitle: "Speed Benchmarks",
     file: "/infographics/infographic-speed-benchmarks.svg",
     category: "Performance Metrics",
-    icon: Zap,
+    icon: Activity,
     description:
       "Empirically measured runtime performance comparing AegisBrain's indexed neural SQLite FTS5 store against the conventional approach of repeatedly crawling megabytes of unstructured session transcript files.",
     invariants: [
@@ -209,7 +208,7 @@ export function InfographicsGallery() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-black/40">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#B91C1C] text-white font-nikkei text-xs uppercase tracking-widest shadow-[2px_2px_0px_#000000]">
-            <Sparkles className="w-3.5 h-3.5" />
+            <FileText className="w-3.5 h-3.5" />
             <span>SYSTEM BLUEPRINTS</span>
           </div>
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
@@ -226,13 +225,6 @@ export function InfographicsGallery() {
           </div>
           <div className="text-[10px] font-mono uppercase text-zinc-400">Hand-Crafted SVG</div>
         </div>
-      </div>
-
-      {/* Graphic Novel Narration Box matching Santioni style */}
-      <div className="narration-box my-4">
-        <p className="narration-text">
-          SEVEN SOVEREIGN BLUEPRINTS ETCHED IN STEEL AND PAPYRUS. FROM TOPOLOGY TO RECOVERY GATES, EVERY INVARIANT IS MATHEMATICALLY VERIFIED.
-        </p>
       </div>
 
       {/* Navigation Tabs Bar */}

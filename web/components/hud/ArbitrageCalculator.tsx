@@ -6,10 +6,7 @@ import {
   TrendingUp,
   Cpu,
   Layers,
-  Sparkles,
   Bot,
-  ShieldCheck,
-  Zap,
   ArrowRight,
   Calculator,
   Repeat,
@@ -68,7 +65,7 @@ export function ArbitrageCalculator() {
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#B91C1C] text-white font-nikkei text-xs uppercase tracking-widest shadow-[2px_2px_0px_#000000]">
             <Calculator className="w-3.5 h-3.5" />
-            <span>TOKEN ARBITRAGE SIMULATOR</span>
+            <span>TOKEN ARBITRAGE CALCULATOR</span>
           </div>
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
             Dynamic Token Arbitrage Calculator
@@ -86,13 +83,6 @@ export function ArbitrageCalculator() {
             <div className="text-[10px] font-mono uppercase text-emerald-300">Frontier Cost Reduction</div>
           </div>
         </div>
-      </div>
-
-      {/* Graphic Novel Narration Box matching Santioni style */}
-      <div className="narration-box my-4">
-        <p className="narration-text">
-          THE SENIOR REASONING BRAIN DIRECTS ARCHITECTURE ALONE. VERBOSE BOILERPLATE AND BRUTE IMPLEMENTATION DRAFTS ARE DISPATCHED TO FREE LOCAL WORKERS.
-        </p>
       </div>
 
       {/* Main Calculator Grid */}

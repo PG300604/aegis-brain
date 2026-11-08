@@ -7,15 +7,12 @@ import {
   Pause,
   CheckCheck,
   Send,
-  Sparkles,
   Paperclip,
   Smile,
   Mic,
   ChevronLeft,
   Info,
-  Shield,
   Radio,
-  Zap,
   Cpu,
   Wifi,
   Battery,
@@ -496,12 +493,12 @@ export function TelegramSimulator() {
                             </div>
                           </div>
 
-                          {/* Deterministic Chunking Shield Output */}
+                          {/* Deterministic Chunking Output */}
                           {msg.chunks && (
                             <div className="pt-1.5 border-t border-white/20 space-y-1">
-                              <div className="text-[10px] font-mono text-emerald-300 font-bold flex items-center gap-1">
-                                <Sparkles className="w-3 h-3 text-[#D4AF37]" />
-                                Deterministic 25s Slicing Shield:
+                              <div className="text-[10px] font-mono text-emerald-300 font-bold flex items-center gap-1.5">
+                                <span className="text-[#D4AF37] font-bold">●</span>
+                                Deterministic 25s Slicing Engine:
                               </div>
                               {msg.chunks.map((chk) => (
                                 <div

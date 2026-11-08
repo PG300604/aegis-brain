@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Mic, Square, Sparkles } from "lucide-react";
+import { Mic, Square } from "lucide-react";
 import "./VoicePill.css";
 
 interface VoicePillProps {
@@ -117,7 +117,7 @@ export function VoicePill({ onTranscriptionComplete, className = "" }: VoicePill
       {/* Real-time Transcription Chip */}
       {transcribedText && (
         <div className="flex items-center gap-2 px-3 py-1 bg-[#FBF9F5] border-2 border-black rounded-lg shadow-[3px_3px_0px_#000000] text-xs font-mono text-black animate-in fade-in slide-in-from-bottom-1">
-          <Sparkles className="w-3.5 h-3.5 text-[#B91C1C]" />
+          <span className="w-2 h-2 rounded-full bg-[#B91C1C]" />
           <span>Whisper STT: <strong className="text-[#B91C1C]">&ldquo;{transcribedText}&rdquo;</strong></span>
         </div>
       )}
