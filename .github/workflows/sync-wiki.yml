@@ -1,0 +1,49 @@
+name: Sync Arch Wiki
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/wiki/**'
+  workflow_dispatch:
+
+jobs:
+  sync-wiki:
+    name: Sync docs/wiki to GitHub Wiki
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Source Repository
+        uses: actions/checkout@v4
+        with:
+          path: repo
+
+      - name: Checkout GitHub Wiki
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki
+          token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Sync Wiki Files
+        run: |
+          if [ -d "wiki" ]; then
+            mkdir -p wiki
+            cp -r repo/docs/wiki/* wiki/
+            cd wiki
+            # Ensure Home.md exists for GitHub Wiki default portal
+            cp -f 00-index.md Home.md
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add .
+            if git diff-index --quiet HEAD --; then
+              echo "No wiki changes to commit"
+            else
+              git commit -m "docs(wiki): automated sync from docs/wiki"
+              git push
+            fi
+          else
+            echo "Wiki repo not found or not yet enabled. Enable GitHub Wiki in repository settings first."
+          fi
