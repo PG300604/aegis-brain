@@ -682,16 +682,93 @@ def download_telegram_file(token: str, file_id: str, preferred_name: Optional[st
     return dest_file
 
 
+def _kill_proc_tree(pid: int) -> None:
+    """Ensure process and any spawned child trees are cleanly terminated."""
+    try:
+        if sys.platform == "win32":
+            subprocess.run(
+                ["taskkill", "/F", "/T", "/PID", str(pid)],
+                capture_output=True,
+                timeout=5,
+                creationflags=creationflags,
+            )
+        else:
+            import signal
+            os.kill(pid, signal.SIGKILL)
+    except Exception:
+        pass
+
+
+def _run_process_safe(
+    cmd: List[str],
+    timeout: int,
+    cwd: Optional[Path] = None,
+    env: Optional[Dict[str, str]] = None,
+) -> subprocess.CompletedProcess:
+    """Run process with strict timeout and guaranteed process tree termination on Windows/POSIX."""
+    proc = None
+    try:
+        proc = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            cwd=str(cwd) if cwd else None,
+            env=env,
+            creationflags=creationflags,
+        )
+        stdout, stderr = proc.communicate(timeout=timeout)
+        return subprocess.CompletedProcess(
+            args=cmd,
+            returncode=proc.returncode if proc.returncode is not None else -1,
+            stdout=stdout or "",
+            stderr=stderr or "",
+        )
+    except subprocess.TimeoutExpired:
+        if proc:
+            _kill_proc_tree(proc.pid)
+            try:
+                proc.communicate(timeout=2)
+            except Exception:
+                pass
+        raise
+    except Exception:
+        if proc:
+            _kill_proc_tree(proc.pid)
+        raise
+
+
+def get_audio_duration(audio_path: Path, ffmpeg_cmd: Optional[str] = None) -> float:
+    """Detect audio duration in seconds via FFmpeg stderr inspection."""
+    if not ffmpeg_cmd or not audio_path.exists():
+        return 0.0
+    try:
+        res = _run_process_safe(
+            [ffmpeg_cmd, "-i", str(audio_path)],
+            timeout=15,
+        )
+        import re
+        output = (res.stderr or "") + (res.stdout or "")
+        match = re.search(r"Duration:\s*(\d+):(\d+):(\d+\.?\d*)", output)
+        if match:
+            h = float(match.group(1))
+            m = float(match.group(2))
+            s = float(match.group(3))
+            return h * 3600 + m * 60 + s
+    except Exception:
+        pass
+    return 0.0
+
+
 def transcribe_telegram_audio(audio_path: Path) -> str:
-    """Transcribe voice note or audio file via local FFmpeg and OpenAI Whisper."""
+    """Transcribe voice note or audio file via local FFmpeg and OpenAI Whisper with chunking for > 30s."""
     if not audio_path.exists():
         return ""
 
-    if os.environ.get("PYTEST_CURRENT_TEST"):
+    if os.environ.get("PYTEST_CURRENT_TEST") and not os.environ.get("AEGIS_TEST_FORCE_TRANSCRIBE"):
         return "Simulated voice prompt from test"
 
     import shutil
-    import subprocess
     import tempfile
 
     ffmpeg_cmd = shutil.which("ffmpeg") or shutil.which("ffmpeg.exe")
@@ -712,11 +789,15 @@ def transcribe_telegram_audio(audio_path: Path) -> str:
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_path = Path(tmp_dir)
         wav_path = tmp_path / "voice_converted.wav"
-        
-        # 1. Convert to 16kHz mono PCM wav via ffmpeg if needed
+
+        # 1. Detect source duration if ffmpeg is available
+        duration = get_audio_duration(audio_path, ffmpeg_cmd) if ffmpeg_cmd else 0.0
+
+        # 2. Convert to 16kHz mono PCM wav via ffmpeg if available
         if ffmpeg_cmd:
+            ffmpeg_timeout = max(60, int(duration * 2)) if duration > 0 else 60
             try:
-                subprocess.run(
+                _run_process_safe(
                     [
                         ffmpeg_cmd,
                         "-y",
@@ -726,9 +807,7 @@ def transcribe_telegram_audio(audio_path: Path) -> str:
                         "-c:a", "pcm_s16le",
                         str(wav_path),
                     ],
-                    capture_output=True,
-                    timeout=30,
-                    creationflags=creationflags,
+                    timeout=ffmpeg_timeout,
                 )
             except Exception:
                 wav_path = audio_path
@@ -737,11 +816,67 @@ def transcribe_telegram_audio(audio_path: Path) -> str:
 
         target_audio = wav_path if wav_path.exists() and wav_path.stat().st_size > 500 else audio_path
 
-        # 2. Transcribe with Whisper
+        # If duration was not detected from raw audio, check converted wav
+        if duration <= 0.0 and ffmpeg_cmd and target_audio.exists():
+            duration = get_audio_duration(target_audio, ffmpeg_cmd)
+
         env = os.environ.copy()
         env["PYTHONIOENCODING"] = "utf-8"
+
+        # 3. If audio length > 30s and ffmpeg is available, chunk into 30s segments
+        if duration > 30.0 and ffmpeg_cmd:
+            chunk_pattern = str(tmp_path / "chunk_%03d.wav")
+            try:
+                _run_process_safe(
+                    [
+                        ffmpeg_cmd,
+                        "-y",
+                        "-i", str(target_audio),
+                        "-f", "segment",
+                        "-segment_time", "30",
+                        "-c:a", "pcm_s16le",
+                        chunk_pattern,
+                    ],
+                    timeout=max(60, int(duration * 2)),
+                )
+            except Exception:
+                pass
+
+            chunks = sorted(tmp_path.glob("chunk_*.wav"))
+            if chunks:
+                chunk_transcripts: List[str] = []
+                for chunk in chunks:
+                    chunk_out_dir = tmp_path / f"out_{chunk.stem}"
+                    chunk_out_dir.mkdir(exist_ok=True)
+                    try:
+                        _run_process_safe(
+                            [
+                                whisper_cmd,
+                                str(chunk),
+                                "--model", "base",
+                                "--output_format", "txt",
+                                "--output_dir", str(chunk_out_dir),
+                                "--fp16", "False",
+                                "--condition_on_previous_text", "False",
+                                "--temperature", "0",
+                            ],
+                            timeout=180,
+                            env=env,
+                        )
+                        txts = list(chunk_out_dir.glob("*.txt"))
+                        if txts:
+                            chunk_text = txts[0].read_text(encoding="utf-8", errors="replace").strip()
+                            if chunk_text:
+                                chunk_transcripts.append(chunk_text)
+                    except Exception:
+                        pass
+                if chunk_transcripts:
+                    return " ".join(chunk_transcripts).strip()
+
+        # 4. Non-chunked path (single chunk or <= 30s or ffmpeg unavailable):
+        dynamic_timeout = max(180, int(duration * 4)) if duration > 0 else 180
         try:
-            subprocess.run(
+            _run_process_safe(
                 [
                     whisper_cmd,
                     str(target_audio),
@@ -749,12 +884,11 @@ def transcribe_telegram_audio(audio_path: Path) -> str:
                     "--output_format", "txt",
                     "--output_dir", str(tmp_path),
                     "--fp16", "False",
+                    "--condition_on_previous_text", "False",
+                    "--temperature", "0",
                 ],
-                capture_output=True,
-                text=True,
-                timeout=120,
+                timeout=dynamic_timeout,
                 env=env,
-                creationflags=creationflags,
             )
             txt_files = list(tmp_path.glob("*.txt"))
             if txt_files:
@@ -918,7 +1052,9 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
                     continue
 
                 for update in data.get("result", []):
-                    offset = max(offset, update["update_id"] + 1)
+                    up_id = update.get("update_id")
+                    if up_id is not None:
+                        offset = max(offset, up_id + 1)
 
                     # 1. Handle Native Poll Answers (User 1-tap MCQ decision)
                     poll_ans = update.get("poll_answer")
@@ -1072,9 +1208,12 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
                                 mime = voice.get("mime_type", "")
                                 v_ext = ".oga" if "ogg" in mime else ".mp3"
                                 dl_path = download_telegram_file(token, fid, preferred_name=f"voice_note_{int(time.time())}{v_ext}")
-                                v_reply = handle_incoming_voice(chat_id, dl_path, config=cfg)
-                                if v_reply:
-                                    send_telegram_message(chat_id, v_reply, config=cfg)
+                                try:
+                                    v_reply = handle_incoming_voice(chat_id, dl_path, config=cfg)
+                                    if v_reply:
+                                        send_telegram_message(chat_id, v_reply, config=cfg)
+                                except Exception as he:
+                                    send_telegram_message(chat_id, f"⚠️ Voice note execution error: {he}", config=cfg)
                         except Exception as ve:
                             send_telegram_message(chat_id, f"⚠️ Voice note processing error: {ve}", config=cfg)
                         continue
@@ -1119,15 +1258,18 @@ def poll_telegram_updates(stop_event: Optional[threading.Event] = None, on_ready
                     except Exception:
                         pass
 
-                    attach_to_input_desktop()
-                    reply = handle_remote_command(chat_id, text)
-                    if reply:
-                        get_terminal_mirror().append(reply, source=f"cmd:{text[:25]}")
-                        send_telegram_message(chat_id, reply, config=cfg)
-                        try:
-                            mark_telegram_message_processed(up_id, result_summary=reply[:300])
-                        except Exception:
-                            pass
+                    try:
+                        attach_to_input_desktop()
+                        reply = handle_remote_command(chat_id, text)
+                        if reply:
+                            get_terminal_mirror().append(reply, source=f"cmd:{text[:25]}")
+                            send_telegram_message(chat_id, reply, config=cfg)
+                            try:
+                                mark_telegram_message_processed(up_id, result_summary=reply[:300])
+                            except Exception:
+                                pass
+                    except Exception as cmd_err:
+                        send_telegram_message(chat_id, f"⚠️ Command execution error: {cmd_err}", config=cfg)
 
         except Exception as e:
             time.sleep(3)

@@ -1,12 +1,12 @@
-# AegisBrain Arch Wiki Portal
+# AegisBrain Wiki Portal
 
-Welcome to the **AegisBrain Arch Wiki** — the encyclopedic technical documentation for the AegisBrain autonomous engineering chassis, neural memory bus, and 3-tier multi-agent governor.
+Technical documentation for the AegisBrain autonomous engineering chassis, neural memory bus, and 3-tier multi-agent governor.
 
-This wiki is maintained in the spirit of the *Arch Linux Wiki*: comprehensive, authoritative, fact-driven, and devoid of conversational filler. Every section details system internals, protocol specifications, configuration files, and troubleshooting steps.
+This wiki provides reference specifications, system internals, protocols, configuration formats, and troubleshooting procedures.
 
 ---
 
-## 📖 Master Table of Contents
+## Master Table of Contents
 
 | Chapter | Title | Summary |
 | :---: | :--- | :--- |
@@ -24,11 +24,11 @@ This wiki is maintained in the spirit of the *Arch Linux Wiki*: comprehensive, a
 | **[12](12-4-decision-quality-architecture-gate.md)** | **[4-Decision Quality Architecture Gate](12-4-decision-quality-architecture-gate.md)** | Karpathy Simplicity Doctrine, Ponytail/Unslop AI watermark stripping, Red-Team audit, and Dual-Environment sandbox. |
 | **[13](13-fast-path-testing-and-ast.md)** | **[Fast-Path Testing & AST Verification](13-fast-path-testing-and-ast.md)** | In-memory AST verification (`aegis test <file>`), scoped pytest execution (< 1s), and CI parity maintenance. |
 | **[14](14-cli-reference-bible.md)** | **[CLI Reference Bible](14-cli-reference-bible.md)** | Exhaustive dictionary of all 58+ commands, subcommands, arguments, flags, options, and exit codes. |
-| **[15](15-troubleshooting-and-diagnostics.md)** | **[Troubleshooting & Diagnostics](15-troubleshooting-and-diagnostics.md)** | Arch Wiki-style troubleshooting table: error messages, root causes, diagnostic recipes (`aegis doctor`), and recoveries. |
+| **[15](15-troubleshooting-and-diagnostics.md)** | **[Troubleshooting & Diagnostics](15-troubleshooting-and-diagnostics.md)** | System troubleshooting table: error messages, root causes, diagnostic recipes (`aegis doctor`), and recoveries. |
 
 ---
 
-## 🗺️ Reading Paths by Engineering Persona
+## Reading Paths by Engineering Persona
 
 Depending on your integration objective, consult the following curated sequences:
 

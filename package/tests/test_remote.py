@@ -420,6 +420,183 @@ class TestCaffeinateAndRemote(unittest.TestCase):
             if f_path.exists():
                 f_path.unlink()
 
+    def test_transcribe_audio_long_duration_chunking(self):
+        """Audio > 30s triggers chunking, --condition_on_previous_text False, --temperature 0 and stitches transcripts."""
+        import tempfile
+        from unittest.mock import patch
+        from aegis.remote import transcribe_telegram_audio
+
+        with tempfile.NamedTemporaryFile("wb", suffix=".wav", delete=False) as f:
+            f.write(b"RIFF" + b"\x00" * 1000)
+            f_path = Path(f.name)
+
+        try:
+            os.environ["AEGIS_TEST_FORCE_TRANSCRIBE"] = "1"
+            whisper_calls = []
+
+            def fake_run(cmd, timeout, cwd=None, env=None):
+                cmd_str = " ".join(cmd)
+                if "-f segment" in cmd_str:
+                    out_pat = cmd[-1]
+                    parent = Path(out_pat).parent
+                    c0 = parent / "chunk_000.wav"
+                    c1 = parent / "chunk_001.wav"
+                    c0.write_bytes(b"chunk0")
+                    c1.write_bytes(b"chunk1")
+                elif "whisper" in cmd[0]:
+                    whisper_calls.append((cmd, timeout))
+                    out_idx = cmd.index("--output_dir") + 1
+                    out_d = Path(cmd[out_idx])
+                    chunk_name = Path(cmd[1]).stem
+                    txt_file = out_d / f"{chunk_name}.txt"
+                    if "000" in chunk_name:
+                        txt_file.write_text("Build the frontend UI", encoding="utf-8")
+                    else:
+                        txt_file.write_text("and connect the WebSocket", encoding="utf-8")
+
+                import subprocess
+                return subprocess.CompletedProcess(args=cmd, returncode=0, stdout="", stderr="")
+
+            with patch("shutil.which", side_effect=lambda x: f"/bin/{x}"), \
+                 patch("aegis.remote.get_audio_duration", return_value=65.0), \
+                 patch("aegis.remote._run_process_safe", side_effect=fake_run):
+                transcript = transcribe_telegram_audio(f_path)
+                self.assertEqual(transcript, "Build the frontend UI and connect the WebSocket")
+                self.assertEqual(len(whisper_calls), 2)
+                for w_cmd, w_tout in whisper_calls:
+                    self.assertIn("--condition_on_previous_text", w_cmd)
+                    cond_idx = w_cmd.index("--condition_on_previous_text")
+                    self.assertEqual(w_cmd[cond_idx + 1], "False")
+                    self.assertIn("--temperature", w_cmd)
+                    temp_idx = w_cmd.index("--temperature")
+                    self.assertEqual(w_cmd[temp_idx + 1], "0")
+        finally:
+            os.environ.pop("AEGIS_TEST_FORCE_TRANSCRIBE", None)
+            if f_path.exists():
+                f_path.unlink()
+
+    def test_transcribe_audio_short_duration_no_chunking(self):
+        """Audio <= 30s uses single chunk with --condition_on_previous_text False and --temperature 0."""
+        import tempfile
+        from unittest.mock import patch
+        from aegis.remote import transcribe_telegram_audio
+
+        with tempfile.NamedTemporaryFile("wb", suffix=".wav", delete=False) as f:
+            f.write(b"RIFF" + b"\x00" * 1000)
+            f_path = Path(f.name)
+
+        try:
+            os.environ["AEGIS_TEST_FORCE_TRANSCRIBE"] = "1"
+            whisper_calls = []
+
+            def fake_run(cmd, timeout, cwd=None, env=None):
+                if "whisper" in cmd[0]:
+                    whisper_calls.append((cmd, timeout))
+                    out_idx = cmd.index("--output_dir") + 1
+                    out_d = Path(cmd[out_idx])
+                    target_name = Path(cmd[1]).stem
+                    (out_d / f"{target_name}.txt").write_text("Run unit tests", encoding="utf-8")
+                import subprocess
+                return subprocess.CompletedProcess(args=cmd, returncode=0, stdout="", stderr="")
+
+            with patch("shutil.which", side_effect=lambda x: f"/bin/{x}"), \
+                 patch("aegis.remote.get_audio_duration", return_value=12.0), \
+                 patch("aegis.remote._run_process_safe", side_effect=fake_run):
+                transcript = transcribe_telegram_audio(f_path)
+                self.assertEqual(transcript, "Run unit tests")
+                self.assertEqual(len(whisper_calls), 1)
+                w_cmd, w_tout = whisper_calls[0]
+                self.assertEqual(w_tout, 180)
+                self.assertIn("--condition_on_previous_text", w_cmd)
+                cond_idx = w_cmd.index("--condition_on_previous_text")
+                self.assertEqual(w_cmd[cond_idx + 1], "False")
+                self.assertIn("--temperature", w_cmd)
+                temp_idx = w_cmd.index("--temperature")
+                self.assertEqual(w_cmd[temp_idx + 1], "0")
+        finally:
+            os.environ.pop("AEGIS_TEST_FORCE_TRANSCRIBE", None)
+            if f_path.exists():
+                f_path.unlink()
+
+    def test_run_process_safe_timeout_kills_process_tree(self):
+        """_run_process_safe kills process tree via _kill_proc_tree when timeout expires."""
+        from unittest.mock import patch, MagicMock
+        import subprocess
+        from aegis.remote import _run_process_safe
+
+        mock_proc = MagicMock()
+        mock_proc.pid = 99999
+        mock_proc.communicate.side_effect = subprocess.TimeoutExpired(cmd=["sleep", "10"], timeout=1)
+
+        with patch("subprocess.Popen", return_value=mock_proc), \
+             patch("aegis.remote._kill_proc_tree") as mock_kill:
+            with self.assertRaises(subprocess.TimeoutExpired):
+                _run_process_safe(["sleep", "10"], timeout=1)
+            mock_kill.assert_called_once_with(99999)
+
+    def test_poll_telegram_updates_graceful_recovery_on_voice_failure(self):
+        """Gracefully recovers when voice transcription throws, preserving offset and processing subsequent updates."""
+        from unittest.mock import patch, MagicMock
+        import json
+        import threading
+        from aegis.remote import poll_telegram_updates
+
+        updates_payload = {
+            "ok": True,
+            "result": [
+                {
+                    "update_id": 101,
+                    "message": {
+                        "message_id": 1,
+                        "chat": {"id": 123456789},
+                        "voice": {"file_id": "bad_voice_file", "mime_type": "audio/ogg"},
+                    },
+                },
+                {
+                    "update_id": 102,
+                    "message": {
+                        "message_id": 2,
+                        "chat": {"id": 123456789},
+                        "text": "/status",
+                    },
+                },
+            ],
+        }
+
+        stop_evt = threading.Event()
+        poll_count = 0
+        recorded_messages = []
+
+        class MockResp:
+            def read(self):
+                return json.dumps(updates_payload).encode("utf-8")
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                pass
+
+        def fake_urlopen(req, timeout=30):
+            nonlocal poll_count
+            poll_count += 1
+            if poll_count == 1:
+                return MockResp()
+            stop_evt.set()
+            return MockResp()
+
+        with patch("aegis.remote.load_remote_config", return_value={"telegram_token": "TEST_TOKEN", "telegram_chat_id": "123456789"}), \
+             patch("aegis.remote.register_telegram_commands"), \
+             patch("aegis.remote.TranscriptWatcher") as mock_watcher, \
+             patch("urllib.request.urlopen", side_effect=fake_urlopen), \
+             patch("aegis.remote.download_telegram_file", return_value=Path("test_voice.oga")), \
+             patch("aegis.remote.handle_incoming_voice", side_effect=RuntimeError("Whisper subprocess crash")), \
+             patch("aegis.remote.send_telegram_message", side_effect=lambda cid, msg, **kw: recorded_messages.append(msg)), \
+             patch("aegis.remote.handle_remote_command", return_value="Status: All systems operational"):
+            mock_watcher.return_value.start = MagicMock()
+            poll_telegram_updates(stop_event=stop_evt)
+
+            self.assertTrue(any("Voice note execution error" in m or "Whisper subprocess crash" in m for m in recorded_messages))
+            self.assertTrue(any("All systems operational" in m for m in recorded_messages))
+
 
 if __name__ == "__main__":
     unittest.main()
