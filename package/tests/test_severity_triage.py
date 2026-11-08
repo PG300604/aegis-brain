@@ -54,6 +54,19 @@ class TestSeverityTriage(unittest.TestCase):
         delegate_crit, _ = should_delegate_to_worker("Fix critical secret leakage and private key exploit")
         self.assertFalse(delegate_crit)
 
+        delegate_micro, dec_micro = should_delegate_to_worker("Fix small typo in README heading")
+        self.assertFalse(delegate_micro)
+        self.assertEqual(dec_micro.execution_strategy, ExecutionStrategy.SUBAGENT_DIRECT)
+
+    def test_micro_task_typo_direct_subagent(self):
+        task = "Fix single word typo in documentation"
+        dec = judge_task_severity(task)
+        self.assertEqual(dec.execution_strategy, ExecutionStrategy.SUBAGENT_DIRECT)
+        self.assertEqual(dec.recommended_worker, "subagent_direct")
+        self.assertEqual(dec.complexity_score, 1)
+        self.assertEqual(dec.workers_per_subagent, 0)
+        self.assertIn("Micro-task / typo", dec.rationale)
+
     def test_format_banner(self):
         dec = judge_task_severity("Extract metadata from Instagram reel")
         banner = dec.format_banner()
