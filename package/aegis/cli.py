@@ -391,6 +391,8 @@ def main() -> None:
     # setup (Role-Based Dynamic Arsenal Installation Wizard)
     setup_parser = subparsers.add_parser("setup", help="Role-based Arsenal Installation & Archetype Setup Wizard")
     setup_parser.add_argument("--profile", "-p", choices=["developer", "creator", "security", "omni"], help="Target archetype profile name")
+    setup_parser.add_argument("--workers", action="store_true", default=False, help="Run Worker Model Onboarding & Discovery Wizard")
+
 
     # unslop
     unslop_parser = subparsers.add_parser(
@@ -478,11 +480,18 @@ def main() -> None:
         help="Directly select archetype pack during doctor/setup",
     )
     doc_parser.add_argument(
+        "--models",
+        action="store_true",
+        default=False,
+        help="Inspect Tier 3 Worker Models & Fallback Cascade",
+    )
+    doc_parser.add_argument(
         "tool",
         nargs="?",
         default=None,
         help="Specific tool to install (when using 'install' alias)",
     )
+
 
     # hands / test-ui / ui / inspect-ui (Native Web Inspection & UI Automation)
     hands_parser = subparsers.add_parser(
@@ -509,6 +518,65 @@ def main() -> None:
         default=False,
         help="Output machine-readable JSON for AI agents",
     )
+
+    # workers / models (Tier 3 Worker Model Discovery & Onboarding Wizard)
+    workers_parser = subparsers.add_parser(
+        "workers",
+        aliases=["worker", "models"],
+        help="Discover, configure, and manage Tier 3 execution worker models and fallback cascade",
+    )
+    workers_parser.add_argument(
+        "action",
+        nargs="?",
+        default="list",
+        choices=["list", "setup", "advice", "clear"],
+        help="Workers action: 'list' (default), 'setup', 'advice', or 'clear'",
+    )
+    workers_parser.add_argument(
+        "--models",
+        "-m",
+        default=None,
+        help="Comma-separated model names (or screenshot confirmation) to save for OpenCode/workers",
+    )
+    workers_parser.add_argument(
+        "--tool",
+        "-t",
+        default=None,
+        choices=["opencode", "hermes", "ollama"],
+        help="Filter or configure specific worker tool",
+    )
+    workers_parser.add_argument(
+        "--json",
+        action="store_true",
+        default=False,
+        help="Output machine-readable JSON",
+    )
+
+    # test (Fast-Path In-Memory AST Verification & Scoped Pytest)
+    test_parser = subparsers.add_parser(
+        "test",
+        help="Fast-path in-memory AST verification and scoped pytest execution (< 1s)",
+    )
+    test_parser.add_argument(
+        "scoped_path",
+        nargs="?",
+        default=None,
+        help="Target file or test path to verify",
+    )
+    test_parser.add_argument(
+        "--scoped",
+        "-s",
+        dest="scoped_flag",
+        default=None,
+        help="Target file or test path to verify",
+    )
+    test_parser.add_argument(
+        "--json",
+        action="store_true",
+        default=False,
+        help="Output machine-readable JSON",
+    )
+
 
 
     args = parser.parse_args()
@@ -1419,6 +1487,13 @@ def main() -> None:
         print(f"\n✅ {res['message']}")
         print(f"Mounted Skills ({len(res['mounted_skills'])}): {', '.join(res['mounted_skills'])}")
 
+        if getattr(args, "workers", False):
+            from .workers import run_workers_wizard, format_worker_cascade_report
+            print("\n--- Running Worker Models Discovery Wizard ---")
+            w_res = run_workers_wizard()
+            print(format_worker_cascade_report(w_res))
+
+
     elif args.command in ("doctor", "check", "install"):
         from .environment import run_doctor, format_doctor_report, save_host_capabilities, install_tool, run_arsenal_wizard
 
@@ -1468,6 +1543,12 @@ def main() -> None:
                     else:
                         print("\n[AegisDoctor --fix] All components are already installed.")
 
+            if getattr(args, "models", False):
+                from .db import get_worker_cascade
+                from .workers import format_worker_cascade_report
+                cascade = get_worker_cascade()
+                print("\n" + format_worker_cascade_report(cascade))
+
     elif args.command in ("hands", "test-ui", "ui", "inspect-ui"):
         from .hands import format_hands_report, inspect_web_target
         result = inspect_web_target(args.url, capture_screenshot=args.screenshot)
@@ -1481,6 +1562,67 @@ def main() -> None:
         if getattr(args, "assert_clean", False):
             if not result.is_live or result.status_code >= 400 or result.console_errors:
                 sys.exit(1)
+
+    elif args.command in ("workers", "worker", "models"):
+        from .db import clear_worker_models, get_worker_cascade
+        from .workers import (
+            format_worker_cascade_report,
+            get_worker_setup_advice,
+            run_workers_wizard,
+        )
+
+        action = getattr(args, "action", "list") or "list"
+
+        if action == "advice":
+            adv = get_worker_setup_advice(tool=getattr(args, "tool", None))
+            print(adv)
+
+        elif action == "clear":
+            clear_worker_models(tool_name=getattr(args, "tool", None))
+            print("[AegisBrain] Worker models cleared from persistent memory.")
+
+        elif action == "setup":
+            user_answers = {}
+            if getattr(args, "models", None):
+                user_answers["opencode_models"] = args.models
+            res = run_workers_wizard(user_answers=user_answers)
+            if getattr(args, "json", False):
+                import json
+                print(json.dumps(res, indent=2))
+            else:
+                if res.get("setup_advice_needed"):
+                    print(res.get("setup_advice", ""))
+                else:
+                    print(format_worker_cascade_report(res))
+                    if res.get("warnings"):
+                        print("\n⚠️ Warnings:")
+                        for w in res["warnings"]:
+                            print(f"- {w}")
+
+        else:  # list
+            cascade = get_worker_cascade()
+            if getattr(args, "json", False):
+                import json
+                print(json.dumps(cascade, indent=2))
+            else:
+                print(format_worker_cascade_report(cascade))
+
+    elif args.command == "test":
+        from .workers import run_fast_test
+        scoped = getattr(args, "scoped_flag", None) or getattr(args, "scoped_path", None)
+        res = run_fast_test(scoped)
+        if getattr(args, "json", False):
+            import json
+            print(json.dumps(res, indent=2))
+        else:
+            status_emoji = "✅ PASS" if res["status"] == "pass" else "❌ FAIL"
+            print(f"=== Fast-Path Test: {status_emoji} ({res['elapsed_ms']} ms) ===")
+            print(f"AST Valid: {'✅' if res['ast_valid'] else '❌'} ({res['ast_message']})")
+            if res.get("test_target"):
+                print(f"Scoped Target: {res['test_target']}")
+            if res.get("test_output"):
+                print(f"\n{res['test_output']}")
+
 
     else:
         parser.print_help()

@@ -112,4 +112,14 @@ from .hands import (
     inspect_web_target,
     execute_ui_journey,
 )
+from .workers import (
+    detect_opencode_models,
+    detect_hermes_fallbacks,
+    detect_ollama_local_models,
+    get_worker_setup_advice,
+    run_workers_wizard,
+    format_worker_cascade_report,
+    run_fast_test,
+)
+
 

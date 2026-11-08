@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-205%20Passing-success.svg?logo=githubactions&logoColor=white" alt="CI"></a>
+  <a href="https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-262%20Passing-success.svg?logo=githubactions&logoColor=white" alt="CI"></a>
   <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?logo=python&logoColor=white" alt="Python"></a>
   <a href="https://sqlite.org"><img src="https://img.shields.io/badge/Storage-SQLite%20WAL%20%2B%20FTS5-003B57.svg?logo=sqlite&logoColor=white" alt="Storage"></a>
   <img src="https://img.shields.io/badge/RAM-%3C%2025%20MB-10B981.svg" alt="Memory">
@@ -168,6 +168,74 @@ Manage, monitor, and steer your workstation coding sessions from your smartphone
 
 ---
 
+## 🌐 Native Hands Engine (Headless Web Inspection & DOM Testing)
+
+Modern AI coding agents frequently declare web frontend features "complete" without ever testing if the localhost dev server actually renders. AegisBrain gives agents **physical hands** to verify localhost apps, test interactive DOM elements, and capture screenshots:
+
+- **Playwright Headless Automation**: Launches headless Chromium to render the live DOM, capture full-page screenshots, inspect console error logs, and audit clickable buttons and input forms.
+- **Graceful Zero-Dependency Fallback (`lightweight_dom`)**: If Playwright or browser binaries are not installed, the engine seamlessly falls back to pure standard library HTTP + HTMLParser, extracting titles, forms, inputs, and links with zero runtime dependencies.
+- **CI/CD Quality Gate Assertion**: `aegis hands http://localhost:3000 --assert-clean` exits with code 1 if the target fails to respond, returns HTTP $\ge 400$, or emits unhandled browser console errors.
+- **AI-Native JSON & Markdown Telemetry**: Delivers structured element trees (`buttons`, `inputs`, `links`, `headings`) directly to agents via `aegis hands <url> --json`.
+
+```bash
+# Inspect a local developer server and take a screenshot
+aegis hands http://localhost:3000 --screenshot
+
+# CI/CD Quality Gate (fail on HTTP error or browser console error)
+aegis hands http://localhost:5173 --assert-clean
+```
+
+---
+
+## ⚡ Tier 3 Worker Models & Strict No-Guesswork Token Arbitrage
+
+AegisBrain eliminates frontier token burn by routing implementation code drafts, tests, and functions to free Tier 3 execution workers, strictly guarded by a 3-tier cascade:
+
+```
+[ Tier 3A: OpenCode ]  --> High-Reasoning Free Models (DeepSeek V4.1 Flash Free / Flint 40B)
+         ↓ (if rate-limited or busy)
+[ Tier 3B: Hermes Agent ] --> Fast Cloud Fallback Chain (Nemotron 3.5 Bolt + 4 free endpoints)
+         ↓ (if offline or disconnected)
+[ Tier 3C: Local Ollama ] --> Pure Offline Failover (Qwen2.5-Coder 7B; 0 idle RAM footprint)
+```
+
+### Strict "No-Guesswork" Onboarding Protocol
+Interactive TUI tools (like OpenCode's `/models` screen) often prevent reliable non-interactive detection of active favorites. AegisBrain strictly adheres to a **Zero-Guesswork** standard during setup (`aegis setup --workers` or `aegis doctor --models`):
+1. **Interactive Verification**: Asks users whether their worker tools are already configured.
+2. **Setup Advisory Guide**: For unconfigured developers, `aegis workers advice` provides an exact step-by-step tutorial on acquiring free models without spending money.
+3. **Evidence-Based Proof**: If active favorites cannot be verified statically, AegisBrain prompts the user to enter their chosen model names or upload a terminal screenshot of their `/models` or fallback screen, ensuring the priority hierarchy is 100% truthful.
+
+```bash
+# View active worker models and priority cascade
+aegis workers list
+
+# View zero-cost setup guidance for OpenCode, Hermes, and Ollama
+aegis workers advice
+
+# Run the guided Worker Discovery Wizard
+aegis setup --workers
+```
+
+---
+
+## 🛡️ Role-Based Dynamic Arsenal Installation (`aegis setup`)
+
+Developers do not need every single tool installed on day one. AegisBrain categorizes capabilities into targeted Archetypes:
+
+- **Developer Profile**: Lean engineering pack (AST code graph, git sweep, test runners, token workers).
+- **Creator Profile**: Sensory perception pack (FFmpeg video slicing, Whisper voice transcription, UI-UX Pro Max, OpenMontage).
+- **Security Profile**: Red-team pen-testing pack (Artemis scanner, DAST auditing, secret leakage scanners).
+- **Omni Profile**: Full workstation capabilities mounted simultaneously.
+
+*Any missing capability is automatically detected and mounted Just-In-Time (JIT) by the Jev Semantic Decision Head when cross-domain tasks are received.*
+
+```bash
+# Mount a specific archetype profile
+aegis setup --profile developer
+```
+
+---
+
 ## Quickstart & Installation
 
 ### 1-Line Universal Install
@@ -200,6 +268,11 @@ command -v aegis >/dev/null 2>&1 && eval "$(aegis hook --shell bash)"
 
 | Command | Subcommand / Options | Description |
 | :--- | :--- | :--- |
+| `aegis setup` | `[--profile P] [--workers]` | Role-based Arsenal installation wizard (`developer`, `creator`, `security`, `omni`) and Tier 3 worker discovery. |
+| `aegis doctor` | `[--fix] [--models]` | Workstation environment health scorecard and Tier 3 worker cascade inspection. |
+| `aegis workers` | `list` / `setup` / `advice` / `clear` | Discover, configure, and manage Tier 3 execution worker models and fallback priority cascade. |
+| `aegis test` | `<file> [--scoped]` | Fast-path in-memory AST verification and targeted scoped test runner (< 1s execution). |
+| `aegis hands` | `<url> [--screenshot] [--assert-clean]` (aliases: `ui`, `test-ui`) | Native headless web app inspector: live DOM extraction, console error checks, and screenshot captures. |
 | `aegis briefing` | `[--name N]` (aliases: `hi`, `greeting`) | High-craft, anti-slop developer briefing: status, recent milestones, real-time community radar, and next actions. |
 | `aegis bye` | `[--summary S]` (aliases: `close-session`, `session-end`) | Graceful session termination: restore-point snapshot, context compaction to `ACTIVE_CONTEXT.md`, and DB archive. |
 | `aegis radar` | `[--sub S] [--limit N]` | Scan real-time engineering discussions from HackerNews and r/LocalLLaMA with 2-hour TTL auto-cache. |
@@ -236,7 +309,7 @@ command -v aegis >/dev/null 2>&1 && eval "$(aegis hook --shell bash)"
 
 - **Daemon RAM Footprint**: 18.4 MB (idle), 24.2 MB (active multi-agent routing).
 - **Daemon Startup Time**: 34 ms (zero external imports).
-- **Test Suite Coverage**: **205 / 205 passed (100% pass rate in 25.67s)**.
+- **Test Suite Coverage**: **262 / 262 passed (100% pass rate in 18.21s)**.
 
 ---
 

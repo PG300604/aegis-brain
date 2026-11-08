@@ -631,16 +631,17 @@ def apply_archetype_profile(
     # Update host_capabilities in brain.db
     try:
         from .config import get_db_path
+        from .environment import init_host_capabilities_table
+        init_host_capabilities_table()
         brain_path = get_db_path()
-        if brain_path.exists():
-            with sqlite3.connect(str(brain_path)) as c_brain:
-                cols = {row[1] for row in c_brain.execute("PRAGMA table_info(host_capabilities)").fetchall()}
-                if cols and "archetype" not in cols:
-                    c_brain.execute("ALTER TABLE host_capabilities ADD COLUMN archetype TEXT DEFAULT 'developer'")
-                cur = c_brain.execute("UPDATE host_capabilities SET archetype = ?, updated_at = CURRENT_TIMESTAMP WHERE id = 1", (norm,))
-                if cur.rowcount == 0:
-                    c_brain.execute("INSERT INTO host_capabilities (id, os, shell, pkg_manager, archetype, updated_at) VALUES (1, 'unknown', 'unknown', 'unknown', ?, CURRENT_TIMESTAMP)", (norm,))
-                c_brain.commit()
+        with sqlite3.connect(str(brain_path)) as c_brain:
+            cols = {row[1] for row in c_brain.execute("PRAGMA table_info(host_capabilities)").fetchall()}
+            if cols and "archetype" not in cols:
+                c_brain.execute("ALTER TABLE host_capabilities ADD COLUMN archetype TEXT DEFAULT 'developer'")
+            cur = c_brain.execute("UPDATE host_capabilities SET archetype = ?, updated_at = CURRENT_TIMESTAMP WHERE id = 1", (norm,))
+            if cur.rowcount == 0:
+                c_brain.execute("INSERT INTO host_capabilities (id, os, shell, pkg_manager, archetype, updated_at) VALUES (1, 'unknown', 'unknown', 'unknown', ?, CURRENT_TIMESTAMP)", (norm,))
+            c_brain.commit()
     except Exception:
         pass
 

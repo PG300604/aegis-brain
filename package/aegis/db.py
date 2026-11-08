@@ -108,6 +108,20 @@ CREATE TABLE IF NOT EXISTS host_capabilities (
     archetype TEXT DEFAULT 'developer',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS worker_models (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    tool_name TEXT NOT NULL,
+    model_name TEXT NOT NULL,
+    display_name TEXT,
+    priority INTEGER DEFAULT 1,
+    is_primary INTEGER DEFAULT 0,
+    is_free INTEGER DEFAULT 1,
+    fallback_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(tool_name, model_name)
+);
+
 """
 
 
@@ -373,3 +387,106 @@ def get_recent_telegram_messages(limit: int = 20) -> List[Dict[str, Any]]:
             (limit,),
         ).fetchall()
         return [dict(r) for r in rows]
+
+
+def save_worker_model(
+    tool_name: str = "",
+    model_name: str = "",
+    display_name: str = "",
+    priority: int = 1,
+    is_primary: bool = False,
+    is_free: bool = True,
+    fallback_order: int = 0,
+    **kwargs: Any,
+) -> int:
+    """Save or update a confirmed worker model in persistent memory."""
+    t_name = tool_name or str(kwargs.get("tool", ""))
+    m_name = model_name or str(kwargs.get("model", ""))
+    d_name = display_name or str(kwargs.get("name", m_name))
+    is_prim = 1 if (is_primary or kwargs.get("primary", False)) else 0
+    free_flag = 1 if (is_free or "free" in str(kwargs.get("cost_profile", "")).lower()) else 0
+
+    if not t_name or not m_name:
+        return 0
+
+    with get_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO worker_models 
+            (tool_name, model_name, display_name, priority, is_primary, is_free, fallback_order)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(tool_name, model_name) DO UPDATE SET
+                display_name = excluded.display_name,
+                priority = excluded.priority,
+                is_primary = excluded.is_primary,
+                is_free = excluded.is_free,
+                fallback_order = excluded.fallback_order
+            """,
+            (
+                t_name,
+                m_name,
+                d_name,
+                priority,
+                is_prim,
+                free_flag,
+                fallback_order,
+            ),
+        )
+        return cur.lastrowid or 0
+
+
+
+def get_worker_models(tool_name: Optional[str] = None) -> List[Dict[str, Any]]:
+    """Retrieve all confirmed worker models, optionally filtered by tool."""
+    with get_connection() as conn:
+        if tool_name:
+            rows = conn.execute(
+                """
+                SELECT * FROM worker_models 
+                WHERE tool_name = ? 
+                ORDER BY priority ASC, fallback_order ASC, id ASC
+                """,
+                (tool_name,),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                """
+                SELECT * FROM worker_models 
+                ORDER BY priority ASC, fallback_order ASC, id ASC
+                """
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+
+def clear_worker_models(tool_name: Optional[str] = None) -> None:
+    """Clear worker models from database."""
+    with get_connection() as conn:
+        if tool_name:
+            conn.execute("DELETE FROM worker_models WHERE tool_name = ?", (tool_name,))
+        else:
+            conn.execute("DELETE FROM worker_models")
+
+
+def get_worker_cascade() -> Dict[str, Any]:
+    """Retrieve hierarchical worker model cascade organized by priority."""
+    all_models = get_worker_models()
+    p1 = [m for m in all_models if m.get("priority") == 1]
+    p2 = [m for m in all_models if m.get("priority") == 2]
+    p3 = [m for m in all_models if m.get("priority") == 3]
+
+    primary_model = next((m for m in all_models if m.get("is_primary")), None)
+    if not primary_model and p1:
+        primary_model = p1[0]
+    elif not primary_model and p2:
+        primary_model = p2[0]
+
+    return {
+        "priority_1_opencode": p1,
+        "priority_2_hermes": p2,
+        "priority_3_ollama": p3,
+        "all_models": all_models,
+        "primary": primary_model,
+        "total_count": len(all_models),
+    }
+
