@@ -38,12 +38,11 @@ except ImportError:
 
 def format_gemini_ui_prompt(
     element_description: str,
-    component_name: str = "Feature06StatsBadge",
-    context: str = "Feature 06: Master Architectural Blueprints in AegisBrain",
+    component_name: str = "Feature06BlueprintCards",
+    context: str = "Feature 06: Architectural System Blueprints in AegisBrain",
 ) -> str:
-    """Format a UI generation prompt with strict Andrej Karpathy simplicity invariants
-
-    and high-contrast graphic novel styling rules.
+    """Format a UI generation prompt with strict Andrej Karpathy simplicity invariants,
+    high-contrast graphic novel styling rules, and policy-compliant neutral technical phrasing.
     """
     return f"""You are an elite React and Tailwind CSS UI engineer following the Andrej Karpathy Simplicity Doctrine.
 
@@ -65,13 +64,13 @@ Your task is to build a single, self-contained, production-grade React component
    - Deep background: `#070709` or `#101116`
    - High-contrast paper/plate: `#FAF8F5` or `#FBF9F5`
    - Ink black: `#000000` or `#0D0D11`
-   - Sovereign Crimson: `#B91C1C` / `#DC2626`
+   - Accent Crimson: `#B91C1C` / `#DC2626`
    - Monochromatic text: text-zinc-100 / text-black / text-zinc-400
 3. TYPOGRAPHY:
    - Uppercase monospace category/tag chips: `font-mono text-xs uppercase tracking-widest`.
    - Bold, impactful metric displays and titles.
-4. ZERO AI SLOP:
-   - NO rounded red pills (`rounded-full` buttons or tags are strictly forbidden).
+4. ZERO SLOP:
+   - NO rounded pill shapes (`rounded-full` buttons or tags are strictly forbidden).
    - NO generic floating purple/blue SaaS gradients.
    - NO bloated abstraction wrappers or speculative configurability.
 
@@ -120,15 +119,30 @@ def click_window_input(
         return False
 
 
-def simulate_paste_and_enter(press_enter: bool = True) -> bool:
-    """Simulate Ctrl+V and optional Enter keystrokes using hardware scan codes."""
+def simulate_paste_and_enter(press_enter: bool = True, clear_input: bool = True) -> bool:
+    """Simulate Ctrl+A -> Backspace, then Ctrl+V, and optional Enter keystrokes using hardware scan codes."""
     if sys.platform != "win32":
         return False
     try:
         user32 = ctypes.windll.user32
         scan_ctrl = user32.MapVirtualKeyW(0x11, 0)
+        scan_a = user32.MapVirtualKeyW(0x41, 0)
+        scan_backspace = user32.MapVirtualKeyW(0x08, 0)
         scan_v = user32.MapVirtualKeyW(0x56, 0)
         scan_enter = user32.MapVirtualKeyW(0x0D, 0)
+
+        # Clear existing text if requested (Ctrl+A -> Backspace)
+        if clear_input:
+            user32.keybd_event(0x11, scan_ctrl, 0, 0)
+            user32.keybd_event(0x41, scan_a, 0, 0)
+            time.sleep(0.05)
+            user32.keybd_event(0x41, scan_a, 0x0002, 0)
+            user32.keybd_event(0x11, scan_ctrl, 0x0002, 0)
+            time.sleep(0.08)
+            user32.keybd_event(0x08, scan_backspace, 0, 0)
+            time.sleep(0.05)
+            user32.keybd_event(0x08, scan_backspace, 0x0002, 0)
+            time.sleep(0.12)
 
         # Press Ctrl+V
         user32.keybd_event(0x11, scan_ctrl, 0, 0)
@@ -136,7 +150,7 @@ def simulate_paste_and_enter(press_enter: bool = True) -> bool:
         time.sleep(0.06)
         user32.keybd_event(0x56, scan_v, 0x0002, 0)
         user32.keybd_event(0x11, scan_ctrl, 0x0002, 0)
-        time.sleep(0.18)
+        time.sleep(0.20)
 
         # Press Enter if requested
         if press_enter:

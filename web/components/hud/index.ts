@@ -6,3 +6,4 @@ export { QualityGateCards } from "./QualityGateCards";
 export { InfographicsGallery } from "./InfographicsGallery";
 export { Feature06StatsBadge } from "./Feature06StatsBadge";
 export { Feature06PipelineFlow } from "./Feature06PipelineFlow";
+export { Feature06BlueprintCards } from "./Feature06BlueprintCards";
