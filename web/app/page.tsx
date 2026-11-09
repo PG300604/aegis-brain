@@ -166,8 +166,15 @@ export default function Home() {
       <section
         id="experience"
         ref={heroRef}
-        className="relative min-h-screen w-full flex flex-col items-center justify-between pt-28 pb-0 sm:pt-32 px-4 bg-[#070709] overflow-hidden"
+        className="relative isolate min-h-screen w-full flex flex-col items-center justify-between pt-28 pb-0 sm:pt-32 px-4 bg-[#070709] overflow-hidden"
       >
+        {/* Fluid Smoke Background Effect */}
+        <div
+          data-aifx="fluid-smoke"
+          data-aifx-colors="#000000,#58564b,#4b5c74"
+          className="absolute inset-0 -z-10 pointer-events-none"
+          aria-hidden="true"
+        />
         {/* Center: Monumental Headline with Staggered Entrance Animation & Scroll Dissolve */}
         <motion.div
           style={{ opacity: heroOpacity, scale: heroScale }}

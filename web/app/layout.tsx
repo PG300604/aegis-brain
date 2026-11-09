@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -216,6 +217,10 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-[#030305] text-[#E2E8F0] selection:bg-cyan-500/30 selection:text-cyan-200 antialiased font-sans">
+        <Script
+          src="https://cdn.aidesigner.ai/effects/runtime/v1.js"
+          strategy="afterInteractive"
+        />
         {children}
       </body>
     </html>
