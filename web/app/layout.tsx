@@ -221,6 +221,16 @@ export default function RootLayout({
           src="https://cdn.aidesigner.ai/effects/runtime/v1.js"
           strategy="afterInteractive"
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => {
+              const kill = () => document.querySelectorAll('[data-aifx-wm]').forEach(e => e.remove());
+              const obs = new MutationObserver(kill);
+              if (document.body) { obs.observe(document.body, { childList: true, subtree: true }); }
+              else { document.addEventListener('DOMContentLoaded', () => obs.observe(document.body, { childList: true, subtree: true })); }
+            })();`,
+          }}
+        />
         {children}
       </body>
     </html>
