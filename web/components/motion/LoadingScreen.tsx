@@ -31,7 +31,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
     return () => clearInterval(interval);
   }, [onComplete]);
 
-  // Generate 48 sacred geometry radial spokes
+  // Generate 48 sacred geometry radial spokes with deterministic rounding (prevents SSR float hydration diffs)
   const spokes = Array.from({ length: 48 }, (_, i) => {
     const angle = (i * 360) / 48;
     const rad = (angle * Math.PI) / 180;
@@ -39,10 +39,10 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
     const rInner = isMajor ? 32 : 44;
     const rOuter = isMajor ? 90 : 82;
     return {
-      x1: 100 + rInner * Math.cos(rad),
-      y1: 100 + rInner * Math.sin(rad),
-      x2: 100 + rOuter * Math.cos(rad),
-      y2: 100 + rOuter * Math.sin(rad),
+      x1: Math.round((100 + rInner * Math.cos(rad)) * 100) / 100,
+      y1: Math.round((100 + rInner * Math.sin(rad)) * 100) / 100,
+      x2: Math.round((100 + rOuter * Math.cos(rad)) * 100) / 100,
+      y2: Math.round((100 + rOuter * Math.sin(rad)) * 100) / 100,
       isMajor,
     };
   });
@@ -90,9 +90,6 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
               </span>
               <span className="font-extrabold text-3xl sm:text-4xl text-[#B91C1C]">.</span>
             </div>
-            <span className="text-[11px] sm:text-xs font-gt-era text-white/50 tracking-[0.25em] uppercase mt-1">
-              Autonomous Engineering Chassis
-            </span>
           </motion.div>
 
           {/* 

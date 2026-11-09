@@ -100,9 +100,6 @@ export default function Home() {
               </span>
               <span className="font-extrabold text-2xl sm:text-3xl text-[#B91C1C]">.</span>
             </div>
-            <span className="text-[11px] sm:text-xs font-gt-era text-white/60 tracking-wider mt-0.5">
-              Autonomous engineering chassis, neural memory bus &amp; multi-agent governor.
-            </span>
           </a>
         </div>
 
@@ -203,19 +200,16 @@ export default function Home() {
             Experience
           </motion.h2>
 
-          {/* Punchy, Non-Slop Directives & Sub-description */}
+          {/* Punchy, Non-Slop Directives */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-8 max-w-3xl mx-auto px-4 space-y-3"
+            className="mt-8 max-w-3xl mx-auto px-4"
           >
             <h3 className="font-nikkei text-[#D4AF37] text-base sm:text-xl md:text-2xl uppercase tracking-[0.2em] font-extrabold leading-tight">
               TAKE FULL CONTROL OF YOUR AGENTS
             </h3>
-            <p className="font-gt-era text-zinc-300 text-sm sm:text-base font-medium tracking-wide max-w-2xl mx-auto leading-relaxed">
-              Autonomous engineering chassis, neural memory bus, and 3-tier multi-agent governor. Sub-second SQLite FTS5 persistence, 24/7 Win32 keepalive, deterministic token arbitrage, and live Telegram telemetry.
-            </p>
           </motion.div>
         </motion.div>
 
@@ -239,8 +233,8 @@ export default function Home() {
         <div className="comic-plate relative w-full p-6 sm:p-12">
           {/* Feature Header in Human Real-Life Terms */}
           <div className="mb-8 pt-2">
-            <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
-              FEATURE 01 • PERMANENT AGENT MEMORY
+            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
+              FEATURE 01 // PERMANENT AGENT MEMORY
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl lg:text-6xl text-black tracking-tight leading-tight uppercase">
               Never Suffer From Agent Amnesia Again
@@ -282,8 +276,8 @@ export default function Home() {
       <ParallaxCard index={1} id="arbitrage">
         <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="mb-8 pt-2">
-            <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
-              FEATURE 02 • TOKEN ARBITRAGE ENGINE
+            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
+              FEATURE 02 // TOKEN ARBITRAGE
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
               Slash Your AI API Bill by 92%
@@ -363,11 +357,10 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Card 1: Traditional Vulnerability */}
             <div className="comic-card-red p-6 rounded-lg space-y-3">
-              <div className="flex items-center justify-between border-b border-black/10 pb-2">
+              <div className="border-b border-black/10 pb-2">
                 <span className="font-nikkei text-xs uppercase tracking-wider text-[#B91C1C] font-extrabold">
                   Traditional Agent Vulnerability
                 </span>
-                <span className="text-[10px] font-mono text-zinc-500">Unshielded</span>
               </div>
               <ul className="space-y-2 text-xs font-gt-era text-black/80">
                 <li className="flex items-start gap-2">
@@ -387,11 +380,10 @@ export default function Home() {
 
             {/* Card 2: Aegis KeepAlive Shield */}
             <div className="comic-card-emerald p-6 rounded-lg space-y-3">
-              <div className="flex items-center justify-between border-b border-black/10 pb-2">
+              <div className="border-b border-black/10 pb-2">
                 <span className="font-nikkei text-xs uppercase tracking-wider text-emerald-700 font-extrabold">
                   Aegis Immortal KeepAlive Shield
                 </span>
-                <span className="text-[10px] font-mono text-emerald-700 font-bold">Active 24/7</span>
               </div>
               <ul className="space-y-2 text-xs font-gt-era text-black/80">
                 <li className="flex items-start gap-2">
@@ -493,8 +485,8 @@ export default function Home() {
       <ParallaxCard index={5} id="blueprints">
         <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="mb-8 pt-2">
-            <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
-              FEATURE 06 • ARCHITECTURAL BLUEPRINTS
+            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
+              FEATURE 06 // SYSTEM BLUEPRINTS
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
               The 7 Core System Blueprints
@@ -504,13 +496,7 @@ export default function Home() {
             </p>
           </div>
 
-          {/* System Metric & Invariant Badge: Feature06StatsBadge (Generated by Gemini 4 Argon) */}
-          <Feature06StatsBadge className="mb-8" />
-
-          {/* Interactive 5-Stage Deterministic Node Flow (Generated by Gemini 4 Argon) */}
-          <Feature06PipelineFlow className="mb-8" />
-
-          {/* 7 Interactive Live Architectural Blueprints (Interactive Element Cards) */}
+          {/* 7 Interactive Live Architectural Blueprints */}
           <Feature06BlueprintCards className="mb-8" />
 
           {/* System Diagrams: InfographicsGallery */}

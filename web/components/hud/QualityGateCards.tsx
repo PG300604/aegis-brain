@@ -169,15 +169,9 @@ export function QualityGateCards() {
       <div className="p-6 sm:p-8 rounded-xl bg-[#FAF8F5] text-black border-2 border-black shadow-[6px_6px_0px_#000000] space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b-2 border-black pb-4">
           <div>
-            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-wider">
-              FILTER {active.number} • VERIFICATION SPECIFICATION
-            </div>
-            <h4 className="font-charles-rosie text-2xl sm:text-3xl text-black uppercase tracking-tight mt-1">
+            <h4 className="font-charles-rosie text-2xl sm:text-3xl text-black uppercase tracking-tight">
               {active.title}
             </h4>
-          </div>
-          <div className="text-xs font-gt-era font-bold uppercase text-black/60">
-            Automated Architecture Check
           </div>
         </div>
 

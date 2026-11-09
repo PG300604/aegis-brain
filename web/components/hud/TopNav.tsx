@@ -30,7 +30,7 @@ export function TopNav() {
           scrolled ? "shadow-[6px_6px_0px_#000000] border-white/20" : "shadow-[4px_4px_0px_#000000]"
         }`}
       >
-        {/* Brand Lockup: Matches User Screenshot Exactly */}
+        {/* Brand Lockup: Clean Minimal Aesthetic */}
         <div className="flex items-center gap-4">
           <a href="#" className="flex flex-col group select-none">
             <div className="flex items-baseline">
@@ -39,9 +39,6 @@ export function TopNav() {
               </span>
               <span className="font-extrabold text-xl sm:text-2xl text-[#B91C1C]">.</span>
             </div>
-            <span className="text-[10px] sm:text-[11px] font-gt-era text-white/60 tracking-wider">
-              Autonomous engineering chassis, neural memory bus &amp; multi-agent governor.
-            </span>
           </a>
 
           {/* Daemon Active Badge */}

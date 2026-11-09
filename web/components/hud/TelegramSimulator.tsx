@@ -223,9 +223,6 @@ export function TelegramSimulator() {
         <div className="lg:col-span-5 space-y-4">
           <div className="border-2 border-black bg-white shadow-[6px_6px_0px_#000000] p-6 space-y-4">
             <div className="border-b-2 border-black pb-3">
-              <div className="text-[10px] font-mono uppercase tracking-widest text-[#B91C1C] font-extrabold mb-1">
-                TELEGRAM COCKPIT BRIDGE • 24/7 DAEMON
-              </div>
               <h3 className="font-charles-rosie text-2xl sm:text-3xl text-black uppercase tracking-tight leading-none">
                 Sovereign Mobile Telemetry
               </h3>

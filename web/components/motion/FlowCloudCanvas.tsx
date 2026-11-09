@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useScroll } from "motion/react";
 
 interface FlowCloudCanvasProps {
   fillColor?: string;
   className?: string;
-  frameCount?: number;
 }
 
 const TOTAL_FRAMES = 190;
@@ -16,79 +15,68 @@ const FRAME_PATH = (idx: number) =>
 export function FlowCloudCanvas({
   fillColor = "#FAF8F5",
   className = "",
-  frameCount = TOTAL_FRAMES,
 }: FlowCloudCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   const [imagesLoaded, setImagesLoaded] = useState(false);
-  const [useVideoFallback, setUseVideoFallback] = useState(true);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const currentFrameRef = useRef(0);
   const animFrameIdRef = useRef<number | null>(null);
 
-  // Bind to page scroll
+  // Bind strictly to window scroll progress through the hero container
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
   });
 
-  // Preload frames in chunks
+  // Preload all 190 high-res cropped frames
   useEffect(() => {
     let isCancelled = false;
-    const loadedImages: HTMLImageElement[] = new Array(frameCount);
+    const loadedImages: HTMLImageElement[] = new Array(TOTAL_FRAMES);
     let loadedCount = 0;
 
-    // Load first 24 frames immediately for instant interactive responsiveness
-    const loadBatch = (start: number, end: number) => {
-      for (let i = start; i < end && i < frameCount; i++) {
+    const loadRange = (start: number, end: number) => {
+      for (let i = start; i < end && i < TOTAL_FRAMES; i++) {
         const img = new Image();
         img.src = FRAME_PATH(i);
         img.onload = () => {
           if (isCancelled) return;
           loadedImages[i] = img;
           loadedCount++;
-          if (loadedCount >= Math.min(30, frameCount)) {
+          // Enable display as soon as initial cluster is available
+          if (loadedCount >= 20 && !imagesLoaded) {
             imagesRef.current = loadedImages;
             setImagesLoaded(true);
-            setUseVideoFallback(false);
           }
         };
       }
     };
 
-    // Immediate first batch
-    loadBatch(0, 30);
+    // Load initial 30 frames instantly
+    loadRange(0, 30);
 
-    // Stagger remaining frames to prevent network thread saturation
-    const timer = setTimeout(() => {
+    // Stagger remaining frames smoothly
+    const t = setTimeout(() => {
       if (!isCancelled) {
-        loadBatch(30, frameCount);
+        loadRange(30, TOTAL_FRAMES);
       }
-    }, 350);
+    }, 200);
 
     return () => {
       isCancelled = true;
-      clearTimeout(timer);
+      clearTimeout(t);
     };
-  }, [frameCount]);
+  }, [imagesLoaded]);
 
-  // Canvas drawing loop with scroll-scrubbing + idle ambient billowing
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: true });
-    if (!ctx) return;
+  // Draw current frame on canvas strictly on scroll
+  const drawFrame = useCallback(
+    (frameIdx: number) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d", { alpha: true });
+      if (!ctx) return;
 
-    let lastTime = performance.now();
-    let ambientPhase = 0;
-
-    const render = (time: number) => {
-      const dt = (time - lastTime) / 1000;
-      lastTime = time;
-
-      // Handle High-DPI
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
@@ -100,29 +88,23 @@ export function FlowCloudCanvas({
 
       ctx.save();
       ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, width, height);
 
-      // Current scroll progress (0 to 1)
-      const scrollVal = scrollYProgress.get() || 0;
+      // Find nearest loaded frame if current isn't ready yet
+      let img = imagesRef.current[frameIdx];
+      if (!img || !img.complete || img.naturalWidth === 0) {
+        for (let offset = 1; offset < 20; offset++) {
+          const prev = imagesRef.current[Math.max(0, frameIdx - offset)];
+          if (prev && prev.complete && prev.naturalWidth > 0) {
+            img = prev;
+            break;
+          }
+        }
+      }
 
-      // Ambient breathing offset when idle
-      ambientPhase += dt * 0.8;
-      const ambientFrameOffset = Math.round(Math.sin(ambientPhase) * 6);
-
-      // Determine target frame index
-      const baseFrame = Math.floor(scrollVal * (frameCount - 1));
-      const targetFrame = Math.max(
-        0,
-        Math.min(frameCount - 1, baseFrame + ambientFrameOffset)
-      );
-
-      currentFrameRef.current = targetFrame;
-      const currentImg = imagesRef.current[targetFrame];
-
-      if (currentImg && currentImg.complete && currentImg.naturalWidth > 0) {
-        ctx.clearRect(0, 0, width, height);
-
-        // Aspect fit / cover
-        const imgAspect = currentImg.naturalWidth / currentImg.naturalHeight;
+      if (img && img.complete && img.naturalWidth > 0) {
+        // High-res cover math across entire canvas width
+        const imgAspect = img.naturalWidth / img.naturalHeight;
         const canvasAspect = width / height;
 
         let drawW = width;
@@ -133,90 +115,118 @@ export function FlowCloudCanvas({
         if (canvasAspect > imgAspect) {
           drawW = width;
           drawH = width / imgAspect;
-          offsetY = height - drawH; // Anchor to bottom
+          offsetY = 0; // Anchor top half
         } else {
           drawH = height;
           drawW = height * imgAspect;
-          offsetX = (width - drawW) / 2; // Center horizontally
+          offsetX = (width - drawW) / 2;
         }
 
-        ctx.drawImage(currentImg, offsetX, offsetY, drawW, drawH);
+        // Draw cloud frame
+        ctx.globalAlpha = 0.96;
+        ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
 
-        // Graphic novel contrast & bottom bleed gradient into fillColor
-        const gradient = ctx.createLinearGradient(0, height - 70, 0, height);
-        gradient.addColorStop(0, "rgba(250, 248, 245, 0)");
-        gradient.addColorStop(1, fillColor);
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, height - 70, width, 70);
+        // Soft lateral transparency feathering to eliminate harsh side cutoff on full screen
+        const fadeW = Math.min(width * 0.14, 180);
+
+        // Left fade
+        const leftGrad = ctx.createLinearGradient(0, 0, fadeW, 0);
+        leftGrad.addColorStop(0, "#070709");
+        leftGrad.addColorStop(1, "rgba(7, 7, 9, 0)");
+        ctx.fillStyle = leftGrad;
+        ctx.fillRect(0, 0, fadeW, height);
+
+        // Right fade
+        const rightGrad = ctx.createLinearGradient(width - fadeW, 0, width, 0);
+        rightGrad.addColorStop(0, "rgba(7, 7, 9, 0)");
+        rightGrad.addColorStop(1, "#070709");
+        ctx.fillStyle = rightGrad;
+        ctx.fillRect(width - fadeW, 0, fadeW, height);
+
+        // Top transparency feathering
+        const topGrad = ctx.createLinearGradient(0, 0, 0, 60);
+        topGrad.addColorStop(0, "#070709");
+        topGrad.addColorStop(1, "rgba(7, 7, 9, 0)");
+        ctx.fillStyle = topGrad;
+        ctx.fillRect(0, 0, width, 60);
+
+        // Bottom seamless blend into white/ivory base
+        const botGrad = ctx.createLinearGradient(0, height - 90, 0, height);
+        botGrad.addColorStop(0, "rgba(250, 248, 245, 0)");
+        botGrad.addColorStop(0.65, "rgba(250, 248, 245, 0.75)");
+        botGrad.addColorStop(1, fillColor);
+        ctx.fillStyle = botGrad;
+        ctx.fillRect(0, height - 90, width, 90);
       }
 
       ctx.restore();
-      animFrameIdRef.current = requestAnimationFrame(render);
-    };
+    },
+    [fillColor]
+  );
 
-    animFrameIdRef.current = requestAnimationFrame(render);
+  // Subscribe strictly to scroll progress: ONLY moves on scroll wheel
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (latest) => {
+      // Clamp strictly to frame count
+      const clamped = Math.max(0, Math.min(1, latest));
+      const targetFrame = Math.min(
+        TOTAL_FRAMES - 1,
+        Math.floor(clamped * (TOTAL_FRAMES - 1))
+      );
+      if (targetFrame !== currentFrameRef.current) {
+        currentFrameRef.current = targetFrame;
+        if (animFrameIdRef.current) {
+          cancelAnimationFrame(animFrameIdRef.current);
+        }
+        animFrameIdRef.current = requestAnimationFrame(() => {
+          drawFrame(targetFrame);
+        });
+      }
+    });
+
+    // Initial render
+    drawFrame(0);
 
     return () => {
+      unsubscribe();
       if (animFrameIdRef.current) {
         cancelAnimationFrame(animFrameIdRef.current);
       }
     };
-  }, [fillColor, frameCount, imagesLoaded, scrollYProgress]);
+  }, [drawFrame, scrollYProgress]);
+
+  // Handle window resize cleanly
+  useEffect(() => {
+    const handleResize = () => {
+      drawFrame(currentFrameRef.current);
+    };
+    window.addEventListener("resize", handleResize, { passive: true });
+    return () => window.removeEventListener("resize", handleResize);
+  }, [drawFrame]);
 
   return (
     <div
       ref={containerRef}
-      className={`relative w-full overflow-hidden pointer-events-none select-none ${className}`}
+      className={`relative w-screen left-1/2 -translate-x-1/2 overflow-visible pointer-events-none select-none ${className}`}
       aria-hidden="true"
     >
       <div className="relative w-full flex flex-col items-center">
-        {/* Layer 1: Instant Hardware Video Fallback & Ambient Atmosphere */}
-        <div
-          className={`absolute inset-0 w-full h-full transition-opacity duration-700 ${
-            useVideoFallback ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <video
-            ref={videoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            className="w-full h-full object-cover object-bottom brightness-105 contrast-125"
-          >
-            <source src="/cumulus_cloud.mp4" type="video/mp4" />
-          </video>
-          {/* Subtle bottom fade for video */}
-          <div
-            className="absolute bottom-0 inset-x-0 h-16 pointer-events-none"
-            style={{
-              background: `linear-gradient(to bottom, transparent, ${fillColor})`,
-            }}
-          />
-        </div>
-
-        {/* Layer 2: Interactive High-DPI Scrubbed Cloud Canvas */}
+        {/* Full-Bleed High-DPI Cloud Canvas with Lateral Transparency Mask */}
         <canvas
           ref={canvasRef}
-          className={`relative z-10 w-full h-[320px] sm:h-[440px] md:h-[540px] lg:h-[620px] block transition-opacity duration-500 ${
-            imagesLoaded ? "opacity-100" : "opacity-0"
-          }`}
-          style={{ imageRendering: "auto" }}
+          className="relative z-10 w-full h-[360px] sm:h-[480px] md:h-[580px] lg:h-[680px] block"
+          style={{
+            imageRendering: "auto",
+            maskImage:
+              "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+            WebkitMaskImage:
+              "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+          }}
         />
 
-        {/* Layer 3: Architectural Graphic Novel Line Accent */}
-        <div className="relative z-20 w-full flex items-center justify-between px-6 -mt-3">
-          <div className="h-[2px] w-24 bg-black/40" />
-          <div className="font-mono text-[10px] uppercase tracking-widest text-black/50 bg-[#FAF8F5] px-2 py-0.5 border border-black/20">
-            ATMOSPHERIC BUFFER // DETERMINISTIC PARALLAX
-          </div>
-          <div className="h-[2px] w-24 bg-black/40" />
-        </div>
-
-        {/* Seamless Ivory Base Extension to anchor into Feature Cards */}
+        {/* Seamless Ivory Base Extension to anchor directly into Feature Cards */}
         <div
-          className="w-full h-8 sm:h-14 -mt-[1px]"
+          className="w-full h-10 sm:h-16 -mt-[2px]"
           style={{ backgroundColor: fillColor }}
         />
       </div>
