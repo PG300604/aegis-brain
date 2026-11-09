@@ -63,8 +63,7 @@ export function ArbitrageCalculator() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-black/40">
         <div>
-          <div className="font-nikkei text-xs uppercase tracking-[0.2em] text-[#B91C1C] font-extrabold flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#B91C1C]" />
+          <div className="border-l-2 border-[#B91C1C] pl-2 font-nikkei text-xs uppercase tracking-[0.2em] text-[#B91C1C] font-extrabold">
             TOKEN ARBITRAGE CALCULATOR
           </div>
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">

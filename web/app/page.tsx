@@ -200,29 +200,25 @@ export default function Home() {
             Experience
           </h2>
 
-          {/* Punchy, Human Storytelling: Real Developer Pain Points Solved */}
-          <div className="mt-4 sm:mt-6 max-w-2xl mx-auto px-4 text-center">
-            <h3 className="font-nikkei text-[#D4AF37] text-base sm:text-xl uppercase tracking-[0.2em] font-extrabold leading-tight">
-              STOP PAYING FOR AI AMNESIA &amp; RUNAWAY BILLS
+          {/* Punchy, Non-Slop Directives & Sub-description */}
+          <div className="mt-8 max-w-3xl mx-auto px-4 space-y-3">
+            <h3 className="font-nikkei text-[#D4AF37] text-base sm:text-xl md:text-2xl uppercase tracking-[0.2em] font-extrabold leading-tight">
+              TAKE FULL CONTROL OF YOUR AGENTS
             </h3>
-            <p className="font-gt-era text-zinc-300 text-xs sm:text-sm font-medium tracking-wide max-w-lg mx-auto leading-relaxed mt-2">
-              Your coding agents stop forgetting yesterday&apos;s code. Free local models write boilerplate, verified by 4 safety gates.
+            <p className="font-gt-era text-zinc-300 text-sm sm:text-base font-medium tracking-wide max-w-2xl mx-auto leading-relaxed">
+              Autonomous engineering chassis, neural memory bus, and 3-tier multi-agent governor. Sub-second SQLite FTS5 persistence, 24/7 Win32 keepalive, deterministic token arbitrage, and live Telegram telemetry.
             </p>
           </div>
         </motion.div>
 
         {/* Billowing Cumulus Cloud Mist Bank Rising on Scroll (Santioni Spirits Aesthetic) */}
         <motion.div style={{ y: cloudY }} className="relative w-full mt-auto z-20">
-          <CloudMistBank fillColor="#FBF9F5" />
+          <CloudMistBank fillColor="#FAF8F5" />
         </motion.div>
 
-        {/* Scroll Indicator Prompt */}
-        <div className="relative z-30 flex flex-col items-center gap-1.5 pb-4 -mt-10 sm:-mt-14 pointer-events-none select-none">
-          <div className="flex items-center gap-2 font-nikkei text-[10px] tracking-[0.25em] uppercase text-black font-extrabold px-3 py-1 border border-black bg-[#FAF8F5] rounded shadow-[2px_2px_0px_#000000]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B91C1C] animate-pulse" />
-            <span>EXPLORE SYSTEM ARCHITECTURE</span>
-          </div>
-          <ChevronDown className="w-3.5 h-3.5 animate-bounce text-[#B91C1C]" />
+        {/* Minimal Editorial Scroll Indicator */}
+        <div className="relative z-30 flex flex-col items-center gap-1 pb-4 -mt-8 pointer-events-none select-none">
+          <ChevronDown className="w-4 h-4 text-white/50 animate-bounce" />
         </div>
       </section>
 

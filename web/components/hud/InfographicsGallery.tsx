@@ -641,8 +641,7 @@ export function InfographicsGallery() {
       */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
         <div>
-          <div className="font-nikkei text-xs uppercase tracking-[0.2em] text-[#B91C1C] font-extrabold flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#B91C1C]" />
+          <div className="border-l-2 border-[#B91C1C] pl-2 font-nikkei text-xs uppercase tracking-[0.2em] text-[#B91C1C] font-extrabold">
             SYSTEM ARCHITECTURE SPECIFICATION
           </div>
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
@@ -740,9 +739,8 @@ export function InfographicsGallery() {
         {/* Human Pain Point & Story Narrative */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
           <div className="md:col-span-4 p-4 rounded bg-red-50/70 border border-red-300 shadow-[2px_2px_0px_#000000] space-y-1">
-            <div className="font-nikkei text-[11px] uppercase tracking-wider text-[#B91C1C] font-extrabold flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#B91C1C]" />
-              The Developer Pain Point
+            <div className="font-nikkei text-[11px] uppercase tracking-wider text-[#B91C1C] font-extrabold">
+              // The Developer Pain Point
             </div>
             <p className="font-gt-era text-xs text-red-950 leading-relaxed font-medium">
               {active.painPoint}
