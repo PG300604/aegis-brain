@@ -20,11 +20,10 @@ import { ArbitrageCalculator } from "@/components/hud/ArbitrageCalculator";
 import { QualityGateCards } from "@/components/hud/QualityGateCards";
 import { TelegramSimulator } from "@/components/hud/TelegramSimulator";
 import { InfographicsGallery } from "@/components/hud/InfographicsGallery";
-import { FluidWaterWave } from "@/components/motion/FluidWaterWave";
 import { ParallaxCard } from "@/components/motion/ParallaxCard";
 import { LoadingScreen } from "@/components/motion/LoadingScreen";
 import { CursorPhysicsProvider } from "@/components/motion/CursorPhysicsProvider";
-import { SceneTransition } from "@/components/motion/SceneTransition";
+import { CloudMistBank } from "@/components/motion/CloudMistBank";
 import { InteractiveTierDiagram } from "@/components/hud/InteractiveTierDiagram";
 import { LaptopCliFrame } from "@/components/hud/LaptopCliFrame";
 import { SoundtrackController, triggerSoundEffect } from "@/components/audio/SoundtrackController";
@@ -34,13 +33,13 @@ export default function Home() {
   const [soundActive, setSoundActive] = useState(false);
   const [copiedClone, setCopiedClone] = useState(false);
 
-  // Hero section scroll-driven fluid wave reveal
+  // Hero section scroll animations
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress: heroScroll } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
-  const waveY = useTransform(heroScroll, [0, 1], ["0%", "-35%"]);
+  const cloudY = useTransform(heroScroll, [0, 1], ["0%", "-28%"]);
   const heroOpacity = useTransform(heroScroll, [0, 0.7], [1, 0.15]);
   const heroScale = useTransform(heroScroll, [0, 0.9], [1, 0.94]);
 
@@ -165,7 +164,7 @@ export default function Home() {
       <section
         id="experience"
         ref={heroRef}
-        className="relative min-h-screen w-full flex flex-col items-center justify-between pt-36 pb-0 px-4 bg-[#070709] overflow-hidden"
+        className="relative min-h-screen w-full flex flex-col items-center justify-between pt-28 pb-0 sm:pt-32 px-4 bg-[#070709] overflow-hidden"
       >
         {/* Subtle Horizontal Dry-Brush Chalk Streaks */}
         <div
@@ -187,50 +186,45 @@ export default function Home() {
           initial={{ opacity: 0, y: 25 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 text-center flex flex-col items-center max-w-5xl mx-auto my-auto select-none pt-4 sm:pt-8"
+          className="relative z-10 text-center flex flex-col items-center max-w-5xl mx-auto select-none pt-2 sm:pt-4"
         >
-          <p className="font-charles-rosie text-white/70 text-lg sm:text-2xl tracking-[0.35em] uppercase mb-1">
+          <p className="font-charles-rosie text-white/70 text-base sm:text-xl tracking-[0.35em] uppercase mb-1">
             The
           </p>
 
-          <h1 className="font-charles-rosie text-white text-6xl sm:text-8xl md:text-9xl lg:text-[10rem] leading-[0.88] tracking-tight uppercase drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)]">
+          <h1 className="font-charles-rosie text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-[0.88] tracking-tight uppercase drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)]">
             Aeg<span className="text-[#B91C1C]">i</span>s
           </h1>
 
-          <h2 className="font-charles-rosie text-white text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight tracking-[0.16em] uppercase mt-2 drop-shadow-[0_8px_25px_rgba(0,0,0,0.95)]">
+          <h2 className="font-charles-rosie text-white text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight tracking-[0.16em] uppercase mt-1 drop-shadow-[0_8px_25px_rgba(0,0,0,0.95)]">
             Experience
           </h2>
 
-          {/* Punchy, Non-Slop Directives & Sub-description */}
-          <div className="mt-8 max-w-3xl mx-auto px-4 space-y-3">
-            <h3 className="font-nikkei text-[#D4AF37] text-base sm:text-xl md:text-2xl uppercase tracking-[0.2em] font-extrabold leading-tight">
-              TAKE FULL CONTROL OF YOUR AGENTS
+          {/* Punchy, Human Storytelling: Real Developer Pain Points Solved */}
+          <div className="mt-4 sm:mt-6 max-w-2xl mx-auto px-4 text-center">
+            <h3 className="font-nikkei text-[#D4AF37] text-base sm:text-xl uppercase tracking-[0.2em] font-extrabold leading-tight">
+              STOP PAYING FOR AI AMNESIA &amp; RUNAWAY BILLS
             </h3>
-            <p className="font-nikkei text-white text-xs sm:text-sm uppercase tracking-[0.25em] font-bold">
-              UNLEASH THE FULL POWER OF AGENTIC PERSISTENCE
+            <p className="font-gt-era text-zinc-300 text-xs sm:text-sm font-medium tracking-wide max-w-lg mx-auto leading-relaxed mt-2">
+              Your coding agents stop forgetting yesterday&apos;s code. Free local models write boilerplate, verified by 4 safety gates.
             </p>
           </div>
         </motion.div>
 
-        {/* Foreground: Billowing Fluid Liquid Mist Wave Rising Dynamically on Scroll */}
-        <motion.div style={{ y: waveY }} className="relative w-full mt-12 z-20">
-          <FluidWaterWave fillColor="#FBF9F5" />
+        {/* Billowing Cumulus Cloud Mist Bank Rising on Scroll (Santioni Spirits Aesthetic) */}
+        <motion.div style={{ y: cloudY }} className="relative w-full mt-auto z-20">
+          <CloudMistBank fillColor="#FBF9F5" />
         </motion.div>
 
         {/* Scroll Indicator Prompt */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1.5 text-black pointer-events-none select-none">
-          <span className="font-nikkei text-[10px] tracking-[0.25em] uppercase text-black font-extrabold bg-[#FBF9F5] px-3 py-1 border border-black shadow-[2px_2px_0px_#000000]">
-            EXPLORE ARCHITECTURAL FEATURES
-          </span>
-          <ChevronDown className="w-4 h-4 animate-bounce text-[#B91C1C]" />
+        <div className="relative z-30 flex flex-col items-center gap-1.5 pb-4 -mt-10 sm:-mt-14 pointer-events-none select-none">
+          <div className="flex items-center gap-2 font-nikkei text-[10px] tracking-[0.25em] uppercase text-black font-extrabold px-3 py-1 border border-black bg-[#FAF8F5] rounded shadow-[2px_2px_0px_#000000]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#B91C1C] animate-pulse" />
+            <span>EXPLORE SYSTEM ARCHITECTURE</span>
+          </div>
+          <ChevronDown className="w-3.5 h-3.5 animate-bounce text-[#B91C1C]" />
         </div>
       </section>
-
-      {/* Editorial Threshold: Prologue -> Act I */}
-      <SceneTransition
-        fromAct="PROLOGUE • THE EXPERIENCE"
-        toAct="ACT I • NEURAL MEMORY CORE"
-      />
 
       {/* 
         ========================================================================
@@ -275,11 +269,6 @@ export default function Home() {
         </div>
       </ParallaxCard>
 
-      {/* Editorial Threshold: Act I -> Act II */}
-      <SceneTransition
-        fromAct="ACT I • NEURAL MEMORY CORE"
-        toAct="ACT II • TOKEN ARBITRAGE"
-      />
 
       {/* 
         ========================================================================
@@ -293,10 +282,10 @@ export default function Home() {
               FEATURE 02 • TOKEN ARBITRAGE ENGINE
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
-              3-Tier Multi-Agent Hierarchy
+              Slash Your AI API Bill by 92%
             </h2>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
-              Frontier models (Gemini 4, Claude Opus, Fable) are strategic brains, not construction workers. AegisBrain enforces strict division of labor: high-cognition models architect and coach, while local CLI workers (Hermes, Ollama, Qwen) execute implementations for free.
+              Why pay $20 per million tokens for expensive models to write repetitive boilerplate? Frontier models act as the strategic brain, while free local models running on your own computer do the grunt work for $0.00.
             </p>
           </div>
 
@@ -346,11 +335,6 @@ export default function Home() {
         </div>
       </ParallaxCard>
 
-      {/* Editorial Threshold: Act II -> Act III */}
-      <SceneTransition
-        fromAct="ACT II • TOKEN ARBITRAGE"
-        toAct="ACT III • HOST DAEMON SHIELD"
-      />
 
       {/* 
         ========================================================================
@@ -364,10 +348,10 @@ export default function Home() {
               FEATURE 03 • IMMORTAL HOST DAEMON
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
-              24/7 Win32 KeepAlive Shield &amp; Process Resurrection
+              Runs All Night Without Crashing
             </h2>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
-              Operating an autonomous coding agent overnight requires absolute resilience. Win32 connected standby, sleep transitions, and terminal terminations can disrupt unshielded agents. Aegis introduces an immortal Windows Scheduled Task watchdog.
+              Leaving an AI agent to run overnight shouldn&apos;t end with a frozen terminal. A silent Windows Scheduled Task checks your agent every 5 minutes and automatically restarts it if your computer sleeps, reboots, or crashes.
             </p>
           </div>
 
@@ -444,11 +428,6 @@ export default function Home() {
         </div>
       </ParallaxCard>
 
-      {/* Editorial Threshold: Act III -> Act IV */}
-      <SceneTransition
-        fromAct="ACT III • HOST DAEMON SHIELD"
-        toAct="ACT IV • MOBILE TELEMETRY"
-      />
 
       {/* 
         ========================================================================
@@ -462,10 +441,10 @@ export default function Home() {
               FEATURE 04 • MOBILE TELEGRAM TELEMETRY
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
-              Real-Time Mobile Command Center
+              Control Your Agent From Your Phone
             </h2>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
-              True developer autonomy means never being chained to a desk. AegisBrain runs a 24/7 Telegram companion (<code className="font-mono bg-black/10 px-1">@HHAACLIBot</code>) with audio transcription shielding and in-flight terminal control.
+              Step away from your desk without losing control. Send voice notes, review code diffs, and get notified the second tests pass—directly through Telegram while your desktop does the heavy lifting.
             </p>
           </div>
 
@@ -475,12 +454,6 @@ export default function Home() {
           </div>
         </div>
       </ParallaxCard>
-
-      {/* Editorial Threshold: Act IV -> Act V */}
-      <SceneTransition
-        fromAct="ACT IV • MOBILE TELEMETRY"
-        toAct="ACT V • QUALITY ARCHITECTURE GATE"
-      />
 
       {/* 
         ========================================================================
@@ -494,10 +467,10 @@ export default function Home() {
               FEATURE 05 • PRODUCTION SAFETY GATE
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
-              4-Decision Quality Architecture Gate
+              Catch Bad Code Before It Hits Git
             </h2>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
-              When lower-tier models generate code, errors occur. Rather than discarding local models, Aegis applies an adversarial compiler and static analysis gate that coach the worker until zero defects remain.
+              Local models are free, but they can make silly mistakes. Instead of throwing them away, our 4-stage filter strips AI apologies, blocks vulnerabilities, and tests every line in a sandbox until zero bugs remain.
             </p>
           </div>
 
@@ -507,12 +480,6 @@ export default function Home() {
           </div>
         </div>
       </ParallaxCard>
-
-      {/* Editorial Threshold: Act V -> Act VI */}
-      <SceneTransition
-        fromAct="ACT V • QUALITY ARCHITECTURE GATE"
-        toAct="ACT VI • MASTER BLUEPRINTS"
-      />
 
       {/* 
         ========================================================================
@@ -526,10 +493,10 @@ export default function Home() {
               FEATURE 06 • ARCHITECTURAL BLUEPRINTS
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
-              Architecture &amp; Execution Flow
+              The 7 Core System Blueprints
             </h2>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
-              Clear system blueprints detailing multi-agent token arbitrage, sub-second neural memory, and deterministic mobile telemetry.
+              Explore step-by-step how AegisBrain connects your terminal, memory database, free local models, and mobile notifications into a single bulletproof system.
             </p>
           </div>
 
@@ -539,12 +506,6 @@ export default function Home() {
           </div>
         </div>
       </ParallaxCard>
-
-      {/* Editorial Threshold: Act VI -> Epilogue */}
-      <SceneTransition
-        fromAct="ACT VI • MASTER BLUEPRINTS"
-        toAct="EPILOGUE • DEPLOYMENT & QUICKSTART"
-      />
 
       {/* 
         ========================================================================
@@ -571,12 +532,6 @@ export default function Home() {
           </div>
         </div>
       </ParallaxCard>
-
-      {/* Editorial Threshold: Epilogue -> Coda */}
-      <SceneTransition
-        fromAct="EPILOGUE • DEPLOYMENT & QUICKSTART"
-        toAct="CODA • OPEN SOURCE & COMMUNITY"
-      />
 
       {/* 
         ========================================================================

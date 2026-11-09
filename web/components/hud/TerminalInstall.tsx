@@ -84,9 +84,9 @@ export function TerminalInstall() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-black/40">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#B91C1C] text-white font-nikkei text-xs uppercase tracking-widest shadow-[2px_2px_0px_#000000]">
-            <Terminal className="w-3.5 h-3.5" />
-            <span>QUICKSTART &amp; INSTALLATION</span>
+          <div className="font-nikkei text-xs uppercase tracking-[0.2em] text-[#B91C1C] font-extrabold flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#B91C1C]" />
+            QUICKSTART &amp; INSTALLATION
           </div>
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
             Install in Seconds

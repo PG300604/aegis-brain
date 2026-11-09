@@ -20,16 +20,32 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
           setTimeout(() => {
             setIsDone(true);
             onComplete?.();
-          }, 450);
+          }, 350);
           return 100;
         }
         const increment = prev < 40 ? 3 : prev < 80 ? 4 : 2;
         return Math.min(100, prev + increment);
       });
-    }, 28);
+    }, 25);
 
     return () => clearInterval(interval);
   }, [onComplete]);
+
+  // Generate 48 sacred geometry radial spokes
+  const spokes = Array.from({ length: 48 }, (_, i) => {
+    const angle = (i * 360) / 48;
+    const rad = (angle * Math.PI) / 180;
+    const isMajor = i % 4 === 0;
+    const rInner = isMajor ? 32 : 44;
+    const rOuter = isMajor ? 90 : 82;
+    return {
+      x1: 100 + rInner * Math.cos(rad),
+      y1: 100 + rInner * Math.sin(rad),
+      x2: 100 + rOuter * Math.cos(rad),
+      y2: 100 + rOuter * Math.sin(rad),
+      isMajor,
+    };
+  });
 
   return (
     <AnimatePresence>
@@ -43,7 +59,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
           }}
           className="fixed inset-0 z-[100] flex flex-col justify-between p-6 sm:p-12 bg-[#070709] text-[#FAF8F5] select-none pointer-events-auto overflow-hidden"
         >
-          {/* Subtle Horizontal Dry-Brush Chalk Streaks */}
+          {/* Subtle Horizontal Dry-Brush Chalk Background */}
           <div
             className="absolute inset-0 pointer-events-none opacity-15"
             style={{
@@ -59,78 +75,135 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
           {/* 
             ====================================================================
-            TOP-LEFT: OFFICIAL AEGISBRAIN LOGO LOCKUP (Exactly as requested)
+            TOP CENTER: OFFICIAL AEGISBRAIN LOGO LOCKUP (Clean & Sovereign)
             ====================================================================
           */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="relative z-10 flex flex-col"
+            transition={{ duration: 0.6 }}
+            className="relative z-10 flex flex-col items-center pt-6 sm:pt-8"
           >
             <div className="flex items-baseline">
-              <span className="font-extrabold text-2xl sm:text-3xl text-white tracking-tight">
+              <span className="font-extrabold text-3xl sm:text-4xl text-white tracking-tight">
                 AegisBrain
               </span>
-              <span className="font-extrabold text-2xl sm:text-3xl text-[#B91C1C]">.</span>
+              <span className="font-extrabold text-3xl sm:text-4xl text-[#B91C1C]">.</span>
             </div>
-            <span className="text-[11px] sm:text-xs font-gt-era text-white/60 tracking-wider mt-0.5">
-              Autonomous engineering chassis, neural memory bus &amp; multi-agent governor.
+            <span className="text-[11px] sm:text-xs font-gt-era text-white/50 tracking-[0.25em] uppercase mt-1">
+              Autonomous Engineering Chassis
             </span>
           </motion.div>
 
           {/* 
             ====================================================================
-            CENTER: GRAPHIC NOVEL CHAPTER CARD (Santioni Spirits Aesthetic)
+            SCREEN CENTER: SACRED GEOMETRY SUNBURST / LENS EMBLEM (Rotating)
             ====================================================================
           */}
-          <div className="relative z-10 my-auto flex flex-col items-center justify-center max-w-xl mx-auto w-full text-center">
-            {/* Chapter Header */}
-            <div className="font-nikkei text-xs sm:text-sm text-[#B91C1C] uppercase tracking-[0.3em] font-extrabold mb-2">
-              CHAPTER I
-            </div>
+          <div className="relative z-10 my-auto flex flex-col items-center justify-center">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
+              className="relative w-48 h-48 sm:w-64 sm:h-64 flex items-center justify-center"
+            >
+              <svg
+                viewBox="0 0 200 200"
+                className="w-full h-full text-white drop-shadow-[0_0_20px_rgba(212,175,55,0.2)]"
+              >
+                {/* Outermost Thin Reference Ring */}
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="95"
+                  fill="none"
+                  stroke="#FAF8F5"
+                  strokeWidth="0.8"
+                  opacity="0.3"
+                />
 
-            {/* Monolithic Serif Title */}
-            <h2 className="font-charles-rosie text-4xl sm:text-6xl text-white tracking-tight uppercase leading-none mb-3">
-              The Sovereign Chassis
-            </h2>
+                {/* Concentric Dashed Ring */}
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="90"
+                  fill="none"
+                  stroke="#D4AF37"
+                  strokeWidth="0.75"
+                  strokeDasharray="2 4"
+                  opacity="0.6"
+                />
 
-            {/* Thin Decorative Hairline Divider */}
-            <div className="w-24 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent my-4" />
+                {/* Radiating Fine Sunburst Spokes */}
+                {spokes.map((spoke, idx) => (
+                  <line
+                    key={idx}
+                    x1={spoke.x1}
+                    y1={spoke.y1}
+                    x2={spoke.x2}
+                    y2={spoke.y2}
+                    stroke={spoke.isMajor ? "#FAF8F5" : "#D4AF37"}
+                    strokeWidth={spoke.isMajor ? "1" : "0.6"}
+                    opacity={spoke.isMajor ? "0.85" : "0.45"}
+                  />
+                ))}
 
-            {/* Editorial Subtitle */}
-            <p className="font-gt-era text-xs sm:text-sm text-white/70 max-w-md mx-auto leading-relaxed">
-              Synthesizing permanent neural memory, 3-tier token arbitrage, and immortal runtime telemetry.
-            </p>
+                {/* Middle Concentric Ring */}
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="44"
+                  fill="none"
+                  stroke="#FAF8F5"
+                  strokeWidth="1"
+                  opacity="0.7"
+                />
 
-            {/* Large Minimalist Numeric Progress Counter */}
-            <div className="font-charles-rosie text-6xl sm:text-8xl text-white font-extrabold tracking-tighter mt-8 leading-none">
-              {progress < 10 ? `0${progress}` : progress}
-              <span className="text-2xl sm:text-4xl text-[#B91C1C] ml-1 font-normal">%</span>
-            </div>
+                {/* Inner Concentric Ring */}
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="32"
+                  fill="none"
+                  stroke="#D4AF37"
+                  strokeWidth="1.2"
+                  opacity="0.9"
+                />
 
-            {/* Fine Hairline Progress Track */}
-            <div className="w-48 h-[2px] bg-white/10 rounded-full mt-6 overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-[#B91C1C] to-[#D4AF37]"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+                {/* Center Core Dot */}
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="4"
+                  fill="#B91C1C"
+                />
+              </svg>
+            </motion.div>
           </div>
 
           {/* 
             ====================================================================
-            BOTTOM: EDITORIAL MOTTO
+            BOTTOM CENTER: SLEEK RAZOR-THIN PROGRESS BAR & METRIC
             ====================================================================
           */}
-          <div className="relative z-10 flex items-center justify-between pt-6 border-t border-white/10 text-xs font-gt-era text-white/40">
-            <span className="italic font-charles-rosie text-white/60">
-              &ldquo;Memoriam Non Perdet, Tempus Non Teret&rdquo;
-            </span>
-            <span className="uppercase font-nikkei tracking-widest text-[10px]">
-              Sovereign Release v2.4.0
-            </span>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="relative z-10 flex flex-col items-center pb-8 sm:pb-12 w-full max-w-xs mx-auto gap-3"
+          >
+            {/* Razor-thin progress line (2px) */}
+            <div className="w-full h-[2px] bg-white/20 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-white transition-all duration-75 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+
+            {/* Clean Monospace Progress Counter */}
+            <div className="font-mono text-xs text-white/50 tracking-widest">
+              {progress < 10 ? `0${progress}` : progress}%
+            </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

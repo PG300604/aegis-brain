@@ -82,9 +82,9 @@ export function InteractiveTierDiagram() {
       {/* Header */}
       <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-5 border-b border-white/10">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-[#B91C1C] text-white font-nikkei text-[10px] uppercase tracking-widest shadow-[2px_2px_0px_#000000]">
-            <span className="font-mono text-[9px] font-bold text-white">[FLOW]</span>
-            <span>3D INTERACTIVE ARCHITECTURE</span>
+          <div className="font-nikkei text-xs uppercase tracking-[0.2em] text-[#B91C1C] font-extrabold flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#B91C1C]" />
+            TRI-TIER ARCHITECTURE SPECIFICATION
           </div>
           <h3 className="font-charles-rosie text-xl sm:text-2xl text-white uppercase tracking-tight mt-1.5">
             Tri-Tier Token Arbitrage Flow
