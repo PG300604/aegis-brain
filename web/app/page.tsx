@@ -23,6 +23,8 @@ import { InfographicsGallery } from "@/components/hud/InfographicsGallery";
 import { FluidWaterWave } from "@/components/motion/FluidWaterWave";
 import { ParallaxCard } from "@/components/motion/ParallaxCard";
 import { LoadingScreen } from "@/components/motion/LoadingScreen";
+import { CursorPhysicsProvider } from "@/components/motion/CursorPhysicsProvider";
+import { SceneTransition } from "@/components/motion/SceneTransition";
 import { InteractiveTierDiagram } from "@/components/hud/InteractiveTierDiagram";
 import { LaptopCliFrame } from "@/components/hud/LaptopCliFrame";
 import { SoundtrackController, triggerSoundEffect } from "@/components/audio/SoundtrackController";
@@ -62,7 +64,8 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#070709] text-[#0D0D11] selection:bg-[#B91C1C] selection:text-white paper-grain">
+    <CursorPhysicsProvider>
+      <div className="relative min-h-screen bg-[#070709] text-[#0D0D11] selection:bg-[#B91C1C] selection:text-white paper-grain">
       {/* Cinematic Sovereign Preloader with AegisBrain Logo Top-Left */}
       <LoadingScreen />
 
@@ -223,6 +226,12 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Editorial Threshold: Prologue -> Act I */}
+      <SceneTransition
+        fromAct="PROLOGUE • THE EXPERIENCE"
+        toAct="ACT I • NEURAL MEMORY CORE"
+      />
+
       {/* 
         ========================================================================
         FEATURE 01: PERMANENT AGENT MEMORY (Real Developer Experience)
@@ -265,6 +274,12 @@ export default function Home() {
           </div>
         </div>
       </ParallaxCard>
+
+      {/* Editorial Threshold: Act I -> Act II */}
+      <SceneTransition
+        fromAct="ACT I • NEURAL MEMORY CORE"
+        toAct="ACT II • TOKEN ARBITRAGE"
+      />
 
       {/* 
         ========================================================================
@@ -330,6 +345,12 @@ export default function Home() {
           </div>
         </div>
       </ParallaxCard>
+
+      {/* Editorial Threshold: Act II -> Act III */}
+      <SceneTransition
+        fromAct="ACT II • TOKEN ARBITRAGE"
+        toAct="ACT III • HOST DAEMON SHIELD"
+      />
 
       {/* 
         ========================================================================
@@ -423,6 +444,12 @@ export default function Home() {
         </div>
       </ParallaxCard>
 
+      {/* Editorial Threshold: Act III -> Act IV */}
+      <SceneTransition
+        fromAct="ACT III • HOST DAEMON SHIELD"
+        toAct="ACT IV • MOBILE TELEMETRY"
+      />
+
       {/* 
         ========================================================================
         FEATURE 04: DETERMINISTIC MOBILE TELEGRAM TELEMETRY & WHISPER SHIELD
@@ -448,6 +475,12 @@ export default function Home() {
           </div>
         </div>
       </ParallaxCard>
+
+      {/* Editorial Threshold: Act IV -> Act V */}
+      <SceneTransition
+        fromAct="ACT IV • MOBILE TELEMETRY"
+        toAct="ACT V • QUALITY ARCHITECTURE GATE"
+      />
 
       {/* 
         ========================================================================
@@ -475,6 +508,12 @@ export default function Home() {
         </div>
       </ParallaxCard>
 
+      {/* Editorial Threshold: Act V -> Act VI */}
+      <SceneTransition
+        fromAct="ACT V • QUALITY ARCHITECTURE GATE"
+        toAct="ACT VI • MASTER BLUEPRINTS"
+      />
+
       {/* 
         ========================================================================
         FEATURE 06: MASTER ARCHITECTURAL BLUEPRINTS GALLERY
@@ -501,6 +540,12 @@ export default function Home() {
         </div>
       </ParallaxCard>
 
+      {/* Editorial Threshold: Act VI -> Epilogue */}
+      <SceneTransition
+        fromAct="ACT VI • MASTER BLUEPRINTS"
+        toAct="EPILOGUE • DEPLOYMENT & QUICKSTART"
+      />
+
       {/* 
         ========================================================================
         FEATURE 07: QUICKSTART & INSTALLATION: ONE-LINE SETUP
@@ -526,6 +571,12 @@ export default function Home() {
           </div>
         </div>
       </ParallaxCard>
+
+      {/* Editorial Threshold: Epilogue -> Coda */}
+      <SceneTransition
+        fromAct="EPILOGUE • DEPLOYMENT & QUICKSTART"
+        toAct="CODA • OPEN SOURCE & COMMUNITY"
+      />
 
       {/* 
         ========================================================================
@@ -699,5 +750,6 @@ export default function Home() {
         onToggleSound={setSoundActive}
       />
     </div>
+    </CursorPhysicsProvider>
   );
 }
