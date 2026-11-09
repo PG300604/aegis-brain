@@ -14,6 +14,17 @@ import {
   Check,
   Layers,
   Lock,
+  Play,
+  Search,
+  Zap,
+  RefreshCw,
+  Send,
+  Smartphone,
+  ShieldCheck,
+  TrendingDown,
+  Sparkles,
+  FileCode2,
+  CheckCircle2,
 } from "lucide-react";
 
 export interface Feature06BlueprintCardsProps {
@@ -496,6 +507,14 @@ export function Feature06BlueprintCards({
     Math.min(Math.max(initialBlueprintIndex, 0), BLUEPRINTS.length - 1)
   );
   const [copied, setCopied] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<"visual" | "code">("visual");
+
+  // Interactive states for intuitive blueprint demonstrators
+  const [simulatingDispatch, setSimulatingDispatch] = useState<boolean>(false);
+  const [activeMemoryQuery, setActiveMemoryQuery] = useState<number>(0);
+  const [daemonSimStep, setDaemonSimStep] = useState<number | null>(null);
+  const [telegramApproved, setTelegramApproved] = useState<boolean>(false);
+  const [copiedCommand, setCopiedCommand] = useState<boolean>(false);
 
   const active = BLUEPRINTS[selectedIdx];
   const ActiveIcon = active.icon;
@@ -708,72 +727,543 @@ export function Feature06BlueprintCards({
 
             {/* Middle Split: 2) Interactive Code/Terminal Preview & 3) Four Key Telemetry Metrics */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-              {/* 2) Interactive Code / Terminal Preview */}
+              {/* 2) Intuitive Interactive Demonstrator / Raw Code Switcher */}
               <div className="lg:col-span-7 flex flex-col border-2 border-black bg-[#070709] text-zinc-100 shadow-[4px_4px_0px_#000000]">
-                <div className="bg-[#101116] border-b-2 border-black px-4 py-2.5 flex flex-wrap items-center justify-between gap-2">
+                {/* Section Header with Mode Toggle */}
+                <div className="bg-[#101116] border-b-2 border-black px-4 py-2 flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 bg-[#DC2626] border border-black inline-block" />
                     <span className="font-mono text-xs uppercase tracking-widest font-bold text-[#FAF8F5]">
-                      02 // {active.codeTitle}
+                      02 // {viewMode === "visual" ? "INTUITIVE VISUAL GUIDE" : active.codeTitle}
                     </span>
                   </div>
+
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-[11px] uppercase tracking-widest text-zinc-400 px-2 py-0.5 bg-black border border-zinc-800">
-                      {active.codeLang}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleCopyCode}
-                      className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest font-bold px-2.5 py-1 bg-[#FAF8F5] text-black border border-black hover:bg-[#B91C1C] hover:text-white transition-colors"
-                    >
-                      {copied ? (
-                        <>
-                          <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                          COPIED
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3.5 h-3.5 stroke-[2.5]" />
-                          COPY SPEC
-                        </>
-                      )}
-                    </button>
+                    {/* View Switcher: Visual vs Raw Code */}
+                    <div className="flex items-center bg-black border border-zinc-800 p-0.5">
+                      <button
+                        type="button"
+                        onClick={() => setViewMode("visual")}
+                        className={`font-mono text-[11px] uppercase tracking-widest px-2.5 py-1 transition-colors font-bold ${
+                          viewMode === "visual"
+                            ? "bg-[#B91C1C] text-white"
+                            : "text-zinc-400 hover:text-white"
+                        }`}
+                      >
+                        ✦ Visual Flow
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setViewMode("code")}
+                        className={`font-mono text-[11px] uppercase tracking-widest px-2.5 py-1 transition-colors font-bold ${
+                          viewMode === "code"
+                            ? "bg-[#FAF8F5] text-black"
+                            : "text-zinc-400 hover:text-white"
+                        }`}
+                      >
+                        &lt; &gt; Raw Spec
+                      </button>
+                    </div>
+
+                    {viewMode === "code" && (
+                      <button
+                        type="button"
+                        onClick={handleCopyCode}
+                        className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest font-bold px-2.5 py-1 bg-[#FAF8F5] text-black border border-black hover:bg-[#B91C1C] hover:text-white transition-colors"
+                      >
+                        {copied ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                            COPIED
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5 stroke-[2.5]" />
+                            COPY SPEC
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
                 </div>
 
-                <div className="p-4 overflow-x-auto flex-1 flex items-center">
-                  <pre className="font-mono text-xs md:text-[13px] leading-relaxed w-full">
-                    {active.codeContent.split("\n").map((line, i) => {
-                      const isComment =
-                        line.trim().startsWith("#") ||
-                        line.trim().startsWith("--") ||
-                        line.trim().startsWith("//");
-                      const isCommand =
-                        line.trim().startsWith("$") ||
-                        line.trim().startsWith("[STAGE") ||
-                        line.trim().startsWith("VERDICT:") ||
-                        line.trim().startsWith("[OK]");
+                {/* Content Container */}
+                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
+                  {viewMode === "code" ? (
+                    <div className="overflow-x-auto flex-1 flex items-center">
+                      <pre className="font-mono text-xs md:text-[13px] leading-relaxed w-full">
+                        {active.codeContent.split("\n").map((line, i) => {
+                          const isComment =
+                            line.trim().startsWith("#") ||
+                            line.trim().startsWith("--") ||
+                            line.trim().startsWith("//");
+                          const isCommand =
+                            line.trim().startsWith("$") ||
+                            line.trim().startsWith("[STAGE") ||
+                            line.trim().startsWith("VERDICT:") ||
+                            line.trim().startsWith("[OK]");
 
-                      return (
-                        <div key={i} className="table-row">
-                          <span className="table-cell pr-4 select-none text-zinc-600 text-right w-7">
-                            {String(i + 1).padStart(2, "0")}
-                          </span>
-                          <span
-                            className={`table-cell whitespace-pre ${
-                              isComment
-                                ? "text-zinc-400 italic"
-                                : isCommand
-                                ? "text-[#DC2626] font-bold"
-                                : "text-[#FAF8F5]"
-                            }`}
-                          >
-                            {line}
-                          </span>
+                          return (
+                            <div key={i} className="table-row">
+                              <span className="table-cell pr-4 select-none text-zinc-600 text-right w-7">
+                                {String(i + 1).padStart(2, "0")}
+                              </span>
+                              <span
+                                className={`table-cell whitespace-pre ${
+                                  isComment
+                                    ? "text-zinc-400 italic"
+                                    : isCommand
+                                    ? "text-[#DC2626] font-bold"
+                                    : "text-[#FAF8F5]"
+                                }`}
+                              >
+                                {line}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </pre>
+                    </div>
+                  ) : (
+                    /* Intuitive, Easy-to-Understand Visual Demonstrators */
+                    <div className="w-full h-full flex flex-col justify-between space-y-4">
+                      {/* BP-01: Sovereign Tri-Tier System Topology */}
+                      {active.id === "BP-01" && (
+                        <div className="space-y-3.5">
+                          <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+                            <div>
+                              <div className="font-mono text-xs text-[#DC2626] font-bold uppercase tracking-widest">
+                                HOW WORK GETS DONE WITHOUT WASTING TOKENS
+                              </div>
+                              <div className="text-sm font-black text-[#FAF8F5] uppercase">
+                                High-Level Brains Delegate To Free Local Workers
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSimulatingDispatch(true);
+                                setTimeout(() => setSimulatingDispatch(false), 2400);
+                              }}
+                              className="px-2.5 py-1 bg-[#FAF8F5] text-black font-mono text-[11px] font-bold uppercase border border-black hover:bg-[#B91C1C] hover:text-white transition-colors flex items-center gap-1.5 shrink-0"
+                            >
+                              <Play className={`w-3 h-3 ${simulatingDispatch ? "animate-spin" : ""}`} />
+                              {simulatingDispatch ? "DISPATCHING..." : "SIMULATE DISPATCH"}
+                            </button>
+                          </div>
+
+                          <div className="space-y-2">
+                            {/* Tier 1 Box */}
+                            <div className={`p-2.5 sm:p-3 border-2 transition-all ${simulatingDispatch ? "border-[#DC2626] bg-[#1f1014]" : "border-zinc-800 bg-[#101116]"}`}>
+                              <div className="flex items-center justify-between text-xs font-mono font-bold mb-1">
+                                <span className="text-[#DC2626]">TIER 1: SENIOR BOSS (Claude 3.5 / Gemini)</span>
+                                <span className="text-zinc-400 text-[10px] bg-black px-1.5 py-0.5 border border-zinc-800">BRAIN ONLY</span>
+                              </div>
+                              <p className="text-xs text-zinc-300">
+                                Plans system invariants and reviews final diffs. <strong className="text-white">Never wastes tokens writing raw boilerplate.</strong>
+                              </p>
+                            </div>
+
+                            {/* Down Arrow */}
+                            <div className="flex justify-center -my-1">
+                              <ArrowRight className="w-3.5 h-3.5 text-zinc-500 rotate-90" />
+                            </div>
+
+                            {/* Tier 2 Box */}
+                            <div className={`p-2.5 sm:p-3 border-2 transition-all ${simulatingDispatch ? "border-[#B91C1C] bg-[#1f1014]" : "border-zinc-800 bg-[#101116]"}`}>
+                              <div className="flex items-center justify-between text-xs font-mono font-bold mb-1">
+                                <span className="text-zinc-200">TIER 2: DOMAIN SUBAGENT (Junior Boss)</span>
+                                <span className="text-zinc-400 text-[10px] bg-black px-1.5 py-0.5 border border-zinc-800">ORCHESTRATION</span>
+                              </div>
+                              <p className="text-xs text-zinc-300">
+                                Partitions tasks into micro-steps, manages error budgets, and coaches local models.
+                              </p>
+                            </div>
+
+                            {/* Down Arrow */}
+                            <div className="flex justify-center -my-1">
+                              <ArrowRight className="w-3.5 h-3.5 text-zinc-500 rotate-90" />
+                            </div>
+
+                            {/* Tier 3 Box */}
+                            <div className={`p-2.5 sm:p-3 border-2 transition-all ${simulatingDispatch ? "border-green-500 bg-[#0d1a10]" : "border-zinc-800 bg-[#101116]"}`}>
+                              <div className="flex items-center justify-between text-xs font-mono font-bold mb-1">
+                                <span className="text-green-400">TIER 3: 16x LOCAL WORKERS (Hermes / Ollama / Qwen)</span>
+                                <span className="text-green-400 font-bold text-[10px] bg-black px-1.5 py-0.5 border border-green-800">$0.00 FREE TOKENS</span>
+                              </div>
+                              <p className="text-xs text-zinc-300">
+                                Rapidly writes 100% of candidate code, unit tests, and repetitive functions on your local machine.
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="bg-[#101116] border border-zinc-800 p-2.5 flex items-center justify-between text-xs font-mono">
+                            <span className="text-zinc-400">ARBITRAGE RESULT:</span>
+                            <span className="text-green-400 font-bold">96.4% Cost Reduction • 0.42ms Dispatch Latency</span>
+                          </div>
                         </div>
-                      );
-                    })}
-                  </pre>
+                      )}
+
+                      {/* BP-02: SQLite WAL + FTS5 Vectorless Neural Memory Bus */}
+                      {active.id === "BP-02" && (
+                        <div className="space-y-3.5">
+                          <div className="border-b border-zinc-800 pb-2.5">
+                            <div className="font-mono text-xs text-[#DC2626] font-bold uppercase tracking-widest">
+                              SUB-MILLISECOND EPISODIC MEMORY PLAYGROUND
+                            </div>
+                            <div className="text-sm font-black text-[#FAF8F5] uppercase">
+                              Photographic Memory Without Heavy Cloud Vector Databases
+                            </div>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <div className="text-[11px] font-mono text-zinc-400 uppercase">
+                              Click a sample query to test instant recall:
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
+                              {[
+                                "Where did we set session timeouts?",
+                                "Why SQLite instead of Postgres?",
+                                "Recall yesterday's bug fix in auth",
+                              ].map((q, qIdx) => (
+                                <button
+                                  key={q}
+                                  type="button"
+                                  onClick={() => setActiveMemoryQuery(qIdx)}
+                                  className={`p-2 text-left font-mono text-[11px] border transition-colors ${
+                                    activeMemoryQuery === qIdx
+                                      ? "bg-[#B91C1C] text-white border-black font-bold shadow-[2px_2px_0px_#000000]"
+                                      : "bg-[#101116] text-zinc-300 border-zinc-800 hover:border-zinc-500"
+                                  }`}
+                                >
+                                  &quot;{q}&quot;
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Simulated Retrieval Result Card */}
+                          <div className="bg-[#101116] border-2 border-zinc-800 p-3.5 space-y-2">
+                            <div className="flex items-center justify-between text-xs font-mono">
+                              <span className="text-green-400 font-bold flex items-center gap-1.5">
+                                <Zap className="w-3.5 h-3.5 text-green-400" />
+                                RECALLED IN {activeMemoryQuery === 0 ? "0.38ms" : activeMemoryQuery === 1 ? "0.45ms" : "0.29ms"}
+                              </span>
+                              <span className="text-zinc-400">
+                                SOURCE: {activeMemoryQuery === 0 ? "session_manager.ts:42" : activeMemoryQuery === 1 ? "architecture.md:18" : "session_guard.c:88"}
+                              </span>
+                            </div>
+
+                            <p className="text-xs font-mono text-[#FAF8F5] bg-black p-2.5 border border-zinc-800 leading-relaxed">
+                              {activeMemoryQuery === 0 &&
+                                "> Invariant Locked: Enforce 15m sliding session timeout. All refresh tokens revoked on password change or multi-device conflict."}
+                              {activeMemoryQuery === 1 &&
+                                "> Architectural Decision: SQLite WAL with mmap gives zero-syscall sub-millisecond reads without managing external database server daemons."}
+                              {activeMemoryQuery === 2 &&
+                                "> Resolved race condition in token renewal loop using atomic compare-and-swap ring slots. Verified by 28 SMT assertions."}
+                            </p>
+
+                            <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400 pt-1 border-t border-zinc-800">
+                              <span>COST: <strong className="text-green-400">$0.00 (Zero API Tokens)</strong></span>
+                              <span>MATCH: <strong className="text-[#FAF8F5]">100% BM25 Lexical Score</strong></span>
+                            </div>
+                          </div>
+
+                          <div className="bg-black border border-zinc-800 p-2.5 flex items-center justify-between text-xs font-mono">
+                            <span className="text-zinc-400">BENCHMARK:</span>
+                            <span className="text-green-400 font-bold">SQLite FTS5 (0.38ms) vs Pinecone/Weaviate (850ms)</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* BP-03: AST-Aware Token Arbitrage & Context Pruning */}
+                      {active.id === "BP-03" && (
+                        <div className="space-y-3.5">
+                          <div className="border-b border-zinc-800 pb-2.5">
+                            <div className="font-mono text-xs text-[#DC2626] font-bold uppercase tracking-widest">
+                              SMART CONTEXT SLICER // 95.8% TOKEN SAVINGS
+                            </div>
+                            <div className="text-sm font-black text-[#FAF8F5] uppercase">
+                              Strips Boilerplate Bodies • Preserves 100% of Types & Interfaces
+                            </div>
+                          </div>
+
+                          <div className="space-y-2.5">
+                            {/* Without Aegis */}
+                            <div className="bg-[#101116] border border-red-900/50 p-3 space-y-1.5">
+                              <div className="flex items-center justify-between text-xs font-mono">
+                                <span className="text-red-400 font-bold">WITHOUT AEGIS (RAW REPOSITORY DUMP)</span>
+                                <span className="text-red-400 font-mono font-bold">150,000 TOKENS • $1.50</span>
+                              </div>
+                              <div className="w-full bg-zinc-900 h-2.5 border border-zinc-800 overflow-hidden">
+                                <div className="bg-red-600 h-full w-full" />
+                              </div>
+                              <div className="text-[11px] text-zinc-400">
+                                Overloads LLM memory with 2,000 lines of repetitive implementation, causing hallucinations and token exhaustion.
+                              </div>
+                            </div>
+
+                            {/* With Aegis */}
+                            <div className="bg-[#101116] border border-green-900/50 p-3 space-y-1.5">
+                              <div className="flex items-center justify-between text-xs font-mono">
+                                <span className="text-green-400 font-bold">WITH AEGIS AST PRUNER</span>
+                                <span className="text-green-400 font-mono font-bold">6,300 TOKENS • $0.06</span>
+                              </div>
+                              <div className="w-full bg-zinc-900 h-2.5 border border-zinc-800 overflow-hidden">
+                                <div className="bg-green-500 h-full w-[4.2%]" />
+                              </div>
+                              <div className="text-[11px] text-zinc-300">
+                                Extracts exact public function signatures, types, and dependencies. Replaces bodies with O(1) hashes.
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="bg-black border border-zinc-800 p-2.5 flex items-center justify-between text-xs font-mono">
+                            <span className="text-zinc-400">NET BENEFIT:</span>
+                            <span className="text-green-400 font-bold">23.8x CHEAPER PER PROMPT • ZERO CONTEXT OVERFLOW</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* BP-04: Win32 Keepalive & Self-Healing Daemon */}
+                      {active.id === "BP-04" && (
+                        <div className="space-y-3.5">
+                          <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+                            <div>
+                              <div className="font-mono text-xs text-[#DC2626] font-bold uppercase tracking-widest">
+                                24/7 BACKGROUND DAEMON // AUTO-RESURRECTION
+                              </div>
+                              <div className="text-sm font-black text-[#FAF8F5] uppercase">
+                                Never Lose Your Agent&apos;s Train Of Thought
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 bg-black px-2.5 py-1 border border-zinc-800 shrink-0">
+                              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                              <span className="font-mono text-[11px] text-green-400 font-bold">ONLINE 24/7</span>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
+                              <span>SIMULATE RESILIENCE SEQUENCE:</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setDaemonSimStep(1);
+                                  setTimeout(() => setDaemonSimStep(2), 700);
+                                  setTimeout(() => setDaemonSimStep(3), 1500);
+                                  setTimeout(() => setDaemonSimStep(null), 3200);
+                                }}
+                                className="px-2 py-0.5 bg-[#FAF8F5] text-black hover:bg-[#B91C1C] hover:text-white font-mono text-[11px] font-bold border border-black transition-colors"
+                              >
+                                {daemonSimStep ? "SIMULATING..." : "SIMULATE CRASH"}
+                              </button>
+                            </div>
+
+                            <div className="space-y-1.5 font-mono text-xs">
+                              <div className={`p-2 border flex items-center justify-between ${daemonSimStep === 1 ? "border-red-500 bg-red-950/40 text-red-300" : "border-zinc-800 bg-[#101116] text-zinc-400"}`}>
+                                <span>01 // Terminal Window Closed by User</span>
+                                <span>{daemonSimStep === 1 ? "TRIGGERED" : "READY"}</span>
+                              </div>
+                              <div className={`p-2 border flex items-center justify-between ${daemonSimStep === 2 ? "border-yellow-500 bg-yellow-950/40 text-yellow-300" : "border-zinc-800 bg-[#101116] text-zinc-400"}`}>
+                                <span>02 // Win32 Task Scheduler Wakes Sentinel</span>
+                                <span>{daemonSimStep === 2 ? "WAKING (1.2s)" : "READY"}</span>
+                              </div>
+                              <div className={`p-2 border flex items-center justify-between ${daemonSimStep === 3 ? "border-green-500 bg-green-950/40 text-green-300" : "border-zinc-800 bg-[#101116] text-zinc-400"}`}>
+                                <span>03 // SQLite WAL Restored & Telegram Resumed</span>
+                                <span>{daemonSimStep === 3 ? "RESURRECTED" : "READY"}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="bg-[#101116] border border-zinc-800 p-2.5 flex items-center justify-between text-xs font-mono">
+                            <span className="text-zinc-400">KERNEL GUARANTEE:</span>
+                            <span className="text-[#FAF8F5] font-bold">Zero Zombie Processes • 512MB RAM Ceiling</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* BP-05: Lock-Free Telemetry & Telegram Mobile Cockpit */}
+                      {active.id === "BP-05" && (
+                        <div className="space-y-3.5">
+                          <div className="border-b border-zinc-800 pb-2.5">
+                            <div className="font-mono text-xs text-[#DC2626] font-bold uppercase tracking-widest">
+                              TELEGRAM MOBILE COCKPIT // REMOTE 24/7 AGENT OPS
+                            </div>
+                            <div className="text-sm font-black text-[#FAF8F5] uppercase">
+                              Control, Review, And Merge AI Code From Your Phone
+                            </div>
+                          </div>
+
+                          {/* Telegram Chat Simulation */}
+                          <div className="bg-[#101116] border-2 border-zinc-800 p-3 space-y-2.5">
+                            <div className="flex items-center justify-between pb-1.5 border-b border-zinc-800 text-xs font-mono">
+                              <span className="text-zinc-200 font-bold flex items-center gap-1.5">
+                                <Smartphone className="w-3.5 h-3.5 text-blue-400" />
+                                @HHAACLIBot (Aegis Telegram Cockpit)
+                              </span>
+                              <span className="text-green-400 font-bold">● ACTIVE</span>
+                            </div>
+
+                            {/* Message 1 (User) */}
+                            <div className="flex justify-end">
+                              <div className="bg-blue-600/80 text-white font-mono text-xs px-3 py-1.5 rounded-sm max-w-[80%]">
+                                /status check auth refactor
+                              </div>
+                            </div>
+
+                            {/* Message 2 (Bot) */}
+                            <div className="flex justify-start">
+                              <div className="bg-black border border-zinc-800 text-zinc-200 font-mono text-xs p-2.5 rounded-sm space-y-1.5 max-w-[90%]">
+                                <div className="text-green-400 font-bold">
+                                  ⚡ All 286 Quality Theorems Passed (0 Errors)
+                                </div>
+                                <div className="text-zinc-400 text-[11px]">
+                                  Tokens: 96% saved via local Hermes worker. Commit staged.
+                                </div>
+                                <div className="pt-1 flex items-center gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => setTelegramApproved(!telegramApproved)}
+                                    className={`px-2.5 py-1 text-xs font-bold font-mono transition-colors border ${
+                                      telegramApproved
+                                        ? "bg-green-600 text-white border-green-400"
+                                        : "bg-white text-black border-black hover:bg-[#B91C1C] hover:text-white"
+                                    }`}
+                                  >
+                                    {telegramApproved ? "✓ MERGED & DEPLOYED" : "APPROVE & PUSH"}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="bg-[#101116] border border-zinc-800 p-2.5 flex items-center justify-between text-xs font-mono">
+                            <span className="text-zinc-400">LATENCY:</span>
+                            <span className="text-green-400 font-bold">42ns Lock-Free SPSC Ring Buffer Telemetry</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* BP-06: 4-Decision Formal Quality Gates */}
+                      {active.id === "BP-06" && (
+                        <div className="space-y-3.5">
+                          <div className="border-b border-zinc-800 pb-2.5">
+                            <div className="font-mono text-xs text-[#DC2626] font-bold uppercase tracking-widest">
+                              4-STAGE SMT QUALITY GATES // ZERO REGRESSIONS
+                            </div>
+                            <div className="text-sm font-black text-[#FAF8F5] uppercase">
+                              Every Code Diff Is Formally Proven Before Merging
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs">
+                            <div className="p-2.5 bg-[#101116] border border-zinc-800 space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[#FAF8F5] font-bold">1. KARPATHY SIMPLICITY</span>
+                                <span className="text-green-400 font-bold">[PASS]</span>
+                              </div>
+                              <p className="text-[11px] text-zinc-400">
+                                Rejects speculative wrappers, single-use abstractions, and unnecessary code lines.
+                              </p>
+                            </div>
+
+                            <div className="p-2.5 bg-[#101116] border border-zinc-800 space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[#FAF8F5] font-bold">2. ANTI-SLOP & PURGE</span>
+                                <span className="text-green-400 font-bold">[PASS]</span>
+                              </div>
+                              <p className="text-[11px] text-zinc-400">
+                                Strips conversational filler (&quot;Sure thing!&quot;, &quot;As an AI...&quot;), and cleans code.
+                              </p>
+                            </div>
+
+                            <div className="p-2.5 bg-[#101116] border border-zinc-800 space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[#FAF8F5] font-bold">3. RED-TEAM SECURITY</span>
+                                <span className="text-green-400 font-bold">[PASS]</span>
+                              </div>
+                              <p className="text-[11px] text-zinc-400">
+                                Blocks command injection, unsafe shell calls, and hardcoded API keys.
+                              </p>
+                            </div>
+
+                            <div className="p-2.5 bg-[#101116] border border-zinc-800 space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[#FAF8F5] font-bold">4. DUAL SANDBOX TEST</span>
+                                <span className="text-green-400 font-bold">[PASS]</span>
+                              </div>
+                              <p className="text-[11px] text-zinc-400">
+                                Runs unit tests in an isolated sandbox before committing to your git branch.
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="bg-black border border-green-800 p-2.5 flex items-center justify-between text-xs font-mono">
+                            <span className="text-zinc-400">FINAL VERDICT:</span>
+                            <span className="text-green-400 font-bold">286/286 THEOREMS PROVEN • 100% PRODUCTION SAFE</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* BP-07: Single-Binary Quickstart & Zero-Config Setup */}
+                      {active.id === "BP-07" && (
+                        <div className="space-y-3.5">
+                          <div className="border-b border-zinc-800 pb-2.5">
+                            <div className="font-mono text-xs text-[#DC2626] font-bold uppercase tracking-widest">
+                              1-LINE ZERO-DEPENDENCY IGNITION // UP IN 1.8s
+                            </div>
+                            <div className="text-sm font-black text-[#FAF8F5] uppercase">
+                              One Command To Boot Full Autonomous Chassis
+                            </div>
+                          </div>
+
+                          {/* Command Box */}
+                          <div className="bg-[#101116] border-2 border-black p-3 space-y-2">
+                            <div className="flex items-center justify-between text-xs font-mono text-zinc-400">
+                              <span>RUN IN YOUR TERMINAL:</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (typeof navigator !== "undefined" && navigator.clipboard) {
+                                    navigator.clipboard.writeText("curl -fsSL https://aegisbrain.dev/install.sh | sh");
+                                    setCopiedCommand(true);
+                                    setTimeout(() => setCopiedCommand(false), 2000);
+                                  }
+                                }}
+                                className="px-2 py-0.5 bg-[#FAF8F5] text-black font-mono text-[11px] font-bold hover:bg-[#B91C1C] hover:text-white transition-colors"
+                              >
+                                {copiedCommand ? "✓ COPIED" : "COPY COMMAND"}
+                              </button>
+                            </div>
+                            <code className="block bg-black p-2.5 border border-zinc-800 font-mono text-xs sm:text-sm text-[#FAF8F5] overflow-x-auto">
+                              $ curl -fsSL https://aegisbrain.dev/install.sh | sh
+                            </code>
+                          </div>
+
+                          <div className="space-y-1.5 font-mono text-xs">
+                            <div className="flex items-center gap-2 text-zinc-300">
+                              <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
+                              <span>Auto-detects local hardware, Ollama, Hermes, and Claude Code</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-zinc-300">
+                              <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
+                              <span>Starts SQLite FTS5 vectorless memory bus in under 2ms</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-zinc-300">
+                              <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
+                              <span>Establishes 24/7 background keepalive daemon &amp; Telegram cockpit</span>
+                            </div>
+                          </div>
+
+                          <div className="bg-[#101116] border border-zinc-800 p-2.5 flex items-center justify-between text-xs font-mono">
+                            <span className="text-zinc-400">BOOT SPEED:</span>
+                            <span className="text-green-400 font-bold">1.80s COLD BOOT • 0 DOCKER CONTAINERS NEEDED</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
