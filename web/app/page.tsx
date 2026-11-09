@@ -20,6 +20,7 @@ import { ArbitrageCalculator } from "@/components/hud/ArbitrageCalculator";
 import { QualityGateCards } from "@/components/hud/QualityGateCards";
 import { TelegramSimulator } from "@/components/hud/TelegramSimulator";
 import { InfographicsGallery } from "@/components/hud/InfographicsGallery";
+import { Feature06StatsBadge } from "@/components/hud/Feature06StatsBadge";
 import { ParallaxCard } from "@/components/motion/ParallaxCard";
 import { LoadingScreen } from "@/components/motion/LoadingScreen";
 import { CursorPhysicsProvider } from "@/components/motion/CursorPhysicsProvider";
@@ -39,7 +40,8 @@ export default function Home() {
     target: heroRef,
     offset: ["start start", "end start"],
   });
-  const cloudY = useTransform(heroScroll, [0, 1], ["0%", "-28%"]);
+  const cloudY = useTransform(heroScroll, [0, 1], ["0%", "-30%"]);
+  const cloudScale = useTransform(heroScroll, [0, 1], [1, 1.06]);
   const heroOpacity = useTransform(heroScroll, [0, 0.7], [1, 0.15]);
   const heroScale = useTransform(heroScroll, [0, 0.9], [1, 0.94]);
 
@@ -64,7 +66,7 @@ export default function Home() {
 
   return (
     <CursorPhysicsProvider>
-      <div className="relative min-h-screen bg-[#070709] text-[#0D0D11] selection:bg-[#B91C1C] selection:text-white paper-grain">
+      <div className="relative min-h-screen bg-[#070709] text-[#0D0D11] selection:bg-[#B91C1C] selection:text-white">
       {/* Cinematic Sovereign Preloader with AegisBrain Logo Top-Left */}
       <LoadingScreen />
 
@@ -166,53 +168,56 @@ export default function Home() {
         ref={heroRef}
         className="relative min-h-screen w-full flex flex-col items-center justify-between pt-28 pb-0 sm:pt-32 px-4 bg-[#070709] overflow-hidden"
       >
-        {/* Subtle Horizontal Dry-Brush Chalk Streaks */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-15"
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              0deg,
-              transparent,
-              transparent 3px,
-              rgba(255, 255, 255, 0.05) 3px,
-              rgba(255, 255, 255, 0.05) 4px
-            )`,
-          }}
-        />
-
-        {/* Center: Monumental Headline with Pure, Non-Jitter Entrance Animation & Scroll Dissolve */}
+        {/* Center: Monumental Headline with Staggered Entrance Animation & Scroll Dissolve */}
         <motion.div
           style={{ opacity: heroOpacity, scale: heroScale }}
-          initial={{ opacity: 0, y: 25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="relative z-10 text-center flex flex-col items-center max-w-5xl mx-auto select-none pt-2 sm:pt-4"
         >
-          <p className="font-charles-rosie text-white/70 text-base sm:text-xl tracking-[0.35em] uppercase mb-1">
+          <motion.p
+            initial={{ opacity: 0, y: 15, letterSpacing: "0.2em" }}
+            animate={{ opacity: 0.75, y: 0, letterSpacing: "0.35em" }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="font-charles-rosie text-white text-base sm:text-xl uppercase mb-1"
+          >
             The
-          </p>
+          </motion.p>
 
-          <h1 className="font-charles-rosie text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-[0.88] tracking-tight uppercase drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)]">
+          <motion.h1
+            initial={{ opacity: 0, y: 35, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 1.0, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+            className="font-charles-rosie text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-[0.88] tracking-tight uppercase drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)]"
+          >
             Aeg<span className="text-[#B91C1C]">i</span>s
-          </h1>
+          </motion.h1>
 
-          <h2 className="font-charles-rosie text-white text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight tracking-[0.16em] uppercase mt-1 drop-shadow-[0_8px_25px_rgba(0,0,0,0.95)]">
+          <motion.h2
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.0, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="font-charles-rosie text-white text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight tracking-[0.16em] uppercase mt-1 drop-shadow-[0_8px_25px_rgba(0,0,0,0.95)]"
+          >
             Experience
-          </h2>
+          </motion.h2>
 
           {/* Punchy, Non-Slop Directives & Sub-description */}
-          <div className="mt-8 max-w-3xl mx-auto px-4 space-y-3">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-8 max-w-3xl mx-auto px-4 space-y-3"
+          >
             <h3 className="font-nikkei text-[#D4AF37] text-base sm:text-xl md:text-2xl uppercase tracking-[0.2em] font-extrabold leading-tight">
               TAKE FULL CONTROL OF YOUR AGENTS
             </h3>
             <p className="font-gt-era text-zinc-300 text-sm sm:text-base font-medium tracking-wide max-w-2xl mx-auto leading-relaxed">
               Autonomous engineering chassis, neural memory bus, and 3-tier multi-agent governor. Sub-second SQLite FTS5 persistence, 24/7 Win32 keepalive, deterministic token arbitrage, and live Telegram telemetry.
             </p>
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* Billowing Cumulus Cloud Mist Bank Rising on Scroll (Santioni Spirits Aesthetic) */}
-        <motion.div style={{ y: cloudY }} className="relative w-full mt-auto z-20">
+        <motion.div style={{ y: cloudY, scale: cloudScale }} className="relative w-full mt-auto z-20 origin-bottom">
           <CloudMistBank fillColor="#FAF8F5" />
         </motion.div>
 
@@ -495,6 +500,9 @@ export default function Home() {
               Explore step-by-step how AegisBrain connects your terminal, memory database, free local models, and mobile notifications into a single bulletproof system.
             </p>
           </div>
+
+          {/* System Metric & Invariant Badge: Feature06StatsBadge */}
+          <Feature06StatsBadge className="mb-8" />
 
           {/* System Diagrams: InfographicsGallery */}
           <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
