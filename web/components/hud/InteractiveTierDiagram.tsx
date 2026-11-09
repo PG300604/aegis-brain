@@ -69,7 +69,7 @@ export function InteractiveTierDiagram() {
   const [activeTier, setActiveTier] = useState<number>(0);
 
   return (
-    <div className="relative w-full p-5 sm:p-7 bg-[#0E0F15] rounded-xl border-2 border-black text-[#FBF9F5] shadow-[6px_6px_0px_#000000] overflow-hidden">
+    <div className="relative w-full p-5 sm:p-7 bg-[#0E0F15] rounded-none border-2 border-black text-[#FBF9F5] shadow-[6px_6px_0px_#000000] overflow-hidden">
       {/* Background Graphic Grid */}
       <div
         className="absolute inset-0 pointer-events-none opacity-10"
@@ -83,7 +83,7 @@ export function InteractiveTierDiagram() {
       <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-5 border-b border-white/10">
         <div>
           <div className="font-nikkei text-xs uppercase tracking-[0.2em] text-[#B91C1C] font-extrabold flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#B91C1C]" />
+            <span className="w-2.5 h-2.5 bg-[#B91C1C] border border-black inline-block" />
             TRI-TIER ARCHITECTURE SPECIFICATION
           </div>
           <h3 className="font-charles-rosie text-xl sm:text-2xl text-white uppercase tracking-tight mt-1.5">
@@ -94,8 +94,8 @@ export function InteractiveTierDiagram() {
           </p>
         </div>
 
-        <div className="px-3 py-1.5 bg-black border border-white/20 rounded font-mono text-xs text-emerald-400 flex items-center gap-2 shadow-[2px_2px_0px_#10B981]">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="px-3 py-1.5 bg-black border border-white/20 rounded-none font-mono text-xs text-emerald-400 flex items-center gap-2 shadow-[2px_2px_0px_#10B981]">
+          <span className="w-2.5 h-2.5 bg-emerald-400 border border-black inline-block" />
           <span>92.4% Token Cost Reduction</span>
         </div>
       </div>
@@ -113,7 +113,7 @@ export function InteractiveTierDiagram() {
               }}
               whileHover={{ y: -6, scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className={`relative flex flex-col justify-between p-5 rounded-lg border-2 transition-all cursor-pointer select-none ${
+              className={`relative flex flex-col justify-between p-5 rounded-none border-2 transition-all cursor-pointer select-none ${
                 isSelected
                   ? `bg-[#181922] ${tier.borderColor} shadow-[6px_6px_0px_#000000]`
                   : "bg-black/70 border-white/15 opacity-80 hover:opacity-100 shadow-[3px_3px_0px_#000000]"
@@ -123,12 +123,12 @@ export function InteractiveTierDiagram() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span
-                    className="font-nikkei text-[11px] uppercase tracking-wider px-2 py-0.5 rounded font-extrabold"
+                    className="font-nikkei text-[11px] uppercase tracking-wider px-2 py-0.5 rounded-none font-extrabold border border-black"
                     style={{ backgroundColor: tier.color, color: "#FFFFFF" }}
                   >
                     {tier.tier}
                   </span>
-                  <span className="text-[10px] font-mono uppercase text-zinc-400 bg-white/5 px-2 py-0.5 rounded border border-white/10">
+                  <span className="text-[10px] font-mono uppercase text-zinc-400 bg-white/5 px-2 py-0.5 rounded-none border border-white/10">
                     {tier.badge}
                   </span>
                 </div>
@@ -140,7 +140,7 @@ export function InteractiveTierDiagram() {
                   {tier.role}
                 </div>
 
-                <div className="mt-3 p-2 bg-black/80 rounded border border-white/10 font-mono text-[11px]">
+                <div className="mt-3 p-2 bg-black/80 rounded-none border border-white/10 font-mono text-[11px]">
                   <div className="text-zinc-400 text-[10px] uppercase">Engine Models:</div>
                   <div className="text-white font-semibold">{tier.models}</div>
                   <div className="text-[10px] text-emerald-400 mt-1 font-bold">
@@ -163,9 +163,9 @@ export function InteractiveTierDiagram() {
 
               {/* Pulsing Signal Packet Rail */}
               <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-zinc-400">
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1.5">
                   <span
-                    className="w-2 h-2 rounded-full animate-ping"
+                    className="w-2.5 h-2.5 border border-black inline-block"
                     style={{ backgroundColor: tier.color }}
                   />
                   <span>Active Channel</span>

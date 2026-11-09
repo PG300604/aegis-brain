@@ -633,7 +633,7 @@ export function InfographicsGallery() {
     active.pipelineSteps[selectedStepIndex] || active.pipelineSteps[0];
 
   return (
-    <div className="relative p-6 sm:p-10 bg-[#101116] text-[#FBF9F5] border-2 border-black rounded-xl shadow-[8px_8px_0px_#000000]">
+    <div className="relative p-6 sm:p-10 bg-[#101116] text-[#FBF9F5] border-2 border-black rounded-none shadow-[8px_8px_0px_#000000]">
       {/* 
         ========================================================================
         HEADER: Crisp Editorial Style (Zero AI-Slop Pills)
@@ -652,7 +652,7 @@ export function InfographicsGallery() {
           </p>
         </div>
 
-        <div className="px-5 py-2.5 bg-black border-2 border-white/20 rounded text-center shadow-[3px_3px_0px_#D4AF37]">
+        <div className="px-5 py-2.5 bg-black border-2 border-white/20 rounded-none text-center shadow-[3px_3px_0px_#D4AF37]">
           <div className="font-nikkei text-xl sm:text-2xl font-extrabold text-[#D4AF37]">
             7 BLUEPRINTS
           </div>
@@ -680,7 +680,7 @@ export function InfographicsGallery() {
                 setSelectedStepIndex(0);
                 triggerSoundEffect("tab");
               }}
-              className={`p-3 rounded-lg border-2 text-left transition-all cursor-pointer ${
+              className={`p-3 rounded-none border-2 text-left transition-all cursor-pointer ${
                 isSelected
                   ? "bg-[#181822] border-[#B91C1C] shadow-[4px_4px_0px_#B91C1C] translate-y-[-2px]"
                   : "bg-black/60 border-white/15 hover:border-white/40 shadow-[2px_2px_0px_#000000]"
@@ -691,7 +691,7 @@ export function InfographicsGallery() {
                   BP {bp.number}
                 </span>
                 <span
-                  className={`font-mono text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                  className={`font-mono text-[9px] font-bold px-1.5 py-0.5 rounded-none border border-black ${
                     isSelected
                       ? "bg-[#B91C1C] text-white"
                       : "bg-black text-zinc-500"
@@ -717,12 +717,12 @@ export function InfographicsGallery() {
         ACTIVE BLUEPRINT DEEP DIVE PLATE (Cream Paper with 2px Black Border)
         ========================================================================
       */}
-      <div className="p-6 sm:p-8 rounded-xl bg-[#FAF8F5] text-black border-2 border-black shadow-[6px_6px_0px_#000000] space-y-6">
+      <div className="p-6 sm:p-8 rounded-none bg-[#FAF8F5] text-black border-2 border-black shadow-[6px_6px_0px_#000000] space-y-6">
         {/* Specification Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b-2 border-black pb-4">
           <div>
             <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-wider">
-              BLUEPRINT {active.number} • {active.category}
+              BLUEPRINT {active.number} // {active.category}
             </div>
             <h4 className="font-charles-rosie text-2xl sm:text-3xl text-black uppercase tracking-tight mt-1">
               {active.title}
@@ -731,14 +731,14 @@ export function InfographicsGallery() {
               {active.subtitle}
             </div>
           </div>
-          <div className="px-3 py-1 bg-white border border-black rounded text-[11px] font-mono text-black font-semibold shadow-[2px_2px_0px_#000000]">
+          <div className="px-3 py-1 bg-white border border-black rounded-none text-[11px] font-mono text-black font-semibold shadow-[2px_2px_0px_#000000]">
             Autonomous Architecture Standard
           </div>
         </div>
 
         {/* Human Pain Point & Story Narrative */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-          <div className="md:col-span-4 p-4 rounded bg-red-50/70 border border-red-300 shadow-[2px_2px_0px_#000000] space-y-1">
+          <div className="md:col-span-4 p-4 rounded-none bg-red-50/70 border border-red-300 shadow-[2px_2px_0px_#000000] space-y-1">
             <div className="font-nikkei text-[11px] uppercase tracking-wider text-[#B91C1C] font-extrabold">
               // The Developer Pain Point
             </div>
@@ -747,9 +747,9 @@ export function InfographicsGallery() {
             </p>
           </div>
 
-          <div className="md:col-span-8 p-4 rounded bg-white border border-black shadow-[2px_2px_0px_#000000] space-y-1">
+          <div className="md:col-span-8 p-4 rounded-none bg-white border border-black shadow-[2px_2px_0px_#000000] space-y-1">
             <div className="font-nikkei text-[11px] uppercase tracking-wider text-black font-extrabold flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+              <span className="w-2.5 h-2.5 bg-emerald-600 border border-black inline-block" />
               How AegisBrain Solves It
             </div>
             <p className="font-gt-era text-xs sm:text-sm text-black/85 leading-relaxed">
@@ -763,10 +763,10 @@ export function InfographicsGallery() {
           INTERACTIVE SYSTEM PIPELINE: Pure HTML/CSS/SVG Pipeline Elements
           ======================================================================
         */}
-        <div className="p-4 sm:p-5 rounded-lg bg-[#101116] text-[#FBF9F5] border-2 border-black shadow-[4px_4px_0px_#000000] space-y-4">
+        <div className="p-4 sm:p-5 rounded-none bg-[#101116] text-[#FBF9F5] border-2 border-black shadow-[4px_4px_0px_#000000] space-y-4">
           <div className="flex items-center justify-between border-b border-white/10 pb-2">
             <span className="font-nikkei text-xs uppercase tracking-wider text-[#D4AF37] font-bold flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse" />
+              <span className="w-2.5 h-2.5 bg-[#D4AF37] border border-black inline-block" />
               Interactive Execution Pipeline (Click Any Node to Inspect Step)
             </span>
             <span className="font-mono text-[10px] text-zinc-400 hidden sm:inline">
@@ -786,7 +786,7 @@ export function InfographicsGallery() {
                     setSelectedStepIndex(idx);
                     triggerSoundEffect("click");
                   }}
-                  className={`p-3 rounded-lg border-2 text-left transition-all cursor-pointer relative ${
+                  className={`p-3 rounded-none border-2 text-left transition-all cursor-pointer relative ${
                     isSelected
                       ? "bg-[#1C1D26] border-[#D4AF37] shadow-[3px_3px_0px_#D4AF37] translate-y-[-2px]"
                       : "bg-black/60 border-white/10 hover:border-white/30 shadow-[2px_2px_0px_#000000]"
@@ -823,7 +823,7 @@ export function InfographicsGallery() {
           </div>
 
           {/* Active Step Detailed Inspector Plate */}
-          <div className="p-3.5 rounded bg-black border border-white/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+          <div className="p-3.5 rounded-none bg-black border border-white/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="font-mono text-[10px] text-[#D4AF37] font-bold">
@@ -832,7 +832,7 @@ export function InfographicsGallery() {
                 <span className="font-nikkei font-bold text-white uppercase text-xs">
                   {activeStep.label}
                 </span>
-                <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-[#B91C1C] text-white">
+                <span className="font-mono text-[10px] px-1.5 py-0.5 rounded-none border border-black bg-[#B91C1C] text-white">
                   {activeStep.badge}
                 </span>
               </div>
@@ -840,7 +840,7 @@ export function InfographicsGallery() {
                 {activeStep.desc}
               </p>
             </div>
-            <div className="px-3 py-1.5 bg-zinc-900 border border-white/10 rounded font-mono text-[11px] text-emerald-400 shrink-0">
+            <div className="px-3 py-1.5 bg-zinc-900 border border-white/10 rounded-none font-mono text-[11px] text-emerald-400 shrink-0">
               Latency: {activeStep.metric}
             </div>
           </div>
@@ -859,7 +859,7 @@ export function InfographicsGallery() {
             {active.invariants.map((inv, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-2.5 p-3 rounded bg-white border border-black shadow-[2px_2px_0px_#000000]"
+                className="flex items-start gap-2.5 p-3 rounded-none bg-white border border-black shadow-[2px_2px_0px_#000000]"
               >
                 <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                 <span className="font-gt-era text-xs font-medium text-black/90">
@@ -881,7 +881,7 @@ export function InfographicsGallery() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
             {/* Left Protocol Card */}
-            <div className="p-4 rounded bg-[#101116] border-2 border-black shadow-[3px_3px_0px_#000000] text-zinc-200">
+            <div className="p-4 rounded-none bg-[#101116] border-2 border-black shadow-[3px_3px_0px_#000000] text-zinc-200">
               <div className="font-nikkei text-[11px] text-[#D4AF37] uppercase font-bold mb-2 flex items-center justify-between border-b border-white/10 pb-2">
                 <span className="flex items-center gap-1.5">
                   <Terminal className="w-3.5 h-3.5 text-[#B91C1C]" />
@@ -897,7 +897,7 @@ export function InfographicsGallery() {
             </div>
 
             {/* Right Protocol Card */}
-            <div className="p-4 rounded bg-[#0A1A10] border-2 border-black shadow-[3px_3px_0px_#000000] text-emerald-200">
+            <div className="p-4 rounded-none bg-[#0A1A10] border-2 border-black shadow-[3px_3px_0px_#000000] text-emerald-200">
               <div className="font-nikkei text-[11px] text-emerald-400 uppercase font-bold mb-2 flex items-center justify-between border-b border-emerald-500/20 pb-2">
                 <span className="flex items-center gap-1.5">
                   <Code2 className="w-3.5 h-3.5 text-emerald-400" />
@@ -927,7 +927,7 @@ export function InfographicsGallery() {
             {active.stats.map((s, idx) => (
               <div
                 key={idx}
-                className="p-3.5 bg-white border-2 border-black rounded shadow-[3px_3px_0px_#000000]"
+                className="p-3.5 bg-white border-2 border-black rounded-none shadow-[3px_3px_0px_#000000]"
               >
                 <div className="text-[10px] font-nikkei uppercase text-zinc-500 font-bold tracking-wider">
                   {s.label}

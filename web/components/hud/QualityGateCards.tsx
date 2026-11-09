@@ -103,7 +103,7 @@ export function QualityGateCards() {
   const active = GATES.find((g) => g.id === selectedGate) || GATES[0];
 
   return (
-    <div className="relative p-6 sm:p-10 bg-[#101116] text-[#FBF9F5] border-2 border-black rounded-xl shadow-[8px_8px_0px_#000000]">
+    <div className="relative p-6 sm:p-10 bg-[#101116] text-[#FBF9F5] border-2 border-black rounded-none shadow-[8px_8px_0px_#000000]">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
         <div>
@@ -118,7 +118,7 @@ export function QualityGateCards() {
           </p>
         </div>
 
-        <div className="px-5 py-2.5 bg-black border-2 border-white/20 rounded text-center shadow-[3px_3px_0px_#B91C1C]">
+        <div className="px-5 py-2.5 bg-black border-2 border-white/20 rounded-none text-center shadow-[3px_3px_0px_#B91C1C]">
           <div className="font-nikkei text-xl sm:text-2xl font-extrabold text-[#D4AF37]">
             4 INSPECTION GATES
           </div>
@@ -138,7 +138,7 @@ export function QualityGateCards() {
                 setSelectedGate(gate.id);
                 triggerSoundEffect("tab");
               }}
-              className={`p-5 rounded-lg border-2 text-left transition-all cursor-pointer ${
+              className={`p-5 rounded-none border-2 text-left transition-all cursor-pointer ${
                 isSelected
                   ? "bg-[#181822] border-[#B91C1C] shadow-[5px_5px_0px_#B91C1C] translate-y-[-2px]"
                   : "bg-black/60 border-white/15 hover:border-white/40 shadow-[2px_2px_0px_#000000]"
@@ -148,7 +148,7 @@ export function QualityGateCards() {
                 <span className="font-nikkei text-xs font-bold text-[#D4AF37]">
                   STAGE {gate.number}
                 </span>
-                <span className={`font-mono text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                <span className={`font-mono text-[10px] font-bold px-1.5 py-0.5 border border-black ${
                   isSelected ? "bg-[#B91C1C] text-white" : "bg-black text-zinc-500"
                 }`}>
                   [{gate.tag}]
@@ -166,7 +166,7 @@ export function QualityGateCards() {
       </div>
 
       {/* Active Gate Deep Dive Plate */}
-      <div className="p-6 sm:p-8 rounded-xl bg-[#FAF8F5] text-black border-2 border-black shadow-[6px_6px_0px_#000000] space-y-6">
+      <div className="p-6 sm:p-8 rounded-none bg-[#FAF8F5] text-black border-2 border-black shadow-[6px_6px_0px_#000000] space-y-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b-2 border-black pb-4">
           <div>
             <h4 className="font-charles-rosie text-2xl sm:text-3xl text-black uppercase tracking-tight">
@@ -188,7 +188,7 @@ export function QualityGateCards() {
             {active.invariants.map((inv, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-2.5 p-3 rounded bg-white border border-black shadow-[2px_2px_0px_#000000]"
+                className="flex items-start gap-2.5 p-3 rounded-none bg-white border border-black shadow-[2px_2px_0px_#000000]"
               >
                 <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                 <span className="font-gt-era text-xs font-medium text-black/90">{inv}</span>
@@ -204,7 +204,7 @@ export function QualityGateCards() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
             {/* Rejected */}
-            <div className="p-4 rounded bg-[#1A0A0A] border-2 border-[#B91C1C] shadow-[3px_3px_0px_#000000] text-red-200">
+            <div className="p-4 rounded-none bg-[#1A0A0A] border-2 border-[#B91C1C] shadow-[3px_3px_0px_#000000] text-red-200">
               <div className="font-nikkei text-[11px] text-[#B91C1C] uppercase font-bold mb-2 flex items-center justify-between">
                 <span>REJECTED DRAFT</span>
                 <span className="text-[10px] text-red-400">Violates Gate {active.number}</span>
@@ -215,7 +215,7 @@ export function QualityGateCards() {
             </div>
 
             {/* Approved */}
-            <div className="p-4 rounded bg-[#0A1A10] border-2 border-emerald-600 shadow-[3px_3px_0px_#000000] text-emerald-200">
+            <div className="p-4 rounded-none bg-[#0A1A10] border-2 border-emerald-600 shadow-[3px_3px_0px_#000000] text-emerald-200">
               <div className="font-nikkei text-[11px] text-emerald-400 uppercase font-bold mb-2 flex items-center justify-between">
                 <span>APPROVED PRODUCTION CODE</span>
                 <span className="text-[10px] text-emerald-300">Verified</span>

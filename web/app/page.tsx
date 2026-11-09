@@ -37,16 +37,17 @@ export default function Home() {
   const [soundActive, setSoundActive] = useState(false);
   const [copiedClone, setCopiedClone] = useState(false);
 
-  // Hero section scroll animations
-  const heroRef = useRef<HTMLElement>(null);
+  // Hero stage scroll animations for multi-plane parallax depth transition
+  const heroStageRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: heroScroll } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
+    target: heroStageRef,
+    offset: ["start start", "end end"],
   });
-  const cloudY = useTransform(heroScroll, [0, 1], ["0%", "-30%"]);
-  const cloudScale = useTransform(heroScroll, [0, 1], [1, 1.06]);
-  const heroOpacity = useTransform(heroScroll, [0, 0.7], [1, 0.15]);
-  const heroScale = useTransform(heroScroll, [0, 0.9], [1, 0.94]);
+  const heroOpacity = useTransform(heroScroll, [0, 0.35], [1, 0]);
+  const heroScale = useTransform(heroScroll, [0, 0.40], [1, 0.90]);
+  const heroY = useTransform(heroScroll, [0, 0.40], ["0px", "-70px"]);
+  const cloudY = useTransform(heroScroll, [0, 0.8], ["0%", "-18%"]);
+  const cloudScale = useTransform(heroScroll, [0, 0.8], [1, 1.08]);
 
   // Vertical laser scroll tracker
   useEffect(() => {
@@ -163,80 +164,81 @@ export default function Home() {
         HERO SPREAD: THE AEGIS EXPERIENCE (Deep Black + Fluid Typography)
         ========================================================================
       */}
-      <section
-        id="experience"
-        ref={heroRef}
-        className="relative isolate min-h-screen w-full flex flex-col items-center justify-between pt-28 pb-0 sm:pt-32 px-4 bg-[#070709] overflow-hidden"
-      >
-        {/* Fluid Smoke Background Effect */}
-        <div
-          data-aifx="fluid-smoke"
-          data-aifx-colors="#000000,#58564b,#4b5c74"
-          className="absolute inset-0 -z-10 pointer-events-none"
-          aria-hidden="true"
-        />
-        {/* Center: Monumental Headline with Staggered Entrance Animation & Scroll Dissolve */}
-        <motion.div
-          style={{ opacity: heroOpacity, scale: heroScale }}
-          className="relative z-10 text-center flex flex-col items-center max-w-5xl mx-auto select-none pt-2 sm:pt-4"
+      <div ref={heroStageRef} className="relative w-full h-[145vh]">
+        <section
+          id="experience"
+          className="sticky top-0 h-screen w-full flex flex-col items-center justify-between pt-24 pb-0 sm:pt-28 px-4 bg-[#070709] overflow-hidden z-0"
         >
-          <motion.p
-            initial={{ opacity: 0, y: 15, letterSpacing: "0.2em" }}
-            animate={{ opacity: 0.75, y: 0, letterSpacing: "0.35em" }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="font-charles-rosie text-white text-base sm:text-xl uppercase mb-1"
-          >
-            The
-          </motion.p>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 35, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 1.0, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-            className="font-charles-rosie text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-[0.88] tracking-tight uppercase drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)]"
-          >
-            Aeg<span className="text-[#B91C1C]">i</span>s
-          </motion.h1>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.0, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="font-charles-rosie text-white text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight tracking-[0.16em] uppercase mt-1 drop-shadow-[0_8px_25px_rgba(0,0,0,0.95)]"
-          >
-            Experience
-          </motion.h2>
-
-          {/* Punchy, Non-Slop Directives */}
+          {/* Fluid Smoke Background Effect */}
+          <div
+            data-aifx="fluid-smoke"
+            data-aifx-colors="#000000,#58564b,#4b5c74"
+            className="absolute inset-0 -z-10 pointer-events-none"
+            aria-hidden="true"
+          />
+          {/* Center: Monumental Headline with Staggered Entrance Animation & Parallax Dissolve */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-8 max-w-3xl mx-auto px-4"
+            style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
+            className="relative z-10 text-center flex flex-col items-center max-w-5xl mx-auto select-none pt-2 sm:pt-4"
           >
-            <h3 className="font-nikkei text-[#D4AF37] text-base sm:text-xl md:text-2xl uppercase tracking-[0.2em] font-extrabold leading-tight">
-              TAKE FULL CONTROL OF YOUR AGENTS
-            </h3>
+            <motion.p
+              initial={{ opacity: 0, y: 15, letterSpacing: "0.2em" }}
+              animate={{ opacity: 0.75, y: 0, letterSpacing: "0.35em" }}
+              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              className="font-charles-rosie text-white text-base sm:text-xl uppercase mb-1"
+            >
+              The
+            </motion.p>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 35, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 1.0, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+              className="font-charles-rosie text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-[0.88] tracking-tight uppercase drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)]"
+            >
+              Aeg<span className="text-[#B91C1C]">i</span>s
+            </motion.h1>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.0, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="font-charles-rosie text-white text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight tracking-[0.16em] uppercase mt-1 drop-shadow-[0_8px_25px_rgba(0,0,0,0.95)]"
+            >
+              Experience
+            </motion.h2>
+
+            {/* Punchy, Non-Slop Directives */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-8 max-w-3xl mx-auto px-4"
+            >
+              <h3 className="font-nikkei text-[#D4AF37] text-base sm:text-xl md:text-2xl uppercase tracking-[0.2em] font-extrabold leading-tight">
+                TAKE FULL CONTROL OF YOUR AGENTS
+              </h3>
+            </motion.div>
           </motion.div>
-        </motion.div>
 
-        {/* Billowing Cumulus Cloud Mist Bank from Google Flow (190 Frames Scroll-Scrubbed + 60fps Ambient Motion) */}
-        <motion.div style={{ y: cloudY, scale: cloudScale }} className="relative w-full mt-auto z-20 origin-bottom">
-          <FlowCloudCanvas />
-        </motion.div>
+          {/* Billowing Cumulus Cloud Mist Bank from Google Flow (190 Frames Scroll-Scrubbed + Parallax Lift) */}
+          <motion.div style={{ y: cloudY, scale: cloudScale }} className="relative w-full mt-auto z-20 origin-bottom">
+            <FlowCloudCanvas />
+          </motion.div>
 
-        {/* Minimal Editorial Scroll Indicator */}
-        <div className="relative z-30 flex flex-col items-center gap-1 pb-4 -mt-8 pointer-events-none select-none">
-          <ChevronDown className="w-4 h-4 text-white/50 animate-bounce" />
-        </div>
-      </section>
+          {/* Minimal Editorial Scroll Indicator */}
+          <div className="relative z-30 flex flex-col items-center gap-1 pb-4 -mt-8 pointer-events-none select-none">
+            <ChevronDown className="w-4 h-4 text-white/50 animate-bounce" />
+          </div>
+        </section>
+      </div>
 
       {/* 
         ========================================================================
         FEATURE 01: PERMANENT AGENT MEMORY (Real Developer Experience)
         ========================================================================
       */}
-      <ParallaxCard index={0} id="memory">
+      <ParallaxCard index={0} id="memory" className="-mt-[40vh] sm:-mt-[45vh] relative z-10">
         <div className="comic-plate relative w-full p-6 sm:p-12">
           {/* Feature Header in Human Real-Life Terms */}
           <div className="mb-8 pt-2">
@@ -262,7 +264,7 @@ export default function Home() {
           {/* Real-Time Memory Retrieval Trace */}
           <div className="mb-4">
             <div className="text-xs font-nikkei text-black uppercase tracking-wider mb-2 flex items-center gap-2 font-bold">
-              <span className="w-2 h-2 rounded-full bg-[#B91C1C]" />
+              <span className="w-2.5 h-2.5 bg-[#B91C1C] border border-black inline-block" />
               Real-Time Memory Retrieval Trace
             </div>
             <ThoughtLine
@@ -298,7 +300,7 @@ export default function Home() {
           <div className="mb-8 p-4 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] space-y-3">
             <div className="flex items-center justify-between border-b border-black/10 pb-2">
               <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
-                <span className="w-2 h-2 rounded-full bg-[#B91C1C]" />
+                <span className="w-2.5 h-2.5 bg-[#B91C1C] border border-black inline-block" />
                 Active Tier 3 Local Worker Invocations
               </span>
               <span className="font-mono text-[10px] text-emerald-700 font-bold">100% Free Hardware Tokens</span>
@@ -334,7 +336,7 @@ export default function Home() {
           </div>
 
           {/* Arbitrage Engine: ArbitrageCalculator */}
-          <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
+          <div className="border-2 border-black rounded-none overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
             <ArbitrageCalculator />
           </div>
         </div>
@@ -349,8 +351,8 @@ export default function Home() {
       <ParallaxCard index={2} id="keepalive">
         <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="mb-8 pt-2">
-            <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
-              FEATURE 03 • IMMORTAL HOST DAEMON
+            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
+              FEATURE 03 // 24/7 BACKGROUND DAEMON
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
               Runs All Night Without Crashing
@@ -363,7 +365,7 @@ export default function Home() {
           {/* Side-by-Side Comparison Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Card 1: Traditional Vulnerability */}
-            <div className="comic-card-red p-6 rounded-lg space-y-3">
+            <div className="comic-card-red p-6 rounded-none border-2 border-black space-y-3 shadow-[4px_4px_0px_#000000]">
               <div className="border-b border-black/10 pb-2">
                 <span className="font-nikkei text-xs uppercase tracking-wider text-[#B91C1C] font-extrabold">
                   Traditional Agent Vulnerability
@@ -386,10 +388,10 @@ export default function Home() {
             </div>
 
             {/* Card 2: Aegis KeepAlive Shield */}
-            <div className="comic-card-emerald p-6 rounded-lg space-y-3">
+            <div className="comic-card-emerald p-6 rounded-none border-2 border-black space-y-3 shadow-[4px_4px_0px_#000000]">
               <div className="border-b border-black/10 pb-2">
                 <span className="font-nikkei text-xs uppercase tracking-wider text-emerald-700 font-extrabold">
-                  Aegis Immortal KeepAlive Shield
+                  Aegis 24/7 KeepAlive Shield
                 </span>
               </div>
               <ul className="space-y-2 text-xs font-gt-era text-black/80">
@@ -403,7 +405,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-emerald-700 font-bold">✓</span>
-                  <span><strong>Zero Disruption:</strong> Seamless persistence across reboots, account switches, and terminal terminations.</span>
+                  <span><strong>Zero Disruption:</strong> Persistence across reboots, account switches, and terminal terminations.</span>
                 </li>
               </ul>
             </div>
@@ -412,7 +414,7 @@ export default function Home() {
           {/* Pytest Verification Badge */}
           <div className="p-4 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded bg-emerald-100 border-2 border-emerald-600 flex items-center justify-center text-emerald-700 font-bold">
+              <div className="w-10 h-10 rounded-none bg-emerald-100 border-2 border-emerald-600 flex items-center justify-center text-emerald-700 font-bold">
                 <Check className="w-6 h-6 stroke-[3]" />
               </div>
               <div>
@@ -440,8 +442,8 @@ export default function Home() {
       <ParallaxCard index={3} id="mobile">
         <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="mb-8 pt-2">
-            <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
-              FEATURE 04 • MOBILE TELEGRAM TELEMETRY
+            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
+              FEATURE 04 // MOBILE TELEGRAM COCKPIT
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
               Control Your Agent From Your Phone
@@ -452,7 +454,7 @@ export default function Home() {
           </div>
 
           {/* Telegram Simulator: TelegramSimulator with authentic iPhone 16 Pro iOS */}
-          <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116] p-4 sm:p-6">
+          <div className="border-2 border-black rounded-none overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116] p-4 sm:p-6">
             <TelegramSimulator />
           </div>
         </div>
@@ -466,8 +468,8 @@ export default function Home() {
       <ParallaxCard index={4} id="quality">
         <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="mb-8 pt-2">
-            <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
-              FEATURE 05 • PRODUCTION SAFETY GATE
+            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
+              FEATURE 05 // FOUR-STAGE QUALITY GATES
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
               Catch Bad Code Before It Hits Git
@@ -478,7 +480,7 @@ export default function Home() {
           </div>
 
           {/* Quality Gates: QualityGateCards */}
-          <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
+          <div className="border-2 border-black rounded-none overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
             <QualityGateCards />
           </div>
         </div>
@@ -507,7 +509,7 @@ export default function Home() {
           <Feature06BlueprintCards className="mb-8" />
 
           {/* System Diagrams: InfographicsGallery */}
-          <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
+          <div className="border-2 border-black rounded-none overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
             <InfographicsGallery />
           </div>
         </div>
@@ -521,8 +523,8 @@ export default function Home() {
       <ParallaxCard index={6} id="install">
         <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="mb-8 pt-2">
-            <div className="inline-block bg-black text-[#FBF9F5] font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-3 shadow-[2px_2px_0px_#B91C1C]">
-              QUICKSTART &amp; INSTALLATION
+            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
+              QUICKSTART // ONE-LINE INSTALLATION
             </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
               Install in Seconds
@@ -533,7 +535,7 @@ export default function Home() {
           </div>
 
           {/* Terminal Command Strip: TerminalInstall */}
-          <div className="border-2 border-black rounded-lg overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
+          <div className="border-2 border-black rounded-none overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
             <TerminalInstall />
           </div>
         </div>
@@ -547,8 +549,8 @@ export default function Home() {
       <ParallaxCard index={7} id="community">
         <div className="comic-plate relative w-full p-8 sm:p-12 text-black">
             <div className="border-b-2 border-black pb-8">
-              <div className="inline-block bg-[#B91C1C] text-white font-nikkei text-xs uppercase px-3 py-1 tracking-widest mb-2 shadow-[2px_2px_0px_#000000]">
-                OPEN SOURCE &amp; COMMUNITY
+              <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
+                COMMUNITY // OPEN SOURCE DEVELOPMENT
               </div>
               <h3 className="font-charles-rosie text-3xl sm:text-4xl text-black tracking-tight uppercase">
                 Build With AegisBrain
@@ -561,14 +563,14 @@ export default function Home() {
             {/* Action Cards Grid: 4 Pillars of Community */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
               {/* Card 1: Star on GitHub */}
-              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded flex flex-col justify-between">
+              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded-none flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black flex items-center gap-2">
                       <Star className="w-4 h-4 text-[#D4AF37] fill-[#D4AF37]" />
                       Star the Repository
                     </span>
-                    <span className="text-[10px] font-mono uppercase bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">
+                    <span className="text-[10px] font-mono uppercase bg-amber-100 text-amber-800 px-2 py-0.5 border border-black font-bold">
                       GitHub
                     </span>
                   </div>
@@ -581,7 +583,7 @@ export default function Home() {
                     href="https://github.com/PG300604/aegis-brain"
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-black hover:bg-neutral-800 text-white font-nikkei text-xs uppercase tracking-wider rounded border border-black shadow-[2px_2px_0px_#B91C1C] transition-transform hover:-translate-y-0.5"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-black hover:bg-neutral-800 text-white font-nikkei text-xs uppercase tracking-wider rounded-none border-2 border-black shadow-[2px_2px_0px_#B91C1C] transition-transform hover:-translate-y-0.5"
                   >
                     <Star className="w-3.5 h-3.5 text-[#D4AF37] fill-[#D4AF37]" />
                     <span>Star on GitHub</span>
@@ -591,14 +593,14 @@ export default function Home() {
               </div>
 
               {/* Card 2: Clone Repository */}
-              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded flex flex-col justify-between">
+              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded-none flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black flex items-center gap-2">
                       <FileCode className="w-4 h-4 text-[#B91C1C]" />
                       Clone Repository
                     </span>
-                    <span className="text-[10px] font-mono uppercase bg-zinc-100 text-zinc-800 px-2 py-0.5 rounded font-bold">
+                    <span className="text-[10px] font-mono uppercase bg-zinc-100 text-zinc-800 px-2 py-0.5 border border-black font-bold">
                       Local Setup
                     </span>
                   </div>
@@ -606,14 +608,14 @@ export default function Home() {
                     Get the source code and start hacking immediately.
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-black/10 flex items-center justify-between gap-2 bg-[#0D0E15] p-2.5 rounded border border-black text-white font-mono text-[11px]">
+                <div className="mt-4 pt-3 border-t border-black/10 flex items-center justify-between gap-2 bg-[#0D0E15] p-2.5 rounded-none border border-black text-white font-mono text-[11px]">
                   <span className="text-zinc-300 truncate">
                     git clone https://github.com/PG300604/aegis-brain.git
                   </span>
                   <button
                     type="button"
                     onClick={handleCopyClone}
-                    className="px-2.5 py-1 bg-[#B91C1C] hover:bg-red-800 text-white font-nikkei text-[10px] uppercase rounded border border-black flex items-center gap-1 cursor-pointer shrink-0"
+                    className="px-2.5 py-1 bg-[#B91C1C] hover:bg-red-800 text-white font-nikkei text-[10px] uppercase rounded-none border border-black flex items-center gap-1 cursor-pointer shrink-0"
                   >
                     {copiedClone ? (
                       <>
@@ -631,14 +633,14 @@ export default function Home() {
               </div>
 
               {/* Card 3: Issues & Discussions */}
-              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded flex flex-col justify-between">
+              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded-none flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black flex items-center gap-2">
                       <AlertTriangle className="w-4 h-4 text-[#B91C1C]" />
                       Issues &amp; Discussions
                     </span>
-                    <span className="text-[10px] font-mono uppercase bg-red-100 text-[#B91C1C] px-2 py-0.5 rounded font-bold">
+                    <span className="text-[10px] font-mono uppercase bg-red-100 text-[#B91C1C] px-2 py-0.5 border border-black font-bold">
                       Community
                     </span>
                   </div>
@@ -651,7 +653,7 @@ export default function Home() {
                     href="https://github.com/PG300604/aegis-brain/issues"
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#FBF9F5] hover:bg-neutral-100 text-black font-nikkei text-xs uppercase tracking-wider rounded border-2 border-black shadow-[2px_2px_0px_#000000] transition-transform hover:-translate-y-0.5"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#FBF9F5] hover:bg-neutral-100 text-black font-nikkei text-xs uppercase tracking-wider rounded-none border-2 border-black shadow-[2px_2px_0px_#000000] transition-transform hover:-translate-y-0.5"
                   >
                     <span>💬 Open an Issue</span>
                     <ArrowRight className="w-3 h-3 text-black/50 ml-1" />
@@ -660,14 +662,14 @@ export default function Home() {
               </div>
 
               {/* Card 4: Contribute Code */}
-              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded flex flex-col justify-between">
+              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded-none flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-600" />
+                      <span className="w-2.5 h-2.5 bg-emerald-600 border border-black inline-block" />
                       Contribute Code
                     </span>
-                    <span className="text-[10px] font-mono uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">
+                    <span className="text-[10px] font-mono uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 border border-black font-bold">
                       Pull Requests
                     </span>
                   </div>
@@ -680,7 +682,7 @@ export default function Home() {
                     href="https://github.com/PG300604/aegis-brain/pulls"
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-nikkei text-xs uppercase tracking-wider rounded border border-black shadow-[2px_2px_0px_#000000] transition-transform hover:-translate-y-0.5"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-nikkei text-xs uppercase tracking-wider rounded-none border border-black shadow-[2px_2px_0px_#000000] transition-transform hover:-translate-y-0.5"
                   >
                     <span>🔀 Submit Pull Request</span>
                     <ArrowRight className="w-3 h-3 text-white/60 ml-1" />

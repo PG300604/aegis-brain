@@ -8,10 +8,12 @@ interface LoadingScreenProps {
 }
 
 export function LoadingScreen({ onComplete }: LoadingScreenProps) {
+  const [mounted, setMounted] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [isDone, setIsDone] = useState<boolean>(false);
 
   useEffect(() => {
+    setMounted(true);
     // High-precision smooth numeric increment
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -31,7 +33,10 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
     return () => clearInterval(interval);
   }, [onComplete]);
 
-  // Generate 48 sacred geometry radial spokes with deterministic rounding (prevents SSR float hydration diffs)
+  // Client-only guard: prevents any SSR vs client floating-point hydration diffs
+  if (!mounted) return null;
+
+  // Generate 48 sacred geometry radial spokes with deterministic 2-decimal strings
   const spokes = Array.from({ length: 48 }, (_, i) => {
     const angle = (i * 360) / 48;
     const rad = (angle * Math.PI) / 180;
@@ -39,10 +44,10 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
     const rInner = isMajor ? 32 : 44;
     const rOuter = isMajor ? 90 : 82;
     return {
-      x1: Math.round((100 + rInner * Math.cos(rad)) * 100) / 100,
-      y1: Math.round((100 + rInner * Math.sin(rad)) * 100) / 100,
-      x2: Math.round((100 + rOuter * Math.cos(rad)) * 100) / 100,
-      y2: Math.round((100 + rOuter * Math.sin(rad)) * 100) / 100,
+      x1: (100 + rInner * Math.cos(rad)).toFixed(2),
+      y1: (100 + rInner * Math.sin(rad)).toFixed(2),
+      x2: (100 + rOuter * Math.cos(rad)).toFixed(2),
+      y2: (100 + rOuter * Math.sin(rad)).toFixed(2),
       isMajor,
     };
   });
@@ -134,6 +139,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
                 {spokes.map((spoke, idx) => (
                   <line
                     key={idx}
+                    suppressHydrationWarning
                     x1={spoke.x1}
                     y1={spoke.y1}
                     x2={spoke.x2}

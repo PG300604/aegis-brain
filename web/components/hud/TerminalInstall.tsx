@@ -80,12 +80,12 @@ export function TerminalInstall() {
   };
 
   return (
-    <div className="relative p-6 sm:p-8 bg-[#101116] text-[#FBF9F5] border-2 border-black rounded-lg">
+    <div className="relative p-6 sm:p-8 bg-[#101116] text-[#FBF9F5] border-2 border-black rounded-none">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-black/40">
         <div>
           <div className="font-nikkei text-xs uppercase tracking-[0.2em] text-[#B91C1C] font-extrabold flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#B91C1C]" />
+            <span className="w-2.5 h-2.5 bg-[#B91C1C] border border-black inline-block" />
             QUICKSTART &amp; INSTALLATION
           </div>
           <h3 className="text-2xl sm:text-3xl font-charles-rosie text-white uppercase tracking-tight mt-2">
@@ -96,7 +96,7 @@ export function TerminalInstall() {
           </p>
         </div>
 
-        <div className="px-4 py-2 bg-black border-2 border-black rounded text-center shadow-[3px_3px_0px_#D4AF37]">
+        <div className="px-4 py-2 bg-black border-2 border-black rounded-none text-center shadow-[3px_3px_0px_#D4AF37]">
           <div className="font-nikkei text-xl sm:text-2xl font-extrabold text-[#D4AF37]">
             V2.4.0
           </div>
@@ -105,7 +105,7 @@ export function TerminalInstall() {
       </div>
 
       {/* Sleek Brutalist Command Strip / Code Palette */}
-      <div className="my-6 rounded-lg overflow-hidden border-2 border-black shadow-[6px_6px_0px_#000000] bg-[#0D0E15]">
+      <div className="my-6 rounded-none overflow-hidden border-2 border-black shadow-[6px_6px_0px_#000000] bg-[#0D0E15]">
         {/* OS Tabs Bar */}
         <div className="flex items-center border-b-2 border-black bg-black px-2 sm:px-4 overflow-x-auto no-scrollbar">
           {TABS.map((tab) => (
@@ -130,7 +130,7 @@ export function TerminalInstall() {
             {selected.comment}
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-black/90 p-4 rounded border-2 border-black shadow-[inset_2px_2px_4px_rgba(0,0,0,0.6)]">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-black/90 p-4 rounded-none border-2 border-black shadow-[inset_2px_2px_4px_rgba(0,0,0,0.6)]">
             <div className="flex items-center gap-3 overflow-x-auto py-1">
               <span className="text-[#D4AF37] select-none font-bold text-sm">$</span>
               <code className="text-[#FBF9F5] font-medium text-xs sm:text-sm whitespace-nowrap">
@@ -141,7 +141,7 @@ export function TerminalInstall() {
             <button
               type="button"
               onClick={handleCopy}
-              className={`px-4 py-2.5 rounded font-nikkei text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shrink-0 cursor-pointer border-2 border-black ${
+              className={`px-4 py-2.5 rounded-none font-nikkei text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shrink-0 cursor-pointer border-2 border-black ${
                 copied
                   ? "bg-emerald-600 text-white shadow-[2px_2px_0px_#000000]"
                   : "bg-[#B91C1C] hover:bg-red-800 text-white shadow-[3px_3px_0px_#000000] active:translate-x-0.5 active:translate-y-0.5"

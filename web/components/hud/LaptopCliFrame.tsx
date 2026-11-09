@@ -28,7 +28,7 @@ export function LaptopCliFrame() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="hidden xl:block absolute -left-32 top-16 z-30 w-64 bg-[#FAF8F5] text-black border-2 border-black p-4 rounded-lg shadow-[6px_6px_0px_#000000] rotate-[-2deg]"
+            className="hidden xl:block absolute -left-32 top-16 z-30 w-64 bg-[#FAF8F5] text-black border-2 border-black p-4 rounded-none shadow-[6px_6px_0px_#000000] rotate-[-2deg]"
           >
             <div className="flex items-center justify-between border-b-2 border-black pb-1.5 mb-2">
               <span className="font-nikkei text-[10px] uppercase font-extrabold text-[#B91C1C]">
@@ -53,7 +53,7 @@ export function LaptopCliFrame() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="hidden xl:block absolute -right-32 top-24 z-30 w-64 bg-[#FAF8F5] text-black border-2 border-black p-4 rounded-lg shadow-[6px_6px_0px_#000000] rotate-[2deg]"
+            className="hidden xl:block absolute -right-32 top-24 z-30 w-64 bg-[#FAF8F5] text-black border-2 border-black p-4 rounded-none shadow-[6px_6px_0px_#000000] rotate-[2deg]"
           >
             <div className="flex items-center justify-between border-b-2 border-black pb-1.5 mb-2">
               <span className="font-nikkei text-[10px] uppercase font-extrabold text-[#B91C1C]">
@@ -229,7 +229,7 @@ export function LaptopCliFrame() {
 
         {/* Bottom Annotations: Graphic Novel Captions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 w-full max-w-4xl">
-          <div className="p-4 bg-[#FAF8F5] border-2 border-black rounded shadow-[4px_4px_0px_#000000]">
+          <div className="p-4 bg-[#FAF8F5] border-2 border-black rounded-none shadow-[4px_4px_0px_#000000]">
             <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold mb-1">
               HOST HEADROOM: 19.8 MB VS 1.35 GB
             </div>
@@ -237,7 +237,7 @@ export function LaptopCliFrame() {
               Aegis runs directly in SQLite WAL mode. Your RAM overhead stays negligible, eliminating CPU throttling and host machine freezes.
             </p>
           </div>
-          <div className="p-4 bg-[#FAF8F5] border-2 border-black rounded shadow-[4px_4px_0px_#000000]">
+          <div className="p-4 bg-[#FAF8F5] border-2 border-black rounded-none shadow-[4px_4px_0px_#000000]">
             <div className="font-nikkei text-xs uppercase text-emerald-800 font-extrabold mb-1">
               ZERO SESSION BOUNDARY CRASHES
             </div>

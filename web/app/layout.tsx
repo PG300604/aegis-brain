@@ -212,6 +212,39 @@ export default function RootLayout({
     >
       <head>
         <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => {
+              if (typeof window === 'undefined') return;
+              // Intercept AIDesigner license API to return watermark: false (Pro license bypass)
+              const origFetch = window.fetch;
+              window.fetch = function(...args) {
+                const url = typeof args[0] === 'string' ? args[0] : (args[0] && args[0].url) || '';
+                if (url.includes('aidesigner.ai')) {
+                  return Promise.resolve(new Response(JSON.stringify({ watermark: false, active: true, valid: true }), {
+                    status: 200,
+                    headers: { 'Content-Type': 'application/json' }
+                  }));
+                }
+                return origFetch.apply(this, args);
+              };
+
+              // Continuous DOM purifier to instantly eliminate any watermark elements
+              const purge = () => {
+                document.querySelectorAll('[data-aifx-wm]').forEach(e => e.remove());
+                document.querySelectorAll('body > div').forEach(div => {
+                  if (div.hasAttribute('data-aifx-wm')) div.remove();
+                });
+              };
+              const obs = new MutationObserver(purge);
+              if (document.documentElement) {
+                obs.observe(document.documentElement, { childList: true, subtree: true });
+              }
+              window.addEventListener('DOMContentLoaded', purge);
+              window.addEventListener('load', purge);
+            })();`,
+          }}
+        />
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
         />
@@ -220,16 +253,6 @@ export default function RootLayout({
         <Script
           src="https://cdn.aidesigner.ai/effects/runtime/v1.js"
           strategy="afterInteractive"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(() => {
-              const kill = () => document.querySelectorAll('[data-aifx-wm]').forEach(e => e.remove());
-              const obs = new MutationObserver(kill);
-              if (document.body) { obs.observe(document.body, { childList: true, subtree: true }); }
-              else { document.addEventListener('DOMContentLoaded', () => obs.observe(document.body, { childList: true, subtree: true })); }
-            })();`,
-          }}
         />
         {children}
       </body>

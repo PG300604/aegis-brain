@@ -71,13 +71,13 @@ export function ParallaxCard({
         }}
         className="sticky w-full max-w-[1360px] px-3 sm:px-6 transition-transform ease-out will-change-transform"
       >
-        {/* Physical 3D Card Shell with Deep Luxury Lift Shadow */}
+        {/* Physical 3D Card Shell with Deep Luxury Lift Shadow (Graphic Novel Editorial Plate) */}
         <div
           style={{
             boxShadow:
-              "0 -25px 60px rgba(0,0,0,0.85), 0 35px 80px rgba(0,0,0,0.8)",
+              "0 -35px 80px rgba(0,0,0,0.95), 0 35px 80px rgba(0,0,0,0.85)",
           }}
-          className="w-full rounded-2xl overflow-hidden border-2 border-black/85 bg-[#FAF8F5] transition-shadow duration-300"
+          className="w-full rounded-none overflow-hidden border-2 border-black bg-[#FAF8F5] transition-shadow duration-300"
         >
           {children}
         </div>

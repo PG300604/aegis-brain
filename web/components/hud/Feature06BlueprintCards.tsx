@@ -734,7 +734,7 @@ export function Feature06BlueprintCards({
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 bg-[#DC2626] border border-black inline-block" />
                     <span className="font-mono text-xs uppercase tracking-widest font-bold text-[#FAF8F5]">
-                      02 // {viewMode === "visual" ? "INTUITIVE VISUAL GUIDE" : active.codeTitle}
+                      {viewMode === "visual" ? "INTUITIVE VISUAL GUIDE" : active.codeTitle}
                     </span>
                   </div>
 

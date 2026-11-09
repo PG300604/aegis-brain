@@ -59,7 +59,7 @@ export function ArbitrageCalculator() {
   const reductionPercentage = Math.round(((frontierMonthly - aegisMonthly) / frontierMonthly) * 100);
 
   return (
-    <div className="relative p-6 sm:p-8 bg-[#101116] text-[#FBF9F5] border-2 border-black rounded-lg">
+    <div className="relative p-6 sm:p-8 bg-[#101116] text-[#FBF9F5] border-2 border-black rounded-none">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-black/40">
         <div>
@@ -75,7 +75,7 @@ export function ArbitrageCalculator() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="px-4 py-2 bg-emerald-950/80 border-2 border-emerald-500 rounded text-center shadow-[3px_3px_0px_#000000]">
+          <div className="px-4 py-2 bg-emerald-950/80 border-2 border-emerald-500 rounded-none text-center shadow-[3px_3px_0px_#000000]">
             <div className="font-nikkei text-xl sm:text-2xl font-extrabold text-emerald-400">
               {reductionPercentage}%
             </div>
@@ -87,14 +87,14 @@ export function ArbitrageCalculator() {
       {/* Main Calculator Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
         {/* Left Controller Panel (7 cols) */}
-        <div className="lg:col-span-7 p-6 rounded-lg bg-[#181822] border-2 border-black shadow-[4px_4px_0px_#000000] space-y-6">
+        <div className="lg:col-span-7 p-6 rounded-none bg-[#181822] border-2 border-black shadow-[4px_4px_0px_#000000] space-y-6">
           {/* Turns Slider */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <label htmlFor={sliderId} className="font-nikkei text-xs uppercase tracking-wider text-white">
                 Daily Developer Interaction Turns
               </label>
-              <div className="font-mono text-sm font-bold text-[#D4AF37] px-3 py-1 rounded bg-black border border-black shadow-[2px_2px_0px_#000000]">
+              <div className="font-mono text-sm font-bold text-[#D4AF37] px-3 py-1 rounded-none bg-black border border-black shadow-[2px_2px_0px_#000000]">
                 {turns.toLocaleString()} turns / day
               </div>
             </div>
@@ -111,7 +111,7 @@ export function ArbitrageCalculator() {
                 setTurns(Number(e.target.value));
                 setIsAutoPlaying(false);
               }}
-              className="w-full h-2.5 bg-black rounded appearance-none cursor-pointer accent-[#B91C1C]"
+              className="w-full h-2.5 bg-black rounded-none appearance-none cursor-pointer accent-[#B91C1C]"
             />
 
             <div className="flex justify-between text-[11px] font-mono text-zinc-500 mt-2">
@@ -138,7 +138,7 @@ export function ArbitrageCalculator() {
                       setSelectedWorker(w.id);
                       setIsAutoPlaying(false);
                     }}
-                    className={`p-3 rounded-lg border-2 border-black font-mono text-left transition-all cursor-pointer ${
+                    className={`p-3 rounded-none border-2 border-black font-mono text-left transition-all cursor-pointer ${
                       active
                         ? "bg-[#B91C1C]/20 border-[#B91C1C] shadow-[3px_3px_0px_#B91C1C]"
                         : "bg-black/60 hover:bg-black/80 shadow-[2px_2px_0px_#000000]"
@@ -146,7 +146,7 @@ export function ArbitrageCalculator() {
                   >
                     <div className="text-xs font-bold text-white flex items-center justify-between font-nikkei uppercase">
                       <span className={active ? "text-[#D4AF37]" : ""}>{w.name}</span>
-                      {active && <span className="h-2 w-2 rounded-full bg-[#B91C1C] animate-ping" />}
+                      {active && <span className="w-2 h-2 bg-[#B91C1C] border border-black inline-block" />}
                     </div>
                     <div className="text-[10px] text-zinc-400 mt-0.5">{w.model}</div>
                     <div className="text-[10px] text-emerald-400 font-bold mt-1">{w.cost}</div>
@@ -162,7 +162,7 @@ export function ArbitrageCalculator() {
               <span className="text-zinc-400">Token Workload Distribution</span>
               <span className="text-emerald-400 font-bold">92% Free Local • 8% Frontier</span>
             </div>
-            <div className="h-3 w-full rounded bg-black border border-black overflow-hidden flex">
+            <div className="h-3 w-full rounded-none bg-black border border-black overflow-hidden flex">
               <div
                 className="h-full bg-emerald-500 transition-all duration-300"
                 style={{ width: "92%" }}
@@ -176,10 +176,10 @@ export function ArbitrageCalculator() {
             </div>
             <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400 mt-2">
               <span className="flex items-center gap-1.5 text-emerald-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" /> Tier 3 Free Local Workers
+                <span className="w-2 h-2 bg-emerald-400 border border-black inline-block" /> Tier 3 Free Local Workers
               </span>
               <span className="flex items-center gap-1.5 text-red-400">
-                <span className="w-2 h-2 rounded-full bg-[#B91C1C]" /> Tier 1 Frontier Cognition
+                <span className="w-2 h-2 bg-[#B91C1C] border border-black inline-block" /> Tier 1 Frontier Cognition
               </span>
             </div>
           </div>
@@ -187,7 +187,7 @@ export function ArbitrageCalculator() {
 
         {/* Right Output Dashboard (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="comic-plate p-6 rounded-lg text-black space-y-4">
+          <div className="comic-plate p-6 rounded-none text-black space-y-4">
             <div className="flex items-center justify-between border-b-2 border-black pb-3">
               <span className="font-nikkei text-xs uppercase tracking-wider text-black font-extrabold">
                 Monthly Spend Comparison
@@ -196,7 +196,7 @@ export function ArbitrageCalculator() {
             </div>
 
             {/* Traditional Direct Cost */}
-            <div className="p-3 bg-red-50 border-2 border-black rounded shadow-[2px_2px_0px_#B91C1C]">
+            <div className="p-3 bg-red-50 border-2 border-black rounded-none shadow-[2px_2px_0px_#B91C1C]">
               <div className="flex justify-between items-center text-xs font-mono text-red-900">
                 <span>Traditional (100% Frontier API)</span>
                 <span className="font-bold text-base text-[#B91C1C]">
@@ -209,7 +209,7 @@ export function ArbitrageCalculator() {
             </div>
 
             {/* Aegis 3-Tier Cost */}
-            <div className="p-3 bg-emerald-50 border-2 border-black rounded shadow-[2px_2px_0px_#10B981]">
+            <div className="p-3 bg-emerald-50 border-2 border-black rounded-none shadow-[2px_2px_0px_#10B981]">
               <div className="flex justify-between items-center text-xs font-mono text-emerald-900">
                 <span>AegisBrain 3-Tier Arbitrage</span>
                 <span className="font-bold text-base text-emerald-700">

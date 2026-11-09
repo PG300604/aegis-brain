@@ -34,7 +34,8 @@
 
 /* Purge external vendor watermark badges */
 [data-aifx-wm],
-div[data-aifx-wm] {
+div[data-aifx-wm],
+body > div[data-aifx-wm] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
@@ -44,6 +45,8 @@ div[data-aifx-wm] {
   left: -9999px !important;
   width: 0 !important;
   height: 0 !important;
+  transform: scale(0) !important;
+  clip-path: inset(100%) !important;
 }
 
 @layer base {
