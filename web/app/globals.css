@@ -35,7 +35,9 @@
 /* Purge external vendor watermark badges */
 [data-aifx-wm],
 div[data-aifx-wm],
-body > div[data-aifx-wm] {
+body > div[data-aifx-wm],
+a[href*="aidesigner.ai"],
+div:has(> a[href*="aidesigner.ai"]) {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;

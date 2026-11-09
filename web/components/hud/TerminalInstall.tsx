@@ -126,10 +126,6 @@ export function TerminalInstall() {
 
         {/* Command Body */}
         <div className="p-5 sm:p-7 font-mono text-sm relative">
-          <div className="text-zinc-500 text-xs mb-3 font-mono select-none">
-            {selected.comment}
-          </div>
-
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-black/90 p-4 rounded-none border-2 border-black shadow-[inset_2px_2px_4px_rgba(0,0,0,0.6)]">
             <div className="flex items-center gap-3 overflow-x-auto py-1">
               <span className="text-[#D4AF37] select-none font-bold text-sm">$</span>

@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import {
   VolumeX,
   Copy,
@@ -22,9 +23,7 @@ import { TelegramSimulator } from "@/components/hud/TelegramSimulator";
 import { InfographicsGallery } from "@/components/hud/InfographicsGallery";
 import { Feature06StatsBadge } from "@/components/hud/Feature06StatsBadge";
 import { Feature06PipelineFlow } from "@/components/hud/Feature06PipelineFlow";
-import { Feature06BlueprintCards } from "@/components/hud/Feature06BlueprintCards";
 import { ParallaxCard } from "@/components/motion/ParallaxCard";
-import { LoadingScreen } from "@/components/motion/LoadingScreen";
 import { CursorPhysicsProvider } from "@/components/motion/CursorPhysicsProvider";
 import { CloudMistBank } from "@/components/motion/CloudMistBank";
 import { FlowCloudCanvas } from "@/components/motion/FlowCloudCanvas";
@@ -32,22 +31,24 @@ import { InteractiveTierDiagram } from "@/components/hud/InteractiveTierDiagram"
 import { LaptopCliFrame } from "@/components/hud/LaptopCliFrame";
 import { SoundtrackController, triggerSoundEffect } from "@/components/audio/SoundtrackController";
 
+// Client-only dynamic import completely eliminates SSR hydration floating-point diffs
+const LoadingScreen = dynamic(
+  () => import("@/components/motion/LoadingScreen").then((m) => m.LoadingScreen),
+  { ssr: false }
+);
+
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [soundActive, setSoundActive] = useState(false);
   const [copiedClone, setCopiedClone] = useState(false);
 
-  // Hero stage scroll animations for multi-plane parallax depth transition
-  const heroStageRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: heroScroll } = useScroll({
-    target: heroStageRef,
-    offset: ["start start", "end end"],
-  });
-  const heroOpacity = useTransform(heroScroll, [0, 0.35], [1, 0]);
-  const heroScale = useTransform(heroScroll, [0, 0.40], [1, 0.90]);
-  const heroY = useTransform(heroScroll, [0, 0.40], ["0px", "-70px"]);
-  const cloudY = useTransform(heroScroll, [0, 0.8], ["0%", "-18%"]);
-  const cloudScale = useTransform(heroScroll, [0, 0.8], [1, 1.08]);
+  // Window scroll driven multi-plane parallax depth transition
+  const { scrollY } = useScroll();
+  const heroOpacity = useTransform(scrollY, [0, 480], [1, 0.15]);
+  const heroScale = useTransform(scrollY, [0, 520], [1, 0.94]);
+  const heroY = useTransform(scrollY, [0, 520], ["0px", "-60px"]);
+  const cloudY = useTransform(scrollY, [0, 600], ["0%", "-14%"]);
+  const cloudScale = useTransform(scrollY, [0, 600], [1, 1.05]);
 
   // Vertical laser scroll tracker
   useEffect(() => {
@@ -164,81 +165,80 @@ export default function Home() {
         HERO SPREAD: THE AEGIS EXPERIENCE (Deep Black + Fluid Typography)
         ========================================================================
       */}
-      <div ref={heroStageRef} className="relative w-full h-[145vh]">
-        <section
-          id="experience"
-          className="sticky top-0 h-screen w-full flex flex-col items-center justify-between pt-24 pb-0 sm:pt-28 px-4 bg-[#070709] overflow-hidden z-0"
+      <section
+        id="experience"
+        className="relative isolate min-h-screen w-full flex flex-col items-center justify-between pt-24 pb-0 sm:pt-28 px-4 bg-[#070709] overflow-hidden"
+      >
+        {/* Fluid Smoke Background Effect */}
+        <div
+          data-aifx="fluid-smoke"
+          data-aifx-colors="#000000,#58564b,#4b5c74"
+          className="absolute inset-0 -z-10 pointer-events-none"
+          aria-hidden="true"
+        />
+
+        {/* Center: Monumental Headline with Staggered Entrance Animation & Parallax Dissolve */}
+        <motion.div
+          style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
+          className="relative z-20 text-center flex flex-col items-center max-w-5xl mx-auto select-none pt-2 sm:pt-4"
         >
-          {/* Fluid Smoke Background Effect */}
-          <div
-            data-aifx="fluid-smoke"
-            data-aifx-colors="#000000,#58564b,#4b5c74"
-            className="absolute inset-0 -z-10 pointer-events-none"
-            aria-hidden="true"
-          />
-          {/* Center: Monumental Headline with Staggered Entrance Animation & Parallax Dissolve */}
-          <motion.div
-            style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
-            className="relative z-10 text-center flex flex-col items-center max-w-5xl mx-auto select-none pt-2 sm:pt-4"
+          <motion.p
+            initial={{ opacity: 0, y: 15, letterSpacing: "0.2em" }}
+            animate={{ opacity: 0.75, y: 0, letterSpacing: "0.35em" }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="font-charles-rosie text-white text-base sm:text-xl uppercase mb-1"
           >
-            <motion.p
-              initial={{ opacity: 0, y: 15, letterSpacing: "0.2em" }}
-              animate={{ opacity: 0.75, y: 0, letterSpacing: "0.35em" }}
-              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className="font-charles-rosie text-white text-base sm:text-xl uppercase mb-1"
-            >
-              The
-            </motion.p>
+            The
+          </motion.p>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 35, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 1.0, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-              className="font-charles-rosie text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-[0.88] tracking-tight uppercase drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)]"
-            >
-              Aeg<span className="text-[#B91C1C]">i</span>s
-            </motion.h1>
+          <motion.h1
+            initial={{ opacity: 0, y: 35, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 1.0, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+            className="font-charles-rosie text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-[0.88] tracking-tight uppercase drop-shadow-[0_12px_35px_rgba(0,0,0,0.95)]"
+          >
+            Aeg<span className="text-[#B91C1C]">i</span>s
+          </motion.h1>
 
-            <motion.h2
-              initial={{ opacity: 0, y: 25 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.0, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="font-charles-rosie text-white text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight tracking-[0.16em] uppercase mt-1 drop-shadow-[0_8px_25px_rgba(0,0,0,0.95)]"
-            >
-              Experience
-            </motion.h2>
+          <motion.h2
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.0, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="font-charles-rosie text-white text-2xl sm:text-4xl md:text-5xl lg:text-6xl leading-tight tracking-[0.16em] uppercase mt-1 drop-shadow-[0_8px_25px_rgba(0,0,0,0.95)]"
+          >
+            Experience
+          </motion.h2>
 
-            {/* Punchy, Non-Slop Directives */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-8 max-w-3xl mx-auto px-4"
-            >
-              <h3 className="font-nikkei text-[#D4AF37] text-base sm:text-xl md:text-2xl uppercase tracking-[0.2em] font-extrabold leading-tight">
-                TAKE FULL CONTROL OF YOUR AGENTS
-              </h3>
-            </motion.div>
+          {/* Punchy, Non-Slop Directives */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-8 max-w-3xl mx-auto px-4"
+          >
+            <h3 className="font-nikkei text-[#D4AF37] text-base sm:text-xl md:text-2xl uppercase tracking-[0.2em] font-extrabold leading-tight">
+              TAKE FULL CONTROL OF YOUR AGENTS
+            </h3>
           </motion.div>
+        </motion.div>
 
-          {/* Billowing Cumulus Cloud Mist Bank from Google Flow (190 Frames Scroll-Scrubbed + Parallax Lift) */}
-          <motion.div style={{ y: cloudY, scale: cloudScale }} className="relative w-full mt-auto z-20 origin-bottom">
-            <FlowCloudCanvas />
-          </motion.div>
+        {/* Billowing Cumulus Cloud Mist Bank from Google Flow (190 Frames Scroll-Scrubbed + Parallax Lift) */}
+        <motion.div style={{ y: cloudY, scale: cloudScale }} className="relative w-full mt-auto z-10 origin-bottom">
+          <FlowCloudCanvas />
+        </motion.div>
 
-          {/* Minimal Editorial Scroll Indicator */}
-          <div className="relative z-30 flex flex-col items-center gap-1 pb-4 -mt-8 pointer-events-none select-none">
-            <ChevronDown className="w-4 h-4 text-white/50 animate-bounce" />
-          </div>
-        </section>
-      </div>
+        {/* Minimal Editorial Scroll Indicator */}
+        <div className="relative z-30 flex flex-col items-center gap-1 pb-4 -mt-8 pointer-events-none select-none">
+          <ChevronDown className="w-4 h-4 text-white/50 animate-bounce" />
+        </div>
+      </section>
 
       {/* 
         ========================================================================
         FEATURE 01: PERMANENT AGENT MEMORY (Real Developer Experience)
         ========================================================================
       */}
-      <ParallaxCard index={0} id="memory" className="-mt-[40vh] sm:-mt-[45vh] relative z-10">
+      <ParallaxCard index={0} id="memory" className="-mt-16 sm:-mt-24 relative z-20">
         <div className="comic-plate relative w-full p-6 sm:p-12">
           {/* Feature Header in Human Real-Life Terms */}
           <div className="mb-8 pt-2">
@@ -504,9 +504,6 @@ export default function Home() {
               Explore step-by-step how AegisBrain connects your terminal, memory database, free local models, and mobile notifications into a single bulletproof system.
             </p>
           </div>
-
-          {/* 7 Interactive Live Architectural Blueprints */}
-          <Feature06BlueprintCards className="mb-8" />
 
           {/* System Diagrams: InfographicsGallery */}
           <div className="border-2 border-black rounded-none overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">

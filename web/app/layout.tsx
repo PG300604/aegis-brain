@@ -215,7 +215,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `(() => {
               if (typeof window === 'undefined') return;
-              // Intercept AIDesigner license API to return watermark: false (Pro license bypass)
+              // 1. Intercept AIDesigner license API to return watermark: false (Pro license bypass)
               const origFetch = window.fetch;
               window.fetch = function(...args) {
                 const url = typeof args[0] === 'string' ? args[0] : (args[0] && args[0].url) || '';
@@ -228,11 +228,29 @@ export default function RootLayout({
                 return origFetch.apply(this, args);
               };
 
-              // Continuous DOM purifier to instantly eliminate any watermark elements
+              // 2. Intercept Node append methods to drop watermark DOM insertions before they mount
+              const isWm = (n) => n && n.nodeType === 1 && (
+                n.hasAttribute?.('data-aifx-wm') ||
+                n.getAttribute?.('data-aifx-wm') !== null ||
+                (n.textContent && n.textContent.includes('Made in AIDesigner'))
+              );
+              const origAppendChild = Node.prototype.appendChild;
+              Node.prototype.appendChild = function(node) {
+                if (isWm(node)) return node;
+                return origAppendChild.apply(this, arguments);
+              };
+              const origAppend = Element.prototype.append;
+              Element.prototype.append = function(...nodes) {
+                const filtered = nodes.filter(n => !isWm(n));
+                return origAppend.apply(this, filtered);
+              };
+
+              // 3. Continuous DOM purifier as fail-safe fallback
               const purge = () => {
                 document.querySelectorAll('[data-aifx-wm]').forEach(e => e.remove());
                 document.querySelectorAll('body > div').forEach(div => {
-                  if (div.hasAttribute('data-aifx-wm')) div.remove();
+                  if (div.hasAttribute && div.hasAttribute('data-aifx-wm')) div.remove();
+                  if (div.shadowRoot && div.shadowRoot.innerHTML && div.shadowRoot.innerHTML.includes('Made in AIDesigner')) div.remove();
                 });
               };
               const obs = new MutationObserver(purge);

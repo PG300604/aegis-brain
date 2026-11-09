@@ -79,6 +79,19 @@ export function ParallaxCard({
           }}
           className="w-full rounded-none overflow-hidden border-2 border-black bg-[#FAF8F5] transition-shadow duration-300"
         >
+          {/* Sovereign Dossier Binder Top Tab - Eliminates raw white line & anchors card into dark background */}
+          <div className="bg-[#0B0C10] border-b-2 border-black px-4 sm:px-6 py-2.5 flex items-center justify-between text-[11px] font-mono text-zinc-400 select-none">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-[#B91C1C] border border-black inline-block" />
+              <span className="font-extrabold text-white tracking-widest uppercase">
+                AEGIS // SPECIFICATION DOSSIER // DECK 0{index + 1}
+              </span>
+            </div>
+            <div className="flex items-center gap-3 text-[10px] text-zinc-500 uppercase tracking-widest">
+              <span className="hidden sm:inline">STATE: DETERMINISTIC</span>
+              <span className="text-[#D4AF37] font-bold">SEC-LEVEL: SOVEREIGN</span>
+            </div>
+          </div>
           {children}
         </div>
       </motion.div>
