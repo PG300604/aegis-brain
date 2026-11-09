@@ -150,18 +150,17 @@ export function FlowCloudCanvas({
         ctx.fillStyle = topGrad;
         ctx.fillRect(0, 0, width, 60);
 
-        // Bottom seamless blend into white/ivory base
-        const botGrad = ctx.createLinearGradient(0, height - 90, 0, height);
-        botGrad.addColorStop(0, "rgba(250, 248, 245, 0)");
-        botGrad.addColorStop(0.65, "rgba(250, 248, 245, 0.75)");
-        botGrad.addColorStop(1, fillColor);
+        // Soft bottom transparency fade into deep black background (no harsh white bar)
+        const botGrad = ctx.createLinearGradient(0, height - 80, 0, height);
+        botGrad.addColorStop(0, "rgba(7, 7, 9, 0)");
+        botGrad.addColorStop(1, "#070709");
         ctx.fillStyle = botGrad;
-        ctx.fillRect(0, height - 90, width, 90);
+        ctx.fillRect(0, height - 80, width, 80);
       }
 
       ctx.restore();
     },
-    [fillColor]
+    []
   );
 
   // Subscribe strictly to scroll progress: ONLY moves on scroll wheel
@@ -211,23 +210,17 @@ export function FlowCloudCanvas({
       aria-hidden="true"
     >
       <div className="relative w-full flex flex-col items-center">
-        {/* Full-Bleed High-DPI Cloud Canvas with Lateral Transparency Mask */}
+        {/* Full-Bleed High-DPI Cloud Canvas with Lateral and Bottom Transparency Feathering */}
         <canvas
           ref={canvasRef}
           className="relative z-10 w-full h-[360px] sm:h-[480px] md:h-[580px] lg:h-[680px] block"
           style={{
             imageRendering: "auto",
-            maskImage:
-              "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
             WebkitMaskImage:
-              "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+              "linear-gradient(to bottom, black 82%, transparent 100%)",
+            maskImage:
+              "linear-gradient(to bottom, black 82%, transparent 100%)",
           }}
-        />
-
-        {/* Seamless Ivory Base Extension to anchor directly into Feature Cards */}
-        <div
-          className="w-full h-10 sm:h-16 -mt-[2px]"
-          style={{ backgroundColor: fillColor }}
         />
       </div>
     </div>

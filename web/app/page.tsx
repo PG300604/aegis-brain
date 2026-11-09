@@ -222,7 +222,7 @@ export default function Home() {
 
         {/* Billowing Cumulus Cloud Mist Bank from Google Flow (190 Frames Scroll-Scrubbed + 60fps Ambient Motion) */}
         <motion.div style={{ y: cloudY, scale: cloudScale }} className="relative w-full mt-auto z-20 origin-bottom">
-          <FlowCloudCanvas fillColor="#FAF8F5" />
+          <FlowCloudCanvas />
         </motion.div>
 
         {/* Minimal Editorial Scroll Indicator */}
