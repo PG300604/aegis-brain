@@ -17,6 +17,7 @@ export function VoicePill({ onTranscriptionComplete, className = "" }: VoicePill
   // Timer simulation during recording
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
+    let resetTimer: NodeJS.Timeout | null = null;
     if (isRecording) {
       interval = setInterval(() => {
         setSeconds((prev) => {
@@ -29,10 +30,13 @@ export function VoicePill({ onTranscriptionComplete, className = "" }: VoicePill
         });
       }, 1000);
     } else {
-      setSeconds(0);
+      resetTimer = setTimeout(() => {
+        setSeconds(0);
+      }, 0);
     }
     return () => {
       if (interval) clearInterval(interval);
+      if (resetTimer) clearTimeout(resetTimer);
     };
   }, [isRecording]);
 

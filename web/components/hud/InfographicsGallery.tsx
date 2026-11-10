@@ -721,10 +721,7 @@ export function InfographicsGallery() {
         {/* Specification Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b-2 border-black pb-4">
           <div>
-            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-wider">
-              BLUEPRINT {active.number} // {active.category}
-            </div>
-            <h4 className="font-charles-rosie text-2xl sm:text-3xl text-black uppercase tracking-tight mt-1">
+            <h4 className="font-charles-rosie text-2xl sm:text-3xl text-black uppercase tracking-tight">
               {active.title}
             </h4>
             <div className="font-nikkei text-xs text-black/60 uppercase font-semibold mt-0.5">
@@ -740,7 +737,7 @@ export function InfographicsGallery() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
           <div className="md:col-span-4 p-4 rounded-none bg-red-50/70 border border-red-300 shadow-[2px_2px_0px_#000000] space-y-1">
             <div className="font-nikkei text-[11px] uppercase tracking-wider text-[#B91C1C] font-extrabold">
-              // The Developer Pain Point
+              {"// The Developer Pain Point"}
             </div>
             <p className="font-gt-era text-xs text-red-950 leading-relaxed font-medium">
               {active.painPoint}

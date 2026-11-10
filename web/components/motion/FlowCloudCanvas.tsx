@@ -30,45 +30,6 @@ export function FlowCloudCanvas({
     offset: ["start end", "end start"],
   });
 
-  // Preload all 190 high-res cropped frames
-  useEffect(() => {
-    let isCancelled = false;
-    const loadedImages: HTMLImageElement[] = new Array(TOTAL_FRAMES);
-    let loadedCount = 0;
-
-    const loadRange = (start: number, end: number) => {
-      for (let i = start; i < end && i < TOTAL_FRAMES; i++) {
-        const img = new Image();
-        img.src = FRAME_PATH(i);
-        img.onload = () => {
-          if (isCancelled) return;
-          loadedImages[i] = img;
-          loadedCount++;
-          // Enable display as soon as initial cluster is available
-          if (loadedCount >= 20 && !imagesLoaded) {
-            imagesRef.current = loadedImages;
-            setImagesLoaded(true);
-          }
-        };
-      }
-    };
-
-    // Load initial 30 frames instantly
-    loadRange(0, 30);
-
-    // Stagger remaining frames smoothly
-    const t = setTimeout(() => {
-      if (!isCancelled) {
-        loadRange(30, TOTAL_FRAMES);
-      }
-    }, 200);
-
-    return () => {
-      isCancelled = true;
-      clearTimeout(t);
-    };
-  }, [imagesLoaded]);
-
   // Draw current frame on canvas strictly on scroll
   const drawFrame = useCallback(
     (frameIdx: number) => {
@@ -163,6 +124,50 @@ export function FlowCloudCanvas({
     []
   );
 
+  // Preload all 190 high-res cropped frames
+  useEffect(() => {
+    let isCancelled = false;
+    const loadedImages: HTMLImageElement[] = new Array(TOTAL_FRAMES);
+    let loadedCount = 0;
+
+    const loadRange = (start: number, end: number) => {
+      for (let i = start; i < end && i < TOTAL_FRAMES; i++) {
+        const img = new Image();
+        img.src = FRAME_PATH(i);
+        img.onload = () => {
+          if (isCancelled) return;
+          loadedImages[i] = img;
+          loadedCount++;
+          // Draw frame 0 immediately as soon as it arrives
+          if (i === 0) {
+            imagesRef.current = loadedImages;
+            setImagesLoaded(true);
+            requestAnimationFrame(() => drawFrame(0));
+          } else if (loadedCount >= 10 && !imagesLoaded) {
+            imagesRef.current = loadedImages;
+            setImagesLoaded(true);
+            requestAnimationFrame(() => drawFrame(currentFrameRef.current));
+          }
+        };
+      }
+    };
+
+    // Load initial 30 frames instantly
+    loadRange(0, 30);
+
+    // Stagger remaining frames smoothly
+    const t = setTimeout(() => {
+      if (!isCancelled) {
+        loadRange(30, TOTAL_FRAMES);
+      }
+    }, 200);
+
+    return () => {
+      isCancelled = true;
+      clearTimeout(t);
+    };
+  }, [drawFrame, imagesLoaded]);
+
   // Subscribe strictly to scroll progress: ONLY moves on scroll wheel
   useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (latest) => {
@@ -210,6 +215,15 @@ export function FlowCloudCanvas({
       aria-hidden="true"
     >
       <div className="relative w-full flex flex-col items-center">
+        {/* Instant High-Resolution Cloud Plume while canvas frames stream in */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/santioni-cloud-plume-hd.png"
+          alt=""
+          className={`absolute bottom-0 w-full max-h-[680px] object-contain opacity-75 select-none pointer-events-none transition-opacity duration-700 ${
+            imagesLoaded ? "opacity-0" : "opacity-75"
+          }`}
+        />
         {/* Full-Bleed High-DPI Cloud Canvas with Lateral and Bottom Transparency Feathering */}
         <canvas
           ref={canvasRef}

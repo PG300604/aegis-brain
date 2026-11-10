@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useCursorPhysics } from "./CursorPhysicsProvider";
+import { triggerSoundEffect } from "@/components/audio/SoundtrackController";
 
 interface ParallaxCardProps {
   children: React.ReactNode;
@@ -25,24 +26,64 @@ export function ParallaxCard({
   // Consume smooth spring cursor physics for 3D card tilt & parallax
   const { tiltX, tiltY } = useCursorPhysics();
 
-  // Scroll tracking on container with offset: ['start start', 'end start']
-  const { scrollYProgress } = useScroll({
+  // Entrance scroll tracking (as card enters from bottom into sticky dock)
+  const { scrollYProgress: entranceProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "start 0.25"],
+  });
+
+  // Sticky card deck stacking physics (as next card scrolls up and stacks on top)
+  const { scrollYProgress: exitProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
   });
 
-  // Sticky card deck stacking physics:
-  // As next card scrolls up and stacks on top:
-  // - smoothly scales down (1 -> 0.93)
-  // - decreases opacity slightly (1 -> 0.75)
-  // - adds subtle depth blur (0px -> 1.5px)
-  // - recesses in 3D space (z: 0px -> -40px)
-  // - lifts slightly on y axis (0px -> -18px)
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.93]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8, 1], [1, 0.95, 0.75]);
-  const z = useTransform(scrollYProgress, [0, 1], [0, -40]);
-  const filter = useTransform(scrollYProgress, [0, 1], ["blur(0px)", "blur(1.5px)"]);
-  const y = useTransform(scrollYProgress, [0, 1], ["0px", "-18px"]);
+  // Subtle, very light cinematic whoosh sound when card transitions into screen
+  useEffect(() => {
+    let triggered = false;
+    const unsubscribe = entranceProgress.on("change", (v) => {
+      if (v > 0.15 && v < 0.85 && !triggered) {
+        triggered = true;
+        triggerSoundEffect("whoosh");
+      } else if (v < 0.05) {
+        triggered = false;
+      }
+    });
+    return () => unsubscribe();
+  }, [entranceProgress]);
+
+  // Alternating directional entrance on scroll:
+  // Even index cards slide in from LEFT (-80px, -2.5deg)
+  // Odd index cards slide in from RIGHT (+80px, +2.5deg)
+  const isLeft = index % 2 === 0;
+  const enterX = useTransform(
+    entranceProgress,
+    [0, 1],
+    [isLeft ? "-80px" : "80px", "0px"]
+  );
+  const enterRotateZ = useTransform(
+    entranceProgress,
+    [0, 1],
+    [isLeft ? -2.4 : 2.4, 0]
+  );
+  const enterOpacity = useTransform(entranceProgress, [0, 0.4, 1], [0.35, 0.85, 1]);
+
+  // Stacking exit transformations
+  const scale = useTransform(exitProgress, [0, 1], [1, 0.93]);
+  const exitOpacity = useTransform(exitProgress, [0, 0.8, 1], [1, 0.95, 0.75]);
+  const z = useTransform(exitProgress, [0, 1], [0, -40]);
+  const filter = useTransform(exitProgress, [0, 1], ["blur(0px)", "blur(1.5px)"]);
+  const y = useTransform(exitProgress, [0, 1], ["0px", "-18px"]);
+
+  // Combined opacity
+  const combinedOpacity = useTransform(
+    [enterOpacity, exitOpacity],
+    ([en, ex]) => {
+      const e1 = typeof en === "number" ? en : 1;
+      const e2 = typeof ex === "number" ? ex : 1;
+      return Math.min(e1, e2);
+    }
+  );
 
   // Card top sticky offset: creates subtle cascading top margin
   const topOffset = `${72 + index * 4}px`;
@@ -57,8 +98,10 @@ export function ParallaxCard({
       <motion.div
         ref={cardRef}
         style={{
+          x: enterX,
+          rotateZ: enterRotateZ,
           scale,
-          opacity,
+          opacity: combinedOpacity,
           y,
           z,
           filter,
@@ -79,19 +122,6 @@ export function ParallaxCard({
           }}
           className="w-full rounded-none overflow-hidden border-2 border-black bg-[#FAF8F5] transition-shadow duration-300"
         >
-          {/* Sovereign Dossier Binder Top Tab - Eliminates raw white line & anchors card into dark background */}
-          <div className="bg-[#0B0C10] border-b-2 border-black px-4 sm:px-6 py-2.5 flex items-center justify-between text-[11px] font-mono text-zinc-400 select-none">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-[#B91C1C] border border-black inline-block" />
-              <span className="font-extrabold text-white tracking-widest uppercase">
-                AEGIS // SPECIFICATION DOSSIER // DECK 0{index + 1}
-              </span>
-            </div>
-            <div className="flex items-center gap-3 text-[10px] text-zinc-500 uppercase tracking-widest">
-              <span className="hidden sm:inline">STATE: DETERMINISTIC</span>
-              <span className="text-[#D4AF37] font-bold">SEC-LEVEL: SOVEREIGN</span>
-            </div>
-          </div>
           {children}
         </div>
       </motion.div>

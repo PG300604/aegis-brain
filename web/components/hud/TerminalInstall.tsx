@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { triggerSoundEffect } from "@/components/audio/SoundtrackController";
 import {
   Terminal,
   Copy,
@@ -64,6 +65,7 @@ export function TerminalInstall() {
     try {
       await navigator.clipboard.writeText(selected.command);
       setCopied(true);
+      triggerSoundEffect("success");
 
       // Celebratory confetti in Santioni Spirits colors
       confetti({
@@ -112,7 +114,10 @@ export function TerminalInstall() {
             <button
               key={tab.id}
               type="button"
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => {
+                setActiveTab(tab.id);
+                triggerSoundEffect("tab");
+              }}
               className={`px-3.5 sm:px-5 py-3 font-nikkei text-xs uppercase tracking-wider whitespace-nowrap transition-all border-b-2 font-extrabold cursor-pointer ${
                 activeTab === tab.id
                   ? "border-[#B91C1C] text-white bg-[#101116] shadow-[inset_0_-2px_0px_#B91C1C]"

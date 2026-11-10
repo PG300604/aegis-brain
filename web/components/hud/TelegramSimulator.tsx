@@ -61,9 +61,11 @@ export function TelegramSimulator() {
 
     if (activeScenario === 0) {
       // Step 1: /briefing
-      setTypedInput("");
       let charIdx = 0;
       const text = "/briefing";
+      const initTimer = setTimeout(() => {
+        setTypedInput("");
+      }, 0);
       const interval = setInterval(() => {
         if (charIdx <= text.length) {
           setTypedInput(text.slice(0, charIdx));
@@ -88,7 +90,6 @@ export function TelegramSimulator() {
                 tag: "MEMORY RECALL (24ms)",
               },
             ]);
-            triggerSoundEffect("textbox");
             timer2 = setTimeout(() => {
               setActiveScenario(1);
             }, 3600);
@@ -97,6 +98,7 @@ export function TelegramSimulator() {
       }, 55);
 
       return () => {
+        clearTimeout(initTimer);
         clearInterval(interval);
         clearTimeout(timer1);
         clearTimeout(timer2);
@@ -104,20 +106,21 @@ export function TelegramSimulator() {
       };
     } else if (activeScenario === 1) {
       // Step 2: 45s Voice Note
-      setTypedInput("");
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: "msg-3",
-          sender: "user",
-          isAudio: true,
-          audioDuration: "0:45",
-          timestamp: "10:42 AM",
-          tag: "VOICE DIRECTIVE (45s)",
-        },
-      ]);
-      setIsAudioPlaying(true);
-      triggerSoundEffect("click");
+      const initTimer = setTimeout(() => {
+        setTypedInput("");
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: "msg-3",
+            sender: "user",
+            isAudio: true,
+            audioDuration: "0:45",
+            timestamp: "10:42 AM",
+            tag: "VOICE DIRECTIVE (45s)",
+          },
+        ]);
+        setIsAudioPlaying(true);
+      }, 0);
 
       timer1 = setTimeout(() => {
         // Chunking & Transcribing
@@ -136,7 +139,6 @@ export function TelegramSimulator() {
               : m
           )
         );
-        triggerSoundEffect("beam");
 
         timer2 = setTimeout(() => {
           setIsAudioPlaying(false);
@@ -150,7 +152,6 @@ export function TelegramSimulator() {
               tag: "AUTO-EXECUTE",
             },
           ]);
-          triggerSoundEffect("textbox");
           timer3 = setTimeout(() => {
             setActiveScenario(2);
           }, 4200);
@@ -158,15 +159,18 @@ export function TelegramSimulator() {
       }, 1600);
 
       return () => {
+        clearTimeout(initTimer);
         clearTimeout(timer1);
         clearTimeout(timer2);
         clearTimeout(timer3);
       };
     } else if (activeScenario === 2) {
       // Step 3: /type in-flight interrupt
-      setTypedInput("");
       let charIdx = 0;
       const text = "/type git status /alt+m";
+      const initTimer = setTimeout(() => {
+        setTypedInput("");
+      }, 0);
       const interval = setInterval(() => {
         if (charIdx <= text.length) {
           setTypedInput(text.slice(0, charIdx));
@@ -185,7 +189,6 @@ export function TelegramSimulator() {
                 tag: "IN-FLIGHT INTERRUPT",
               },
             ]);
-            triggerSoundEffect("click");
 
             timer2 = setTimeout(() => {
               setMessages((prev) => [
@@ -198,7 +201,6 @@ export function TelegramSimulator() {
                   tag: "STDOUT STREAM",
                 },
               ]);
-              triggerSoundEffect("textbox");
               timer3 = setTimeout(() => {
                 setActiveScenario(0); // Loop back
               }, 4500);
@@ -208,6 +210,7 @@ export function TelegramSimulator() {
       }, 45);
 
       return () => {
+        clearTimeout(initTimer);
         clearInterval(interval);
         clearTimeout(timer1);
         clearTimeout(timer2);

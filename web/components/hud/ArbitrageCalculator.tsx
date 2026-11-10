@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useId } from "react";
+import { triggerSoundEffect } from "@/components/audio/SoundtrackController";
 import {
   DollarSign,
   TrendingUp,
@@ -110,6 +111,7 @@ export function ArbitrageCalculator() {
               onChange={(e) => {
                 setTurns(Number(e.target.value));
                 setIsAutoPlaying(false);
+                triggerSoundEffect("hover");
               }}
               className="w-full h-2.5 bg-black rounded-none appearance-none cursor-pointer accent-[#B91C1C]"
             />
@@ -137,6 +139,7 @@ export function ArbitrageCalculator() {
                     onClick={() => {
                       setSelectedWorker(w.id);
                       setIsAutoPlaying(false);
+                      triggerSoundEffect("worker");
                     }}
                     className={`p-3 rounded-none border-2 border-black font-mono text-left transition-all cursor-pointer ${
                       active

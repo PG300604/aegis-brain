@@ -13,7 +13,9 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
   const [isDone, setIsDone] = useState<boolean>(false);
 
   useEffect(() => {
-    setMounted(true);
+    const mountTimer = setTimeout(() => {
+      setMounted(true);
+    }, 0);
     // High-precision smooth numeric increment
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -30,7 +32,10 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
       });
     }, 25);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(mountTimer);
+      clearInterval(interval);
+    };
   }, [onComplete]);
 
   // Client-only guard: prevents any SSR vs client floating-point hydration diffs

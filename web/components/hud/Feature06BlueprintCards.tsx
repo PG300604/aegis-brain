@@ -543,7 +543,7 @@ export function Feature06BlueprintCards({
           <div className="bg-[#FAF8F5] text-[#0D0D11] border-2 border-black px-3.5 py-2 shadow-[4px_4px_0px_#B91C1C] self-start md:self-end">
             <div className="font-mono text-xs uppercase tracking-widest font-bold">
               ACTIVE PLATE: <span className="text-[#B91C1C]">{active.id}</span>{" "}
-              // 0{selectedIdx + 1} OF 07
+              {"//"} 0{selectedIdx + 1} OF 07
             </div>
             <div className="font-mono text-[11px] uppercase tracking-widest text-zinc-700 font-semibold">
               SPEED: 1.8S  SAVED: 95.8%  LATENCY: 24MS  286/286 PASS
@@ -616,7 +616,7 @@ export function Feature06BlueprintCards({
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-mono text-xs uppercase tracking-widest text-[#DC2626] font-bold">
-                    {active.id} // ARCHITECTURAL SPECIFICATION
+                    {active.id} {"//"} ARCHITECTURAL SPECIFICATION
                   </span>
                 </div>
                 <h3 className="text-xl md:text-2xl font-black uppercase tracking-tight text-[#FAF8F5]">

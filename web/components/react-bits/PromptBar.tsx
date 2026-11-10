@@ -98,35 +98,42 @@ export function PromptBar() {
   useEffect(() => {
     let charIndex = 0;
     const targetText = currentStep.command;
-    setTypedCommand("");
-    setPhase("typing");
+    let typingInterval: NodeJS.Timeout;
 
-    // Phase 1: Typing effect
-    const typingInterval = setInterval(() => {
-      if (charIndex <= targetText.length) {
-        setTypedCommand(targetText.slice(0, charIndex));
-        charIndex++;
-      } else {
-        clearInterval(typingInterval);
-        // Phase 2: Dispatch trigger
-        setPhase("dispatching");
-        setTimeout(() => {
-          // Phase 3: Executing
-          setPhase("executing");
+    const initTimer = setTimeout(() => {
+      setTypedCommand("");
+      setPhase("typing");
+
+      // Phase 1: Typing effect
+      typingInterval = setInterval(() => {
+        if (charIndex <= targetText.length) {
+          setTypedCommand(targetText.slice(0, charIndex));
+          charIndex++;
+        } else {
+          clearInterval(typingInterval);
+          // Phase 2: Dispatch trigger
+          setPhase("dispatching");
           setTimeout(() => {
-            // Phase 4: Output Complete
-            setPhase("complete");
-            // Hold for 3.5 seconds then advance
+            // Phase 3: Executing
+            setPhase("executing");
             setTimeout(() => {
-              setCurrentStepIndex((prev) => (prev + 1) % SIMULATION_STEPS.length);
-            }, 3600);
-          }, 350);
-        }, 450);
-      }
-    }, 45);
+              // Phase 4: Output Complete
+              setPhase("complete");
+              // Hold for 3.5 seconds then advance
+              setTimeout(() => {
+                setCurrentStepIndex((prev) => (prev + 1) % SIMULATION_STEPS.length);
+              }, 3600);
+            }, 350);
+          }, 450);
+        }
+      }, 45);
+    }, 0);
 
-    return () => clearInterval(typingInterval);
-  }, [currentStepIndex]);
+    return () => {
+      clearTimeout(initTimer);
+      if (typingInterval) clearInterval(typingInterval);
+    };
+  }, [currentStepIndex, currentStep.command]);
 
   return (
     <div className="w-full max-w-3xl mx-auto rounded-xl border-2 border-black bg-[#101116] shadow-[8px_8px_0px_#000000] overflow-hidden text-white font-mono text-xs">

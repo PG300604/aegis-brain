@@ -136,7 +136,7 @@ export function QualityGateCards() {
               type="button"
               onClick={() => {
                 setSelectedGate(gate.id);
-                triggerSoundEffect("tab");
+                triggerSoundEffect("gate");
               }}
               className={`p-5 rounded-none border-2 text-left transition-all cursor-pointer ${
                 isSelected

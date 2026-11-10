@@ -118,7 +118,7 @@ const jsonLdGraph = {
         price: "0",
         priceCurrency: "USD",
       },
-      license: "https://opensource.org/licenses/MIT",
+      license: "https://www.gnu.org/licenses/gpl-3.0.html",
       downloadUrl: "https://github.com/PG300604/aegis-brain/releases",
       author: {
         "@type": "Person",
@@ -215,7 +215,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `(() => {
               if (typeof window === 'undefined') return;
-              // 1. Intercept AIDesigner license API to return watermark: false (Pro license bypass)
+              // 1. Intercept AIDesigner license API to return watermark: false
               const origFetch = window.fetch;
               window.fetch = function(...args) {
                 const url = typeof args[0] === 'string' ? args[0] : (args[0] && args[0].url) || '';

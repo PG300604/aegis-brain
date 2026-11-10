@@ -5,7 +5,7 @@ export async function GET() {
 > Autonomous 24/7 Multi-Tier Agent Engine & Sub-Second Neural Memory for AI Coding Assistants.
 > Repository: https://github.com/PG300604/aegis-brain
 > Documentation: https://aegisbrain.dev
-> License: MIT Open Source
+> License: GNU General Public License v3.0 (GPLv3)
 
 ## 1. System Overview
 AegisBrain is a production-grade, 24/7 local background daemon and neural memory engine designed for AI coding assistants (including Antigravity, Claude Code, and OpenCode). It solves high frontier model token bills and sluggish session log crawling by introducing deterministic 3-tier multi-agent token arbitrage and sub-second SQLite FTS5 neural recall.
@@ -52,7 +52,7 @@ All candidate code passes four automated quality filters:
 - \`aegis bye --summary "<text>"\`: Creates a restore snapshot, archives context, and signs off.
 
 ## 4. Key Performance Benchmarks
-- Memory Query Latency: 24ms (AegisBrain FTS5) vs 12,400ms (Raw JSONL Crawl) â€” 516x faster.
+- Memory Query Latency: 24ms (AegisBrain FTS5) vs 12,400ms (Raw JSONL Crawl) — 516x faster.
 - Frontier Model Token Savings: 95.8% (3-Tier Local Distillation).
 - Long Audio Transcoding: 25s segmented chunking with 0% dropped voice frames.
 - Quality Gate Pass Rate: 99.4% first-time execution pass after 2 coaching cycles.

@@ -51,6 +51,25 @@ div:has(> a[href*="aidesigner.ai"]) {
   clip-path: inset(100%) !important;
 }
 
+/* Full-bleed fluid smoke container and canvas */
+div[data-aifx="fluid-smoke"] {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  z-index: -10 !important;
+}
+
+div[data-aifx="fluid-smoke"] canvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  object-fit: cover !important;
+}
+
 @layer base {
   :root {
     --bg-ink: #070709;

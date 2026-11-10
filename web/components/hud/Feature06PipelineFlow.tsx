@@ -318,7 +318,7 @@ export function Feature06PipelineFlow({
                 {activeStep.id} INSPECTOR
               </span>
               <span className="font-mono text-xs uppercase tracking-widest font-bold text-[#FAF8F5]">
-                // {activeStep.code} — {activeStep.title}
+                {"//"} {activeStep.code} — {activeStep.title}
               </span>
             </div>
 

@@ -16,6 +16,7 @@ import {
 import { motion, useScroll, useTransform } from "motion/react";
 import { ThoughtLine } from "@/components/react-bits/ThoughtLine";
 import { CallChip } from "@/components/react-bits/CallChip";
+import { LogoLoop, LogoItem } from "@/components/react-bits";
 import { TerminalInstall } from "@/components/hud/TerminalInstall";
 import { ArbitrageCalculator } from "@/components/hud/ArbitrageCalculator";
 import { QualityGateCards } from "@/components/hud/QualityGateCards";
@@ -25,17 +26,83 @@ import { Feature06StatsBadge } from "@/components/hud/Feature06StatsBadge";
 import { Feature06PipelineFlow } from "@/components/hud/Feature06PipelineFlow";
 import { ParallaxCard } from "@/components/motion/ParallaxCard";
 import { CursorPhysicsProvider } from "@/components/motion/CursorPhysicsProvider";
-import { CloudMistBank } from "@/components/motion/CloudMistBank";
-import { FlowCloudCanvas } from "@/components/motion/FlowCloudCanvas";
 import { InteractiveTierDiagram } from "@/components/hud/InteractiveTierDiagram";
 import { LaptopCliFrame } from "@/components/hud/LaptopCliFrame";
 import { SoundtrackController, triggerSoundEffect } from "@/components/audio/SoundtrackController";
+import {
+  SiAnthropic,
+  SiOllama,
+  SiCursor,
+  SiDeepseek,
+  SiMistralai,
+  SiHuggingface,
+  SiGooglegemini,
+} from "react-icons/si";
+import { RiOpenaiFill } from "react-icons/ri";
+import { NousHermesIcon } from "@/components/icons/NousHermesIcon";
 
 // Client-only dynamic import completely eliminates SSR hydration floating-point diffs
 const LoadingScreen = dynamic(
   () => import("@/components/motion/LoadingScreen").then((m) => m.LoadingScreen),
   { ssr: false }
 );
+
+const SUPPORTED_AGENTS: LogoItem[] = [
+  {
+    title: "Antigravity CLI",
+    hoverColor: "#1A73E8",
+    href: "https://github.com/PG300604/aegis-brain",
+    node: <SiGooglegemini className="w-9 h-9 text-[#1A73E8]" />,
+  },
+  {
+    title: "Claude Code CLI",
+    hoverColor: "#CC785C",
+    href: "https://anthropic.com",
+    node: <SiAnthropic className="w-9 h-9 text-[#CC785C]" />,
+  },
+  {
+    title: "Ollama CLI",
+    hoverColor: "#000000",
+    href: "https://ollama.ai",
+    node: <SiOllama className="w-9 h-9 text-black" />,
+  },
+  {
+    title: "DeepSeek CLI",
+    hoverColor: "#4D6BFE",
+    href: "https://deepseek.com",
+    node: <SiDeepseek className="w-9 h-9 text-[#4D6BFE]" />,
+  },
+  {
+    title: "Hermes CLI",
+    hoverColor: "#E11D48",
+    href: "https://nousresearch.com",
+    node: <NousHermesIcon className="w-9 h-9 text-[#E11D48]" />,
+  },
+  {
+    title: "Codex CLI",
+    hoverColor: "#10A37F",
+    href: "https://openai.com",
+    node: <RiOpenaiFill className="w-9 h-9 text-[#10A37F]" />,
+  },
+  {
+    title: "Cursor CLI",
+    hoverColor: "#000000",
+    href: "https://cursor.com",
+    node: <SiCursor className="w-9 h-9 text-black" />,
+  },
+  {
+    title: "Mistral AI CLI",
+    hoverColor: "#FA520F",
+    href: "https://mistral.ai",
+    node: <SiMistralai className="w-9 h-9 text-[#FA520F]" />,
+  },
+  {
+    title: "Hugging Face CLI",
+    hoverColor: "#D97706",
+    href: "https://huggingface.co",
+    node: <SiHuggingface className="w-9 h-9 text-[#FFD21E]" />,
+  },
+];
 
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -47,8 +114,6 @@ export default function Home() {
   const heroOpacity = useTransform(scrollY, [0, 480], [1, 0.15]);
   const heroScale = useTransform(scrollY, [0, 520], [1, 0.94]);
   const heroY = useTransform(scrollY, [0, 520], ["0px", "-60px"]);
-  const cloudY = useTransform(scrollY, [0, 600], ["0%", "-14%"]);
-  const cloudScale = useTransform(scrollY, [0, 600], [1, 1.05]);
 
   // Vertical laser scroll tracker
   useEffect(() => {
@@ -125,9 +190,18 @@ export default function Home() {
             </a>
             <span className="text-black/30">|</span>
             <a
+              href="https://github.com/PG300604/aegis-brain/wiki"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#B91C1C] transition-colors"
+            >
+              Wiki
+            </a>
+            <span className="text-black/30">|</span>
+            <a
               href="https://github.com/PG300604/aegis-brain"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="text-[#B91C1C] font-extrabold hover:underline flex items-center gap-1"
             >
               GitHub <ArrowRight className="w-3 h-3" />
@@ -167,20 +241,20 @@ export default function Home() {
       */}
       <section
         id="experience"
-        className="relative isolate min-h-screen w-full flex flex-col items-center justify-between pt-24 pb-0 sm:pt-28 px-4 bg-[#070709] overflow-hidden"
+        className="relative isolate min-h-screen w-full flex flex-col items-center justify-between pt-28 pb-8 px-4 bg-[#070709] overflow-hidden"
       >
-        {/* Fluid Smoke Background Effect */}
+        {/* Fluid Smoke — full bleed across the whole hero section */}
         <div
           data-aifx="fluid-smoke"
-          data-aifx-colors="#000000,#58564b,#4b5c74"
-          className="absolute inset-0 -z-10 pointer-events-none"
+          data-aifx-colors="#000000,#626056,#94a3b8"
+          className="absolute inset-0 -z-10 pointer-events-none w-full h-full"
           aria-hidden="true"
         />
 
         {/* Center: Monumental Headline with Staggered Entrance Animation & Parallax Dissolve */}
         <motion.div
           style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
-          className="relative z-20 text-center flex flex-col items-center max-w-5xl mx-auto select-none pt-2 sm:pt-4"
+          className="relative z-20 text-center flex flex-col items-center max-w-5xl mx-auto select-none my-auto"
         >
           <motion.p
             initial={{ opacity: 0, y: 15, letterSpacing: "0.2em" }}
@@ -222,13 +296,8 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
-        {/* Billowing Cumulus Cloud Mist Bank from Google Flow (190 Frames Scroll-Scrubbed + Parallax Lift) */}
-        <motion.div style={{ y: cloudY, scale: cloudScale }} className="relative w-full mt-auto z-10 origin-bottom">
-          <FlowCloudCanvas />
-        </motion.div>
-
         {/* Minimal Editorial Scroll Indicator */}
-        <div className="relative z-30 flex flex-col items-center gap-1 pb-4 -mt-8 pointer-events-none select-none">
+        <div className="relative z-30 flex flex-col items-center gap-1 pb-4 pointer-events-none select-none">
           <ChevronDown className="w-4 h-4 text-white/50 animate-bounce" />
         </div>
       </section>
@@ -238,41 +307,50 @@ export default function Home() {
         FEATURE 01: PERMANENT AGENT MEMORY (Real Developer Experience)
         ========================================================================
       */}
-      <ParallaxCard index={0} id="memory" className="-mt-16 sm:-mt-24 relative z-20">
+      <ParallaxCard index={0} id="memory" className="relative z-20">
         <div className="comic-plate relative w-full p-6 sm:p-12">
           {/* Feature Header in Human Real-Life Terms */}
           <div className="mb-8 pt-2">
-            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
-              FEATURE 01 // PERMANENT AGENT MEMORY
-            </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl lg:text-6xl text-black tracking-tight leading-tight uppercase">
               Never Suffer From Agent Amnesia Again
             </h2>
             <p className="font-gt-era text-black/85 text-base sm:text-lg max-w-4xl mt-3 leading-relaxed">
-              Every time you close your terminal or start a new day, standard AI coding agents forget everything. They waste minutes re-reading your entire project logs from disk—crashing into API token rate limits and freezing right when you&apos;re in the flow.
+              Close your terminal, reboot, come back tomorrow. Normal AI agents forget everything. They burn minutes re-reading old logs, hit rate limits, and freeze up right when you need them.
             </p>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-4xl mt-2 leading-relaxed">
-              AegisBrain gives your assistant a permanent photographic notebook. When you say &ldquo;continue where we left off yesterday&rdquo;, it instantly recalls your exact architectural rules, past bug fixes, and project decisions without burning your tokens.
+              AegisBrain keeps a permanent notebook. Say &ldquo;pick up where I left off&rdquo; and it pulls your exact rules, past fixes, and project decisions in under 25ms. No re-reading. No wasted tokens.
             </p>
           </div>
 
           {/* Claude Code Terminal Inside Laptop Display Frame */}
-          <div className="mb-8">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, amount: 0.2 }}
+            className="mb-8"
+          >
             <LaptopCliFrame />
-          </div>
+          </motion.div>
 
-          {/* Real-Time Memory Retrieval Trace */}
-          <div className="mb-4">
+          {/* Real-Time Memory Retrieval Trace (516x Faster Speed Audit) */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, amount: 0.2 }}
+            className="mb-4"
+          >
             <div className="text-xs font-nikkei text-black uppercase tracking-wider mb-2 flex items-center gap-2 font-bold">
               <span className="w-2.5 h-2.5 bg-[#B91C1C] border border-black inline-block" />
-              Real-Time Memory Retrieval Trace
+              Real-Time Memory Retrieval Trace (516x Faster FTS5 Indexing)
             </div>
             <ThoughtLine
-              summary="Neural Recall Trace: Retrieved 4 symbols & test invariants from brain.db in 21ms"
+              summary="Neural Recall Trace: Retrieved 4 symbols & test invariants from brain.db in 21ms (516x faster than raw session logs)"
               totalTime="21 ms"
               defaultExpanded={false}
             />
-          </div>
+          </motion.div>
         </div>
       </ParallaxCard>
 
@@ -285,19 +363,22 @@ export default function Home() {
       <ParallaxCard index={1} id="arbitrage">
         <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="mb-8 pt-2">
-            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
-              FEATURE 02 // TOKEN ARBITRAGE
-            </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
               Slash Your AI API Bill by 92%
             </h2>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
-              Why pay $20 per million tokens for expensive models to write repetitive boilerplate? Frontier models act as the strategic brain, while free local models running on your own computer do the grunt work for $0.00.
+              Why pay $20 per million tokens for boilerplate? The expensive model thinks. Free local models on your machine do the typing. You keep the savings.
             </p>
           </div>
 
           {/* Bespoke-Styled React Bits <CallChip /> */}
-          <div className="mb-8 p-4 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] space-y-3">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, amount: 0.2 }}
+            className="mb-8 p-4 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] space-y-3"
+          >
             <div className="flex items-center justify-between border-b border-black/10 pb-2">
               <span className="font-nikkei text-xs uppercase tracking-wider text-black flex items-center gap-2 font-bold">
                 <span className="w-2.5 h-2.5 bg-[#B91C1C] border border-black inline-block" />
@@ -328,17 +409,29 @@ export default function Home() {
                 progress={100}
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* 3D Interactive Topology & Signal Flow Diagram (Framer / MotionSites Style) */}
-          <div className="mb-8">
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, amount: 0.2 }}
+            className="mb-8"
+          >
             <InteractiveTierDiagram />
-          </div>
+          </motion.div>
 
           {/* Arbitrage Engine: ArbitrageCalculator */}
-          <div className="border-2 border-black rounded-none overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
+          <motion.div
+            initial={{ opacity: 0, y: 35 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, amount: 0.2 }}
+            className="border-2 border-black rounded-none overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]"
+          >
             <ArbitrageCalculator />
-          </div>
+          </motion.div>
         </div>
       </ParallaxCard>
 
@@ -351,21 +444,24 @@ export default function Home() {
       <ParallaxCard index={2} id="keepalive">
         <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="mb-8 pt-2">
-            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
-              FEATURE 03 // 24/7 BACKGROUND DAEMON
-            </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
               Runs All Night Without Crashing
             </h2>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
-              Leaving an AI agent to run overnight shouldn&apos;t end with a frozen terminal. A silent Windows Scheduled Task checks your agent every 5 minutes and automatically restarts it if your computer sleeps, reboots, or crashes.
+              Leave an AI agent running overnight and wake up to a frozen terminal. AegisBrain fixes that. A silent Windows Scheduled Task checks every 5 minutes and restarts your agent after sleep, reboot, or crash.
             </p>
           </div>
 
           {/* Side-by-Side Comparison Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* Card 1: Traditional Vulnerability */}
-            <div className="comic-card-red p-6 rounded-none border-2 border-black space-y-3 shadow-[4px_4px_0px_#000000]">
+            {/* Card 1: Traditional Vulnerability (Enters from Left) */}
+            <motion.div
+              initial={{ opacity: 0, x: -60 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              viewport={{ once: true, amount: 0.2 }}
+              className="comic-card-red p-6 rounded-none border-2 border-black space-y-3 shadow-[4px_4px_0px_#000000]"
+            >
               <div className="border-b border-black/10 pb-2">
                 <span className="font-nikkei text-xs uppercase tracking-wider text-[#B91C1C] font-extrabold">
                   Traditional Agent Vulnerability
@@ -385,10 +481,16 @@ export default function Home() {
                   <span><strong>Telegram Bridge Death:</strong> Remote polling listeners die unceremoniously with no auto-resurrection.</span>
                 </li>
               </ul>
-            </div>
+            </motion.div>
 
-            {/* Card 2: Aegis KeepAlive Shield */}
-            <div className="comic-card-emerald p-6 rounded-none border-2 border-black space-y-3 shadow-[4px_4px_0px_#000000]">
+            {/* Card 2: Aegis KeepAlive Shield (Enters from Right) */}
+            <motion.div
+              initial={{ opacity: 0, x: 60 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              viewport={{ once: true, amount: 0.2 }}
+              className="comic-card-emerald p-6 rounded-none border-2 border-black space-y-3 shadow-[4px_4px_0px_#000000]"
+            >
               <div className="border-b border-black/10 pb-2">
                 <span className="font-nikkei text-xs uppercase tracking-wider text-emerald-700 font-extrabold">
                   Aegis 24/7 KeepAlive Shield
@@ -408,11 +510,17 @@ export default function Home() {
                   <span><strong>Zero Disruption:</strong> Persistence across reboots, account switches, and terminal terminations.</span>
                 </li>
               </ul>
-            </div>
+            </motion.div>
           </div>
 
           {/* Pytest Verification Badge */}
-          <div className="p-4 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, amount: 0.2 }}
+            className="p-4 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] flex flex-col sm:flex-row items-center justify-between gap-4"
+          >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-none bg-emerald-100 border-2 border-emerald-600 flex items-center justify-center text-emerald-700 font-bold">
                 <Check className="w-6 h-6 stroke-[3]" />
@@ -429,7 +537,7 @@ export default function Home() {
             <div className="comic-stamp-emerald px-4 py-2 font-mono text-xs">
               286/286 PYTEST TESTS PASSING • 100% CLEAN
             </div>
-          </div>
+          </motion.div>
         </div>
       </ParallaxCard>
 
@@ -442,14 +550,11 @@ export default function Home() {
       <ParallaxCard index={3} id="mobile">
         <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="mb-8 pt-2">
-            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
-              FEATURE 04 // MOBILE TELEGRAM COCKPIT
-            </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
               Control Your Agent From Your Phone
             </h2>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
-              Step away from your desk without losing control. Send voice notes, review code diffs, and get notified the second tests pass—directly through Telegram while your desktop does the heavy lifting.
+              Walk away from your desk and still run the show. Send voice notes, check code diffs, and get pinged the second tests pass, all through Telegram on your phone.
             </p>
           </div>
 
@@ -468,14 +573,11 @@ export default function Home() {
       <ParallaxCard index={4} id="quality">
         <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="mb-8 pt-2">
-            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
-              FEATURE 05 // FOUR-STAGE QUALITY GATES
-            </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
               Catch Bad Code Before It Hits Git
             </h2>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
-              Local models are free, but they can make silly mistakes. Instead of throwing them away, our 4-stage filter strips AI apologies, blocks vulnerabilities, and tests every line in a sandbox until zero bugs remain.
+              Free local models write fast but they cut corners. Four filters run on every output: strip the filler text, block security holes, sandbox the tests, and loop until zero bugs remain.
             </p>
           </div>
 
@@ -494,14 +596,11 @@ export default function Home() {
       <ParallaxCard index={5} id="blueprints">
         <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="mb-8 pt-2">
-            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
-              FEATURE 06 // SYSTEM BLUEPRINTS
-            </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
               The 7 Core System Blueprints
             </h2>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
-              Explore step-by-step how AegisBrain connects your terminal, memory database, free local models, and mobile notifications into a single bulletproof system.
+              See how AegisBrain wires your terminal, memory database, local models, and phone notifications into one system that actually works.
             </p>
           </div>
 
@@ -520,20 +619,42 @@ export default function Home() {
       <ParallaxCard index={6} id="install">
         <div className="comic-plate relative w-full p-6 sm:p-10">
           <div className="mb-8 pt-2">
-            <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
-              QUICKSTART // ONE-LINE INSTALLATION
-            </div>
             <h2 className="font-charles-rosie text-4xl sm:text-5xl text-black tracking-tight leading-tight uppercase">
               Install in Seconds
             </h2>
             <p className="font-gt-era text-black/75 text-sm sm:text-base max-w-2xl mt-2 leading-relaxed">
-              Deploy the 24/7 background daemon and global CLI with a single command across macOS, Linux, or Windows.
+              One command. Pick your OS, paste it, done. The background daemon and CLI are ready to go.
             </p>
           </div>
 
           {/* Terminal Command Strip: TerminalInstall */}
           <div className="border-2 border-black rounded-none overflow-hidden shadow-[6px_6px_0px_#000000] bg-[#101116]">
             <TerminalInstall />
+          </div>
+
+          {/* Universal Agent Compatibility: LogoLoop from React Bits */}
+          <div className="mt-8 pt-6 border-t-2 border-black/15">
+            <div className="flex items-center justify-between mb-4">
+              <div className="font-nikkei text-xs uppercase tracking-widest text-[#B91C1C] font-extrabold flex items-center gap-2">
+                <span className="w-2.5 h-2.5 bg-[#B91C1C] border border-black inline-block" />
+                Supports All CLI Agents
+              </div>
+            </div>
+
+            <div className="py-6 px-4 bg-[#FAF8F5] border-2 border-black shadow-[4px_4px_0px_#000000] rounded-none overflow-hidden">
+              <LogoLoop
+                logos={SUPPORTED_AGENTS}
+                speed={60}
+                direction="left"
+                logoHeight={38}
+                gap={60}
+                hoverSpeed={0}
+                fadeOut={true}
+                fadeOutWidth={0.12}
+                labels="below"
+                ariaLabel="Supported CLI Agents"
+              />
+            </div>
           </div>
         </div>
       </ParallaxCard>
@@ -546,21 +667,24 @@ export default function Home() {
       <ParallaxCard index={7} id="community">
         <div className="comic-plate relative w-full p-8 sm:p-12 text-black">
             <div className="border-b-2 border-black pb-8">
-              <div className="font-nikkei text-xs uppercase text-[#B91C1C] font-extrabold tracking-widest mb-2">
-                COMMUNITY // OPEN SOURCE DEVELOPMENT
-              </div>
               <h3 className="font-charles-rosie text-3xl sm:text-4xl text-black tracking-tight uppercase">
                 Build With AegisBrain
               </h3>
               <p className="font-gt-era text-black/75 text-sm sm:text-base mt-2 max-w-2xl leading-relaxed">
-                AegisBrain is 100% free and open-source under the Apache-2.0 License. If you believe coding agents deserve deterministic persistence and zero token waste, star the repository, open issues, and join the development.
+                AegisBrain is free and open-source under GPL-3.0. Star the repo, file issues, send PRs.
               </p>
             </div>
 
             {/* Action Cards Grid: 4 Pillars of Community */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6">
-              {/* Card 1: Star on GitHub */}
-              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded-none flex flex-col justify-between">
+              {/* Card 1: Star on GitHub (Enters from Left) */}
+              <motion.div
+                initial={{ opacity: 0, x: -45 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                viewport={{ once: true, amount: 0.2 }}
+                className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded-none flex flex-col justify-between"
+              >
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black flex items-center gap-2">
@@ -572,14 +696,14 @@ export default function Home() {
                     </span>
                   </div>
                   <p className="font-gt-era text-xs text-black/75 leading-relaxed">
-                    Help more developers discover sovereign agentic memory, zero token waste, and 24/7 background persistence.
+                    More stars means more developers find out about it. Takes two seconds.
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-black/10">
                   <a
                     href="https://github.com/PG300604/aegis-brain"
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-4 py-2 bg-black hover:bg-neutral-800 text-white font-nikkei text-xs uppercase tracking-wider rounded-none border-2 border-black shadow-[2px_2px_0px_#B91C1C] transition-transform hover:-translate-y-0.5"
                   >
                     <Star className="w-3.5 h-3.5 text-[#D4AF37] fill-[#D4AF37]" />
@@ -587,10 +711,16 @@ export default function Home() {
                     <ArrowRight className="w-3 h-3 text-white/60 ml-1" />
                   </a>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Card 2: Clone Repository */}
-              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded-none flex flex-col justify-between">
+              {/* Card 2: Clone Repository (Enters from Right) */}
+              <motion.div
+                initial={{ opacity: 0, x: 45 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                viewport={{ once: true, amount: 0.2 }}
+                className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded-none flex flex-col justify-between"
+              >
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black flex items-center gap-2">
@@ -627,10 +757,16 @@ export default function Home() {
                     )}
                   </button>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Card 3: Issues & Discussions */}
-              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded-none flex flex-col justify-between">
+              {/* Card 3: Issues & Discussions (Enters from Left) */}
+              <motion.div
+                initial={{ opacity: 0, x: -45 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                viewport={{ once: true, amount: 0.2 }}
+                className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded-none flex flex-col justify-between"
+              >
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black flex items-center gap-2">
@@ -649,17 +785,23 @@ export default function Home() {
                   <a
                     href="https://github.com/PG300604/aegis-brain/issues"
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-4 py-2 bg-[#FBF9F5] hover:bg-neutral-100 text-black font-nikkei text-xs uppercase tracking-wider rounded-none border-2 border-black shadow-[2px_2px_0px_#000000] transition-transform hover:-translate-y-0.5"
                   >
                     <span>💬 Open an Issue</span>
                     <ArrowRight className="w-3 h-3 text-black/50 ml-1" />
                   </a>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Card 4: Contribute Code */}
-              <div className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded-none flex flex-col justify-between">
+              {/* Card 4: Contribute Code (Enters from Right) */}
+              <motion.div
+                initial={{ opacity: 0, x: 45 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                viewport={{ once: true, amount: 0.2 }}
+                className="p-5 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] rounded-none flex flex-col justify-between"
+              >
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-nikkei text-xs uppercase tracking-wider font-extrabold text-black flex items-center gap-2">
@@ -678,14 +820,14 @@ export default function Home() {
                   <a
                     href="https://github.com/PG300604/aegis-brain/pulls"
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-nikkei text-xs uppercase tracking-wider rounded-none border border-black shadow-[2px_2px_0px_#000000] transition-transform hover:-translate-y-0.5"
                   >
                     <span>🔀 Submit Pull Request</span>
                     <ArrowRight className="w-3 h-3 text-white/60 ml-1" />
                   </a>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
       </ParallaxCard>
@@ -700,7 +842,7 @@ export default function Home() {
           </span>
         </div>
         <div>
-          Crafted for sovereign developers. Open-source under Apache-2.0.
+          Crafted for sovereign developers. Open-source under GPL-3.0.
         </div>
       </footer>
 
