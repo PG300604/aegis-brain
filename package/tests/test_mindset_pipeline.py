@@ -87,7 +87,9 @@ def test_powershell_mindset_override_and_restore(tmp_path):
     env["HOME"] = str(mock_home)
     env["CI"] = "1"
 
-    proc = subprocess.run(cmd, env=env, capture_output=True, text=True, cwd=str(REPO_ROOT))
+    proc = subprocess.run(
+        cmd, env=env, capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=str(REPO_ROOT)
+    )
     assert proc.returncode == 0, f"install.ps1 failed: {proc.stdout}\n{proc.stderr}"
     assert "AEGISBRAIN INSTALLATION COMPLETE" in proc.stdout
 
@@ -142,7 +144,9 @@ def test_powershell_mindset_override_and_restore(tmp_path):
         "-File", str(RESTORE_PS1),
         "-Force"
     ]
-    restore_proc = subprocess.run(restore_cmd, env=env, capture_output=True, text=True, cwd=str(REPO_ROOT))
+    restore_proc = subprocess.run(
+        restore_cmd, env=env, capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=str(REPO_ROOT)
+    )
     assert restore_proc.returncode == 0, f"restore.ps1 failed: {restore_proc.stdout}\n{restore_proc.stderr}"
     assert "Mindset override rolled back successfully with ZERO RESIDUE!" in restore_proc.stdout
 
@@ -211,6 +215,8 @@ def test_bash_mindset_override_and_restore(tmp_path):
         env=env,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         cwd=str(REPO_ROOT)
     )
     assert proc.returncode == 0, f"install.sh failed: {proc.stdout}\n{proc.stderr}"
@@ -229,6 +235,8 @@ def test_bash_mindset_override_and_restore(tmp_path):
         env=env,
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         cwd=str(REPO_ROOT)
     )
     assert restore_proc.returncode == 0, f"restore.sh failed: {restore_proc.stdout}\n{restore_proc.stderr}"
