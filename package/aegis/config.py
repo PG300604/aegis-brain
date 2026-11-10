@@ -60,27 +60,29 @@ def get_execution_mode_file() -> Path:
 
 
 def get_execution_mode() -> str:
-    """Return 'arbitrage' (3-Tier Token Saving) or 'fast' (Direct Frontier). Defaults to 'arbitrage'."""
+    """Return execution mode: 'auto' (Dual NLP Auto-Triage, default), 'arbitrage', or 'fast'."""
     env_mode = os.environ.get("AEGIS_EXECUTION_MODE")
-    if env_mode in ("arbitrage", "fast"):
-        return env_mode
+    if env_mode in ("auto", "adaptive", "arbitrage", "fast"):
+        return "auto" if env_mode == "adaptive" else env_mode
 
     mode_file = get_execution_mode_file()
     if mode_file.exists():
         try:
             mode = mode_file.read_text(encoding="utf-8").strip().lower()
-            if mode in ("arbitrage", "fast"):
-                return mode
+            if mode in ("auto", "adaptive", "arbitrage", "fast"):
+                return "auto" if mode == "adaptive" else mode
         except Exception:
             pass
-    return "arbitrage"
+    return "auto"
 
 
 def set_execution_mode(mode: str) -> str:
-    """Set execution mode ('arbitrage' or 'fast')."""
+    """Set execution mode ('auto', 'arbitrage', or 'fast')."""
     cleaned = mode.strip().lower()
-    if cleaned not in ("arbitrage", "fast"):
-        raise ValueError("Execution mode must be either 'arbitrage' or 'fast'")
+    if cleaned == "adaptive":
+        cleaned = "auto"
+    if cleaned not in ("auto", "arbitrage", "fast"):
+        raise ValueError("Execution mode must be 'auto', 'arbitrage', or 'fast'")
 
     os.environ["AEGIS_EXECUTION_MODE"] = cleaned
     get_execution_mode_file().write_text(cleaned, encoding="utf-8")

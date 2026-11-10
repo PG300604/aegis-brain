@@ -137,50 +137,73 @@ def generate_screens():
 <span class="gray">                               Version 2.4.0 (GPLv3)</span>
 
 <span class="box-border">┌────────────────────────────────────────────────────────────────────────┐</span>
-<span class="box-border">│</span>  <span class="cyan bold">STEP 1 of 4: License Agreement &amp; Terms of Service</span>                     <span class="box-border">│</span>
+<span class="box-border">│</span>  <span class="cyan bold">STEP 1 of 6: License Agreement &amp; Terms of Service</span>                     <span class="box-border">│</span>
 <span class="box-border">└────────────────────────────────────────────────────────────────────────┘</span>
 <span class="gray">┌────────────────────────────────────────────────────────────────────────┐</span>
 <span class="gray">│</span>  License: GNU General Public License v3.0 (GPL-3.0-or-later)           <span class="gray">│</span>
 <span class="gray">│</span>  Author: Priyanshu Ghosh (@PG300604) | github.com/PG300604/aegis-brain  <span class="gray">│</span>
-<span class="gray">│</span>                                                                        <span class="gray">│</span>
 <span class="gray">│</span>  Core Commitments: 100% Local Neural Memory • Zero Exfiltration         <span class="gray">│</span>
 <span class="gray">│</span>  Subprocess Boundary: Workers (Hermes/Ollama) execute via isolated OS  <span class="gray">│</span>
 <span class="gray">│</span>  Pre-mutation snapshots created automatically before file edits.       <span class="gray">│</span>
 <span class="gray">└────────────────────────────────────────────────────────────────────────┘</span>
- <span class="green">[✓] Terms accepted.</span>
+ <span class="green">[✓] Terms accepted automatically.</span>
 
 <span class="box-border-yellow">┌────────────────────────────────────────────────────────────────────────┐</span>
-<span class="box-border-yellow">│</span>  <span class="yellow bold">STEP 2 of 4: Select Agent Execution Strategy</span>                          <span class="box-border-yellow">│</span>
+<span class="box-border-yellow">│</span>  <span class="yellow bold">STEP 2 of 6: System Requirements &amp; Runtime Inspection</span>                 <span class="box-border-yellow">│</span>
 <span class="box-border-yellow">└────────────────────────────────────────────────────────────────────────┘</span>
 <span class="gray">┌────────────────────────────────────────────────────────────────────────┐</span>
-<span class="gray">│</span>  Choose how Antigravity CLI &amp; AegisBrain should triage coding tasks:   <span class="gray">│</span>
-<span class="gray">│</span>                                                                        <span class="gray">│</span>
-<span class="gray">│</span>  <span class="white bold">[1] Arbitrage Mode</span> <span class="green bold">(Recommended - 85%+ Token Savings):</span>               <span class="gray">│</span>
-<span class="gray">│</span>      Senior Boss serves as Brain only. Delegates substantial tasks to  <span class="gray">│</span>
-<span class="gray">│</span>      Tier 2 Subagents + Tier 3 Local Workers (Hermes, Ollama MoE).     <span class="gray">│</span>
-<span class="gray">│</span>                                                                        <span class="gray">│</span>
-<span class="gray">│</span>  <span class="white bold">[2] Fast Direct Mode:</span>                                                 <span class="gray">│</span>
-<span class="gray">│</span>      Frontier Manager writes code directly for rapid prototyping.      <span class="gray">│</span>
+<span class="gray">│</span>   • Python Runtime:      <span class="green bold">[INSTALLED]</span> Python 3.14.7                     <span class="gray">│</span>
+<span class="gray">│</span>   • Git Version Control: <span class="green bold">[INSTALLED]</span> git version 2.55.0                <span class="gray">│</span>
+<span class="gray">│</span>   • Node.js &amp; npm:       <span class="green bold">[INSTALLED]</span> Node v24.19.0 / npm v11.17.0      <span class="gray">│</span>
+<span class="gray">│</span>   • Host Memory (RAM):   <span class="green bold">[HEALTHY]</span> 5.38 GB Available                   <span class="gray">│</span>
 <span class="gray">└────────────────────────────────────────────────────────────────────────┘</span>
- <span class="green">[✓] Configured: Dynamic Arbitrage Mode (3-Tier Token Saving)</span>
+ <span class="green">[✓] System prerequisites validated.</span>
+
+<span class="box-border">┌────────────────────────────────────────────────────────────────────────┐</span>
+<span class="box-border">│</span>  <span class="cyan bold">STEP 4 of 6: Local Worker Engines &amp; Multimodal Tools</span>                  <span class="box-border">│</span>
+<span class="box-border">└────────────────────────────────────────────────────────────────────────┘</span>
+<span class="gray">┌────────────────────────────────────────────────────────────────────────┐</span>
+<span class="gray">│</span>   • Ollama (Local LLM):      <span class="green bold">[INSTALLED]</span> ollama version 0.5.12         <span class="gray">│</span>
+<span class="gray">│</span>   • Hermes Agent CLI:        <span class="green bold">[INSTALLED]</span> Available in PATH             <span class="gray">│</span>
+<span class="gray">│</span>   • FFmpeg Engine:           <span class="green bold">[INSTALLED]</span> Available in PATH             <span class="gray">│</span>
+<span class="gray">│</span>   • Whisper Speech-to-Text:  <span class="green bold">[INSTALLED]</span> Available in PATH             <span class="gray">│</span>
+<span class="gray">│</span>   • yt-dlp Media Downloader: <span class="green bold">[INSTALLED]</span> Available in PATH             <span class="gray">│</span>
+<span class="gray">└────────────────────────────────────────────────────────────────────────┘</span>
+
+<span class="box-border-yellow">┌────────────────────────────────────────────────────────────────────────┐</span>
+<span class="box-border-yellow">│</span>  <span class="yellow bold">STEP 5 of 6: Intelligent NLP Dual-Mode Engine &amp; Background Daemon</span>     <span class="box-border-yellow">│</span>
+<span class="box-border-yellow">└────────────────────────────────────────────────────────────────────────┘</span>
+<span class="gray">┌────────────────────────────────────────────────────────────────────────┐</span>
+<span class="gray">│</span>  Dynamic Workload Triage Architecture:                                 <span class="gray">│</span>
+<span class="gray">│</span>   • Dual NLP Auto-Triage: BOTH Arbitrage &amp; Fast modes are active.      <span class="gray">│</span>
+<span class="gray">│</span>   • The NLP intent engine analyzes every command in any AI assistant:  <span class="gray">│</span>
+<span class="gray">│</span>     - Fast / Urgent / Quick / Micro fixes  -&gt; Fast Mode (Direct)       <span class="gray">│</span>
+<span class="gray">│</span>     - Substantial / Heavy / Architecture   -&gt; Arbitrage Mode (3-Tier)  <span class="gray">│</span>
+<span class="gray">│</span>   • Zero manual mode switching required: NLP handles it automatically  <span class="gray">│</span>
+<span class="gray">└────────────────────────────────────────────────────────────────────────┘</span>
 
 <span class="box-border-green">┌────────────────────────────────────────────────────────────────────────┐</span>
-<span class="box-border-green">│</span>  <span class="green bold">STEP 4 of 4: Installation &amp; Restore Point Reflex</span>                      <span class="box-border-green">│</span>
+<span class="box-border-green">│</span>  <span class="green bold">STEP 6 of 6: Installation Execution &amp; Restore Point Reflex</span>            <span class="box-border-green">│</span>
 <span class="box-border-green">└────────────────────────────────────────────────────────────────────────┘</span>
- <span class="cyan">[1/6]</span> Creating automated pre-install restore point snapshot...
-       <span class="green">[OK]</span> Snapshot saved: <span class="white">1794302583_pre_install</span> (8 files archived)
- <span class="cyan">[2/6]</span> Initializing local neural memory bus (<span class="white">brain.db</span> WAL mode)...
- <span class="cyan">[3/6]</span> Setting up zero-elevation background autostart daemon (Port 8765)...
- <span class="cyan">[4/6]</span> Registering global '<span class="white bold">aegis</span>' CLI command shim...
- <span class="cyan">[5/6]</span> Auto-linking companion skills across Antigravity, Claude, Codex...
- <span class="cyan">[6/6]</span> Injecting autonomous engineering directives &amp; FTS5 memory hooks...
+ <span class="cyan">[1/7]</span> Creating automated pre-install restore point snapshot...
+       <span class="green">[OK]</span> Snapshot saved: <span class="white">1794330900_universal_install</span> (8 files archived)
+ <span class="cyan">[2/7]</span> Initializing local neural memory bus (<span class="white">brain.db</span> WAL mode)...
+ <span class="cyan">[3/7]</span> Setting up zero-elevation background autostart daemon (Port 8765)...
+ <span class="cyan">[4/7]</span> Registering global '<span class="white bold">aegis</span>' CLI command shim...
+ <span class="cyan">[5/7]</span> Auto-linking companion skills across Antigravity, Claude, Codex...
+ <span class="cyan">[6/7]</span> Injecting autonomous engineering directives &amp; FTS5 memory hooks...
+ <span class="cyan">[7/7]</span> Configuring universal shell hook in PowerShell profile...
 
-<span class="green bold">════════════════════════════════════════════════════════════════════════</span>
-<span class="green bold"> [✓] AegisBrain v2.4.0 successfully installed and operational!</span>
-<span class="green bold">════════════════════════════════════════════════════════════════════════</span>
-  • Execution Mode:  <span class="white bold">ARBITRAGE (85%+ Token Savings via 3-Tier Hierarchy)</span>
-  • Instant Recall:  <span class="cyan">aegis recall &lt;topic&gt;</span> (&lt;25ms sub-second retrieval)
-  • Daemon Status:   <span class="green">http://127.0.0.1:8765/status (24/7 background service)</span>"""
+<span class="green bold">╔════════════════════════════════════════════════════════════════════════╗</span>
+<span class="green bold">║  AEGISBRAIN INSTALLATION COMPLETE — 100% OPERATIONAL                   ║</span>
+<span class="green bold">╠════════════════════════════════════════════════════════════════════════╣</span>
+<span class="white">║  • Execution Strategy:   DUAL NLP AUTO-TRIAGE (Arbitrage + Fast Active)║</span>
+<span class="white">║  • Neural Memory Bus:    Active (brain.db WAL mode, &lt;25ms FTS5 index)  ║</span>
+<span class="white">║  • Background Daemon:    Online 24/7 (http://127.0.0.1:8765/status)    ║</span>
+<span class="white">║  • Telegram Bridge:      @HHAACLIBot (Voice Notes &amp; Terminal Control)  ║</span>
+<span class="white">║  • Restore Point ID:     1794330900_universal_install                  ║</span>
+<span class="white">║  • License:              GNU GPLv3 (Free &amp; Open Source)                ║</span>
+<span class="green bold">╚════════════════════════════════════════════════════════════════════════╝</span>"""
 
     # Screen 2: 3-Tier Multi-Agent Triage in Action
     screen2_content = """<span class="gray">P:\\vault&gt;</span> <span class="white bold">aegis triage "Build distributed JWT token refresh rotation engine with Redis caching"</span>

@@ -118,16 +118,17 @@ class SeverityTriageEngine:
     ]
 
     FAST_PATTERNS = [
-        r"\b(quick|fast|rapid|urgent|rush|asap|direct\s+mode|fast\s+mode|instant)\b",
+        r"\b(quick|fast|rapid|urgent|rush|asap|direct\s+mode|fast\s+mode|quick\s+mode|speed\s+mode|instant|directly|right\s+now|straight\s+away|just\s+do\s+it|skip\s+subagent|no\s+subagent|simple\s+fix|one-liner)\b",
     ]
 
     @classmethod
     def evaluate(cls, task: str, context: Optional[str] = None) -> TriageDecision:
         lower_task = (task + " " + (context or "")).lower()
 
-        # 0. Check Execution Mode (Arbitrage vs Fast)
+        # 0. Check Execution Mode (Auto NLP Triage vs Explicit Override)
         configured_mode = get_execution_mode()
-        user_wants_fast = any(re.search(pat, lower_task) for pat in cls.FAST_PATTERNS) or configured_mode == "fast"
+        nlp_demands_fast = any(re.search(pat, lower_task) for pat in cls.FAST_PATTERNS)
+        user_wants_fast = nlp_demands_fast if configured_mode in ("auto", "adaptive") else (configured_mode == "fast" or nlp_demands_fast)
 
         # 1. Inspect PC Hardware Status (RAM & CPU load) to prevent bottlenecks
         hw = get_hardware_status()
