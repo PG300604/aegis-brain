@@ -9,6 +9,11 @@ FORCE=false
 WORKSPACE=""
 SNAPSHOT_REASON="AegisBrain Universal Installation"
 
+HOME_DIR="${HOME:-$(eval echo "~")}"
+if command -v cygpath >/dev/null 2>&1; then
+  HOME_DIR="$(cygpath -m "$HOME_DIR")"
+fi
+
 # Parse CLI arguments
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -99,8 +104,15 @@ echo -e "\033[1;33m┌───────────────────�
 echo -e "\033[1;33m│  STEP 2 of 6: System Requirements & Runtime Inspection                 │\033[0m"
 echo -e "\033[1;33m├────────────────────────────────────────────────────────────────────────┤\033[0m"
 
+PYTHON_BIN=""
 if command -v python3 >/dev/null 2>&1; then
-  echo -e "\033[1;37m│   • Python Runtime:      [INSTALLED] $(python3 --version 2>&1)\033[0m"
+  PYTHON_BIN="python3"
+elif command -v python >/dev/null 2>&1; then
+  PYTHON_BIN="python"
+fi
+
+if [ -n "$PYTHON_BIN" ]; then
+  echo -e "\033[1;37m│   • Python Runtime:      [INSTALLED] $($PYTHON_BIN --version 2>&1)\033[0m"
 else
   echo -e "\033[1;31m│   • Python Runtime:      [MISSING] Python 3.10+ required\033[0m"
 fi
@@ -198,7 +210,7 @@ if ! ask_user "Enable 24/7 background autostart daemon (Port 8765) on system boo
 fi
 
 # Configure execution mode to 'auto' so both modes work seamlessly via NLP
-AEGIS_DIR="${HOME}/.aegis-brain"
+AEGIS_DIR="${HOME_DIR}/.aegis-brain"
 SNAPSHOTS_DIR="${AEGIS_DIR}/snapshots"
 mkdir -p "${SNAPSHOTS_DIR}"
 echo "auto" > "${AEGIS_DIR}/execution_mode.txt"
@@ -218,15 +230,15 @@ mkdir -p "${SNAPSHOT_FILES_DIR}"
 echo -e "\033[1;36m [1/7]\033[0m Creating automated pre-install restore point snapshot..."
 
 PLANNED_TARGETS=(
-  "antigravity_gemini_md:${HOME}/.gemini/config/GEMINI.md:Google Antigravity"
-  "antigravity_mindset_knowledge:${HOME}/.gemini/antigravity-cli/knowledge/aegis_mindset.md:Google Antigravity"
-  "aegis_skill_antigravity:${HOME}/.gemini/config/skills/aegis/SKILL.md:Google Antigravity"
-  "claude_code_claude_md:${HOME}/.claude/CLAUDE.md:Anthropic Claude Code"
-  "aegis_skill_claude:${HOME}/.claude/skills/aegis/SKILL.md:Anthropic Claude Code"
-  "codex_instructions_md:${HOME}/.codex/instructions.md:OpenAI Codex"
-  "aegis_skill_codex:${HOME}/.codex/skills/aegis/SKILL.md:OpenAI Codex"
-  "aider_conf_yml:${HOME}/.aider.conf.yml:Aider"
-  "aider_conventions_md:${HOME}/.aider/conventions.md:Aider"
+  "antigravity_gemini_md:${HOME_DIR}/.gemini/config/GEMINI.md:Google Antigravity"
+  "antigravity_mindset_knowledge:${HOME_DIR}/.gemini/antigravity-cli/knowledge/aegis_mindset.md:Google Antigravity"
+  "aegis_skill_antigravity:${HOME_DIR}/.gemini/config/skills/aegis/SKILL.md:Google Antigravity"
+  "claude_code_claude_md:${HOME_DIR}/.claude/CLAUDE.md:Anthropic Claude Code"
+  "aegis_skill_claude:${HOME_DIR}/.claude/skills/aegis/SKILL.md:Anthropic Claude Code"
+  "codex_instructions_md:${HOME_DIR}/.codex/instructions.md:OpenAI Codex"
+  "aegis_skill_codex:${HOME_DIR}/.codex/skills/aegis/SKILL.md:OpenAI Codex"
+  "aider_conf_yml:${HOME_DIR}/.aider.conf.yml:Aider"
+  "aider_conventions_md:${HOME_DIR}/.aider/conventions.md:Aider"
 )
 
 MANIFEST_FILES=""
@@ -259,7 +271,7 @@ for item in "${PLANNED_TARGETS[@]}"; do
 done
 
 CREATED_FILES=""
-for p in "${HOME}/.codex/instructions.md" "${HOME}/.aider/conventions.md" "${HOME}/.aider.conf.yml"; do
+for p in "${HOME_DIR}/.codex/instructions.md" "${HOME_DIR}/.aider/conventions.md" "${HOME_DIR}/.aider.conf.yml"; do
   if [ ! -f "$p" ]; then
     if [ -z "$CREATED_FILES" ]; then
       CREATED_FILES="\"$p\""
@@ -290,7 +302,7 @@ cat <<EOF > "${SNAPSHOT_TARGET_DIR}/manifest.json"
   "file_count": ${BACKED_UP_COUNT},
   "files": [${MANIFEST_FILES}],
   "created_files": [${CREATED_FILES}],
-  "created_dirs": ["${HOME}/.codex", "${HOME}/.aider"]
+  "created_dirs": ["${HOME_DIR}/.codex", "${HOME_DIR}/.aider"]
 }
 EOF
 
@@ -302,23 +314,23 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 PKG_DIR="${REPO_ROOT}/package"
 
-python3 -c "import sys; sys.path.insert(0, '${PKG_DIR}'); from aegis.db import init_db; from aegis.hooks import seed_initial_knowledge; init_db(); seed_initial_knowledge(); print('       [OK] SQLite FTS5 database initialized in WAL mode')"
+"$PYTHON_BIN" -c "import sys; sys.path.insert(0, '${PKG_DIR}'); from aegis.db import init_db; from aegis.hooks import seed_initial_knowledge; init_db(); seed_initial_knowledge(); print('       [OK] SQLite FTS5 database initialized in WAL mode')"
 
 # 3. Configure Background Daemon
 if [ "$ENABLE_DAEMON" = true ]; then
   echo -e "\033[1;36m [3/7]\033[0m Setting up zero-elevation 24/7 background autostart daemon..."
-  python3 -c "import sys; sys.path.insert(0, '${PKG_DIR}'); from aegis.service import enable_autostart; ok, msg = enable_autostart(); print('       [OK] ' + msg)" || true
+  "$PYTHON_BIN" -c "import sys; sys.path.insert(0, '${PKG_DIR}'); from aegis.service import enable_autostart; ok, msg = enable_autostart(); print('       [OK] ' + msg)" || true
 else
   echo -e "\033[1;33m [3/7]\033[0m Background autostart daemon skipped by user."
 fi
 
 # 4. Global CLI Shim
 echo -e "\033[1;36m [4/7]\033[0m Registering global 'aegis' CLI command..."
-mkdir -p "${HOME}/.local/bin"
-cat <<EOF > "${HOME}/.local/bin/aegis"
+mkdir -p "${HOME_DIR}/.local/bin"
+cat <<EOF > "${HOME_DIR}/.local/bin/aegis"
 #!/usr/bin/env bash
 export PYTHONPATH="${PKG_DIR}:\$PYTHONPATH"
-exec python3 -m aegis.cli "\$@"
+exec ${PYTHON_BIN:-python} -m aegis.cli "\$@"
 EOF
 chmod +x "${HOME}/.local/bin/aegis"
 echo -e "       \033[1;32m[OK]\033[0m Created POSIX shim: ${HOME}/.local/bin/aegis"
@@ -327,7 +339,7 @@ echo -e "       \033[1;32m[OK]\033[0m Created POSIX shim: ${HOME}/.local/bin/aeg
 echo -e "\033[1;36m [5/7]\033[0m Distributing companion skills across agent platforms..."
 SKILL_SOURCE="${REPO_ROOT}/skills/aegis/SKILL.md"
 if [ -f "$SKILL_SOURCE" ]; then
-  for target_dir in "${HOME}/.gemini/config/skills/aegis" "${HOME}/.claude/skills/aegis" "${HOME}/.codex/skills/aegis"; do
+  for target_dir in "${HOME_DIR}/.gemini/config/skills/aegis" "${HOME_DIR}/.claude/skills/aegis" "${HOME_DIR}/.codex/skills/aegis"; do
     mkdir -p "$target_dir"
     cp "$SKILL_SOURCE" "${target_dir}/SKILL.md"
     echo -e "       \033[1;32m[OK]\033[0m Placed skill -> $target_dir"
@@ -374,7 +386,7 @@ EOF
   inject_block() {
     local target="$1"
     local prepend="${2:-false}"
-    python3 - << 'PYEOF'
+    "$PYTHON_BIN" - << 'PYEOF'
 import os, re
 from pathlib import Path
 
@@ -399,22 +411,22 @@ PYEOF
   }
 
   export AEGIS_BLOCK="$MINDSET_BLOCK"
-  export AEGIS_TARGET="${HOME}/.gemini/config/GEMINI.md"
+  export AEGIS_TARGET="${HOME_DIR}/.gemini/config/GEMINI.md"
   export AEGIS_PREPEND="true"
   inject_block "$AEGIS_TARGET" "true"
 
-  export AEGIS_TARGET="${HOME}/.claude/CLAUDE.md"
+  export AEGIS_TARGET="${HOME_DIR}/.claude/CLAUDE.md"
   export AEGIS_PREPEND="false"
   inject_block "$AEGIS_TARGET" "false"
 
-  export AEGIS_TARGET="${HOME}/.codex/instructions.md"
+  export AEGIS_TARGET="${HOME_DIR}/.codex/instructions.md"
   inject_block "$AEGIS_TARGET" "false"
 
-  export AEGIS_TARGET="${HOME}/.aider/conventions.md"
+  export AEGIS_TARGET="${HOME_DIR}/.aider/conventions.md"
   inject_block "$AEGIS_TARGET" "false"
 
-  if [ ! -f "${HOME}/.aider.conf.yml" ]; then
-    echo "read: conventions.md" > "${HOME}/.aider.conf.yml"
+  if [ ! -f "${HOME_DIR}/.aider.conf.yml" ]; then
+    echo "read: conventions.md" > "${HOME_DIR}/.aider.conf.yml"
   fi
 
   if [ -n "$RESOLVED_WORKSPACE" ] && [ -d "$RESOLVED_WORKSPACE" ]; then
@@ -430,7 +442,7 @@ fi
 
 # 7. Shell Hooks
 echo -e "\033[1;36m [7/7]\033[0m Configuring universal shell hook..."
-BASHRC="${HOME}/.bashrc"
+BASHRC="${HOME_DIR}/.bashrc"
 if [ -f "$BASHRC" ] && ! grep -q "aegis hook" "$BASHRC"; then
   echo -e "\n# AegisBrain Context Hook\ncommand -v aegis >/dev/null 2>&1 && eval \"\$(aegis hook --shell bash)\"" >> "$BASHRC"
   echo -e "       \033[1;32m[OK]\033[0m Injected shell hook into $BASHRC"
