@@ -293,11 +293,31 @@ def generate_screens():
   • Raw JSONL Log Crawling:  9,420 ms (52,400 tokens crawled - 99.8% slower)
   • <span class="cyan bold">Net Savings: 52,318 tokens saved &amp; 517x faster response</span><span class="cursor"></span>"""
 
+    screen5_content = """<span class="prompt">PS P:\vault&gt; </span><span class="cmd">aegis snapshot list</span>
+<span class="cyan bold">============================================================================================</span>
+  <span class="white bold">#   Date / Time          Files  Snapshot ID                    Reason</span>
+<span class="gray">--------------------------------------------------------------------------------------------</span>
+ <span class="yellow bold">[ 1]</span> <span class="cyan">2026-11-10 17:30:06</span>   <span class="green">8</span>     <span class="white bold">1794312006_pre_gemini_update</span>   Pre-update of GEMINI.md for Quick Mode
+ <span class="yellow bold">[ 2]</span> <span class="cyan">2026-11-10 17:18:05</span>   <span class="green">8</span>     <span class="white bold">1794311285_universal_install</span>   AegisBrain Universal Installation
+ <span class="yellow bold">[ 3]</span> <span class="cyan">2026-11-10 14:53:03</span>   <span class="green">8</span>     <span class="white bold">1794302583_pre_install</span>         Automated pre-install restore point
+ <span class="yellow bold">[ 4]</span> <span class="cyan">2026-11-09 16:59:31</span>   <span class="green">6</span>     <span class="white bold">1794223771_session_end</span>         session_bye_archive
+ <span class="yellow bold">[ 5]</span> <span class="cyan">2026-11-08 19:36:22</span>   <span class="green">6</span>     <span class="white bold">1794146782_snapshot</span>            pre-diwali-lock-mode: full landing page overhaul
+<span class="gray">--------------------------------------------------------------------------------------------</span>
+  <span class="gray">(Showing newest 5 of 47 snapshots. Pass --all to see full history)</span>
+
+  <span class="white bold">Tip:</span> Run <span class="green bold">`aegis restore &lt;number&gt;`</span> (e.g. <span class="cyan bold">`aegis restore 1`</span>) to roll back to any snapshot.
+
+<span class="prompt">PS P:\vault&gt; </span><span class="cmd">aegis restore</span>
+<span class="white bold">Select snapshot number to restore [1..47] (or 'q' to quit) [default: 1]: </span><span class="yellow bold">1</span>
+<span class="green bold">[AegisBrain] [OK] Restored 8 files from restore point '1794312006_pre_gemini_update' (cleaned 0 newly created files for zero residue)</span>
+<span class="prompt">PS P:\vault&gt; </span><span class="cursor"></span>"""
+
     screens = [
         ("screenshot-01-installer.html", "screenshot-01-installer.png", "AegisBrain Universal Installer v2.4.0 (Windows Terminal)", screen1_content, 1140, 780),
         ("screenshot-02-subagent-triage.html", "screenshot-02-subagent-triage.png", "AegisBrain 3-Tier Multi-Agent Workload Triage", screen2_content, 1140, 720),
         ("screenshot-03-briefing.html", "screenshot-03-briefing.png", "AegisBrain Zero-Prompt Autonomous Morning Briefing", screen3_content, 1140, 680),
         ("screenshot-04-fts5-recall.html", "screenshot-04-fts5-recall.png", "AegisBrain Sub-Second Neural Memory Recall (18.2ms)", screen4_content, 1140, 620),
+        ("screenshot-05-snapshot-restore.html", "screenshot-05-snapshot-restore.png", "AegisBrain Interactive Snapshot List & Zero-Residue Restore", screen5_content, 1140, 640),
     ]
 
     print("\n--- 2. Generating Terminal Screens and PNG Screenshots ---")

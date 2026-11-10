@@ -300,6 +300,32 @@ def build_scenario_frames():
         ],
         "prompt": "P:\\vault>",
         "cmd": "",
+        "duration": 3.0,
+    })
+
+    # Frame 7: Snapshot Restore Points & Zero-Residue Rollback
+    scenarios.append({
+        "title": "AegisBrain - Instant Snapshot Restore & Zero-Residue Rollback",
+        "lines": [
+            '<span class="gray">P:\\vault&gt;</span> <span class="white bold">aegis snapshot list</span>',
+            '<span class="cyan bold">============================================================================================</span>',
+            '  <span class="white bold">#   Date / Time          Files  Snapshot ID                    Reason</span>',
+            '<span class="gray">--------------------------------------------------------------------------------------------</span>',
+            ' <span class="yellow bold">[ 1]</span> <span class="cyan">2026-11-10 17:30:06</span>   <span class="green">8</span>     <span class="white bold">1794312006_pre_gemini_update</span>   Pre-update of GEMINI.md for Quick Mode',
+            ' <span class="yellow bold">[ 2]</span> <span class="cyan">2026-11-10 17:18:05</span>   <span class="green">8</span>     <span class="white bold">1794311285_universal_install</span>   AegisBrain Universal Installation',
+            ' <span class="yellow bold">[ 3]</span> <span class="cyan">2026-11-10 14:53:03</span>   <span class="green">8</span>     <span class="white bold">1794302583_pre_install</span>         Automated pre-install restore point',
+            '<span class="gray">--------------------------------------------------------------------------------------------</span>',
+            '  <span class="gray">(Showing newest 3 of 47 snapshots)</span>',
+            '',
+            '  <span class="white bold">Tip:</span> Run <span class="green bold">`aegis restore &lt;number&gt;`</span> (e.g. <span class="cyan bold">`aegis restore 1`</span>) to roll back instantly.',
+            '',
+            '<span class="gray">P:\\vault&gt;</span> <span class="white bold">aegis restore 1</span>',
+            '<span class="green bold">[AegisBrain] [OK] Restored 8 files from restore point \'1794312006_pre_gemini_update\'</span>',
+            '  <span class="white">↳ Reverted GEMINI.md, CLAUDE.md, and agent rules to exact pre-change hashes</span>',
+            '  <span class="white">↳ Zero leftover residue • Clean verified state</span>',
+        ],
+        "prompt": "P:\\vault>",
+        "cmd": "",
         "duration": 3.5,
     })
 
