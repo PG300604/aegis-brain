@@ -46,7 +46,7 @@ SEGMENTS = [
         "target_dur": 10.50,
         "camera": {
             "t_in": 1.0, "d_in": 1.2, "d_hold": 6.5, "d_out": 1.2,
-            "z_base": 1.05, "z_max": 1.70, "fx": 650, "fy": 320
+            "z_base": 1.0, "z_max": 2.10, "fx": 650, "fy": 320
         },
         "overlay": VOX_DIR / "vox_seg01.png",
         "out": EDIT_DIR / "enh_01_startup.mp4",
@@ -58,8 +58,8 @@ SEGMENTS = [
         "raw_dur": 37,
         "target_dur": 19.50,
         "camera": {
-            "t_in": 2.0, "d_in": 1.4, "d_hold": 12.5, "d_out": 1.4,
-            "z_base": 1.05, "z_max": 1.75, "fx": 750, "fy": 380
+            "t_in": 1.5, "d_in": 1.4, "d_hold": 13.0, "d_out": 1.4,
+            "z_base": 1.0, "z_max": 2.20, "fx": 750, "fy": 360
         },
         "overlay": VOX_DIR / "vox_seg02.png",
         "out": EDIT_DIR / "enh_02_briefing.mp4",
@@ -71,8 +71,8 @@ SEGMENTS = [
         "raw_dur": 75,
         "target_dur": 22.70,
         "camera": {
-            "t_in": 1.5, "d_in": 1.5, "d_hold": 16.5, "d_out": 1.5,
-            "z_base": 1.05, "z_max": 1.95, "fx": 720, "fy": 340
+            "t_in": 1.2, "d_in": 1.5, "d_hold": 17.0, "d_out": 1.5,
+            "z_base": 1.0, "z_max": 2.40, "fx": 700, "fy": 320
         },
         "overlay": VOX_DIR / "vox_seg03.png",
         "out": EDIT_DIR / "enh_03_recall.mp4",
@@ -84,8 +84,8 @@ SEGMENTS = [
         "raw_dur": 105,
         "target_dur": 21.10,
         "camera": {
-            "t_in": 2.0, "d_in": 1.4, "d_hold": 14.5, "d_out": 1.4,
-            "z_base": 1.05, "z_max": 1.85, "fx": 750, "fy": 360
+            "t_in": 1.5, "d_in": 1.4, "d_hold": 15.0, "d_out": 1.4,
+            "z_base": 1.0, "z_max": 2.30, "fx": 720, "fy": 340
         },
         "overlay": VOX_DIR / "vox_seg04.png",
         "out": EDIT_DIR / "enh_04_hierarchy.mp4",
@@ -97,8 +97,8 @@ SEGMENTS = [
         "raw_dur": 135,
         "target_dur": 23.20,
         "camera": {
-            "t_in": 2.0, "d_in": 1.5, "d_hold": 16.5, "d_out": 1.5,
-            "z_base": 1.05, "z_max": 1.90, "fx": 750, "fy": 420
+            "t_in": 1.5, "d_in": 1.5, "d_hold": 17.0, "d_out": 1.5,
+            "z_base": 1.0, "z_max": 2.35, "fx": 720, "fy": 380
         },
         "overlay": VOX_DIR / "vox_seg05.png",
         "out": EDIT_DIR / "enh_05_quality_gate.mp4",
@@ -110,8 +110,8 @@ SEGMENTS = [
         "raw_dur": 95,
         "target_dur": 16.60,
         "camera": {
-            "t_in": 1.2, "d_in": 1.2, "d_hold": 11.5, "d_out": 1.2,
-            "z_base": 1.05, "z_max": 2.05, "fx": 680, "fy": 350
+            "t_in": 1.0, "d_in": 1.2, "d_hold": 12.0, "d_out": 1.2,
+            "z_base": 1.0, "z_max": 2.45, "fx": 640, "fy": 400
         },
         "overlay": VOX_DIR / "vox_seg06.png",
         "out": EDIT_DIR / "enh_06_pytest.mp4",
@@ -123,8 +123,8 @@ SEGMENTS = [
         "raw_dur": 80,
         "target_dur": 24.60,
         "camera": {
-            "t_in": 2.0, "d_in": 1.5, "d_hold": 18.0, "d_out": 1.5,
-            "z_base": 1.05, "z_max": 1.80, "fx": 720, "fy": 380
+            "t_in": 1.5, "d_in": 1.5, "d_hold": 18.5, "d_out": 1.5,
+            "z_base": 1.0, "z_max": 2.25, "fx": 700, "fy": 360
         },
         "overlay": VOX_DIR / "vox_seg07.png",
         "out": EDIT_DIR / "enh_07_standalone.mp4",
@@ -136,8 +136,8 @@ SEGMENTS = [
         "raw_dur": 60,
         "target_dur": 12.70,
         "camera": {
-            "t_in": 1.5, "d_in": 1.2, "d_hold": 7.5, "d_out": 1.2,
-            "z_base": 1.05, "z_max": 1.85, "fx": 700, "fy": 440
+            "t_in": 1.2, "d_in": 1.2, "d_hold": 8.0, "d_out": 1.2,
+            "z_base": 1.0, "z_max": 2.30, "fx": 680, "fy": 420
         },
         "overlay": VOX_DIR / "vox_seg08.png",
         "out": EDIT_DIR / "enh_08_rollback.mp4",
@@ -149,8 +149,8 @@ SEGMENTS = [
         "raw_dur": 24,
         "target_dur": 13.50,
         "camera": {
-            "t_in": 1.5, "d_in": 1.2, "d_hold": 8.5, "d_out": 1.2,
-            "z_base": 1.05, "z_max": 1.70, "fx": 750, "fy": 380
+            "t_in": 1.2, "d_in": 1.2, "d_hold": 9.0, "d_out": 1.2,
+            "z_base": 1.0, "z_max": 2.00, "fx": 720, "fy": 380
         },
         "overlay": VOX_DIR / "vox_seg09.png",
         "out": EDIT_DIR / "enh_09_briefing_full.mp4",
@@ -275,13 +275,14 @@ def stitch_and_master():
     print("\n--- 3. Merging Master Audio & Burning Editorial Subtitles ---")
     sub_vtt_escaped = str(SUBTITLES_VTT).replace("\\", "/").replace(":", "\\:")
     sub_style = (
-        "FontSize=12.0,"
+        "FontSize=16.0,"
         "FontName=Segoe UI,"
+        "Bold=1,"
         "PrimaryColour=&H00FFFFFF,"
         "OutlineColour=&H00000000,"
-        "BackColour=&HD012131A,"
-        "BorderStyle=4,"
-        "MarginV=28,"
+        "BackColour=&HA0000000,"
+        "BorderStyle=3,"
+        "MarginV=38,"
         "Alignment=2"
     )
 

@@ -1,42 +1,54 @@
+WEBVTT
+
 1
-00:00:00,100 --> 00:00:07,954
-Welcome to AegisBrain, the open-source neural memory bus and three-tier token arbitrage orchestrator for AI coding agents.
+00:00:08,000 --> 00:00:18,455
+Every developer using AI agents faces two major bottlenecks:
+context amnesia across sessions, and token burn on repetitive boilerplate.
 
 2
-00:00:07,904 --> 00:00:18,455
-Every developer using AI agents faces two major bottlenecks: context amnesia across sessions, and spending expensive frontier tokens on repetitive boilerplate.
+00:00:18,455 --> 00:00:25,637
+Today, we demonstrate how AegisBrain solves this
+on a real-world mock project inside the Antigravity CLI.
 
 3
-00:00:18,455 --> 00:00:25,637
-Today, we demonstrate how AegisBrain solves this on a real-world mock project inside the Antigravity CLI.
+00:00:25,637 --> 00:00:37,977
+When we launch Antigravity, AegisBrain's zero-UI pre-flight routine executes autonomously,
+injecting active session context, milestones, and radar in under 400 tokens.
 
 4
-00:00:25,637 --> 00:00:37,977
-When we launch Antigravity, AegisBrain's zero-UI pre-flight routine executes autonomously, injecting active session context, milestones, and system radar in under four hundred tokens.
+00:00:37,977 --> 00:00:46,311
+Next, we ask the agent to implement a production Redis rate limiter
+with burst protection for our ApexPay API gateway.
 
 5
-00:00:37,977 --> 00:00:46,311
-Next, we ask the agent to implement a production Redis token bucket rate limiter with burst protection for our ApexPay API gateway.
+00:00:46,311 --> 00:00:53,500
+Instead of crawling 60,000 tokens of unindexed session history,
+AegisBrain executes a sub-second SQLite FTS5 recall in 18 milliseconds...
 
 6
-00:00:46,311 --> 00:01:00,661
-Instead of crawling sixty thousand tokens of unindexed session history, AegisBrain executes a sub-second SQLite FTS5 recall in just eighteen milliseconds, retrieving previous architectural invariants with zero token waste.
+00:00:53,500 --> 00:01:00,661
+...retrieving previous architectural invariants
+with zero token waste.
 
 7
 00:01:00,661 --> 00:01:05,906
-Watch how AegisBrain organizes work through our three-tier multi-agent hierarchy.
+Watch how AegisBrain organizes work
+through our 3-tier multi-agent hierarchy.
 
 8
 00:01:05,906 --> 00:01:11,838
-The frontier model acts as the Tier 1 Senior Boss, locking down strict invariants.
+The frontier model acts as the Tier 1 Senior Boss,
+locking down strict architectural invariants.
 
 9
 00:01:11,838 --> 00:01:21,776
-It spawns a Tier 2 Junior Boss subagent, which dispatches raw candidate code generation directly to our Tier 3 local worker CLI, Hermes Agent.
+It spawns a Tier 2 Junior Boss subagent, which dispatches candidate code generation
+directly to our Tier 3 local worker CLI, Hermes Agent.
 
 10
 00:01:21,776 --> 00:01:29,166
-Hermes synthesizes the Lua scripts and limiter logic locally on our GPU at zero frontier API cost.
+Hermes synthesizes the Lua scripts and limiter logic
+locally on our GPU at zero frontier API cost.
 
 11
 00:01:29,166 --> 00:01:33,088
@@ -44,15 +56,18 @@ But AegisBrain never blindly trusts raw drafts.
 
 12
 00:01:33,088 --> 00:01:45,024
-Our Tier 2 subagent audits the code through the four-decision quality architecture gate, catching Lua float conversion flaws, removing polite conversational slop, and enforcing Karpathy simplicity.
+Our Tier 2 subagent audits code through the 4-decision quality gate:
+catching Lua float precision flaws, scrubbing conversational slop, and enforcing Karpathy simplicity.
 
 13
 00:01:45,024 --> 00:01:53,125
-When the implementation is finalized, the test suite runs: all eleven unit tests pass in zero point seven two seconds.
+When the implementation is finalized, the test suite runs:
+all 11 unit tests pass in 0.72 seconds.
 
 14
 00:01:53,125 --> 00:02:01,617
-The architectural decision is committed to persistent neural memory, and the security scanner certifies zero secrets and zero vulnerabilities.
+The architectural decision is committed to persistent neural memory,
+and the security scanner certifies zero secrets and zero vulnerabilities.
 
 15
 00:02:01,617 --> 00:02:06,924
@@ -60,7 +75,8 @@ Now, we exit the CLI to demonstrate AegisBrain's standalone tools.
 
 16
 00:02:06,924 --> 00:02:12,671
-Because AegisBrain is cross-assistant, any tool can be executed directly from the terminal.
+Because AegisBrain is cross-assistant,
+any tool can be executed directly from the terminal.
 
 17
 00:02:12,671 --> 00:02:17,328
@@ -68,7 +84,8 @@ We run "aegis recall" to verify our newly indexed decision.
 
 18
 00:02:17,328 --> 00:02:26,262
-Next, "aegis challenge" performs a truth-seeking security audit on our rate limiter, rejecting sycophancy and validating AST safety.
+Next, "aegis challenge" performs a truth-seeking security audit on our rate limiter,
+rejecting sycophancy and validating AST safety.
 
 19
 00:02:26,262 --> 00:02:31,801
@@ -76,13 +93,15 @@ Before pushing changes, "aegis snapshot" creates a cryptographic restore point.
 
 20
 00:02:31,801 --> 00:02:39,031
-And if an experiment ever fails, "aegis restore" rolls back the entire workspace with zero residual files.
+And if an experiment ever fails, "aegis restore" rolls back
+the entire workspace with zero residual files.
 
 21
 00:02:39,031 --> 00:02:45,012
-Finally, "aegis briefing" provides a complete morning dashboard in under twenty milliseconds.
+Finally, "aegis briefing" provides a complete morning dashboard
+in under twenty milliseconds.
 
 22
 00:02:45,012 --> 00:02:56,360
-AegisBrain is open source under GPLv3. Check out the v2.4.0 release on GitHub at PG300604 slash aegis-brain.
-
+AegisBrain is open source under GPLv3.
+Check out the v2.4.0 release on GitHub at PG300604/aegis-brain.

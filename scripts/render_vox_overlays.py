@@ -29,7 +29,7 @@ SEGMENTS_VOX = [
         "tag": "DOC 02 · ZERO-UI PRE-FLIGHT",
         "metric": "18.2ms INGESTION",
         "desc": "Active session radar, restore point #1 and priorities loaded",
-        "hl_box": {"x": 80, "y": 380, "w": 620, "h": 36},
+        "hl_box": None,
         "red_loop": None,
     },
     {
@@ -37,8 +37,8 @@ SEGMENTS_VOX = [
         "tag": "DOC 03 · SQLITE FTS5 RECALL",
         "metric": "18.2ms vs 60,420 TOKENS",
         "desc": "Retrieves verified rate limiter invariants with zero token crawl",
-        "hl_box": {"x": 80, "y": 320, "w": 750, "h": 40},
-        "red_loop": {"x": 280, "y": 420, "w": 280, "h": 65},
+        "hl_box": None,
+        "red_loop": None,
     },
     {
         "id": "vox_seg04",
@@ -46,14 +46,14 @@ SEGMENTS_VOX = [
         "metric": "92.4% TOKENS SAVED",
         "desc": "Tier 1 Boss delegates boilerplate to Tier 3 Hermes CLI on local GPU",
         "hl_box": None,
-        "red_loop": {"x": 100, "y": 350, "w": 480, "h": 70},
+        "red_loop": None,
     },
     {
         "id": "vox_seg05",
         "tag": "DOC 05 · 4-STAGE ARCHITECTURE GATE",
         "metric": "FLAW COACHED & FIXED",
         "desc": "Caught Lua float precision issue • 100% Unslop & Karpathy simplicity",
-        "hl_box": {"x": 80, "y": 410, "w": 680, "h": 38},
+        "hl_box": None,
         "red_loop": None,
     },
     {
@@ -62,14 +62,14 @@ SEGMENTS_VOX = [
         "metric": "11/11 PASSED (0.72s)",
         "desc": "All unit tests pass • AST security scanner certifies 0 secrets",
         "hl_box": None,
-        "red_loop": {"x": 180, "y": 280, "w": 340, "h": 80},
+        "red_loop": None,
     },
     {
         "id": "vox_seg07",
         "tag": "DOC 07 · STANDALONE TERMINAL SUITE",
         "metric": "VERIFIED_SOUND",
         "desc": "aegis recall & aegis challenge truth-seeking AST audit in PowerShell",
-        "hl_box": {"x": 80, "y": 360, "w": 640, "h": 36},
+        "hl_box": None,
         "red_loop": None,
     },
     {
@@ -78,14 +78,14 @@ SEGMENTS_VOX = [
         "metric": "8 FILES RESTORED",
         "desc": "1-click snapshot restore rolls back workspace with zero residual dirt",
         "hl_box": None,
-        "red_loop": {"x": 220, "y": 430, "w": 380, "h": 75},
+        "red_loop": None,
     },
     {
         "id": "vox_seg09",
         "tag": "DOC 09 · MORNING RADAR BRIEFING",
         "metric": "18.2ms DASHBOARD",
         "desc": "Complete morning briefing table: completed tasks, news radar & priorities",
-        "hl_box": {"x": 80, "y": 360, "w": 720, "h": 38},
+        "hl_box": None,
         "red_loop": None,
     },
 ]
@@ -162,8 +162,8 @@ def render_vox_html(item):
   /* Bottom-Right Evidence Index Card */
   .note-card {{
     position: absolute;
-    bottom: 44px;
-    right: 48px;
+    bottom: 64px;
+    right: 55px;
     background: #F6F4EE;
     color: #171716;
     border-left: 4px solid #B8433F;

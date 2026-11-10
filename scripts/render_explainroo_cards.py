@@ -34,7 +34,7 @@ INTRO_HTML = """<!DOCTYPE html>
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 70px 100px;
+    padding: 60px 100px 140px 100px;
     color: #F4F4F6;
   }
 
@@ -211,7 +211,7 @@ OUTRO_HTML = """<!DOCTYPE html>
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 70px 100px;
+    padding: 60px 100px 140px 100px;
     color: #F4F4F6;
   }
 
