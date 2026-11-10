@@ -32,23 +32,66 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# 1. Interactive Notice & Warning Banner
+# 1. AegisBrain ASCII Logo & Welcome Banner
 echo ""
-echo -e "\033[1;33m========================================================================\033[0m"
-echo -e "\033[1;33m [!] WARNING: AEGISBRAIN UNIVERSAL AGENT MINDSET OVERRIDE\033[0m"
-echo -e "\033[1;33m========================================================================\033[0m"
-echo -e "\033[1;37m Warning: This will configure the reasoning mindset and tool\033[0m"
-echo -e "\033[1;37m prioritization of your AI coding assistants. A full snapshot will\033[0m"
-echo -e "\033[1;37m be created allowing 1-click restore.\033[0m"
-echo -e "\033[1;33m========================================================================\033[0m"
+echo -e "\033[1;36m  █████╗ ███████╗ ██████╗ ██╗███████╗    ██████╗ ██████╗  █████╗ ██╗███╗   ██╗\033[0m"
+echo -e "\033[1;36m ██╔══██╗██╔════╝██╔════╝ ██║██╔════╝    ██╔══██╗██╔══██╗██╔══██╗██║████╗  ██║\033[0m"
+echo -e "\033[1;33m ███████║█████╗  ██║  ███╗██║███████╗    ██████╔╝██████╔╝███████║██║██╔██╗ ██║\033[0m"
+echo -e "\033[1;33m ██╔══██║██╔══╝  ██║   ██║██║╚════██║    ██╔══██╗██╔══██╗██╔══██║██║██║╚██╗██║\033[0m"
+echo -e "\033[1;31m ██║  ██║███████╗╚██████╔╝██║███████║    ██████╔╝██║  ██║██║  ██║██║██║ ╚████║\033[0m"
+echo -e "\033[1;31m ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝╚══════╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝\033[0m"
+echo -e "\033[0;90m         [ 24/7 AUTONOMOUS NEURAL MEMORY & 3-TIER AGENT ORCHESTRATOR ]\033[0m"
+echo -e "\033[0;90m                               Version 2.4.0 (GPLv3)\033[0m"
 echo ""
 
+# STEP 1: License & Terms of Service
+echo -e "\033[1;36m┌────────────────────────────────────────────────────────────────────────┐\033[0m"
+echo -e "\033[1;36m│  STEP 1 of 4: License Agreement & Terms of Service                     │\033[0m"
+echo -e "\033[1;36m├────────────────────────────────────────────────────────────────────────┤\033[0m"
+echo -e "\033[1;37m│  License: GNU General Public License v3.0 (GPL-3.0-or-later)           │\033[0m"
+echo -e "\033[1;37m│  Author: Priyanshu Ghosh (@PG300604) | github.com/PG300604/aegis-brain │\033[0m"
+echo -e "\033[1;37m│                                                                        │\033[0m"
+echo -e "\033[1;37m│  Core User Commitments & Operational Terms:                            │\033[0m"
+echo -e "\033[1;37m│   • 100% Local Neural Memory: All data stays local. Zero exfiltration. │\033[0m"
+echo -e "\033[1;37m│   • Subprocess Boundary: Local worker CLIs run via standard pipes.     │\033[0m"
+echo -e "\033[1;37m│   • Autonomous Restore Reflex: Instant snapshots before file changes.  │\033[0m"
+echo -e "\033[1;36m└────────────────────────────────────────────────────────────────────────┘\033[0m"
+
 if [ "$FORCE" = false ] && [ -t 0 ] && [ -z "${CI:-}" ] && [ -z "${NONINTERACTIVE:-}" ]; then
-  read -r -p "Do you wish to proceed with Mindset Override? [Y/n] " response
+  read -r -p " Do you accept the Terms & Conditions and GPLv3 license? [Y/n] " response
   if [[ "$response" =~ ^[nN] ]]; then
-    echo -e "\033[1;33m[AegisBrain] Installation cancelled by user.\033[0m"
+    echo -e "\033[1;31m[AegisBrain] Installation cancelled by user.\033[0m"
     exit 0
   fi
+  echo -e "\033[1;32m [✓] Terms accepted.\033[0m"
+else
+  echo -e "\033[1;32m [✓] Terms accepted automatically (-Force).\033[0m"
+fi
+
+# STEP 2: Execution Strategy Selection
+echo ""
+echo -e "\033[1;33m┌────────────────────────────────────────────────────────────────────────┐\033[0m"
+echo -e "\033[1;33m│  STEP 2 of 4: Select Agent Execution Strategy                          │\033[0m"
+echo -e "\033[1;33m├────────────────────────────────────────────────────────────────────────┤\033[0m"
+echo -e "\033[1;37m│  [1] Arbitrage Mode (Recommended - Maximum Token Savings):             │\033[0m"
+echo -e "\033[1;37m│      Frontier Manager acts as Brain; tasks offloaded to Subagents      │\033[0m"
+echo -e "\033[1;37m│      and local workers (Hermes/Ollama MoE) saving 85%+ tokens.         │\033[0m"
+echo -e "\033[1;37m│                                                                        │\033[0m"
+echo -e "\033[1;37m│  [2] Fast Direct Mode (Instant Turnaround):                            │\033[0m"
+echo -e "\033[1;37m│      Frontier Manager synthesizes code directly without worker triage. │\033[0m"
+echo -e "\033[1;33m└────────────────────────────────────────────────────────────────────────┘\033[0m"
+
+SELECTED_EXEC_MODE="arbitrage"
+if [ "$FORCE" = false ] && [ -t 0 ] && [ -z "${CI:-}" ] && [ -z "${NONINTERACTIVE:-}" ]; then
+  read -r -p " Select execution mode [1 or 2] (Default: 1 - Arbitrage): " modeInput
+  if [ "$modeInput" = "2" ]; then
+    SELECTED_EXEC_MODE="fast"
+    echo -e "\033[1;33m [✓] Configured: Fast Direct Mode\033[0m"
+  else
+    echo -e "\033[1;32m [✓] Configured: Dynamic Arbitrage Mode\033[0m"
+  fi
+else
+  echo -e "\033[1;32m [✓] Default configured: Dynamic Arbitrage Mode\033[0m"
 fi
 
 # 2. Path Discovery

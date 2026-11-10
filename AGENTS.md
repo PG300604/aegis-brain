@@ -41,7 +41,22 @@
   5. If errors or flaws are found, Tier 2 generates a targeted coaching correction prompt and re-invokes the CLI worker.
   6. **Escalation Exception**: ONLY when the worker repeatedly fails or commits too many errors across retries (or on mission-critical architectural tasks), the Subagent constructs an Escalation Dossier and escalates to Tier 1 Senior Boss for direct takeover.
 
-### 5. Anti-Slop & Clean Typography Directives
+### 5. Dynamic Dual-Mode Triage Protocol (Arbitrage Mode vs Fast Mode)
+- **Default Mode: ARBITRAGE (Maximum Token Savings)**:
+  - For all substantial, multi-line, or multi-step tasks, Tier 1 Senior Boss MUST follow the 3-Tier hierarchy:
+    1. Formulate architecture, boundaries, and test assertions.
+    2. Spawn Tier 2 Subagent (`invoke_subagent`).
+    3. Tier 2 Subagent executes Tier 3 worker CLI (`hermes chat -q`, `ollama run qwen2.5-coder:7b`, `opencode`) using `run_command` with free/local tokens.
+    4. Tier 2 audits output via the 4-Gate architecture (Simplicity, Unslop, Red-team security, Dual-env verification).
+  - Always inform the user of the active triage strategy via `aegis triage "<task>"`.
+- **Fast Mode (Instant Turnaround Override)**:
+  - Activated ONLY when the user explicitly requests rapid delivery ("quick", "fast", "urgent", "instant", "asap") or sets `aegis mode --execution fast`.
+  - In Fast Mode, Tier 1 Senior Boss may execute directly without worker roundtrips when speed is prioritized over token arbitrage.
+- **User Agency**:
+  - When a macro task begins and the mode is ambiguous, ask the user or explicitly confirm:
+    `"⚡ [Aegis Triage] Running in Arbitrage Mode (spawning subagents + local workers to save tokens). Say 'quick' anytime to switch to Fast Direct Mode."`
+
+### 6. Anti-Slop & Clean Typography Directives
 - **Zero Hashtag & Formatting Noise**: Never begin responses or CLI prints with raw markdown `#` or `###` headers, or decorative `---` dividers.
 - **Zero Emoji Clutter**: Strictly eliminate gratuitous emojis (`🌅`, `🌐`, `🔥`, `🐙`, `⚠️`, `❓`, `🧠`, `✅`, `🛡️`).
 - **Direct & Concise Communication**: Present information cleanly in natural bullet points (`  • `). State facts, actions, and code without conversational preamble or self-congratulatory meta-commentary.

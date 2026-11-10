@@ -20,6 +20,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from .hardware import get_hardware_status, recommend_model_tier
 from .confidence import recommend_agent, get_agent_confidence
+from .config import get_execution_mode
 
 
 class SeverityLevel(str, Enum):
@@ -116,9 +117,17 @@ class SeverityTriageEngine:
         r"\b(typo|spelling|one\s+word|single\s+word|fix\s+typo|fix\s+spelling|rename\s+variable|minor\s+tweak|small\s+tweak|quick\s+fix|1-line|one\s+line)\b",
     ]
 
+    FAST_PATTERNS = [
+        r"\b(quick|fast|rapid|urgent|rush|asap|direct\s+mode|fast\s+mode|instant)\b",
+    ]
+
     @classmethod
     def evaluate(cls, task: str, context: Optional[str] = None) -> TriageDecision:
         lower_task = (task + " " + (context or "")).lower()
+
+        # 0. Check Execution Mode (Arbitrage vs Fast)
+        configured_mode = get_execution_mode()
+        user_wants_fast = any(re.search(pat, lower_task) for pat in cls.FAST_PATTERNS) or configured_mode == "fast"
 
         # 1. Inspect PC Hardware Status (RAM & CPU load) to prevent bottlenecks
         hw = get_hardware_status()
@@ -191,8 +200,12 @@ class SeverityTriageEngine:
             subagents_count = 1 if bottleneck_risk == "MEDIUM" else 2
             workers_per_sub = 2
 
-        # 4. Strategy & Worker Assignment based on Severity + Hardware Headroom
-        if severity == SeverityLevel.CRITICAL:
+        # 4. Strategy & Worker Assignment based on Severity + Hardware Headroom + Execution Mode
+        if user_wants_fast:
+            strategy = ExecutionStrategy.FRONTIER_DIRECT
+            recommended_worker = "frontier_manager"
+            rationale = "Fast Mode active (user requested rapid turnaround): executing directly via Frontier Manager."
+        elif severity == SeverityLevel.CRITICAL:
             strategy = ExecutionStrategy.FRONTIER_DIRECT
             recommended_worker = "frontier_manager"
             rationale = "High-security or user-flagged critical priority requires Frontier direct navigation."
@@ -208,11 +221,11 @@ class SeverityTriageEngine:
             strategy = ExecutionStrategy.LOCAL_WORKER_WITH_MANAGER_REVIEW
             best_worker = recommend_agent("code_synthesis")
             recommended_worker = best_worker if best_worker != "frontier_manager" else "qwen2.5-coder:7b"
-            rationale = "Boilerplate/testing task routed to parallel local workers to preserve frontier tokens (Boss-Worker)."
+            rationale = "Arbitrage Mode: Routine task routed to Tier 2 Subagent + Local Worker (Hermes/Ollama) to preserve tokens."
         else:
-            strategy = ExecutionStrategy.LOCAL_WORKER_WITH_MANAGER_REVIEW
+            strategy = ExecutionStrategy.PARALLEL_SUBAGENTS
             recommended_worker = "hermes"
-            rationale = "Balanced task delegated to parallel local workers with junior boss verification."
+            rationale = "Arbitrage Mode: Substantial task routed to Tier 2 Subagents with Tier 3 Hermes/Ollama CLI synthesis to save tokens."
 
         return TriageDecision(
             task=task,

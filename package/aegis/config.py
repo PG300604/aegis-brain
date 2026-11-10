@@ -55,6 +55,38 @@ def DB_PATH() -> Path:
     return get_db_path()
 
 
+def get_execution_mode_file() -> Path:
+    return get_aegis_dir() / "execution_mode.txt"
+
+
+def get_execution_mode() -> str:
+    """Return 'arbitrage' (3-Tier Token Saving) or 'fast' (Direct Frontier). Defaults to 'arbitrage'."""
+    env_mode = os.environ.get("AEGIS_EXECUTION_MODE")
+    if env_mode in ("arbitrage", "fast"):
+        return env_mode
+
+    mode_file = get_execution_mode_file()
+    if mode_file.exists():
+        try:
+            mode = mode_file.read_text(encoding="utf-8").strip().lower()
+            if mode in ("arbitrage", "fast"):
+                return mode
+        except Exception:
+            pass
+    return "arbitrage"
+
+
+def set_execution_mode(mode: str) -> str:
+    """Set execution mode ('arbitrage' or 'fast')."""
+    cleaned = mode.strip().lower()
+    if cleaned not in ("arbitrage", "fast"):
+        raise ValueError("Execution mode must be either 'arbitrage' or 'fast'")
+
+    os.environ["AEGIS_EXECUTION_MODE"] = cleaned
+    get_execution_mode_file().write_text(cleaned, encoding="utf-8")
+    return cleaned
+
+
 def get_current_mode() -> str:
     """Return 'public' or 'private'. Defaults to 'public'."""
     env_mode = os.environ.get("AEGIS_MODE")

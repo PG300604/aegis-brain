@@ -80,8 +80,8 @@ def _enable_windows() -> Tuple[bool, str]:
 
     log_path = Path.home() / ".aegis-brain" / "daemon.log"
     # Prefer pythonw.exe on Windows for zero-console headless execution
-    pythonw_runner = runner.parent / "pythonw.exe"
-    actual_runner = pythonw_runner if pythonw_runner.exists() else runner
+    pythonw_runner = Path(runner).parent / "pythonw.exe"
+    actual_runner = str(pythonw_runner) if pythonw_runner.exists() else runner
 
     # VBScript executes completely headlessly (0 = invisible window, False = don't wait, On Error Resume Next suppresses dialogs)
     vbs_content = f'''On Error Resume Next
