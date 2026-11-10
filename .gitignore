@@ -15,3 +15,5 @@ venv/
 *.db-shm
 .DS_Store
 scratch/
+assets/marketing/linkedin_demo/frames/
+hacker_news_post.txt

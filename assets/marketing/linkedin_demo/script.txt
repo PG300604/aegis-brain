@@ -1,0 +1,13 @@
+Every AI coding agent faces two massive bottlenecks: context amnesia and token waste. Crawling sixty-thousand-token session transcripts just to recall an architectural decision drains your budget and causes frustrating latency.
+
+Meet AegisBrain.
+
+With our SQLite FTS5 neural memory bus, developer agents recall past decisions, schemas, and invariants in under twenty milliseconds, consuming less than four hundred tokens.
+
+When heavy boilerplate or unit test suites are needed, AegisBrain's dynamic triage delegates code generation to local models like Qwen 2.5 Coder or Hermes, slashing frontier model costs by over ninety percent.
+
+Before any code touches your repository, it must pass our automated four-stage quality gate: enforcing Karpathy simplicity, stripping LLM conversational slop, blocking command injection vulnerabilities, and verifying isolated unit tests.
+
+And if you ever need to roll back, AegisBrain's zero-residue snapshot engine lets you restore with a single keystroke.
+
+AegisBrain is open source under GPLv3. Check out the v2.4.0 release on GitHub at PG300604 slash aegis-brain.
