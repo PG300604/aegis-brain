@@ -16,6 +16,10 @@ venv/
 .DS_Store
 scratch/
 assets/marketing/linkedin_demo/frames/
+assets/marketing/linkedin_demo/debug_frames/
+assets/marketing/linkedin_demo/debug_recall/
+assets/marketing/linkedin_demo/test_zooms/
+assets/marketing/linkedin_demo/raw_inspection/
 assets/marketing/linkedin_demo/master_edit/seg_*.mp4
 assets/marketing/linkedin_demo/master_edit/enh_*.mp4
 assets/marketing/linkedin_demo/master_edit/stitched_*.mp4

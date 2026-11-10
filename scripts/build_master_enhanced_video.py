@@ -2,13 +2,16 @@
 
 Architecture Integration:
 1. Explainroo (vincentsch/explainroo):
-   - Editorial explainer design: question-first intro card and product-launch outro card
-   - High-readability studio canvas (#0E0F14), clean typography, concrete metrics
+   - Editorial explainer design: unslopped deep-tech architecture intro card & launch outro card
+   - High-readability studio canvas (#0A0B0E), Inter/SF Pro typography, telemetry specs
 2. Huashu Art Motion (alchaincyf/huashu-art-motion - Y2 Vox):
    - Dynamic continuous camera movement (ZOOM-IN and ZOOM-OUT) via mathematical easing
-   - Pushes in smoothly (1.05x -> 1.85x – 2.05x) to focal points (prompt typing, test results, code diffs)
-   - Holds on the close-up, then smoothly pulls back to overview
-   - Authentic Vox documentary clippings: corner tape badges, yellow highlighter sweeps, red marker circles
+   - Calibrated focal points with fx=600 anchor (zero left margin text crop)
+   - Targets exact action areas: prompt typing (fy=720), Hermes synthesis (fy=740), pytest output (fy=560), standalone CLI (fy=820), rollback (fy=840)
+   - Authentic Vox documentary clippings: corner tape badges (DOC 01-09) and note cards
+3. Active Word-by-Word Focus Captions:
+   - Word-level synchronization from master_narration_focus.ass
+   - Highlights active spoken word in vibrant amber/gold (#FFE020) on charcoal background pill
 """
 
 import os
@@ -25,13 +28,15 @@ EDIT_DIR.mkdir(parents=True, exist_ok=True)
 
 RAW_VIDEO = Path(r"C:\Users\priya\Downloads\export-1794342963909.mp4")
 AUDIO_PATH = MARKETING_DIR / "master_narration.mp3"
-SUBTITLES_VTT = MARKETING_DIR / "master_narration.vtt"
+SUBTITLES_ASS = MARKETING_DIR / "master_narration_focus.ass"
 OUTPUT_MP4 = MARKETING_DIR / "aegis-brain-linkedin-master-edit.mp4"
 DOWNLOADS_OUTPUT = Path(r"C:\Users\priya\Downloads\AegisBrain_LinkedIn_Master_Demo_1080p.mp4")
 
 # Total Planned Duration: 184.00s (Audio: 176.40s + 7.60s outro music fade-out)
+# Terminal bounds: Left=96, Right=1824, Top=68, Bottom=940. Text starts at x=115.
+# With fx=600 and z_max=1.75-1.80, window starts around x=52-70, fully capturing the left margin without cropping text.
 SEGMENTS = [
-    # Seg 0: Explainroo Question Intro Card (8.00s)
+    # Seg 0: Explainroo Deep-Tech Architecture Intro Card (8.00s)
     {
         "type": "image",
         "file": EDIT_DIR / "intro_card.png",
@@ -46,7 +51,7 @@ SEGMENTS = [
         "target_dur": 10.50,
         "camera": {
             "t_in": 1.0, "d_in": 1.2, "d_hold": 6.5, "d_out": 1.2,
-            "z_base": 1.0, "z_max": 2.10, "fx": 650, "fy": 320
+            "z_base": 1.0, "z_max": 1.70, "fx": 600, "fy": 320
         },
         "overlay": VOX_DIR / "vox_seg01.png",
         "out": EDIT_DIR / "enh_01_startup.mp4",
@@ -59,12 +64,13 @@ SEGMENTS = [
         "target_dur": 19.50,
         "camera": {
             "t_in": 1.5, "d_in": 1.4, "d_hold": 13.0, "d_out": 1.4,
-            "z_base": 1.0, "z_max": 2.20, "fx": 750, "fy": 360
+            "z_base": 1.0, "z_max": 1.75, "fx": 600, "fy": 380
         },
         "overlay": VOX_DIR / "vox_seg02.png",
         "out": EDIT_DIR / "enh_02_briefing.mp4",
     },
-    # Seg 3: Redis Limiter Prompt & Sub-Second Recall (22.70s)
+    # Seg 3: Redis Limiter Prompt Typing & Sub-Second Recall (22.70s)
+    # Zooms directly on prompt typing area at fy=720
     {
         "type": "video",
         "start": 135,
@@ -72,12 +78,12 @@ SEGMENTS = [
         "target_dur": 22.70,
         "camera": {
             "t_in": 1.2, "d_in": 1.5, "d_hold": 17.0, "d_out": 1.5,
-            "z_base": 1.0, "z_max": 2.40, "fx": 700, "fy": 320
+            "z_base": 1.0, "z_max": 1.80, "fx": 600, "fy": 720
         },
         "overlay": VOX_DIR / "vox_seg03.png",
         "out": EDIT_DIR / "enh_03_recall.mp4",
     },
-    # Seg 4: 3-Tier Multi-Agent Hierarchy (21.10s)
+    # Seg 4: 3-Tier Multi-Agent Hierarchy Dispatch (21.10s)
     {
         "type": "video",
         "start": 225,
@@ -85,12 +91,13 @@ SEGMENTS = [
         "target_dur": 21.10,
         "camera": {
             "t_in": 1.5, "d_in": 1.4, "d_hold": 15.0, "d_out": 1.4,
-            "z_base": 1.0, "z_max": 2.30, "fx": 720, "fy": 340
+            "z_base": 1.0, "z_max": 1.75, "fx": 600, "fy": 340
         },
         "overlay": VOX_DIR / "vox_seg04.png",
         "out": EDIT_DIR / "enh_04_hierarchy.mp4",
     },
     # Seg 5: Hermes Code Synthesis & 4-Stage Quality Gate (23.20s)
+    # Zooms directly on Hermes CLI worker execution at fy=740
     {
         "type": "video",
         "start": 390,
@@ -98,12 +105,13 @@ SEGMENTS = [
         "target_dur": 23.20,
         "camera": {
             "t_in": 1.5, "d_in": 1.5, "d_hold": 17.0, "d_out": 1.5,
-            "z_base": 1.0, "z_max": 2.35, "fx": 720, "fy": 380
+            "z_base": 1.0, "z_max": 1.80, "fx": 600, "fy": 740
         },
         "overlay": VOX_DIR / "vox_seg05.png",
         "out": EDIT_DIR / "enh_05_quality_gate.mp4",
     },
     # Seg 6: Unit Test Execution (11/11 passed) & AST Security (16.60s)
+    # Zooms directly on pytest summary and security certification at fy=560
     {
         "type": "video",
         "start": 815,
@@ -111,12 +119,13 @@ SEGMENTS = [
         "target_dur": 16.60,
         "camera": {
             "t_in": 1.0, "d_in": 1.2, "d_hold": 12.0, "d_out": 1.2,
-            "z_base": 1.0, "z_max": 2.45, "fx": 640, "fy": 400
+            "z_base": 1.0, "z_max": 1.80, "fx": 600, "fy": 560
         },
         "overlay": VOX_DIR / "vox_seg06.png",
         "out": EDIT_DIR / "enh_06_pytest.mp4",
     },
-    # Seg 7: Exiting CLI to Standalone Aegis Tools (24.60s)
+    # Seg 7: Standalone Aegis Tools in PowerShell (24.60s)
+    # Zooms on aegis recall and challenge typing at fy=820
     {
         "type": "video",
         "start": 980,
@@ -124,12 +133,13 @@ SEGMENTS = [
         "target_dur": 24.60,
         "camera": {
             "t_in": 1.5, "d_in": 1.5, "d_hold": 18.5, "d_out": 1.5,
-            "z_base": 1.0, "z_max": 2.25, "fx": 700, "fy": 360
+            "z_base": 1.0, "z_max": 1.80, "fx": 600, "fy": 820
         },
         "overlay": VOX_DIR / "vox_seg07.png",
         "out": EDIT_DIR / "enh_07_standalone.mp4",
     },
     # Seg 8: Zero-Residue Snapshot Rollback (12.70s)
+    # Zooms on aegis restore execution at fy=840
     {
         "type": "video",
         "start": 1060,
@@ -137,12 +147,13 @@ SEGMENTS = [
         "target_dur": 12.70,
         "camera": {
             "t_in": 1.2, "d_in": 1.2, "d_hold": 8.0, "d_out": 1.2,
-            "z_base": 1.0, "z_max": 2.30, "fx": 680, "fy": 420
+            "z_base": 1.0, "z_max": 1.75, "fx": 600, "fy": 840
         },
         "overlay": VOX_DIR / "vox_seg08.png",
         "out": EDIT_DIR / "enh_08_rollback.mp4",
     },
     # Seg 9: Full Morning Briefing Dashboard through 19:04 (13.50s)
+    # Displays full briefing table through final session exit
     {
         "type": "video",
         "start": 1120,
@@ -150,7 +161,7 @@ SEGMENTS = [
         "target_dur": 13.50,
         "camera": {
             "t_in": 1.2, "d_in": 1.2, "d_hold": 9.0, "d_out": 1.2,
-            "z_base": 1.0, "z_max": 2.00, "fx": 720, "fy": 380
+            "z_base": 1.0, "z_max": 1.65, "fx": 600, "fy": 680
         },
         "overlay": VOX_DIR / "vox_seg09.png",
         "out": EDIT_DIR / "enh_09_briefing_full.mp4",
@@ -190,13 +201,14 @@ def make_zoompan_str(c, fps=30, iw=1920, ih=1080):
         f"if(lte(on,{n_out_start}),{z_max:.2f},"
         f"if(lte(on,{n_out_end}),{z_max:.2f}-{dz:.2f}*((on-{n_out_start})/{dout}),{z_base:.2f}))))"
     )
+    # Clamp x so left margin is never cropped
     x_expr = f"min(max(0,{fx}-(iw/zoom/2)),iw-(iw/zoom))"
     y_expr = f"min(max(0,{fy}-(ih/zoom/2)),ih-(ih/zoom))"
     return f"zoompan=z='{z_expr}':x='{x_expr}':y='{y_expr}':d=1:s={iw}x{ih}:fps={fps}"
 
 
 def build_segments():
-    print("\n--- 1. Rendering All 11 Enhanced Video Segments with Dynamic Camera Motion ---")
+    print("\n--- 1. Rendering All 11 Enhanced Video Segments with Calibrated Focal Zoom ---")
     for idx, seg in enumerate(SEGMENTS):
         out_file = seg["out"]
         target_dur = seg.get("duration", seg.get("target_dur"))
@@ -272,22 +284,11 @@ def stitch_and_master():
     subprocess.run(cmd_concat, check=True, cwd=str(EDIT_DIR))
     print(f"  [OK] Stitched video created: {stitched_video.stat().st_size:,} bytes")
 
-    print("\n--- 3. Merging Master Audio & Burning Editorial Subtitles ---")
-    sub_vtt_escaped = str(SUBTITLES_VTT).replace("\\", "/").replace(":", "\\:")
-    sub_style = (
-        "FontSize=16.0,"
-        "FontName=Segoe UI,"
-        "Bold=1,"
-        "PrimaryColour=&H00FFFFFF,"
-        "OutlineColour=&H00000000,"
-        "BackColour=&HA0000000,"
-        "BorderStyle=3,"
-        "MarginV=38,"
-        "Alignment=2"
-    )
+    print("\n--- 3. Merging Master Audio & Burning Active Word-by-Word Focus Subtitles ---")
+    sub_ass_escaped = str(SUBTITLES_ASS).replace("\\", "/").replace(":", "\\:")
 
     vf_chain = (
-        f"subtitles='{sub_vtt_escaped}':force_style='{sub_style}',"
+        f"subtitles='{sub_ass_escaped}',"
         f"fade=t=out:st=182.5:d=1.5"
     )
 
@@ -301,7 +302,7 @@ def stitch_and_master():
         "-t", "184.0",
         str(OUTPUT_MP4)
     ]
-    print("Running final encode and mastering...")
+    print(f"Running final encode with active-focus subtitles from {SUBTITLES_ASS.name}...")
     subprocess.run(cmd_master, check=True)
     print(f"  [OK] Master LinkedIn Video created: {OUTPUT_MP4.stat().st_size:,} bytes")
 

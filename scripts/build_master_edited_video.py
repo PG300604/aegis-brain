@@ -1,16 +1,17 @@
 """Assemble, edit, and render the master LinkedIn demonstration video.
 
-Pipeline:
-- Slices key narrative sections from the user's 19-minute recording.
-- Applies crop-to-terminal & zoom-ins to eliminate desktop whitespace.
-- Fast-forwards long background thinking/synthesis phases (3x - 7x).
-- Overlays transparent floating feature badges with glow effects.
-- Concatenates with intro and outro title cards.
-- Synchronizes with ChristopherNeural master narration (163.68s).
-- Burns in subtitle cards with high-contrast styling.
+Key Improvements:
+- Fully implements AegisBrain website design language (Japanese craftsmanship / neo-brutalist)
+- Replaces generic glowing AI slop with crisp, high-craft HUD telemetry panels
+- Integrates native AegisBrain logo (white text + #B91C1C crimson dot) and active daemon badge
+- Features live benchmark metrics (92.4% token arbitrage, 18.2ms recall, 286/286 invariants)
+- Dynamic zoom-ins on command typing, test results (11/11 passed), and tool outputs
+- Solves abrupt ending: Segment 9 captures the complete aegis briefing through 19:04
+- Extended 11.6s outro card allows the final CTA to play out smoothly with gentle fade-out
 """
 
 import os
+import shutil
 import subprocess
 import time
 from pathlib import Path
@@ -18,135 +19,159 @@ from pathlib import Path
 REPO_ROOT = Path("P:/open-source/aegis-brain")
 MARKETING_DIR = REPO_ROOT / "assets" / "marketing" / "linkedin_demo"
 EDIT_DIR = MARKETING_DIR / "master_edit"
-BADGES_DIR = EDIT_DIR / "badges"
+HUD_DIR = EDIT_DIR / "hud_overlays"
+EDIT_DIR.mkdir(parents=True, exist_ok=True)
 
 RAW_VIDEO = Path(r"C:\Users\priya\Downloads\export-1794342963909.mp4")
 AUDIO_PATH = MARKETING_DIR / "master_narration.mp3"
 SUBTITLES_VTT = MARKETING_DIR / "master_narration.vtt"
 OUTPUT_MP4 = MARKETING_DIR / "aegis-brain-linkedin-master-edit.mp4"
+DOWNLOADS_OUTPUT = Path(r"C:\Users\priya\Downloads\AegisBrain_LinkedIn_Master_Demo_1080p.mp4")
 
+# Total Planned Duration: 184.00s (Audio: 176.40s + 7.60s graceful outro hold)
 SEGMENTS = [
-    # Seg 0: Intro Card (7.5s)
+    # Seg 0: Intro Title Card (8.00s)
     {
         "type": "image",
         "file": EDIT_DIR / "intro_card.png",
-        "duration": 7.50,
+        "duration": 8.00,
         "out": EDIT_DIR / "seg_00_intro.mp4",
     },
-    # Seg 1: Context Amnesia & Antigravity Startup (11.0s)
-    # Raw: 00:05 to 00:27 (22s @ 2.0x -> 11.0s)
+    # Seg 1: Startup & Context Ingestion (10.50s)
+    # Raw: 00:05 to 00:26 (21s @ 2.0x -> 10.5s)
     {
         "type": "video",
         "start": 5,
-        "raw_dur": 22,
-        "target_dur": 11.00,
-        "speed": 2.0,
-        "crop": "crop=1735:975:92:52,scale=1920:1080",
-        "badge": BADGES_DIR / "badge_preflight.png",
+        "raw_dur": 21,
+        "target_dur": 10.50,
+        "speed": 21.0 / 10.50,
+        "crop": "crop=1600:900:100:60,scale=1920:1080",
+        "hud": HUD_DIR / "hud_seg01.png",
         "out": EDIT_DIR / "seg_01_startup.mp4",
     },
-    # Seg 2: Pre-Flight Briefing & Mock Project Setup (19.5s)
-    # Raw: 00:28 to 01:05 (37s @ 1.897x -> 19.5s)
+    # Seg 2: Mock Project Setup & Pre-Flight Briefing (19.50s)
+    # Raw: 00:26 to 01:03 (37s @ 1.897x -> 19.5s)
     {
         "type": "video",
-        "start": 28,
+        "start": 26,
         "raw_dur": 37,
         "target_dur": 19.50,
         "speed": 37.0 / 19.50,
-        "crop": "crop=1550:872:120:60,scale=1920:1080",
-        "badge": BADGES_DIR / "badge_preflight.png",
+        "crop": "crop=1480:832:120:70,scale=1920:1080",
+        "hud": HUD_DIR / "hud_seg02.png",
         "out": EDIT_DIR / "seg_02_briefing.mp4",
     },
-    # Seg 3: Redis Limiter Prompt & Sub-Second Recall (22.6s)
-    # Raw: 02:22 to 03:40 (78s @ 3.451x -> 22.6s)
+    # Seg 3: Redis Limiter Prompt & Sub-Second Recall (22.70s)
+    # Raw: 02:15 to 03:30 (75s @ 3.304x -> 22.7s)
+    # Zoomed into command typing & SQLite FTS5 table
     {
         "type": "video",
-        "start": 142,
-        "raw_dur": 78,
-        "target_dur": 22.60,
-        "speed": 78.0 / 22.60,
-        "crop": "crop=1450:815:100:200,scale=1920:1080",
-        "badge": BADGES_DIR / "badge_recall.png",
+        "start": 135,
+        "raw_dur": 75,
+        "target_dur": 22.70,
+        "speed": 75.0 / 22.70,
+        "crop": "crop=1400:788:110:140,scale=1920:1080",
+        "hud": HUD_DIR / "hud_seg03.png",
         "out": EDIT_DIR / "seg_03_recall.mp4",
     },
-    # Seg 4: 3-Tier Multi-Agent Hierarchy & Hermes CLI (21.2s)
-    # Raw: 03:45 to 05:35 (110s @ 5.188x -> 21.2s)
+    # Seg 4: 3-Tier Multi-Agent Hierarchy & Hermes CLI (21.10s)
+    # Raw: 03:45 to 05:30 (105s @ 4.976x -> 21.1s)
+    # Zoomed into Hermes CLI command line invocation
     {
         "type": "video",
         "start": 225,
-        "raw_dur": 110,
-        "target_dur": 21.20,
-        "speed": 110.0 / 21.20,
-        "crop": "crop=1500:844:110:70,scale=1920:1080",
-        "badge": BADGES_DIR / "badge_triad.png",
+        "raw_dur": 105,
+        "target_dur": 21.10,
+        "speed": 105.0 / 21.10,
+        "crop": "crop=1450:815:100:80,scale=1920:1080",
+        "hud": HUD_DIR / "hud_seg04.png",
         "out": EDIT_DIR / "seg_04_hierarchy.mp4",
     },
-    # Seg 5: Hermes Code Synthesis & 4-Stage Quality Gate (23.2s)
+    # Seg 5: Hermes Code Synthesis & 4-Stage Quality Gate (23.20s)
     # Raw: 06:30 to 08:45 (135s @ 5.819x -> 23.2s)
+    # Zoomed into Lua code diff & flaw correction coaching loop
     {
         "type": "video",
         "start": 390,
         "raw_dur": 135,
         "target_dur": 23.20,
         "speed": 135.0 / 23.20,
-        "crop": "crop=1500:844:110:120,scale=1920:1080",
-        "badge": BADGES_DIR / "badge_quality_gate.png",
+        "crop": "crop=1450:815:100:120,scale=1920:1080",
+        "hud": HUD_DIR / "hud_seg05.png",
         "out": EDIT_DIR / "seg_05_quality_gate.mp4",
     },
-    # Seg 6: Unit Test Execution & 100% Security Certification (16.6s)
-    # Raw: 13:40 to 15:40 (120s @ 7.228x -> 16.6s)
+    # Seg 6: Unit Test Execution & AST Security Certification (16.60s)
+    # Raw: 13:35 to 15:10 (95s @ 5.723x -> 16.6s)
+    # Zoomed in tight on pytest: 11 passed in 0.72s
     {
         "type": "video",
-        "start": 820,
-        "raw_dur": 120,
+        "start": 815,
+        "raw_dur": 95,
         "target_dur": 16.60,
-        "speed": 120.0 / 16.60,
-        "crop": "crop=1450:815:100:100,scale=1920:1080",
-        "badge": BADGES_DIR / "badge_pytest.png",
+        "speed": 95.0 / 16.60,
+        "crop": "crop=1350:760:110:180,scale=1920:1080",
+        "hud": HUD_DIR / "hud_seg06.png",
         "out": EDIT_DIR / "seg_06_pytest.mp4",
     },
-    # Seg 7: Exiting CLI to Standalone Aegis Tools (24.6s)
+    # Seg 7: Exiting CLI to Standalone Aegis Tools (24.60s)
     # Raw: 16:20 to 17:40 (80s @ 3.252x -> 24.6s)
+    # Zoomed in on PowerShell running aegis recall & aegis challenge
     {
         "type": "video",
         "start": 980,
         "raw_dur": 80,
         "target_dur": 24.60,
         "speed": 80.0 / 24.60,
-        "crop": "crop=1650:928:92:52,scale=1920:1080",
-        "badge": BADGES_DIR / "badge_standalone.png",
+        "crop": "crop=1480:832:100:70,scale=1920:1080",
+        "hud": HUD_DIR / "hud_seg07.png",
         "out": EDIT_DIR / "seg_07_standalone.mp4",
     },
-    # Seg 8: Zero-Residue Snapshot Rollback & Briefing (12.0s)
-    # Raw: 17:40 to 18:55 (75s @ 6.25x -> 12.0s)
+    # Seg 8: Zero-Residue Snapshot Rollback (12.70s)
+    # Raw: 17:40 to 18:40 (60s @ 4.724x -> 12.7s)
+    # Zoomed on snapshot hash & restored 8 files
     {
         "type": "video",
         "start": 1060,
-        "raw_dur": 75,
-        "target_dur": 12.00,
-        "speed": 75.0 / 12.00,
-        "crop": "crop=1550:872:92:60,scale=1920:1080",
-        "badge": BADGES_DIR / "badge_rollback.png",
+        "raw_dur": 60,
+        "target_dur": 12.70,
+        "speed": 60.0 / 12.70,
+        "crop": "crop=1450:815:100:100,scale=1920:1080",
+        "hud": HUD_DIR / "hud_seg08.png",
         "out": EDIT_DIR / "seg_08_rollback.mp4",
     },
-    # Seg 9: Outro Card (5.48s)
+    # Seg 9: Full Morning Briefing Dashboard (13.50s)
+    # Raw: 18:40 to 19:04.17 (24s @ 1.777x -> 13.5s)
+    # Captures the complete aegis briefing output through the end of the video!
+    {
+        "type": "video",
+        "start": 1120,
+        "raw_dur": 24,
+        "target_dur": 13.50,
+        "speed": 24.0 / 13.50,
+        "crop": "crop=1480:832:100:80,scale=1920:1080",
+        "hud": HUD_DIR / "hud_seg09.png",
+        "out": EDIT_DIR / "seg_09_briefing_full.mp4",
+    },
+    # Seg 10: Master Outro Card (11.60s)
+    # Clean holding card with GitHub release, install command, and smooth fade
     {
         "type": "image",
         "file": EDIT_DIR / "outro_card.png",
-        "duration": 5.48,
-        "out": EDIT_DIR / "seg_09_outro.mp4",
+        "duration": 11.60,
+        "out": EDIT_DIR / "seg_10_outro.mp4",
     },
 ]
 
 
 def build_segments():
-    print("\n--- 1. Rendering All 10 Video Segments ---")
+    print("\n--- 1. Rendering All 11 Video Segments ---")
     for idx, seg in enumerate(SEGMENTS):
         out_file = seg["out"]
-        print(f"Rendering Segment #{idx}: {out_file.name} (Target: {seg.get('duration', seg.get('target_dur'))}s)...")
+        target_dur = seg.get("duration", seg.get("target_dur"))
+        print(f"Rendering Segment #{idx:02d}: {out_file.name} (Target: {target_dur}s)...")
         
         if seg["type"] == "image":
-            # Image loop to video
+            # Image loop to video with subtle fade in/out if desired
             cmd = [
                 "ffmpeg", "-y",
                 "-loop", "1",
@@ -157,26 +182,23 @@ def build_segments():
                 str(out_file)
             ]
             subprocess.run(cmd, check=True, capture_output=True)
-            print(f"  [OK] Image Segment #{idx} created.")
+            print(f"  [OK] Image Segment #{idx:02d} created: {out_file.stat().st_size:,} bytes")
 
         elif seg["type"] == "video":
-            # Video slice + speedup + crop + badge overlay
+            # Video slice + speedup + crop + HUD overlay
             raw_dur = seg["raw_dur"]
-            target_dur = seg["target_dur"]
             start = seg["start"]
             crop_flt = seg["crop"]
             speed = seg["speed"]
             pts_mult = 1.0 / speed
-            badge = seg["badge"]
+            hud = seg["hud"]
 
             # Filter chain:
-            # 1. crop and scale base video to 1920:1080
-            # 2. apply setpts to speed up
-            # 3. overlay badge at x=1230, y=40
-            # 4. set fps=30
+            # 1. Crop and zoom base video, apply setpts speedup
+            # 2. Overlay full 1920x1080 transparent HUD at 0:0
             filter_str = (
                 f"[0:v]{crop_flt},setpts={pts_mult}*PTS,fps=30[base]; "
-                f"[base][1:v]overlay=1230:40:shortest=1[v]"
+                f"[base][1:v]overlay=0:0[v]"
             )
 
             cmd = [
@@ -185,7 +207,7 @@ def build_segments():
                 "-t", str(raw_dur),
                 "-i", str(RAW_VIDEO),
                 "-loop", "1",
-                "-i", str(badge),
+                "-i", str(hud),
                 "-filter_complex", filter_str,
                 "-map", "[v]",
                 "-t", str(target_dur),
@@ -194,60 +216,74 @@ def build_segments():
             ]
             res = subprocess.run(cmd, capture_output=True)
             if out_file.exists() and out_file.stat().st_size > 1000:
-                print(f"  [OK] Video Segment #{idx} created: {out_file.stat().st_size:,} bytes")
+                print(f"  [OK] Video Segment #{idx:02d} created: {out_file.stat().st_size:,} bytes")
             else:
-                print(f"  [FAIL] Segment #{idx} failed: {res.stderr.decode(errors='ignore')[:300]}")
+                print(f"  [FAIL] Segment #{idx:02d} failed: {res.stderr.decode(errors='ignore')[:300]}")
 
 
 def stitch_and_master():
-    print("\n--- 2. Concatenating Segments ---")
-    concat_txt = EDIT_DIR / "concat_list.txt"
+    print("\n--- 2. Concatenating All Segments ---")
+    concat_txt = EDIT_DIR / "concat_list_v2.txt"
     with open(concat_txt, "w", encoding="utf-8") as f:
         for seg in SEGMENTS:
-            f.write(f"file '{seg['out'].as_posix()}'\n")
+            f.write(f"file '{seg['out'].name}'\n")
 
-    stitched_temp = EDIT_DIR / "stitched_temp.mp4"
-    concat_cmd = [
+    stitched_video = EDIT_DIR / "stitched_v2.mp4"
+    cmd_concat = [
         "ffmpeg", "-y",
         "-f", "concat",
         "-safe", "0",
         "-i", str(concat_txt),
         "-c", "copy",
-        str(stitched_temp)
+        str(stitched_video)
     ]
-    subprocess.run(concat_cmd, check=True, capture_output=True)
-    print(f"Stitched temporary video created: {stitched_temp.name}")
+    subprocess.run(cmd_concat, check=True, cwd=str(EDIT_DIR))
+    print(f"  [OK] Stitched video created: {stitched_video.stat().st_size:,} bytes")
 
-    print("\n--- 3. Merging Master Audio & Burning Subtitles ---")
-    # Using subtitles filter to burn in captions with semi-transparent black pill box
-    # On Windows paths, colons and backslashes need proper escaping for ffmpeg filter
-    escaped_vtt = SUBTITLES_VTT.as_posix().replace(":", r"\:")
+    print("\n--- 3. Merging Audio Narration & Burning Styled Subtitles ---")
+    # Subtitle styling: Neo-brutalist dark semi-transparent pill, crisp white text
+    sub_vtt_escaped = str(SUBTITLES_VTT).replace("\\", "/").replace(":", "\\:")
     sub_style = (
-        "FontName=Segoe UI,FontSize=10.5,PrimaryColour=&H00FFFFFF,"
-        "BackColour=&H90000000,BorderStyle=4,Outline=1,Shadow=0,MarginV=20,Alignment=2"
+        "FontSize=11.5,"
+        "FontName=Segoe UI,"
+        "PrimaryColour=&H00FFFFFF,"
+        "OutlineColour=&H00000000,"
+        "BackColour=&HB0070709,"
+        "BorderStyle=4,"
+        "MarginV=26,"
+        "Alignment=2"
     )
-    video_filter = f"subtitles='{escaped_vtt}':force_style='{sub_style}'"
+    
+    # Filter complex:
+    # Burns subtitles, applies smooth 1.5s fade-out at end (around 182.5s -> 184s)
+    vf_chain = (
+        f"subtitles='{sub_vtt_escaped}':force_style='{sub_style}',"
+        f"fade=t=out:st=182.5:d=1.5"
+    )
 
-    master_cmd = [
+    cmd_master = [
         "ffmpeg", "-y",
-        "-i", str(stitched_temp),
+        "-i", str(stitched_video),
         "-i", str(AUDIO_PATH),
-        "-vf", video_filter,
-        "-c:v", "libx264",
-        "-preset", "medium",
-        "-crf", "18",
-        "-c:a", "aac",
-        "-b:a", "192k",
-        "-shortest",
+        "-filter_complex", vf_chain,
+        "-c:v", "libx264", "-crf", "17", "-preset", "medium",
+        "-c:a", "aac", "-b:a", "192k",
+        "-t", "184.0",
         str(OUTPUT_MP4)
     ]
-    res = subprocess.run(master_cmd, capture_output=True)
-    if OUTPUT_MP4.exists() and OUTPUT_MP4.stat().st_size > 1000:
-        print(f"\n[SUCCESS] Master Video Created: {OUTPUT_MP4.name} ({OUTPUT_MP4.stat().st_size:,} bytes)!")
-    else:
-        print(f"\n[FAIL] Master video generation failed: {res.stderr.decode(errors='ignore')[:400]}")
+    print("Running final encode and mastering...")
+    subprocess.run(cmd_master, check=True)
+    print(f"  [OK] Master LinkedIn Video created: {OUTPUT_MP4.stat().st_size:,} bytes")
+
+    # Copy to Downloads
+    print(f"\n--- 4. Copying to User Downloads: {DOWNLOADS_OUTPUT} ---")
+    shutil.copy2(OUTPUT_MP4, DOWNLOADS_OUTPUT)
+    print(f"  [OK] Successfully copied to {DOWNLOADS_OUTPUT}")
 
 
 if __name__ == "__main__":
+    t0 = time.time()
     build_segments()
     stitch_and_master()
+    elapsed = time.time() - t0
+    print(f"\n✨ Video Build Complete in {elapsed:.1f}s!")

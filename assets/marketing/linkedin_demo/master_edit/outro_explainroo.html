@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: #0E0F14;
+    background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 60px 100px 140px 100px;
+    color: #F4F4F6;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .brand-chip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #171821;
+    border: 1px solid #2B2D3C;
+    padding: 10px 22px;
+    border-radius: 8px;
+  }
+  .brand-name {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #FFFFFF;
+  }
+  .brand-dot { color: #E11D48; }
+  .badge-open {
+    font-family: ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #10B981;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 8px 18px;
+    border-radius: 6px;
+  }
+
+  /* Center Content */
+  .center-box {
+    max-width: 1350px;
+  }
+  .summary-tag {
+    font-family: ui-monospace, monospace;
+    font-size: 14px;
+    font-weight: 800;
+    color: #10B981;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .outro-heading {
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1.15;
+    letter-spacing: -2px;
+    color: #FFFFFF;
+    margin-bottom: 28px;
+  }
+  .outro-heading span { color: #E11D48; }
+
+  /* Install Terminal Box */
+  .cmd-box {
+    background: #171821;
+    border: 1px solid #2B2D3C;
+    padding: 22px 36px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+  .cmd-prompt { color: #E11D48; }
+  .cmd-text { color: #10B981; }
+  .cmd-comment { color: #64748B; font-size: 18px; margin-left: 16px; }
+
+  /* Takeaways Grid (explainroo takeaways) */
+  .takeaways-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .takeaway-card {
+    background: #171821;
+    border: 1px solid #262835;
+    padding: 20px 24px;
+    border-radius: 8px;
+  }
+  .takeaway-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-bottom: 8px;
+  }
+  .check-icon {
+    color: #10B981;
+    font-weight: 900;
+    font-size: 18px;
+  }
+  .takeaway-desc {
+    font-size: 13px;
+    color: #94A3B8;
+    line-height: 1.45;
+  }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #232532;
+    padding-top: 24px;
+    font-size: 14px;
+    color: #64748B;
+    font-family: ui-monospace, monospace;
+  }
+  .footer a {
+    color: #F4F4F6;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .footer a span { color: #E11D48; }
+</style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="brand-chip">
+      <span class="brand-name">AegisBrain<span class="brand-dot">.</span></span>
+      <span class="brand-pill">Open Source</span>
+    </div>
+    <div class="badge-open">Free &amp; Open Source • GNU GPLv3</div>
+  </div>
+
+  <!-- Center Content -->
+  <div class="center-box">
+    <div class="summary-tag">✓ Ready For Production</div>
+    <h1 class="outro-heading">Add Neural Memory &amp; Token Arbitrage to Your Coding Agents<span>.</span></h1>
+
+    <!-- Terminal Command -->
+    <div class="cmd-box">
+      <span class="cmd-prompt">$</span>
+      <span class="cmd-text">pip install aegis-brain</span>
+      <span class="cmd-comment"># works with Antigravity, Hermes &amp; Ollama</span>
+    </div>
+
+    <!-- 3 Takeaway Cards -->
+    <div class="takeaways-grid">
+      <div class="takeaway-card">
+        <div class="takeaway-header"><span class="check-icon">✓</span> Zero-UI Neural Memory</div>
+        <div class="takeaway-desc">SQLite FTS5 Porter Stemmer delivers sub-second recall (&lt;18.2ms) without multi-megabyte JSONL crawls.</div>
+      </div>
+      <div class="takeaway-card">
+        <div class="takeaway-header"><span class="check-icon">✓</span> 3-Tier Multi-Agent Triad</div>
+        <div class="takeaway-desc">Frontier Manager dictates strict invariants while local GPU workers synthesize code at 0 API cost.</div>
+      </div>
+      <div class="takeaway-card">
+        <div class="takeaway-header"><span class="check-icon">✓</span> 4-Decision Quality Gates</div>
+        <div class="takeaway-desc">Enforces Karpathy Simplicity, scrubs conversational slop, and guarantees 100% AST security.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div>GitHub: <a href="https://github.com/PG300604/aegis-brain">github.com/PG300604/<span>aegis-brain</span></a></div>
+    <div>Official Release: <strong>v2.4.0 (20 Topics Configured)</strong></div>
+  </div>
+</body>
+</html>

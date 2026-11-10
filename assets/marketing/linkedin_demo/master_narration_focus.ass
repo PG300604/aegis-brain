@@ -1,0 +1,370 @@
+[Script Info]
+Title: AegisBrain Master Narration Focus Captions
+ScriptType: v4.00+
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+YCbCr Matrix: TV.709
+PlayResX: 1920
+PlayResY: 1080
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Segoe UI,32,&H00FFFFFF,&H000000FF,&H00000000,&H900D0E12,1,0,0,0,100,100,0,0,3,4,0,2,60,60,42,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:08.00,0:00:08.50,Default,,0,0,0,,{\c&H0020E0FF\b1}Every{\r} developer using AI agents faces two
+Dialogue: 0,0:00:08.50,0:00:08.99,Default,,0,0,0,,Every {\c&H0020E0FF\b1}developer{\r} using AI agents faces two
+Dialogue: 0,0:00:08.99,0:00:09.49,Default,,0,0,0,,Every developer {\c&H0020E0FF\b1}using{\r} AI agents faces two
+Dialogue: 0,0:00:09.49,0:00:09.99,Default,,0,0,0,,Every developer using {\c&H0020E0FF\b1}AI{\r} agents faces two
+Dialogue: 0,0:00:09.99,0:00:10.49,Default,,0,0,0,,Every developer using AI {\c&H0020E0FF\b1}agents{\r} faces two
+Dialogue: 0,0:00:10.49,0:00:10.99,Default,,0,0,0,,Every developer using AI agents {\c&H0020E0FF\b1}faces{\r} two
+Dialogue: 0,0:00:10.99,0:00:11.48,Default,,0,0,0,,Every developer using AI agents faces {\c&H0020E0FF\b1}two{\r}
+Dialogue: 0,0:00:11.48,0:00:11.98,Default,,0,0,0,,{\c&H0020E0FF\b1}major{\r} bottlenecks: context amnesia across sessions, and
+Dialogue: 0,0:00:11.98,0:00:12.48,Default,,0,0,0,,major {\c&H0020E0FF\b1}bottlenecks:{\r} context amnesia across sessions, and
+Dialogue: 0,0:00:12.48,0:00:12.98,Default,,0,0,0,,major bottlenecks: {\c&H0020E0FF\b1}context{\r} amnesia across sessions, and
+Dialogue: 0,0:00:12.98,0:00:13.48,Default,,0,0,0,,major bottlenecks: context {\c&H0020E0FF\b1}amnesia{\r} across sessions, and
+Dialogue: 0,0:00:13.48,0:00:13.97,Default,,0,0,0,,major bottlenecks: context amnesia {\c&H0020E0FF\b1}across{\r} sessions, and
+Dialogue: 0,0:00:13.97,0:00:14.47,Default,,0,0,0,,major bottlenecks: context amnesia across {\c&H0020E0FF\b1}sessions,{\r} and
+Dialogue: 0,0:00:14.47,0:00:14.97,Default,,0,0,0,,major bottlenecks: context amnesia across sessions, {\c&H0020E0FF\b1}and{\r}
+Dialogue: 0,0:00:14.97,0:00:15.47,Default,,0,0,0,,{\c&H0020E0FF\b1}spending{\r} expensive frontier tokens on repetitive boilerplate.
+Dialogue: 0,0:00:15.47,0:00:15.97,Default,,0,0,0,,spending {\c&H0020E0FF\b1}expensive{\r} frontier tokens on repetitive boilerplate.
+Dialogue: 0,0:00:15.97,0:00:16.46,Default,,0,0,0,,spending expensive {\c&H0020E0FF\b1}frontier{\r} tokens on repetitive boilerplate.
+Dialogue: 0,0:00:16.46,0:00:16.96,Default,,0,0,0,,spending expensive frontier {\c&H0020E0FF\b1}tokens{\r} on repetitive boilerplate.
+Dialogue: 0,0:00:16.96,0:00:17.46,Default,,0,0,0,,spending expensive frontier tokens {\c&H0020E0FF\b1}on{\r} repetitive boilerplate.
+Dialogue: 0,0:00:17.46,0:00:17.96,Default,,0,0,0,,spending expensive frontier tokens on {\c&H0020E0FF\b1}repetitive{\r} boilerplate.
+Dialogue: 0,0:00:17.96,0:00:18.45,Default,,0,0,0,,spending expensive frontier tokens on repetitive {\c&H0020E0FF\b1}boilerplate.{\r}
+Dialogue: 0,0:00:18.45,0:00:18.80,Default,,0,0,0,,{\c&H0020E0FF\b1}Today,{\r} we demonstrate how AegisBrain solves this
+Dialogue: 0,0:00:18.80,0:00:19.14,Default,,0,0,0,,Today, {\c&H0020E0FF\b1}we{\r} demonstrate how AegisBrain solves this
+Dialogue: 0,0:00:19.14,0:00:19.48,Default,,0,0,0,,Today, we {\c&H0020E0FF\b1}demonstrate{\r} how AegisBrain solves this
+Dialogue: 0,0:00:19.48,0:00:19.82,Default,,0,0,0,,Today, we demonstrate {\c&H0020E0FF\b1}how{\r} AegisBrain solves this
+Dialogue: 0,0:00:19.82,0:00:20.16,Default,,0,0,0,,Today, we demonstrate how {\c&H0020E0FF\b1}AegisBrain{\r} solves this
+Dialogue: 0,0:00:20.16,0:00:20.51,Default,,0,0,0,,Today, we demonstrate how AegisBrain {\c&H0020E0FF\b1}solves{\r} this
+Dialogue: 0,0:00:20.51,0:00:20.85,Default,,0,0,0,,Today, we demonstrate how AegisBrain solves {\c&H0020E0FF\b1}this{\r}
+Dialogue: 0,0:00:20.85,0:00:21.19,Default,,0,0,0,,{\c&H0020E0FF\b1}on{\r} a real-world mock project inside the
+Dialogue: 0,0:00:21.19,0:00:21.53,Default,,0,0,0,,on {\c&H0020E0FF\b1}a{\r} real-world mock project inside the
+Dialogue: 0,0:00:21.53,0:00:21.88,Default,,0,0,0,,on a {\c&H0020E0FF\b1}real-world{\r} mock project inside the
+Dialogue: 0,0:00:21.88,0:00:22.22,Default,,0,0,0,,on a real-world {\c&H0020E0FF\b1}mock{\r} project inside the
+Dialogue: 0,0:00:22.22,0:00:22.56,Default,,0,0,0,,on a real-world mock {\c&H0020E0FF\b1}project{\r} inside the
+Dialogue: 0,0:00:22.56,0:00:22.90,Default,,0,0,0,,on a real-world mock project {\c&H0020E0FF\b1}inside{\r} the
+Dialogue: 0,0:00:22.90,0:00:23.24,Default,,0,0,0,,on a real-world mock project inside {\c&H0020E0FF\b1}the{\r}
+Dialogue: 0,0:00:23.24,0:00:24.44,Default,,0,0,0,,{\c&H0020E0FF\b1}Antigravity{\r} CLI.
+Dialogue: 0,0:00:24.44,0:00:25.64,Default,,0,0,0,,Antigravity {\c&H0020E0FF\b1}CLI.{\r}
+Dialogue: 0,0:00:25.64,0:00:26.08,Default,,0,0,0,,{\c&H0020E0FF\b1}When{\r} we launch Antigravity, AegisBrain's zero-UI pre-flight
+Dialogue: 0,0:00:26.08,0:00:26.52,Default,,0,0,0,,When {\c&H0020E0FF\b1}we{\r} launch Antigravity, AegisBrain's zero-UI pre-flight
+Dialogue: 0,0:00:26.52,0:00:26.96,Default,,0,0,0,,When we {\c&H0020E0FF\b1}launch{\r} Antigravity, AegisBrain's zero-UI pre-flight
+Dialogue: 0,0:00:26.96,0:00:27.40,Default,,0,0,0,,When we launch {\c&H0020E0FF\b1}Antigravity,{\r} AegisBrain's zero-UI pre-flight
+Dialogue: 0,0:00:27.40,0:00:27.84,Default,,0,0,0,,When we launch Antigravity, {\c&H0020E0FF\b1}AegisBrain's{\r} zero-UI pre-flight
+Dialogue: 0,0:00:27.84,0:00:28.28,Default,,0,0,0,,When we launch Antigravity, AegisBrain's {\c&H0020E0FF\b1}zero-UI{\r} pre-flight
+Dialogue: 0,0:00:28.28,0:00:28.72,Default,,0,0,0,,When we launch Antigravity, AegisBrain's zero-UI {\c&H0020E0FF\b1}pre-flight{\r}
+Dialogue: 0,0:00:28.72,0:00:29.16,Default,,0,0,0,,{\c&H0020E0FF\b1}routine{\r} executes autonomously, injecting active session context,
+Dialogue: 0,0:00:29.16,0:00:29.60,Default,,0,0,0,,routine {\c&H0020E0FF\b1}executes{\r} autonomously, injecting active session context,
+Dialogue: 0,0:00:29.60,0:00:30.04,Default,,0,0,0,,routine executes {\c&H0020E0FF\b1}autonomously,{\r} injecting active session context,
+Dialogue: 0,0:00:30.04,0:00:30.48,Default,,0,0,0,,routine executes autonomously, {\c&H0020E0FF\b1}injecting{\r} active session context,
+Dialogue: 0,0:00:30.48,0:00:30.93,Default,,0,0,0,,routine executes autonomously, injecting {\c&H0020E0FF\b1}active{\r} session context,
+Dialogue: 0,0:00:30.93,0:00:31.37,Default,,0,0,0,,routine executes autonomously, injecting active {\c&H0020E0FF\b1}session{\r} context,
+Dialogue: 0,0:00:31.37,0:00:31.81,Default,,0,0,0,,routine executes autonomously, injecting active session {\c&H0020E0FF\b1}context,{\r}
+Dialogue: 0,0:00:31.81,0:00:32.25,Default,,0,0,0,,{\c&H0020E0FF\b1}milestones,{\r} and system radar in under four
+Dialogue: 0,0:00:32.25,0:00:32.69,Default,,0,0,0,,milestones, {\c&H0020E0FF\b1}and{\r} system radar in under four
+Dialogue: 0,0:00:32.69,0:00:33.13,Default,,0,0,0,,milestones, and {\c&H0020E0FF\b1}system{\r} radar in under four
+Dialogue: 0,0:00:33.13,0:00:33.57,Default,,0,0,0,,milestones, and system {\c&H0020E0FF\b1}radar{\r} in under four
+Dialogue: 0,0:00:33.57,0:00:34.01,Default,,0,0,0,,milestones, and system radar {\c&H0020E0FF\b1}in{\r} under four
+Dialogue: 0,0:00:34.01,0:00:34.45,Default,,0,0,0,,milestones, and system radar in {\c&H0020E0FF\b1}under{\r} four
+Dialogue: 0,0:00:34.45,0:00:34.89,Default,,0,0,0,,milestones, and system radar in under {\c&H0020E0FF\b1}four{\r}
+Dialogue: 0,0:00:34.89,0:00:36.43,Default,,0,0,0,,{\c&H0020E0FF\b1}hundred{\r} tokens.
+Dialogue: 0,0:00:36.43,0:00:37.98,Default,,0,0,0,,hundred {\c&H0020E0FF\b1}tokens.{\r}
+Dialogue: 0,0:00:37.98,0:00:38.27,Default,,0,0,0,,{\c&H0020E0FF\b1}Next,{\r} we ask the agent to implement
+Dialogue: 0,0:00:38.27,0:00:38.57,Default,,0,0,0,,Next, {\c&H0020E0FF\b1}we{\r} ask the agent to implement
+Dialogue: 0,0:00:38.57,0:00:38.87,Default,,0,0,0,,Next, we {\c&H0020E0FF\b1}ask{\r} the agent to implement
+Dialogue: 0,0:00:38.87,0:00:39.17,Default,,0,0,0,,Next, we ask {\c&H0020E0FF\b1}the{\r} agent to implement
+Dialogue: 0,0:00:39.17,0:00:39.47,Default,,0,0,0,,Next, we ask the {\c&H0020E0FF\b1}agent{\r} to implement
+Dialogue: 0,0:00:39.47,0:00:39.76,Default,,0,0,0,,Next, we ask the agent {\c&H0020E0FF\b1}to{\r} implement
+Dialogue: 0,0:00:39.76,0:00:40.06,Default,,0,0,0,,Next, we ask the agent to {\c&H0020E0FF\b1}implement{\r}
+Dialogue: 0,0:00:40.06,0:00:40.36,Default,,0,0,0,,{\c&H0020E0FF\b1}a{\r} production Redis token bucket rate limiter
+Dialogue: 0,0:00:40.36,0:00:40.66,Default,,0,0,0,,a {\c&H0020E0FF\b1}production{\r} Redis token bucket rate limiter
+Dialogue: 0,0:00:40.66,0:00:40.95,Default,,0,0,0,,a production {\c&H0020E0FF\b1}Redis{\r} token bucket rate limiter
+Dialogue: 0,0:00:40.95,0:00:41.25,Default,,0,0,0,,a production Redis {\c&H0020E0FF\b1}token{\r} bucket rate limiter
+Dialogue: 0,0:00:41.25,0:00:41.55,Default,,0,0,0,,a production Redis token {\c&H0020E0FF\b1}bucket{\r} rate limiter
+Dialogue: 0,0:00:41.55,0:00:41.85,Default,,0,0,0,,a production Redis token bucket {\c&H0020E0FF\b1}rate{\r} limiter
+Dialogue: 0,0:00:41.85,0:00:42.14,Default,,0,0,0,,a production Redis token bucket rate {\c&H0020E0FF\b1}limiter{\r}
+Dialogue: 0,0:00:42.14,0:00:42.44,Default,,0,0,0,,{\c&H0020E0FF\b1}with{\r} burst protection for our ApexPay API
+Dialogue: 0,0:00:42.44,0:00:42.74,Default,,0,0,0,,with {\c&H0020E0FF\b1}burst{\r} protection for our ApexPay API
+Dialogue: 0,0:00:42.74,0:00:43.04,Default,,0,0,0,,with burst {\c&H0020E0FF\b1}protection{\r} for our ApexPay API
+Dialogue: 0,0:00:43.04,0:00:43.33,Default,,0,0,0,,with burst protection {\c&H0020E0FF\b1}for{\r} our ApexPay API
+Dialogue: 0,0:00:43.33,0:00:43.63,Default,,0,0,0,,with burst protection for {\c&H0020E0FF\b1}our{\r} ApexPay API
+Dialogue: 0,0:00:43.63,0:00:43.93,Default,,0,0,0,,with burst protection for our {\c&H0020E0FF\b1}ApexPay{\r} API
+Dialogue: 0,0:00:43.93,0:00:44.23,Default,,0,0,0,,with burst protection for our ApexPay {\c&H0020E0FF\b1}API{\r}
+Dialogue: 0,0:00:44.23,0:00:46.31,Default,,0,0,0,,{\c&H0020E0FF\b1}gateway.{\r}
+Dialogue: 0,0:00:46.31,0:00:46.72,Default,,0,0,0,,{\c&H0020E0FF\b1}Instead{\r} of crawling sixty thousand tokens of
+Dialogue: 0,0:00:46.72,0:00:47.13,Default,,0,0,0,,Instead {\c&H0020E0FF\b1}of{\r} crawling sixty thousand tokens of
+Dialogue: 0,0:00:47.13,0:00:47.54,Default,,0,0,0,,Instead of {\c&H0020E0FF\b1}crawling{\r} sixty thousand tokens of
+Dialogue: 0,0:00:47.54,0:00:47.95,Default,,0,0,0,,Instead of crawling {\c&H0020E0FF\b1}sixty{\r} thousand tokens of
+Dialogue: 0,0:00:47.95,0:00:48.36,Default,,0,0,0,,Instead of crawling sixty {\c&H0020E0FF\b1}thousand{\r} tokens of
+Dialogue: 0,0:00:48.36,0:00:48.77,Default,,0,0,0,,Instead of crawling sixty thousand {\c&H0020E0FF\b1}tokens{\r} of
+Dialogue: 0,0:00:48.77,0:00:49.18,Default,,0,0,0,,Instead of crawling sixty thousand tokens {\c&H0020E0FF\b1}of{\r}
+Dialogue: 0,0:00:49.18,0:00:49.59,Default,,0,0,0,,{\c&H0020E0FF\b1}unindexed{\r} session history, AegisBrain executes a sub-second
+Dialogue: 0,0:00:49.59,0:00:50.00,Default,,0,0,0,,unindexed {\c&H0020E0FF\b1}session{\r} history, AegisBrain executes a sub-second
+Dialogue: 0,0:00:50.00,0:00:50.41,Default,,0,0,0,,unindexed session {\c&H0020E0FF\b1}history,{\r} AegisBrain executes a sub-second
+Dialogue: 0,0:00:50.41,0:00:50.82,Default,,0,0,0,,unindexed session history, {\c&H0020E0FF\b1}AegisBrain{\r} executes a sub-second
+Dialogue: 0,0:00:50.82,0:00:51.23,Default,,0,0,0,,unindexed session history, AegisBrain {\c&H0020E0FF\b1}executes{\r} a sub-second
+Dialogue: 0,0:00:51.23,0:00:51.64,Default,,0,0,0,,unindexed session history, AegisBrain executes {\c&H0020E0FF\b1}a{\r} sub-second
+Dialogue: 0,0:00:51.64,0:00:52.05,Default,,0,0,0,,unindexed session history, AegisBrain executes a {\c&H0020E0FF\b1}sub-second{\r}
+Dialogue: 0,0:00:52.05,0:00:52.46,Default,,0,0,0,,{\c&H0020E0FF\b1}SQLite{\r} FTS5 recall in just eighteen milliseconds,
+Dialogue: 0,0:00:52.46,0:00:52.87,Default,,0,0,0,,SQLite {\c&H0020E0FF\b1}FTS5{\r} recall in just eighteen milliseconds,
+Dialogue: 0,0:00:52.87,0:00:53.28,Default,,0,0,0,,SQLite FTS5 {\c&H0020E0FF\b1}recall{\r} in just eighteen milliseconds,
+Dialogue: 0,0:00:53.28,0:00:53.69,Default,,0,0,0,,SQLite FTS5 recall {\c&H0020E0FF\b1}in{\r} just eighteen milliseconds,
+Dialogue: 0,0:00:53.69,0:00:54.10,Default,,0,0,0,,SQLite FTS5 recall in {\c&H0020E0FF\b1}just{\r} eighteen milliseconds,
+Dialogue: 0,0:00:54.10,0:00:54.51,Default,,0,0,0,,SQLite FTS5 recall in just {\c&H0020E0FF\b1}eighteen{\r} milliseconds,
+Dialogue: 0,0:00:54.51,0:00:54.92,Default,,0,0,0,,SQLite FTS5 recall in just eighteen {\c&H0020E0FF\b1}milliseconds,{\r}
+Dialogue: 0,0:00:54.92,0:00:55.33,Default,,0,0,0,,{\c&H0020E0FF\b1}retrieving{\r} previous architectural invariants with zero token
+Dialogue: 0,0:00:55.33,0:00:55.74,Default,,0,0,0,,retrieving {\c&H0020E0FF\b1}previous{\r} architectural invariants with zero token
+Dialogue: 0,0:00:55.74,0:00:56.15,Default,,0,0,0,,retrieving previous {\c&H0020E0FF\b1}architectural{\r} invariants with zero token
+Dialogue: 0,0:00:56.15,0:00:56.56,Default,,0,0,0,,retrieving previous architectural {\c&H0020E0FF\b1}invariants{\r} with zero token
+Dialogue: 0,0:00:56.56,0:00:56.97,Default,,0,0,0,,retrieving previous architectural invariants {\c&H0020E0FF\b1}with{\r} zero token
+Dialogue: 0,0:00:56.97,0:00:57.38,Default,,0,0,0,,retrieving previous architectural invariants with {\c&H0020E0FF\b1}zero{\r} token
+Dialogue: 0,0:00:57.38,0:00:57.79,Default,,0,0,0,,retrieving previous architectural invariants with zero {\c&H0020E0FF\b1}token{\r}
+Dialogue: 0,0:00:57.79,0:01:00.66,Default,,0,0,0,,{\c&H0020E0FF\b1}waste.{\r}
+Dialogue: 0,0:01:00.66,0:01:01.04,Default,,0,0,0,,{\c&H0020E0FF\b1}Watch{\r} how AegisBrain organizes work through our
+Dialogue: 0,0:01:01.04,0:01:01.41,Default,,0,0,0,,Watch {\c&H0020E0FF\b1}how{\r} AegisBrain organizes work through our
+Dialogue: 0,0:01:01.41,0:01:01.78,Default,,0,0,0,,Watch how {\c&H0020E0FF\b1}AegisBrain{\r} organizes work through our
+Dialogue: 0,0:01:01.78,0:01:02.16,Default,,0,0,0,,Watch how AegisBrain {\c&H0020E0FF\b1}organizes{\r} work through our
+Dialogue: 0,0:01:02.16,0:01:02.53,Default,,0,0,0,,Watch how AegisBrain organizes {\c&H0020E0FF\b1}work{\r} through our
+Dialogue: 0,0:01:02.53,0:01:02.91,Default,,0,0,0,,Watch how AegisBrain organizes work {\c&H0020E0FF\b1}through{\r} our
+Dialogue: 0,0:01:02.91,0:01:03.28,Default,,0,0,0,,Watch how AegisBrain organizes work through {\c&H0020E0FF\b1}our{\r}
+Dialogue: 0,0:01:03.28,0:01:04.16,Default,,0,0,0,,{\c&H0020E0FF\b1}three-tier{\r} multi-agent hierarchy.
+Dialogue: 0,0:01:04.16,0:01:05.03,Default,,0,0,0,,three-tier {\c&H0020E0FF\b1}multi-agent{\r} hierarchy.
+Dialogue: 0,0:01:05.03,0:01:05.91,Default,,0,0,0,,three-tier multi-agent {\c&H0020E0FF\b1}hierarchy.{\r}
+Dialogue: 0,0:01:05.91,0:01:06.33,Default,,0,0,0,,{\c&H0020E0FF\b1}The{\r} frontier model acts as the Tier
+Dialogue: 0,0:01:06.33,0:01:06.75,Default,,0,0,0,,The {\c&H0020E0FF\b1}frontier{\r} model acts as the Tier
+Dialogue: 0,0:01:06.75,0:01:07.18,Default,,0,0,0,,The frontier {\c&H0020E0FF\b1}model{\r} acts as the Tier
+Dialogue: 0,0:01:07.18,0:01:07.60,Default,,0,0,0,,The frontier model {\c&H0020E0FF\b1}acts{\r} as the Tier
+Dialogue: 0,0:01:07.60,0:01:08.02,Default,,0,0,0,,The frontier model acts {\c&H0020E0FF\b1}as{\r} the Tier
+Dialogue: 0,0:01:08.02,0:01:08.45,Default,,0,0,0,,The frontier model acts as {\c&H0020E0FF\b1}the{\r} Tier
+Dialogue: 0,0:01:08.45,0:01:08.87,Default,,0,0,0,,The frontier model acts as the {\c&H0020E0FF\b1}Tier{\r}
+Dialogue: 0,0:01:08.87,0:01:09.30,Default,,0,0,0,,{\c&H0020E0FF\b1}1{\r} Senior Boss, locking down strict invariants.
+Dialogue: 0,0:01:09.30,0:01:09.72,Default,,0,0,0,,1 {\c&H0020E0FF\b1}Senior{\r} Boss, locking down strict invariants.
+Dialogue: 0,0:01:09.72,0:01:10.14,Default,,0,0,0,,1 Senior {\c&H0020E0FF\b1}Boss,{\r} locking down strict invariants.
+Dialogue: 0,0:01:10.14,0:01:10.57,Default,,0,0,0,,1 Senior Boss, {\c&H0020E0FF\b1}locking{\r} down strict invariants.
+Dialogue: 0,0:01:10.57,0:01:10.99,Default,,0,0,0,,1 Senior Boss, locking {\c&H0020E0FF\b1}down{\r} strict invariants.
+Dialogue: 0,0:01:10.99,0:01:11.41,Default,,0,0,0,,1 Senior Boss, locking down {\c&H0020E0FF\b1}strict{\r} invariants.
+Dialogue: 0,0:01:11.41,0:01:11.84,Default,,0,0,0,,1 Senior Boss, locking down strict {\c&H0020E0FF\b1}invariants.{\r}
+Dialogue: 0,0:01:11.84,0:01:12.19,Default,,0,0,0,,{\c&H0020E0FF\b1}It{\r} spawns a Tier 2 Junior Boss
+Dialogue: 0,0:01:12.19,0:01:12.55,Default,,0,0,0,,It {\c&H0020E0FF\b1}spawns{\r} a Tier 2 Junior Boss
+Dialogue: 0,0:01:12.55,0:01:12.90,Default,,0,0,0,,It spawns {\c&H0020E0FF\b1}a{\r} Tier 2 Junior Boss
+Dialogue: 0,0:01:12.90,0:01:13.26,Default,,0,0,0,,It spawns a {\c&H0020E0FF\b1}Tier{\r} 2 Junior Boss
+Dialogue: 0,0:01:13.26,0:01:13.61,Default,,0,0,0,,It spawns a Tier {\c&H0020E0FF\b1}2{\r} Junior Boss
+Dialogue: 0,0:01:13.61,0:01:13.97,Default,,0,0,0,,It spawns a Tier 2 {\c&H0020E0FF\b1}Junior{\r} Boss
+Dialogue: 0,0:01:13.97,0:01:14.32,Default,,0,0,0,,It spawns a Tier 2 Junior {\c&H0020E0FF\b1}Boss{\r}
+Dialogue: 0,0:01:14.32,0:01:14.68,Default,,0,0,0,,{\c&H0020E0FF\b1}subagent,{\r} which dispatches raw candidate code generation
+Dialogue: 0,0:01:14.68,0:01:15.03,Default,,0,0,0,,subagent, {\c&H0020E0FF\b1}which{\r} dispatches raw candidate code generation
+Dialogue: 0,0:01:15.03,0:01:15.39,Default,,0,0,0,,subagent, which {\c&H0020E0FF\b1}dispatches{\r} raw candidate code generation
+Dialogue: 0,0:01:15.39,0:01:15.74,Default,,0,0,0,,subagent, which dispatches {\c&H0020E0FF\b1}raw{\r} candidate code generation
+Dialogue: 0,0:01:15.74,0:01:16.10,Default,,0,0,0,,subagent, which dispatches raw {\c&H0020E0FF\b1}candidate{\r} code generation
+Dialogue: 0,0:01:16.10,0:01:16.45,Default,,0,0,0,,subagent, which dispatches raw candidate {\c&H0020E0FF\b1}code{\r} generation
+Dialogue: 0,0:01:16.45,0:01:16.81,Default,,0,0,0,,subagent, which dispatches raw candidate code {\c&H0020E0FF\b1}generation{\r}
+Dialogue: 0,0:01:16.81,0:01:17.16,Default,,0,0,0,,{\c&H0020E0FF\b1}directly{\r} to our Tier 3 local worker
+Dialogue: 0,0:01:17.16,0:01:17.52,Default,,0,0,0,,directly {\c&H0020E0FF\b1}to{\r} our Tier 3 local worker
+Dialogue: 0,0:01:17.52,0:01:17.87,Default,,0,0,0,,directly to {\c&H0020E0FF\b1}our{\r} Tier 3 local worker
+Dialogue: 0,0:01:17.87,0:01:18.23,Default,,0,0,0,,directly to our {\c&H0020E0FF\b1}Tier{\r} 3 local worker
+Dialogue: 0,0:01:18.23,0:01:18.58,Default,,0,0,0,,directly to our Tier {\c&H0020E0FF\b1}3{\r} local worker
+Dialogue: 0,0:01:18.58,0:01:18.94,Default,,0,0,0,,directly to our Tier 3 {\c&H0020E0FF\b1}local{\r} worker
+Dialogue: 0,0:01:18.94,0:01:19.29,Default,,0,0,0,,directly to our Tier 3 local {\c&H0020E0FF\b1}worker{\r}
+Dialogue: 0,0:01:19.29,0:01:20.12,Default,,0,0,0,,{\c&H0020E0FF\b1}CLI,{\r} Hermes Agent.
+Dialogue: 0,0:01:20.12,0:01:20.95,Default,,0,0,0,,CLI, {\c&H0020E0FF\b1}Hermes{\r} Agent.
+Dialogue: 0,0:01:20.95,0:01:21.78,Default,,0,0,0,,CLI, Hermes {\c&H0020E0FF\b1}Agent.{\r}
+Dialogue: 0,0:01:21.78,0:01:22.13,Default,,0,0,0,,{\c&H0020E0FF\b1}Hermes{\r} synthesizes the Lua scripts and limiter
+Dialogue: 0,0:01:22.13,0:01:22.48,Default,,0,0,0,,Hermes {\c&H0020E0FF\b1}synthesizes{\r} the Lua scripts and limiter
+Dialogue: 0,0:01:22.48,0:01:22.83,Default,,0,0,0,,Hermes synthesizes {\c&H0020E0FF\b1}the{\r} Lua scripts and limiter
+Dialogue: 0,0:01:22.83,0:01:23.18,Default,,0,0,0,,Hermes synthesizes the {\c&H0020E0FF\b1}Lua{\r} scripts and limiter
+Dialogue: 0,0:01:23.18,0:01:23.54,Default,,0,0,0,,Hermes synthesizes the Lua {\c&H0020E0FF\b1}scripts{\r} and limiter
+Dialogue: 0,0:01:23.54,0:01:23.89,Default,,0,0,0,,Hermes synthesizes the Lua scripts {\c&H0020E0FF\b1}and{\r} limiter
+Dialogue: 0,0:01:23.89,0:01:24.24,Default,,0,0,0,,Hermes synthesizes the Lua scripts and {\c&H0020E0FF\b1}limiter{\r}
+Dialogue: 0,0:01:24.24,0:01:24.59,Default,,0,0,0,,{\c&H0020E0FF\b1}logic{\r} locally on our GPU at zero
+Dialogue: 0,0:01:24.59,0:01:24.94,Default,,0,0,0,,logic {\c&H0020E0FF\b1}locally{\r} on our GPU at zero
+Dialogue: 0,0:01:24.94,0:01:25.30,Default,,0,0,0,,logic locally {\c&H0020E0FF\b1}on{\r} our GPU at zero
+Dialogue: 0,0:01:25.30,0:01:25.65,Default,,0,0,0,,logic locally on {\c&H0020E0FF\b1}our{\r} GPU at zero
+Dialogue: 0,0:01:25.65,0:01:25.99,Default,,0,0,0,,logic locally on our {\c&H0020E0FF\b1}GPU{\r} at zero
+Dialogue: 0,0:01:25.99,0:01:26.35,Default,,0,0,0,,logic locally on our GPU {\c&H0020E0FF\b1}at{\r} zero
+Dialogue: 0,0:01:26.35,0:01:26.70,Default,,0,0,0,,logic locally on our GPU at {\c&H0020E0FF\b1}zero{\r}
+Dialogue: 0,0:01:26.70,0:01:27.52,Default,,0,0,0,,{\c&H0020E0FF\b1}frontier{\r} API cost.
+Dialogue: 0,0:01:27.52,0:01:28.34,Default,,0,0,0,,frontier {\c&H0020E0FF\b1}API{\r} cost.
+Dialogue: 0,0:01:28.34,0:01:29.17,Default,,0,0,0,,frontier API {\c&H0020E0FF\b1}cost.{\r}
+Dialogue: 0,0:01:29.17,0:01:29.73,Default,,0,0,0,,{\c&H0020E0FF\b1}But{\r} AegisBrain never blindly trusts raw drafts.
+Dialogue: 0,0:01:29.73,0:01:30.29,Default,,0,0,0,,But {\c&H0020E0FF\b1}AegisBrain{\r} never blindly trusts raw drafts.
+Dialogue: 0,0:01:30.29,0:01:30.85,Default,,0,0,0,,But AegisBrain {\c&H0020E0FF\b1}never{\r} blindly trusts raw drafts.
+Dialogue: 0,0:01:30.85,0:01:31.41,Default,,0,0,0,,But AegisBrain never {\c&H0020E0FF\b1}blindly{\r} trusts raw drafts.
+Dialogue: 0,0:01:31.41,0:01:31.97,Default,,0,0,0,,But AegisBrain never blindly {\c&H0020E0FF\b1}trusts{\r} raw drafts.
+Dialogue: 0,0:01:31.97,0:01:32.53,Default,,0,0,0,,But AegisBrain never blindly trusts {\c&H0020E0FF\b1}raw{\r} drafts.
+Dialogue: 0,0:01:32.53,0:01:33.09,Default,,0,0,0,,But AegisBrain never blindly trusts raw {\c&H0020E0FF\b1}drafts.{\r}
+Dialogue: 0,0:01:33.09,0:01:33.51,Default,,0,0,0,,{\c&H0020E0FF\b1}Our{\r} Tier 2 subagent audits the code
+Dialogue: 0,0:01:33.51,0:01:33.94,Default,,0,0,0,,Our {\c&H0020E0FF\b1}Tier{\r} 2 subagent audits the code
+Dialogue: 0,0:01:33.94,0:01:34.37,Default,,0,0,0,,Our Tier {\c&H0020E0FF\b1}2{\r} subagent audits the code
+Dialogue: 0,0:01:34.37,0:01:34.79,Default,,0,0,0,,Our Tier 2 {\c&H0020E0FF\b1}subagent{\r} audits the code
+Dialogue: 0,0:01:34.79,0:01:35.22,Default,,0,0,0,,Our Tier 2 subagent {\c&H0020E0FF\b1}audits{\r} the code
+Dialogue: 0,0:01:35.22,0:01:35.65,Default,,0,0,0,,Our Tier 2 subagent audits {\c&H0020E0FF\b1}the{\r} code
+Dialogue: 0,0:01:35.65,0:01:36.07,Default,,0,0,0,,Our Tier 2 subagent audits the {\c&H0020E0FF\b1}code{\r}
+Dialogue: 0,0:01:36.07,0:01:36.50,Default,,0,0,0,,{\c&H0020E0FF\b1}through{\r} the four-decision quality architecture gate, catching
+Dialogue: 0,0:01:36.50,0:01:36.92,Default,,0,0,0,,through {\c&H0020E0FF\b1}the{\r} four-decision quality architecture gate, catching
+Dialogue: 0,0:01:36.92,0:01:37.35,Default,,0,0,0,,through the {\c&H0020E0FF\b1}four-decision{\r} quality architecture gate, catching
+Dialogue: 0,0:01:37.35,0:01:37.78,Default,,0,0,0,,through the four-decision {\c&H0020E0FF\b1}quality{\r} architecture gate, catching
+Dialogue: 0,0:01:37.78,0:01:38.20,Default,,0,0,0,,through the four-decision quality {\c&H0020E0FF\b1}architecture{\r} gate, catching
+Dialogue: 0,0:01:38.20,0:01:38.63,Default,,0,0,0,,through the four-decision quality architecture {\c&H0020E0FF\b1}gate,{\r} catching
+Dialogue: 0,0:01:38.63,0:01:39.06,Default,,0,0,0,,through the four-decision quality architecture gate, {\c&H0020E0FF\b1}catching{\r}
+Dialogue: 0,0:01:39.06,0:01:39.48,Default,,0,0,0,,{\c&H0020E0FF\b1}Lua{\r} float conversion flaws, removing polite conversational
+Dialogue: 0,0:01:39.48,0:01:39.91,Default,,0,0,0,,Lua {\c&H0020E0FF\b1}float{\r} conversion flaws, removing polite conversational
+Dialogue: 0,0:01:39.91,0:01:40.33,Default,,0,0,0,,Lua float {\c&H0020E0FF\b1}conversion{\r} flaws, removing polite conversational
+Dialogue: 0,0:01:40.33,0:01:40.76,Default,,0,0,0,,Lua float conversion {\c&H0020E0FF\b1}flaws,{\r} removing polite conversational
+Dialogue: 0,0:01:40.76,0:01:41.19,Default,,0,0,0,,Lua float conversion flaws, {\c&H0020E0FF\b1}removing{\r} polite conversational
+Dialogue: 0,0:01:41.19,0:01:41.61,Default,,0,0,0,,Lua float conversion flaws, removing {\c&H0020E0FF\b1}polite{\r} conversational
+Dialogue: 0,0:01:41.61,0:01:42.04,Default,,0,0,0,,Lua float conversion flaws, removing polite {\c&H0020E0FF\b1}conversational{\r}
+Dialogue: 0,0:01:42.04,0:01:42.64,Default,,0,0,0,,{\c&H0020E0FF\b1}slop,{\r} and enforcing Karpathy simplicity.
+Dialogue: 0,0:01:42.64,0:01:43.23,Default,,0,0,0,,slop, {\c&H0020E0FF\b1}and{\r} enforcing Karpathy simplicity.
+Dialogue: 0,0:01:43.23,0:01:43.83,Default,,0,0,0,,slop, and {\c&H0020E0FF\b1}enforcing{\r} Karpathy simplicity.
+Dialogue: 0,0:01:43.83,0:01:44.43,Default,,0,0,0,,slop, and enforcing {\c&H0020E0FF\b1}Karpathy{\r} simplicity.
+Dialogue: 0,0:01:44.43,0:01:45.02,Default,,0,0,0,,slop, and enforcing Karpathy {\c&H0020E0FF\b1}simplicity.{\r}
+Dialogue: 0,0:01:45.02,0:01:45.41,Default,,0,0,0,,{\c&H0020E0FF\b1}When{\r} the implementation is finalized, the test
+Dialogue: 0,0:01:45.41,0:01:45.80,Default,,0,0,0,,When {\c&H0020E0FF\b1}the{\r} implementation is finalized, the test
+Dialogue: 0,0:01:45.80,0:01:46.18,Default,,0,0,0,,When the {\c&H0020E0FF\b1}implementation{\r} is finalized, the test
+Dialogue: 0,0:01:46.18,0:01:46.57,Default,,0,0,0,,When the implementation {\c&H0020E0FF\b1}is{\r} finalized, the test
+Dialogue: 0,0:01:46.57,0:01:46.95,Default,,0,0,0,,When the implementation is {\c&H0020E0FF\b1}finalized,{\r} the test
+Dialogue: 0,0:01:46.95,0:01:47.34,Default,,0,0,0,,When the implementation is finalized, {\c&H0020E0FF\b1}the{\r} test
+Dialogue: 0,0:01:47.34,0:01:47.72,Default,,0,0,0,,When the implementation is finalized, the {\c&H0020E0FF\b1}test{\r}
+Dialogue: 0,0:01:47.72,0:01:48.11,Default,,0,0,0,,{\c&H0020E0FF\b1}suite{\r} runs: all eleven unit tests pass
+Dialogue: 0,0:01:48.11,0:01:48.50,Default,,0,0,0,,suite {\c&H0020E0FF\b1}runs:{\r} all eleven unit tests pass
+Dialogue: 0,0:01:48.50,0:01:48.88,Default,,0,0,0,,suite runs: {\c&H0020E0FF\b1}all{\r} eleven unit tests pass
+Dialogue: 0,0:01:48.88,0:01:49.27,Default,,0,0,0,,suite runs: all {\c&H0020E0FF\b1}eleven{\r} unit tests pass
+Dialogue: 0,0:01:49.27,0:01:49.65,Default,,0,0,0,,suite runs: all eleven {\c&H0020E0FF\b1}unit{\r} tests pass
+Dialogue: 0,0:01:49.65,0:01:50.04,Default,,0,0,0,,suite runs: all eleven unit {\c&H0020E0FF\b1}tests{\r} pass
+Dialogue: 0,0:01:50.04,0:01:50.42,Default,,0,0,0,,suite runs: all eleven unit tests {\c&H0020E0FF\b1}pass{\r}
+Dialogue: 0,0:01:50.42,0:01:50.87,Default,,0,0,0,,{\c&H0020E0FF\b1}in{\r} zero point seven two seconds.
+Dialogue: 0,0:01:50.87,0:01:51.32,Default,,0,0,0,,in {\c&H0020E0FF\b1}zero{\r} point seven two seconds.
+Dialogue: 0,0:01:51.32,0:01:51.77,Default,,0,0,0,,in zero {\c&H0020E0FF\b1}point{\r} seven two seconds.
+Dialogue: 0,0:01:51.77,0:01:52.22,Default,,0,0,0,,in zero point {\c&H0020E0FF\b1}seven{\r} two seconds.
+Dialogue: 0,0:01:52.22,0:01:52.67,Default,,0,0,0,,in zero point seven {\c&H0020E0FF\b1}two{\r} seconds.
+Dialogue: 0,0:01:52.67,0:01:53.12,Default,,0,0,0,,in zero point seven two {\c&H0020E0FF\b1}seconds.{\r}
+Dialogue: 0,0:01:53.12,0:01:53.53,Default,,0,0,0,,{\c&H0020E0FF\b1}The{\r} architectural decision is committed to persistent
+Dialogue: 0,0:01:53.53,0:01:53.93,Default,,0,0,0,,The {\c&H0020E0FF\b1}architectural{\r} decision is committed to persistent
+Dialogue: 0,0:01:53.93,0:01:54.34,Default,,0,0,0,,The architectural {\c&H0020E0FF\b1}decision{\r} is committed to persistent
+Dialogue: 0,0:01:54.34,0:01:54.74,Default,,0,0,0,,The architectural decision {\c&H0020E0FF\b1}is{\r} committed to persistent
+Dialogue: 0,0:01:54.74,0:01:55.15,Default,,0,0,0,,The architectural decision is {\c&H0020E0FF\b1}committed{\r} to persistent
+Dialogue: 0,0:01:55.15,0:01:55.55,Default,,0,0,0,,The architectural decision is committed {\c&H0020E0FF\b1}to{\r} persistent
+Dialogue: 0,0:01:55.55,0:01:55.96,Default,,0,0,0,,The architectural decision is committed to {\c&H0020E0FF\b1}persistent{\r}
+Dialogue: 0,0:01:55.96,0:01:56.36,Default,,0,0,0,,{\c&H0020E0FF\b1}neural{\r} memory, and the security scanner certifies
+Dialogue: 0,0:01:56.36,0:01:56.76,Default,,0,0,0,,neural {\c&H0020E0FF\b1}memory,{\r} and the security scanner certifies
+Dialogue: 0,0:01:56.76,0:01:57.17,Default,,0,0,0,,neural memory, {\c&H0020E0FF\b1}and{\r} the security scanner certifies
+Dialogue: 0,0:01:57.17,0:01:57.57,Default,,0,0,0,,neural memory, and {\c&H0020E0FF\b1}the{\r} security scanner certifies
+Dialogue: 0,0:01:57.57,0:01:57.98,Default,,0,0,0,,neural memory, and the {\c&H0020E0FF\b1}security{\r} scanner certifies
+Dialogue: 0,0:01:57.98,0:01:58.38,Default,,0,0,0,,neural memory, and the security {\c&H0020E0FF\b1}scanner{\r} certifies
+Dialogue: 0,0:01:58.38,0:01:58.79,Default,,0,0,0,,neural memory, and the security scanner {\c&H0020E0FF\b1}certifies{\r}
+Dialogue: 0,0:01:58.79,0:01:59.35,Default,,0,0,0,,{\c&H0020E0FF\b1}zero{\r} secrets and zero vulnerabilities.
+Dialogue: 0,0:01:59.35,0:01:59.92,Default,,0,0,0,,zero {\c&H0020E0FF\b1}secrets{\r} and zero vulnerabilities.
+Dialogue: 0,0:01:59.92,0:02:00.48,Default,,0,0,0,,zero secrets {\c&H0020E0FF\b1}and{\r} zero vulnerabilities.
+Dialogue: 0,0:02:00.48,0:02:01.05,Default,,0,0,0,,zero secrets and {\c&H0020E0FF\b1}zero{\r} vulnerabilities.
+Dialogue: 0,0:02:01.05,0:02:01.62,Default,,0,0,0,,zero secrets and zero {\c&H0020E0FF\b1}vulnerabilities.{\r}
+Dialogue: 0,0:02:01.62,0:02:01.99,Default,,0,0,0,,{\c&H0020E0FF\b1}Now,{\r} we exit the CLI to demonstrate
+Dialogue: 0,0:02:01.99,0:02:02.38,Default,,0,0,0,,Now, {\c&H0020E0FF\b1}we{\r} exit the CLI to demonstrate
+Dialogue: 0,0:02:02.38,0:02:02.75,Default,,0,0,0,,Now, we {\c&H0020E0FF\b1}exit{\r} the CLI to demonstrate
+Dialogue: 0,0:02:02.75,0:02:03.13,Default,,0,0,0,,Now, we exit {\c&H0020E0FF\b1}the{\r} CLI to demonstrate
+Dialogue: 0,0:02:03.13,0:02:03.51,Default,,0,0,0,,Now, we exit the {\c&H0020E0FF\b1}CLI{\r} to demonstrate
+Dialogue: 0,0:02:03.51,0:02:03.89,Default,,0,0,0,,Now, we exit the CLI {\c&H0020E0FF\b1}to{\r} demonstrate
+Dialogue: 0,0:02:03.89,0:02:04.27,Default,,0,0,0,,Now, we exit the CLI to {\c&H0020E0FF\b1}demonstrate{\r}
+Dialogue: 0,0:02:04.27,0:02:05.16,Default,,0,0,0,,{\c&H0020E0FF\b1}AegisBrain's{\r} standalone tools.
+Dialogue: 0,0:02:05.16,0:02:06.04,Default,,0,0,0,,AegisBrain's {\c&H0020E0FF\b1}standalone{\r} tools.
+Dialogue: 0,0:02:06.04,0:02:06.92,Default,,0,0,0,,AegisBrain's standalone {\c&H0020E0FF\b1}tools.{\r}
+Dialogue: 0,0:02:06.92,0:02:07.33,Default,,0,0,0,,{\c&H0020E0FF\b1}Because{\r} AegisBrain is cross-assistant, any tool can
+Dialogue: 0,0:02:07.33,0:02:07.75,Default,,0,0,0,,Because {\c&H0020E0FF\b1}AegisBrain{\r} is cross-assistant, any tool can
+Dialogue: 0,0:02:07.75,0:02:08.16,Default,,0,0,0,,Because AegisBrain {\c&H0020E0FF\b1}is{\r} cross-assistant, any tool can
+Dialogue: 0,0:02:08.16,0:02:08.57,Default,,0,0,0,,Because AegisBrain is {\c&H0020E0FF\b1}cross-assistant,{\r} any tool can
+Dialogue: 0,0:02:08.57,0:02:08.98,Default,,0,0,0,,Because AegisBrain is cross-assistant, {\c&H0020E0FF\b1}any{\r} tool can
+Dialogue: 0,0:02:08.98,0:02:09.39,Default,,0,0,0,,Because AegisBrain is cross-assistant, any {\c&H0020E0FF\b1}tool{\r} can
+Dialogue: 0,0:02:09.39,0:02:09.80,Default,,0,0,0,,Because AegisBrain is cross-assistant, any tool {\c&H0020E0FF\b1}can{\r}
+Dialogue: 0,0:02:09.80,0:02:10.28,Default,,0,0,0,,{\c&H0020E0FF\b1}be{\r} executed directly from the terminal.
+Dialogue: 0,0:02:10.28,0:02:10.76,Default,,0,0,0,,be {\c&H0020E0FF\b1}executed{\r} directly from the terminal.
+Dialogue: 0,0:02:10.76,0:02:11.23,Default,,0,0,0,,be executed {\c&H0020E0FF\b1}directly{\r} from the terminal.
+Dialogue: 0,0:02:11.23,0:02:11.71,Default,,0,0,0,,be executed directly {\c&H0020E0FF\b1}from{\r} the terminal.
+Dialogue: 0,0:02:11.71,0:02:12.19,Default,,0,0,0,,be executed directly from {\c&H0020E0FF\b1}the{\r} terminal.
+Dialogue: 0,0:02:12.19,0:02:12.67,Default,,0,0,0,,be executed directly from the {\c&H0020E0FF\b1}terminal.{\r}
+Dialogue: 0,0:02:12.67,0:02:13.00,Default,,0,0,0,,{\c&H0020E0FF\b1}We{\r} run "aegis recall" to verify our
+Dialogue: 0,0:02:13.00,0:02:13.34,Default,,0,0,0,,We {\c&H0020E0FF\b1}run{\r} "aegis recall" to verify our
+Dialogue: 0,0:02:13.34,0:02:13.67,Default,,0,0,0,,We run {\c&H0020E0FF\b1}"aegis{\r} recall" to verify our
+Dialogue: 0,0:02:13.67,0:02:14.00,Default,,0,0,0,,We run "aegis {\c&H0020E0FF\b1}recall"{\r} to verify our
+Dialogue: 0,0:02:14.00,0:02:14.33,Default,,0,0,0,,We run "aegis recall" {\c&H0020E0FF\b1}to{\r} verify our
+Dialogue: 0,0:02:14.33,0:02:14.67,Default,,0,0,0,,We run "aegis recall" to {\c&H0020E0FF\b1}verify{\r} our
+Dialogue: 0,0:02:14.67,0:02:14.99,Default,,0,0,0,,We run "aegis recall" to verify {\c&H0020E0FF\b1}our{\r}
+Dialogue: 0,0:02:14.99,0:02:15.78,Default,,0,0,0,,{\c&H0020E0FF\b1}newly{\r} indexed decision.
+Dialogue: 0,0:02:15.78,0:02:16.55,Default,,0,0,0,,newly {\c&H0020E0FF\b1}indexed{\r} decision.
+Dialogue: 0,0:02:16.55,0:02:17.33,Default,,0,0,0,,newly indexed {\c&H0020E0FF\b1}decision.{\r}
+Dialogue: 0,0:02:17.33,0:02:17.75,Default,,0,0,0,,{\c&H0020E0FF\b1}Next,{\r} "aegis challenge" performs a truth-seeking security
+Dialogue: 0,0:02:17.75,0:02:18.18,Default,,0,0,0,,Next, {\c&H0020E0FF\b1}"aegis{\r} challenge" performs a truth-seeking security
+Dialogue: 0,0:02:18.18,0:02:18.60,Default,,0,0,0,,Next, "aegis {\c&H0020E0FF\b1}challenge"{\r} performs a truth-seeking security
+Dialogue: 0,0:02:18.60,0:02:19.03,Default,,0,0,0,,Next, "aegis challenge" {\c&H0020E0FF\b1}performs{\r} a truth-seeking security
+Dialogue: 0,0:02:19.03,0:02:19.46,Default,,0,0,0,,Next, "aegis challenge" performs {\c&H0020E0FF\b1}a{\r} truth-seeking security
+Dialogue: 0,0:02:19.46,0:02:19.88,Default,,0,0,0,,Next, "aegis challenge" performs a {\c&H0020E0FF\b1}truth-seeking{\r} security
+Dialogue: 0,0:02:19.88,0:02:20.31,Default,,0,0,0,,Next, "aegis challenge" performs a truth-seeking {\c&H0020E0FF\b1}security{\r}
+Dialogue: 0,0:02:20.31,0:02:20.73,Default,,0,0,0,,{\c&H0020E0FF\b1}audit{\r} on our rate limiter, rejecting sycophancy
+Dialogue: 0,0:02:20.73,0:02:21.16,Default,,0,0,0,,audit {\c&H0020E0FF\b1}on{\r} our rate limiter, rejecting sycophancy
+Dialogue: 0,0:02:21.16,0:02:21.58,Default,,0,0,0,,audit on {\c&H0020E0FF\b1}our{\r} rate limiter, rejecting sycophancy
+Dialogue: 0,0:02:21.58,0:02:22.01,Default,,0,0,0,,audit on our {\c&H0020E0FF\b1}rate{\r} limiter, rejecting sycophancy
+Dialogue: 0,0:02:22.01,0:02:22.43,Default,,0,0,0,,audit on our rate {\c&H0020E0FF\b1}limiter,{\r} rejecting sycophancy
+Dialogue: 0,0:02:22.43,0:02:22.86,Default,,0,0,0,,audit on our rate limiter, {\c&H0020E0FF\b1}rejecting{\r} sycophancy
+Dialogue: 0,0:02:22.86,0:02:23.28,Default,,0,0,0,,audit on our rate limiter, rejecting {\c&H0020E0FF\b1}sycophancy{\r}
+Dialogue: 0,0:02:23.28,0:02:24.03,Default,,0,0,0,,{\c&H0020E0FF\b1}and{\r} validating AST safety.
+Dialogue: 0,0:02:24.03,0:02:24.77,Default,,0,0,0,,and {\c&H0020E0FF\b1}validating{\r} AST safety.
+Dialogue: 0,0:02:24.77,0:02:25.52,Default,,0,0,0,,and validating {\c&H0020E0FF\b1}AST{\r} safety.
+Dialogue: 0,0:02:25.52,0:02:26.26,Default,,0,0,0,,and validating AST {\c&H0020E0FF\b1}safety.{\r}
+Dialogue: 0,0:02:26.26,0:02:26.66,Default,,0,0,0,,{\c&H0020E0FF\b1}Before{\r} pushing changes, "aegis snapshot" creates a
+Dialogue: 0,0:02:26.66,0:02:27.05,Default,,0,0,0,,Before {\c&H0020E0FF\b1}pushing{\r} changes, "aegis snapshot" creates a
+Dialogue: 0,0:02:27.05,0:02:27.45,Default,,0,0,0,,Before pushing {\c&H0020E0FF\b1}changes,{\r} "aegis snapshot" creates a
+Dialogue: 0,0:02:27.45,0:02:27.84,Default,,0,0,0,,Before pushing changes, {\c&H0020E0FF\b1}"aegis{\r} snapshot" creates a
+Dialogue: 0,0:02:27.84,0:02:28.24,Default,,0,0,0,,Before pushing changes, "aegis {\c&H0020E0FF\b1}snapshot"{\r} creates a
+Dialogue: 0,0:02:28.24,0:02:28.64,Default,,0,0,0,,Before pushing changes, "aegis snapshot" {\c&H0020E0FF\b1}creates{\r} a
+Dialogue: 0,0:02:28.64,0:02:29.03,Default,,0,0,0,,Before pushing changes, "aegis snapshot" creates {\c&H0020E0FF\b1}a{\r}
+Dialogue: 0,0:02:29.03,0:02:29.95,Default,,0,0,0,,{\c&H0020E0FF\b1}cryptographic{\r} restore point.
+Dialogue: 0,0:02:29.95,0:02:30.88,Default,,0,0,0,,cryptographic {\c&H0020E0FF\b1}restore{\r} point.
+Dialogue: 0,0:02:30.88,0:02:31.80,Default,,0,0,0,,cryptographic restore {\c&H0020E0FF\b1}point.{\r}
+Dialogue: 0,0:02:31.80,0:02:32.15,Default,,0,0,0,,{\c&H0020E0FF\b1}And{\r} if an experiment ever fails, "aegis
+Dialogue: 0,0:02:32.15,0:02:32.49,Default,,0,0,0,,And {\c&H0020E0FF\b1}if{\r} an experiment ever fails, "aegis
+Dialogue: 0,0:02:32.49,0:02:32.83,Default,,0,0,0,,And if {\c&H0020E0FF\b1}an{\r} experiment ever fails, "aegis
+Dialogue: 0,0:02:32.83,0:02:33.18,Default,,0,0,0,,And if an {\c&H0020E0FF\b1}experiment{\r} ever fails, "aegis
+Dialogue: 0,0:02:33.18,0:02:33.52,Default,,0,0,0,,And if an experiment {\c&H0020E0FF\b1}ever{\r} fails, "aegis
+Dialogue: 0,0:02:33.52,0:02:33.87,Default,,0,0,0,,And if an experiment ever {\c&H0020E0FF\b1}fails,{\r} "aegis
+Dialogue: 0,0:02:33.87,0:02:34.21,Default,,0,0,0,,And if an experiment ever fails, {\c&H0020E0FF\b1}"aegis{\r}
+Dialogue: 0,0:02:34.21,0:02:34.56,Default,,0,0,0,,{\c&H0020E0FF\b1}restore"{\r} rolls back the entire workspace with
+Dialogue: 0,0:02:34.56,0:02:34.90,Default,,0,0,0,,restore" {\c&H0020E0FF\b1}rolls{\r} back the entire workspace with
+Dialogue: 0,0:02:34.90,0:02:35.24,Default,,0,0,0,,restore" rolls {\c&H0020E0FF\b1}back{\r} the entire workspace with
+Dialogue: 0,0:02:35.24,0:02:35.59,Default,,0,0,0,,restore" rolls back {\c&H0020E0FF\b1}the{\r} entire workspace with
+Dialogue: 0,0:02:35.59,0:02:35.93,Default,,0,0,0,,restore" rolls back the {\c&H0020E0FF\b1}entire{\r} workspace with
+Dialogue: 0,0:02:35.93,0:02:36.28,Default,,0,0,0,,restore" rolls back the entire {\c&H0020E0FF\b1}workspace{\r} with
+Dialogue: 0,0:02:36.28,0:02:36.62,Default,,0,0,0,,restore" rolls back the entire workspace {\c&H0020E0FF\b1}with{\r}
+Dialogue: 0,0:02:36.62,0:02:37.42,Default,,0,0,0,,{\c&H0020E0FF\b1}zero{\r} residual files.
+Dialogue: 0,0:02:37.42,0:02:38.23,Default,,0,0,0,,zero {\c&H0020E0FF\b1}residual{\r} files.
+Dialogue: 0,0:02:38.23,0:02:39.03,Default,,0,0,0,,zero residual {\c&H0020E0FF\b1}files.{\r}
+Dialogue: 0,0:02:39.03,0:02:39.46,Default,,0,0,0,,{\c&H0020E0FF\b1}Finally,{\r} "aegis briefing" provides a complete morning
+Dialogue: 0,0:02:39.46,0:02:39.89,Default,,0,0,0,,Finally, {\c&H0020E0FF\b1}"aegis{\r} briefing" provides a complete morning
+Dialogue: 0,0:02:39.89,0:02:40.31,Default,,0,0,0,,Finally, "aegis {\c&H0020E0FF\b1}briefing"{\r} provides a complete morning
+Dialogue: 0,0:02:40.31,0:02:40.74,Default,,0,0,0,,Finally, "aegis briefing" {\c&H0020E0FF\b1}provides{\r} a complete morning
+Dialogue: 0,0:02:40.74,0:02:41.17,Default,,0,0,0,,Finally, "aegis briefing" provides {\c&H0020E0FF\b1}a{\r} complete morning
+Dialogue: 0,0:02:41.17,0:02:41.59,Default,,0,0,0,,Finally, "aegis briefing" provides a {\c&H0020E0FF\b1}complete{\r} morning
+Dialogue: 0,0:02:41.59,0:02:42.02,Default,,0,0,0,,Finally, "aegis briefing" provides a complete {\c&H0020E0FF\b1}morning{\r}
+Dialogue: 0,0:02:42.02,0:02:42.62,Default,,0,0,0,,{\c&H0020E0FF\b1}dashboard{\r} in under twenty milliseconds.
+Dialogue: 0,0:02:42.62,0:02:43.22,Default,,0,0,0,,dashboard {\c&H0020E0FF\b1}in{\r} under twenty milliseconds.
+Dialogue: 0,0:02:43.22,0:02:43.82,Default,,0,0,0,,dashboard in {\c&H0020E0FF\b1}under{\r} twenty milliseconds.
+Dialogue: 0,0:02:43.82,0:02:44.41,Default,,0,0,0,,dashboard in under {\c&H0020E0FF\b1}twenty{\r} milliseconds.
+Dialogue: 0,0:02:44.41,0:02:45.01,Default,,0,0,0,,dashboard in under twenty {\c&H0020E0FF\b1}milliseconds.{\r}
+Dialogue: 0,0:02:45.01,0:02:45.55,Default,,0,0,0,,{\c&H0020E0FF\b1}AegisBrain{\r} is open source under GPLv3. Check
+Dialogue: 0,0:02:45.55,0:02:46.09,Default,,0,0,0,,AegisBrain {\c&H0020E0FF\b1}is{\r} open source under GPLv3. Check
+Dialogue: 0,0:02:46.09,0:02:46.63,Default,,0,0,0,,AegisBrain is {\c&H0020E0FF\b1}open{\r} source under GPLv3. Check
+Dialogue: 0,0:02:46.63,0:02:47.17,Default,,0,0,0,,AegisBrain is open {\c&H0020E0FF\b1}source{\r} under GPLv3. Check
+Dialogue: 0,0:02:47.17,0:02:47.71,Default,,0,0,0,,AegisBrain is open source {\c&H0020E0FF\b1}under{\r} GPLv3. Check
+Dialogue: 0,0:02:47.71,0:02:48.25,Default,,0,0,0,,AegisBrain is open source under {\c&H0020E0FF\b1}GPLv3.{\r} Check
+Dialogue: 0,0:02:48.25,0:02:48.79,Default,,0,0,0,,AegisBrain is open source under GPLv3. {\c&H0020E0FF\b1}Check{\r}
+Dialogue: 0,0:02:48.79,0:02:49.34,Default,,0,0,0,,{\c&H0020E0FF\b1}out{\r} the v2.4.0 release on GitHub at
+Dialogue: 0,0:02:49.34,0:02:49.88,Default,,0,0,0,,out {\c&H0020E0FF\b1}the{\r} v2.4.0 release on GitHub at
+Dialogue: 0,0:02:49.88,0:02:50.42,Default,,0,0,0,,out the {\c&H0020E0FF\b1}v2.4.0{\r} release on GitHub at
+Dialogue: 0,0:02:50.42,0:02:50.96,Default,,0,0,0,,out the v2.4.0 {\c&H0020E0FF\b1}release{\r} on GitHub at
+Dialogue: 0,0:02:50.96,0:02:51.50,Default,,0,0,0,,out the v2.4.0 release {\c&H0020E0FF\b1}on{\r} GitHub at
+Dialogue: 0,0:02:51.50,0:02:52.04,Default,,0,0,0,,out the v2.4.0 release on {\c&H0020E0FF\b1}GitHub{\r} at
+Dialogue: 0,0:02:52.04,0:02:52.58,Default,,0,0,0,,out the v2.4.0 release on GitHub {\c&H0020E0FF\b1}at{\r}
+Dialogue: 0,0:02:52.58,0:02:53.84,Default,,0,0,0,,{\c&H0020E0FF\b1}PG300604{\r} slash aegis-brain.
+Dialogue: 0,0:02:53.84,0:02:55.10,Default,,0,0,0,,PG300604 {\c&H0020E0FF\b1}slash{\r} aegis-brain.
+Dialogue: 0,0:02:55.10,0:02:56.36,Default,,0,0,0,,PG300604 slash {\c&H0020E0FF\b1}aegis-brain.{\r}

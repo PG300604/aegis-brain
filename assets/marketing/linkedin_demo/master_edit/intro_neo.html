@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: #070709;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    background-size: 28px 28px;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 80px;
+    color: #FAF8F5;
+  }
+
+  /* Top Navigation Bar */
+  .top-bar {
+    width: 100%;
+    max-width: 1600px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #101116;
+    border: 2px solid #000000;
+    box-shadow: 4px 4px 0px #000000;
+    padding: 16px 32px;
+    border-radius: 8px;
+  }
+  .brand {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: baseline;
+  }
+  .brand-dot {
+    color: #B91C1C;
+    margin-left: 1px;
+  }
+  .brand-sub {
+    font-size: 13px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color: #A1A1AA;
+    margin-left: 16px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .daemon-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #0A3320;
+    border: 1.5px solid rgba(16, 185, 129, 0.4);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-family: ui-monospace, "SF Mono", monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #34D399;
+    letter-spacing: 0.5px;
+  }
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #10B981;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #10B981;
+  }
+
+  /* Center Hero Section */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 1300px;
+  }
+  .release-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #181920;
+    border: 1.5px solid #27272A;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #D4AF37;
+    font-family: ui-monospace, monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    box-shadow: 2px 2px 0px #000000;
+  }
+  .hero-title {
+    font-size: 78px;
+    font-weight: 900;
+    letter-spacing: -2.5px;
+    line-height: 1.05;
+    margin-bottom: 20px;
+    color: #FFFFFF;
+  }
+  .hero-title span {
+    color: #B91C1C;
+  }
+  .hero-lead {
+    font-size: 26px;
+    color: #E4E4E7;
+    font-weight: 500;
+    line-height: 1.45;
+    max-width: 1100px;
+    margin-bottom: 12px;
+  }
+  .hero-sub {
+    font-size: 17px;
+    color: #A1A1AA;
+    line-height: 1.5;
+    max-width: 950px;
+  }
+
+  /* Bottom Metrics Grid */
+  .metrics-grid {
+    width: 100%;
+    max-width: 1600px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .metric-card {
+    background: #101116;
+    border: 2px solid #000000;
+    box-shadow: 6px 6px 0px #000000;
+    padding: 24px 28px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .metric-card.accent {
+    border-color: #B91C1C;
+  }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .card-tag {
+    font-size: 11px;
+    font-weight: 800;
+    font-family: ui-monospace, monospace;
+    letter-spacing: 1px;
+    color: #71717A;
+    text-transform: uppercase;
+  }
+  .card-pill {
+    font-size: 10px;
+    font-family: ui-monospace, monospace;
+    font-weight: 700;
+    padding: 3px 8px;
+    background: #181920;
+    border: 1px solid #27272A;
+    border-radius: 4px;
+    color: #FAF8F5;
+  }
+  .metric-val {
+    font-size: 44px;
+    font-weight: 900;
+    font-family: ui-monospace, monospace;
+    color: #FAF8F5;
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+  }
+  .metric-val.green { color: #10B981; }
+  .metric-val.crimson { color: #EF4444; }
+  .metric-val.gold { color: #F59E0B; }
+  .metric-desc {
+    font-size: 13px;
+    color: #A1A1AA;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div style="display: flex; align-items: center;">
+      <div class="brand">AegisBrain<span class="brand-dot">.</span></div>
+      <div class="brand-sub">Neural Memory Bus &amp; Agent Orchestrator</div>
+    </div>
+    <div class="daemon-pill">
+      <div class="pulse-dot"></div>
+      <span>DAEMON :8765 ACTIVE</span>
+    </div>
+  </div>
+
+  <!-- Center Hero -->
+  <div class="hero">
+    <div class="release-tag">Official Release v2.4.0 • GNU GPLv3 • 20 Topics</div>
+    <h1 class="hero-title">Zero-UI Neural Memory Bus<span>.</span></h1>
+    <p class="hero-lead">3-Tier Dynamic Token Arbitrage Orchestration for AI Coding Agents</p>
+    <p class="hero-sub">Eliminates agent amnesia with &lt;400-token instant boot, cross-assistant SQLite FTS5 recall, and 4-decision quality architecture gates.</p>
+  </div>
+
+  <!-- Bottom Metrics Grid -->
+  <div class="metrics-grid">
+    <div class="metric-card accent">
+      <div class="card-top">
+        <span class="card-tag">TOKEN ARBITRAGE</span>
+        <span class="card-pill">TIER 1 ➔ 2 ➔ 3</span>
+      </div>
+      <div class="metric-val green">92.4%</div>
+      <div class="metric-desc">Frontier tokens saved via local Hermes CLI offload</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="card-top">
+        <span class="card-tag">SQLITE FTS5 ENGINE</span>
+        <span class="card-pill">SUB-SECOND</span>
+      </div>
+      <div class="metric-val">18.2ms</div>
+      <div class="metric-desc">Instant memory recall vs 60k token raw log crawl</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="card-top">
+        <span class="card-tag">QUALITY GATES</span>
+        <span class="card-pill">4-STAGE</span>
+      </div>
+      <div class="metric-val gold">100%</div>
+      <div class="metric-desc">Karpathy Simplicity, Unslop &amp; AST Security certified</div>
+    </div>
+
+    <div class="metric-card">
+      <div class="card-top">
+        <span class="card-tag">INVARIANTS SUITE</span>
+        <span class="card-pill">DETERMINISTIC</span>
+      </div>
+      <div class="metric-val crimson">286/286</div>
+      <div class="metric-desc">Formal verification pass rate before host mutation</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    width: 1920px;
+    height: 1080px;
+    background: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Top Nav Bar Overlay */
+  .top-hud {
+    position: absolute;
+    top: 20px;
+    left: 40px;
+    right: 40px;
+    height: 52px;
+    background: rgba(16, 17, 22, 0.94);
+    border: 2px solid #000000;
+    box-shadow: 4px 4px 0px #000000;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    backdrop-filter: blur(8px);
+  }
+  .brand-lockup {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+  }
+  .brand-text {
+    font-size: 22px;
+    font-weight: 900;
+    color: #FAF8F5;
+    letter-spacing: -0.5px;
+  }
+  .brand-dot {
+    color: #B91C1C;
+    font-size: 24px;
+    font-weight: 900;
+  }
+  .brand-tag {
+    font-size: 11px;
+    font-family: ui-monospace, "SF Mono", monospace;
+    color: #A1A1AA;
+    margin-left: 14px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .daemon-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #0A3320;
+    border: 1.5px solid rgba(16, 185, 129, 0.4);
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-family: ui-monospace, "SF Mono", monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #34D399;
+  }
+  .pulse-dot {
+    width: 7px;
+    height: 7px;
+    background: #10B981;
+    border-radius: 50%;
+  }
+
+  /* Right Side Telemetry Card */
+  .side-card {
+    position: absolute;
+    top: 86px;
+    right: 40px;
+    width: 380px;
+    background: rgba(16, 17, 22, 0.95);
+    border: 2px solid #000000;
+    box-shadow: 5px 5px 0px #000000;
+    border-radius: 8px;
+    padding: 18px 22px;
+    backdrop-filter: blur(10px);
+    color: #FAF8F5;
+  }
+  .side-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+  }
+  .side-title {
+    font-size: 11px;
+    font-family: ui-monospace, monospace;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #71717A;
+    text-transform: uppercase;
+  }
+  .side-pill {
+    font-size: 10px;
+    font-family: ui-monospace, monospace;
+    font-weight: 700;
+    padding: 2px 8px;
+    background: #181920;
+    border: 1px solid #27272A;
+    border-radius: 3px;
+    color: #D4AF37;
+  }
+
+  .metric-block {
+    margin-bottom: 12px;
+  }
+  .metric-num {
+    font-size: 32px;
+    font-weight: 900;
+    font-family: ui-monospace, monospace;
+    color: #10B981;
+    line-height: 1.05;
+    margin-bottom: 3px;
+    letter-spacing: -0.5px;
+  }
+  .metric-lbl {
+    font-size: 11px;
+    font-weight: 600;
+    color: #A1A1AA;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .gate-list {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 12px;
+  }
+  .gate-title {
+    font-size: 10px;
+    font-family: ui-monospace, monospace;
+    font-weight: 800;
+    color: #71717A;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .gate-item {
+    font-size: 11px;
+    font-family: ui-monospace, monospace;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .gate-check {
+    font-weight: bold;
+    font-family: ui-monospace, monospace;
+  }
+
+  .status-footer {
+    margin-top: 14px;
+    background: #181920;
+    border: 1px solid #27272A;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: #FAF8F5;
+    letter-spacing: 0.5px;
+  }
+  .status-footer span {
+    color: #B91C1C;
+    margin-right: 4px;
+  }
+</style>
+</head>
+<body>
+  <!-- Top Nav HUD -->
+  <div class='top-hud'>
+    <div style='display: flex; align-items: center;'>
+      <div class='brand-lockup'>
+        <span class='brand-text'>AegisBrain</span><span class='brand-dot'>.</span>
+      </div>
+      <span class='brand-tag'>APEX-PAY RATE LIMITER • LIVE DEMO</span>
+    </div>
+    <div style='display: flex; align-items: center; gap: 16px;'>
+      <div class='daemon-badge'>
+        <div class='pulse-dot'></div>
+        <span>DAEMON :8765 ACTIVE</span>
+      </div>
+      <span style='font-family: ui-monospace, monospace; font-size: 11px; color: #71717A;'>PID: 14208</span>
+    </div>
+  </div>
+
+  <!-- Right Side Telemetry Card -->
+  <div class='side-card'>
+    <div class='side-header'>
+      <span class='side-title'>TELEMETRY BUS</span>
+      <span class='side-pill'>STEP 02 // PRE-FLIGHT</span>
+    </div>
+
+    <div class='metric-block'>
+      <div class='metric-num'>342 TOKENS</div>
+      <div class='metric-lbl'>Active Context Ingestion</div>
+    </div>
+
+    <div class='metric-block'>
+      <div class='metric-num' style='color: #FAF8F5; font-size: 24px;'>18.2ms</div>
+      <div class='metric-lbl'>Sub-Second Ingestion Speed</div>
+    </div>
+
+    <div class='gate-list'>
+      <div class='gate-title'>4-Stage Architecture Gate</div>
+      <div class='gate-item'>
+          <span class='gate-check' style='color: #10B981'>[✓]</span>
+          <span style='color: #FAF8F5'>01 Karpathy Simplicity</span>
+        </div><div class='gate-item'>
+          <span class='gate-check' style='color: #71717A'>[ ]</span>
+          <span style='color: #71717A'>02 TurnItOut Unslop</span>
+        </div><div class='gate-item'>
+          <span class='gate-check' style='color: #71717A'>[ ]</span>
+          <span style='color: #71717A'>03 AST Security Audit</span>
+        </div><div class='gate-item'>
+          <span class='gate-check' style='color: #71717A'>[ ]</span>
+          <span style='color: #71717A'>04 Sandboxed Verification</span>
+        </div>
+    </div>
+
+    <div class='status-footer'>
+      <span>●</span> RESTORE POINT #1: LOCKED
+    </div>
+  </div>
+</body>
+</html>
