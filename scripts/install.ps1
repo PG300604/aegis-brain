@@ -160,6 +160,12 @@ $HomeDir = if ($env:USERPROFILE) { $env:USERPROFILE } else { [System.Environment
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = Split-Path -Parent $ScriptDir
 $SkillSource = Join-Path $RepoRoot "skills\aegis\SKILL.md"
+$ResolvedWorkspace = if ($WorkspacePath) { $WorkspacePath } else {
+    try {
+        $gitRoot = (& git rev-parse --show-toplevel 2>$null)
+        if ($gitRoot -and (Test-Path $gitRoot)) { $gitRoot.Trim() } else { (Get-Location).Path }
+    } catch { (Get-Location).Path }
+}
 
 $AntigravityConfig = Join-Path $HomeDir ".gemini\config\GEMINI.md"
 $ClaudeConfig = Join-Path $HomeDir ".claude\CLAUDE.md"
@@ -308,11 +314,34 @@ foreach ($target in $PlannedTargets) {
         $BackedUpFiles += [PSCustomObject]@{
             label = $target.Label
             original_path = $tPath
+            backup_path = $relBackup
             backup_relative_path = $relBackup
             platform = $target.Platform
             hash_sha256 = $hash
         }
     }
+}
+
+$CreatedFiles = @()
+$CreatedDirs = @()
+$potentialNew = @(
+    (Join-Path $HomeDir ".codex\instructions.md"),
+    (Join-Path $HomeDir ".aider\conventions.md"),
+    (Join-Path $HomeDir ".aider.conf.yml")
+)
+if ($ResolvedWorkspace) {
+    $potentialNew += (Join-Path $ResolvedWorkspace "CLAUDE.md")
+    $potentialNew += (Join-Path $ResolvedWorkspace "AGENTS.md")
+}
+foreach ($pn in $potentialNew) {
+    if (-not (Test-Path $pn)) { $CreatedFiles += $pn }
+}
+$potentialDirs = @(
+    (Join-Path $HomeDir ".codex"),
+    (Join-Path $HomeDir ".aider")
+)
+foreach ($pd in $potentialDirs) {
+    if (-not (Test-Path $pd)) { $CreatedDirs += $pd }
 }
 
 $Manifest = [PSCustomObject]@{
@@ -322,11 +351,14 @@ $Manifest = [PSCustomObject]@{
     author = "AegisBrain Universal Installer v2.4.0"
     file_count = $BackedUpFiles.Count
     files = $BackedUpFiles
+    created_files = $CreatedFiles
+    created_dirs = $CreatedDirs
 }
 
 $ManifestPath = Join-Path $SnapshotTargetDir "manifest.json"
 $ManifestJson = $Manifest | ConvertTo-Json -Depth 5
-[System.IO.File]::WriteAllText($ManifestPath, $ManifestJson, [System.Text.Encoding]::UTF8)
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+[System.IO.File]::WriteAllText($ManifestPath, $ManifestJson, $utf8NoBom)
 Write-Host "       [OK] Snapshot created: $SnapshotId ($($BackedUpFiles.Count) files archived)" -ForegroundColor Green
 
 # 2. Initialize DB & Seed
@@ -386,7 +418,83 @@ foreach ($targetDir in $SkillTargets) {
 # 6. Inject Autonomous Engineering Directives & Mindset
 Write-Host " [6/7] Injecting autonomous engineering directives & memory hooks..." -ForegroundColor Cyan
 if ($ConfigureAgents) {
-    & python -c "import sys; sys.path.insert(0, '$($PkgDir.Replace('\', '/'))'); from install import install; print('       [OK] Universal hooks synchronized across Antigravity, Claude, Codex, Aider')" 2>&1 | Out-Null
+    $MindsetMarkdown = @"
+<!-- AEGIS_BRAIN_MINDSET_START -->
+# AegisBrain Universal Mindset Override: Autonomous Hierarchy & Simplicity Directives
+
+> [!IMPORTANT]
+> **OPERATIONAL PRIORITY #1 OVERRIDE**: The following core doctrines govern all reasoning, planning, tool selection, and code generation across this workspace.
+
+## 1. Adaptive Dual-Mode Workflow (Quick Mode + Token Arbitrage)
+- **User Intent & Speed Sovereignty**: When the user requests quick mode, fast turnaround, or direct pair programming, the primary model operates **directly as the lead engineer**, writing and editing files surgically without subagent latency.
+- **Dynamic Token Arbitrage Mode**:
+  - For massive background boilerplate, repetitive test suites, or when token conservation is requested, tasks are delegated to Tier 2 Subagents + Tier 3 Local Workers (hermes chat -q, ollama run qwen2.5-coder:7b, opencode) to save 85%+ frontier tokens.
+  - Say 'quick', 'fast', 'fast mode', or chat naturally to execute directly via Frontier Manager.
+- **Transparent Progress Observer**: Maintain step-by-step progress micro-updates so the user can steer, pause, or comment early.
+- **4-Stage Quality Gate Review**: Every candidate output must pass:
+  1) Unslop / TurnItOut: Strip artificial LLM conversational filler.
+  2) Red-Team Security Audit: Block unsafe shell calls (shell=True, os.system), injections, and traversals.
+  3) Secret Scanning: Block hardcoded API keys, tokens, and credentials.
+  4) Verifiable Test Loop: Verify against isolated syntax or unit tests before host mutation.
+
+## 2. AST Graph Symbol Retrieval (Priority #1 Code Navigation)
+- Query symbols, class hierarchies, and caller/callee graphs via aegis graph --query <symbol> before dumping files or reading large code chunks.
+- Fallback to conventional grep ONLY if AST indexing fails.
+
+## 3. Subagent Token Arbitrage & Neural Memory Bus
+- Run aegis recall (or aegis recall "<topic>") to retrieve instant SQLite FTS5 memories (<50ms, <100 tokens).
+- Run aegis bootstrap to inject active workspace context in <= 400 tokens. Never crawl raw multi-megabyte session logs.
+
+## 4. Andrej Karpathy Simplicity Doctrine
+- Surgical changes only: Touch ONLY lines directly relevant to the user request.
+- Zero speculative abstraction: No premature wrappers for single-use logic.
+- If a solution can be implemented cleanly in 50 lines, never produce 200 lines.
+<!-- AEGIS_BRAIN_MINDSET_END -->
+"@
+
+    function Inject-MarkdownBlock {
+        param([string]$FilePath, [string]$Block, [bool]$Prepend = $false)
+        $parent = Split-Path -Parent $FilePath
+        if (-not (Test-Path $parent)) {
+            New-Item -ItemType Directory -Path $parent -Force | Out-Null
+        }
+        if (Test-Path $FilePath) {
+            $content = Get-Content -Path $FilePath -Raw -Encoding utf8
+            if ($content -match '<!-- AEGIS_BRAIN_MINDSET_START -->[\s\S]*?<!-- AEGIS_BRAIN_MINDSET_END -->') {
+                $newContent = [regex]::Replace($content, '<!-- AEGIS_BRAIN_MINDSET_START -->[\s\S]*?<!-- AEGIS_BRAIN_MINDSET_END -->', $Block.Trim())
+            } elseif ($Prepend) {
+                $newContent = $Block.Trim() + "`r`n`r`n" + $content.TrimStart()
+            } else {
+                $newContent = $content.TrimEnd() + "`r`n`r`n" + $Block.Trim()
+            }
+            [System.IO.File]::WriteAllText($FilePath, $newContent, [System.Text.Encoding]::UTF8)
+        } else {
+            [System.IO.File]::WriteAllText($FilePath, $Block.Trim() + "`r`n", [System.Text.Encoding]::UTF8)
+        }
+    }
+
+    # A. Google Antigravity
+    Inject-MarkdownBlock -FilePath (Join-Path $HomeDir ".gemini\config\GEMINI.md") -Block $MindsetMarkdown -Prepend $true
+    Inject-MarkdownBlock -FilePath (Join-Path $HomeDir ".gemini\antigravity-cli\knowledge\aegis_mindset.md") -Block $MindsetMarkdown -Prepend $true
+    # B. Anthropic Claude Code
+    Inject-MarkdownBlock -FilePath (Join-Path $HomeDir ".claude\CLAUDE.md") -Block $MindsetMarkdown -Prepend $false
+    # C. OpenAI Codex
+    Inject-MarkdownBlock -FilePath (Join-Path $HomeDir ".codex\instructions.md") -Block $MindsetMarkdown -Prepend $false
+    # D. Aider
+    Inject-MarkdownBlock -FilePath (Join-Path $HomeDir ".aider\conventions.md") -Block $MindsetMarkdown -Prepend $false
+    $aiderConf = Join-Path $HomeDir ".aider.conf.yml"
+    if (-not (Test-Path $aiderConf)) {
+        [System.IO.File]::WriteAllText($aiderConf, "read: conventions.md`r`n", [System.Text.Encoding]::UTF8)
+    }
+    # E. Workspace
+    if ($ResolvedWorkspace -and (Test-Path $ResolvedWorkspace)) {
+        Inject-MarkdownBlock -FilePath (Join-Path $ResolvedWorkspace "CLAUDE.md") -Block $MindsetMarkdown -Prepend $false
+        Inject-MarkdownBlock -FilePath (Join-Path $ResolvedWorkspace "AGENTS.md") -Block $MindsetMarkdown -Prepend $false
+    }
+    # F. Save latest pointer
+    $LatestPointer = Join-Path $SnapshotsDir "LATEST_MINDSET_SNAPSHOT.txt"
+    $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+    [System.IO.File]::WriteAllText($LatestPointer, $SnapshotId.Trim(), $utf8NoBom)
     Write-Host "       [OK] Directives & hooks injected into GEMINI.md, CLAUDE.md, and instructions.md" -ForegroundColor Green
 }
 

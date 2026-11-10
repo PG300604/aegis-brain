@@ -156,7 +156,8 @@ $restoreErrors = @()
 
 foreach ($file in $Manifest.files) {
     $origPath = $file.original_path
-    $backupPath = Join-Path $SnapshotTargetDir $file.backup_path
+    $rel = if ($file.backup_path) { $file.backup_path } else { $file.backup_relative_path }
+    $backupPath = Join-Path $SnapshotTargetDir $rel
 
     if (Test-Path $backupPath) {
         try {

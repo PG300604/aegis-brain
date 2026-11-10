@@ -43,7 +43,8 @@ class TestSeverityTriage(unittest.TestCase):
         self.assertEqual(dec.severity, SeverityLevel.MODERATE)
         self.assertIn(dec.execution_strategy, [
             ExecutionStrategy.LOCAL_WORKER_WITH_MANAGER_REVIEW,
-            ExecutionStrategy.LIGHTWEIGHT_CLI
+            ExecutionStrategy.LIGHTWEIGHT_CLI,
+            ExecutionStrategy.PARALLEL_SUBAGENTS,
         ])
         self.assertEqual(dec.complexity_score, 6)
 

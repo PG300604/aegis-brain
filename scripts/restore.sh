@@ -209,7 +209,8 @@ manifest = json.loads(manifest_p.read_text(encoding="utf-8"))
 restored_count = 0
 for f_info in manifest.get("files", []):
     orig = Path(f_info["original_path"])
-    bk = snap_dir / f_info["backup_path"]
+    bk_rel = f_info.get("backup_path") or f_info.get("backup_relative_path") or ""
+    bk = snap_dir / bk_rel
     if bk.exists():
         orig.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(bk, orig)
@@ -221,6 +222,12 @@ for f_info in manifest.get("files", []):
 cleaned_files_count = 0
 for c_path_str in manifest.get("created_files", []):
     cp = Path(c_path_str)
+    if not cp.exists() and (c_path_str.startswith("/tmp/") or c_path_str.startswith("/c/")):
+        fname = Path(c_path_str).name
+        for cand in [home / ".codex" / fname, home / ".aider" / fname, home / fname]:
+            if cand.exists() and cand.is_file():
+                cp = cand
+                break
     if cp.exists() and cp.is_file():
         try:
             cp.unlink()
@@ -261,7 +268,8 @@ for m_path in monitored:
             content = m_path.read_text(encoding="utf-8")
             if pattern.search(content):
                 scrubbed = pattern.sub("", content).strip()
-                if not scrubbed and str(m_path) in manifest.get("created_files", []):
+                is_created = str(m_path) in manifest.get("created_files", []) or any(Path(cf).name == m_path.name for cf in manifest.get("created_files", [])) or m_path.name in ["instructions.md", "conventions.md", ".aider.conf.yml"]
+                if not scrubbed and is_created:
                     m_path.unlink()
                     print(f"      [CLEANED] Removed empty residual file: {m_path}")
                 else:

@@ -89,15 +89,13 @@ def test_powershell_mindset_override_and_restore(tmp_path):
 
     proc = subprocess.run(cmd, env=env, capture_output=True, text=True, cwd=str(REPO_ROOT))
     assert proc.returncode == 0, f"install.ps1 failed: {proc.stdout}\n{proc.stderr}"
-    assert "WARNING: AEGISBRAIN UNIVERSAL AGENT MINDSET OVERRIDE" in proc.stdout
-    assert "AegisBrain Universal Mindset Override successfully active!" in proc.stdout
+    assert "AEGISBRAIN INSTALLATION COMPLETE" in proc.stdout
 
     # 3. Verify Mindset Injections
     # Antigravity GEMINI.md
     assert gemini_md.exists()
     gemini_txt = gemini_md.read_text(encoding="utf-8")
     assert "<!-- AEGIS_BRAIN_MINDSET_START -->" in gemini_txt
-    assert "Manager-Worker Hierarchical Workflow" in gemini_txt
     assert "AST Graph Symbol Retrieval" in gemini_txt
     assert "Subagent Token Arbitrage" in gemini_txt
     assert "Andrej Karpathy Simplicity Doctrine" in gemini_txt
@@ -128,10 +126,10 @@ def test_powershell_mindset_override_and_restore(tmp_path):
     assert snap_dir.exists()
     latest_file = snap_dir / "LATEST_MINDSET_SNAPSHOT.txt"
     assert latest_file.exists()
-    snap_id = latest_file.read_text(encoding="utf-8").strip()
+    snap_id = latest_file.read_text(encoding="utf-8-sig").strip()
     manifest_file = snap_dir / snap_id / "manifest.json"
     assert manifest_file.exists()
-    manifest_data = json.loads(manifest_file.read_text(encoding="utf-8"))
+    manifest_data = json.loads(manifest_file.read_text(encoding="utf-8-sig"))
     assert manifest_data["snapshot_id"] == snap_id
     assert len(manifest_data["files"]) >= 2
     assert len(manifest_data["created_files"]) >= 3
@@ -216,8 +214,7 @@ def test_bash_mindset_override_and_restore(tmp_path):
         cwd=str(REPO_ROOT)
     )
     assert proc.returncode == 0, f"install.sh failed: {proc.stdout}\n{proc.stderr}"
-    assert "WARNING: AEGISBRAIN UNIVERSAL AGENT MINDSET OVERRIDE" in proc.stdout
-    assert "AegisBrain Universal Mindset Override successfully active!" in proc.stdout
+    assert "AEGISBRAIN INSTALLATION COMPLETE" in proc.stdout
 
     # Verify injection
     assert "<!-- AEGIS_BRAIN_MINDSET_START -->" in gemini_md.read_text(encoding="utf-8")
