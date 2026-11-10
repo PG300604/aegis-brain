@@ -252,14 +252,17 @@ def main() -> None:
     nav_parser.add_argument("page", nargs="?", type=int, default=1, help="Page number to inspect (default: 1)")
 
     # snapshot (Restore point creation & inspection)
-    snap_parser = subparsers.add_parser("snapshot", help="Create or list agent configuration restore points")
+    snap_parser = subparsers.add_parser("snapshot", aliases=["snapshots"], help="Create or list agent configuration restore points")
     snap_parser.add_argument("action", nargs="?", choices=["create", "list"], default="list", help="Action (create/list)")
     snap_parser.add_argument("--name", "-n", default=None, help="Optional friendly name for the snapshot")
     snap_parser.add_argument("--reason", "-r", default="manual", help="Reason for creating snapshot")
+    snap_parser.add_argument("--all", "-a", action="store_true", help="Display all snapshots without pagination/limit")
 
     # restore / rollback
-    restore_parser = subparsers.add_parser("restore", help="Rollback agent configuration and rules to a previous restore point")
-    restore_parser.add_argument("snapshot_id", nargs="?", default="latest", help="Snapshot ID or partial name to restore")
+    restore_parser = subparsers.add_parser("restore", aliases=["rollback"], help="Rollback agent configuration and rules to a previous restore point")
+    restore_parser.add_argument("snapshot_id", nargs="?", default=None, help="Snapshot ID, index number (1, 2...), or 'latest'")
+    restore_parser.add_argument("--interactive", "-i", action="store_true", help="Interactively select snapshot from a numbered list")
+    restore_parser.add_argument("--force", "-f", action="store_true", help="Bypass confirmation prompt")
 
     # browse (Lightweight AI Browser)
     browse_parser = subparsers.add_parser("browse", help="Fetch and distill web content into token-efficient markdown (Jev-compatible)")
@@ -1002,29 +1005,43 @@ def main() -> None:
         for it in items:
             print(f"[{it['time_str']} {it['source'].upper()}] {it['text']}")
 
-    elif args.command == "snapshot":
-        from .snapshot import create_snapshot, list_snapshots
-        if args.action == "create":
+    elif args.command in ("snapshot", "snapshots"):
+        from .snapshot import create_snapshot, list_snapshots, format_snapshot_table
+        if getattr(args, "action", "list") == "create":
             res = create_snapshot(name=args.name, reason=args.reason)
             print(f"[AegisBrain] Snapshot created: {res['snapshot_id']} ({res['file_count']} files archived)")
         else:
             snaps = list_snapshots()
-            print("=== AegisBrain Configuration Restore Points ===")
-            if not snaps:
-                print("  No snapshots found. Run `aegis snapshot create` to create a restore point.")
-            for s in snaps:
-                print(f"  • [{s.get('snapshot_id')}] {s.get('name')} - {s.get('reason')} ({s.get('created_at')})")
+            limit = None if getattr(args, "all", False) else 25
+            print(format_snapshot_table(snaps, limit=limit))
+            print("\n  Tip: Run `aegis restore <number>` (e.g. `aegis restore 1`) to roll back to any snapshot.")
 
-    elif args.command == "restore":
-        from .snapshot import restore_snapshot, list_snapshots
-        snap_id = args.snapshot_id
-        if snap_id == "latest":
-            snaps = list_snapshots()
-            if not snaps:
-                print("[AegisBrain] No snapshots available to restore.")
+    elif args.command in ("restore", "rollback"):
+        from .snapshot import restore_snapshot, list_snapshots, format_snapshot_table
+        snaps = list_snapshots()
+        if not snaps:
+            print("[AegisBrain] No snapshots available to restore.")
+            return
+
+        target_id = getattr(args, "snapshot_id", None)
+        # If no snapshot_id provided or interactive flag set, prompt interactively
+        if target_id is None or getattr(args, "interactive", False):
+            print(format_snapshot_table(snaps, limit=20))
+            print("")
+            try:
+                choice = input(f"Select snapshot number to restore [1..{len(snaps)}] (or snapshot ID, 'q' to quit) [default: 1]: ").strip()
+            except (KeyboardInterrupt, EOFError):
+                print("\n[AegisBrain] Cancelled.")
                 return
-            snap_id = snaps[0]["snapshot_id"]
-        ok, msg = restore_snapshot(snap_id)
+            if not choice:
+                target_id = "1"
+            elif choice.lower() in ("q", "quit", "cancel"):
+                print("[AegisBrain] Restore cancelled.")
+                return
+            else:
+                target_id = choice
+
+        ok, msg = restore_snapshot(target_id)
         status_lbl = "[OK]" if ok else "[ERROR]"
         print(f"[AegisBrain] {status_lbl} {msg}")
 

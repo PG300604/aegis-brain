@@ -27,37 +27,87 @@ $HomeDir = if ($env:USERPROFILE) { $env:USERPROFILE } else { [System.Environment
 $SnapshotsDir = Join-Path $HomeDir ".aegis-brain\snapshots"
 $LatestPointer = Join-Path $SnapshotsDir "LATEST_MINDSET_SNAPSHOT.txt"
 
-# 1. Resolve Snapshot ID & Directory
-$TargetSnapshotId = $SnapshotId
-if (-not $TargetSnapshotId) {
-    if (Test-Path $LatestPointer) {
-        $TargetSnapshotId = (Get-Content -Path $LatestPointer -Raw -Encoding utf8).Trim()
-    }
-}
-
-if (-not $TargetSnapshotId) {
-    # Auto-discover latest snapshot
-    if (Test-Path $SnapshotsDir) {
-        $matching = Get-ChildItem -Path $SnapshotsDir -Directory | Where-Object {
-            (Test-Path (Join-Path $_.FullName "manifest.json")) -and ($_.Name -match 'mindset_override')
-        } | Sort-Object Name -Descending
-
-        if ($matching) {
-            $TargetSnapshotId = $matching[0].Name
-        } else {
-            $anySnap = Get-ChildItem -Path $SnapshotsDir -Directory | Where-Object {
-                Test-Path (Join-Path $_.FullName "manifest.json")
-            } | Sort-Object Name -Descending
-            if ($anySnap) {
-                $TargetSnapshotId = $anySnap[0].Name
-            }
+# 1. Discover all valid snapshots
+$SnapshotsList = @()
+if (Test-Path $SnapshotsDir) {
+    Get-ChildItem -Path $SnapshotsDir -Directory | Sort-Object Name -Descending | ForEach-Object {
+        $mPath = Join-Path $_.FullName "manifest.json"
+        if (Test-Path $mPath) {
+            try {
+                $mData = Get-Content -Path $mPath -Raw -Encoding utf8 | ConvertFrom-Json
+                $SnapshotsList += [PSCustomObject]@{
+                    Id = $_.Name
+                    Date = if ($mData.created_at) { $mData.created_at } else { $_.CreationTime.ToString("yyyy-MM-dd HH:mm:ss") }
+                    Reason = if ($mData.reason) { $mData.reason } else { "manual" }
+                    Files = if ($mData.file_count) { $mData.file_count } else { 0 }
+                    Path = $_.FullName
+                }
+            } catch {}
         }
     }
 }
 
-if (-not $TargetSnapshotId) {
+if ($SnapshotsList.Count -eq 0) {
     Write-Host "[ERROR] No restore points found in $SnapshotsDir" -ForegroundColor Red
     exit 1
+}
+
+# 2. Interactive Selection Menu or Parameter Resolution
+$TargetSnapshotId = $SnapshotId
+if (-not $TargetSnapshotId -and -not $Force -and -not $env:CI -and -not $env:NONINTERACTIVE) {
+    Write-Host " Available Configuration Restore Points:" -ForegroundColor White
+    Write-Host "--------------------------------------------------------------------------------------------" -ForegroundColor DarkGray
+    Write-Host (" {0,-5} {1,-20} {2,-6} {3,-30} {4}" -f "#", "Date / Time", "Files", "Snapshot ID", "Reason") -ForegroundColor Cyan
+    Write-Host "--------------------------------------------------------------------------------------------" -ForegroundColor DarkGray
+
+    $maxShow = [Math]::Min($SnapshotsList.Count, 20)
+    for ($i = 0; $i -lt $maxShow; $i++) {
+        $s = $SnapshotsList[$i]
+        $num = "[{0,2}]" -f ($i + 1)
+        $rShort = if ($s.Reason.Length -gt 32) { $s.Reason.Substring(0, 29) + "..." } else { $s.Reason }
+        Write-Host (" {0,-5} {1,-20} {2,5}   {3,-30} {4}" -f $num, $s.Date, $s.Files, $s.Id, $rShort) -ForegroundColor Gray
+    }
+    Write-Host "--------------------------------------------------------------------------------------------" -ForegroundColor DarkGray
+    if ($SnapshotsList.Count -gt $maxShow) {
+        Write-Host " (Showing newest $maxShow of $($SnapshotsList.Count) snapshots)" -ForegroundColor DarkGray
+    }
+    Write-Host ""
+
+    try {
+        $sel = Read-Host "Select snapshot number to restore [1..$($SnapshotsList.Count)], ID, or Enter for latest [1] (or 'q' to quit)"
+        $sel = $sel.Trim()
+        if ($sel -match '^[qQ]') {
+            Write-Host "[AegisBrain] Restore cancelled." -ForegroundColor Yellow
+            exit 0
+        } elseif ($sel -match '^\d+$') {
+            $idx = [int]$sel - 1
+            if ($idx -ge 0 -and $idx -lt $SnapshotsList.Count) {
+                $TargetSnapshotId = $SnapshotsList[$idx].Id
+            } else {
+                Write-Host "[ERROR] Invalid selection '$sel'. Must be between 1 and $($SnapshotsList.Count)." -ForegroundColor Red
+                exit 1
+            }
+        } elseif ($sel) {
+            $TargetSnapshotId = $sel
+        } else {
+            $TargetSnapshotId = $SnapshotsList[0].Id
+        }
+    } catch {
+        $TargetSnapshotId = $SnapshotsList[0].Id
+    }
+} elseif (-not $TargetSnapshotId) {
+    # Non-interactive / Force default
+    if (Test-Path $LatestPointer) {
+        $TargetSnapshotId = (Get-Content -Path $LatestPointer -Raw -Encoding utf8).Trim()
+    } else {
+        $TargetSnapshotId = $SnapshotsList[0].Id
+    }
+} elseif ($TargetSnapshotId -match '^\d+$') {
+    # Numeric index passed via parameter
+    $idx = [int]$TargetSnapshotId - 1
+    if ($idx -ge 0 -and $idx -lt $SnapshotsList.Count) {
+        $TargetSnapshotId = $SnapshotsList[$idx].Id
+    }
 }
 
 $SnapshotTargetDir = Join-Path $SnapshotsDir $TargetSnapshotId

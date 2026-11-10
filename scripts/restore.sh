@@ -32,6 +32,73 @@ SNAPSHOTS_DIR="$HOME_DIR/.aegis-brain/snapshots"
 LATEST_POINTER="$SNAPSHOTS_DIR/LATEST_MINDSET_SNAPSHOT.txt"
 
 # 1. Resolve Snapshot ID
+if [ -z "$TARGET_SNAPSHOT_ID" ] && [ "$FORCE" = false ] && [ -t 0 ]; then
+  # Interactive snapshot selector
+  PY_BIN=""
+  if command -v python3 >/dev/null 2>&1; then
+    PY_BIN="python3"
+  elif command -v python >/dev/null 2>&1; then
+    PY_BIN="python"
+  fi
+
+  if [ -n "$PY_BIN" ]; then
+    SELECT_OUTPUT="$($PY_BIN -c '
+import json, os, sys
+from pathlib import Path
+home = Path(os.environ.get("HOME", str(Path.home())))
+sdir = home / ".aegis-brain" / "snapshots"
+if not sdir.exists():
+    sys.exit(1)
+snaps = []
+for d in sorted(sdir.iterdir(), reverse=True):
+    if d.is_dir() and (d / "manifest.json").exists():
+        try:
+            m = json.loads((d / "manifest.json").read_text("utf-8"))
+            snaps.append(m)
+        except Exception:
+            pass
+if not snaps:
+    sys.exit(1)
+
+sys.stderr.write(" Available Configuration Restore Points:\n")
+sys.stderr.write("-" * 88 + "\n")
+sys.stderr.write(f" {\"#\":<4} {\"Date / Time\":<20} {\"Files\":<6} {\"Snapshot ID\":<30} Reason\n")
+sys.stderr.write("-" * 88 + "\n")
+for i, s in enumerate(snaps[:20], 1):
+    sid = s.get("snapshot_id", "")
+    dt = s.get("created_at", "")
+    fc = s.get("file_count", 0)
+    r = s.get("reason", "manual")
+    if len(r) > 30: r = r[:27] + "..."
+    sys.stderr.write(f" [{i:>2}]  {dt:<20} {fc:>4}   {sid:<30} {r}\n")
+sys.stderr.write("-" * 88 + "\n")
+
+try:
+    c = input(f"Select snapshot number [1..{len(snaps)}], ID, or Enter for latest [1] (or q to quit): ").strip()
+except Exception:
+    c = ""
+
+if c.lower() in ("q", "quit"):
+    sys.exit(2)
+if c.isdigit():
+    idx = int(c) - 1
+    if 0 <= idx < len(snaps):
+        print(snaps[idx]["snapshot_id"])
+        sys.exit(0)
+if c:
+    print(c)
+    sys.exit(0)
+print(snaps[0]["snapshot_id"])
+' 2>&1)" || true
+    RET_CODE=$?
+    if [ $RET_CODE -eq 2 ]; then
+      echo -e "\033[1;33m[AegisBrain] Restore cancelled.\033[0m"
+      exit 0
+    fi
+    TARGET_SNAPSHOT_ID="$(echo "$SELECT_OUTPUT" | tail -n 1)"
+  fi
+fi
+
 if [ -z "$TARGET_SNAPSHOT_ID" ]; then
   if [ -f "$LATEST_POINTER" ]; then
     TARGET_SNAPSHOT_ID="$(tr -d ' \r\n' < "$LATEST_POINTER")"
@@ -40,14 +107,9 @@ fi
 
 if [ -z "$TARGET_SNAPSHOT_ID" ]; then
   if [ -d "$SNAPSHOTS_DIR" ]; then
-    latest_dir="$(find "$SNAPSHOTS_DIR" -maxdepth 1 -mindepth 1 -type d -name "*mindset_override*" | sort -r | head -n 1 || true)"
-    if [ -n "$latest_dir" ]; then
-      TARGET_SNAPSHOT_ID="$(basename "$latest_dir")"
-    else
-      latest_any="$(find "$SNAPSHOTS_DIR" -maxdepth 1 -mindepth 1 -type d | sort -r | head -n 1 || true)"
-      if [ -n "$latest_any" ]; then
-        TARGET_SNAPSHOT_ID="$(basename "$latest_any")"
-      fi
+    latest_any="$(find "$SNAPSHOTS_DIR" -maxdepth 1 -mindepth 1 -type d | sort -r | head -n 1 || true)"
+    if [ -n "$latest_any" ]; then
+      TARGET_SNAPSHOT_ID="$(basename "$latest_any")"
     fi
   fi
 fi
@@ -55,6 +117,14 @@ fi
 if [ -z "$TARGET_SNAPSHOT_ID" ]; then
   echo -e "\033[1;31m[ERROR] No restore points found in $SNAPSHOTS_DIR\033[0m"
   exit 1
+fi
+
+# Resolve numeric index if passed as parameter (e.g. ./restore.sh 1)
+if [[ "$TARGET_SNAPSHOT_ID" =~ ^[0-9]+$ ]]; then
+  resolved_dir="$(find "$SNAPSHOTS_DIR" -maxdepth 1 -mindepth 1 -type d | sort -r | sed -n "${TARGET_SNAPSHOT_ID}p" || true)"
+  if [ -n "$resolved_dir" ]; then
+    TARGET_SNAPSHOT_ID="$(basename "$resolved_dir")"
+  fi
 fi
 
 SNAPSHOT_TARGET_DIR="$SNAPSHOTS_DIR/$TARGET_SNAPSHOT_ID"

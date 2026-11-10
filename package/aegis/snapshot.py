@@ -100,7 +100,7 @@ def create_snapshot(name: Optional[str] = None, reason: str = "manual") -> Dict[
 
 
 def list_snapshots() -> List[Dict[str, Any]]:
-    """List all available restore points in chronological order."""
+    """List all available restore points in chronological order (newest first)."""
     snaps = []
     root = get_snapshots_dir()
     for child in sorted(root.iterdir(), reverse=True):
@@ -115,18 +115,60 @@ def list_snapshots() -> List[Dict[str, Any]]:
     return snaps
 
 
-def restore_snapshot(snapshot_id: str) -> Tuple[bool, str]:
-    """Restore agent configurations from a specified snapshot ID or latest."""
+def format_snapshot_table(snaps: Optional[List[Dict[str, Any]]] = None, limit: Optional[int] = 20) -> str:
+    """Format restore points into a clean human-readable table with dates and numbers."""
+    if snaps is None:
+        snaps = list_snapshots()
+    if not snaps:
+        return "  No restore points found. Run `aegis snapshot create` to create one."
+
+    lines = [
+        "=" * 92,
+        "  #   Date / Time          Files  Snapshot ID                    Reason",
+        "-" * 92,
+    ]
+    displayed = snaps[:limit] if limit else snaps
+    for idx, s in enumerate(displayed, 1):
+        sid = s.get("snapshot_id", "unknown")
+        dt = s.get("created_at", "unknown")
+        fc = s.get("file_count", 0)
+        reason = s.get("reason", "manual")
+        if len(reason) > 36:
+            reason = reason[:33] + "..."
+        lines.append(f" [{idx:>2}] {dt:<19}  {fc:>2}    {sid:<30} {reason}")
+    lines.append("-" * 92)
+    if limit and len(snaps) > limit:
+        lines.append(f"  (Showing newest {limit} of {len(snaps)} snapshots. Pass --all to see full history)")
+    return "\n".join(lines)
+
+
+def restore_snapshot(snapshot_id: str = "latest") -> Tuple[bool, str]:
+    """Restore agent configurations from a specified snapshot ID, index number, or latest."""
     root = get_snapshots_dir()
-    target_dir = root / snapshot_id
+    snaps = list_snapshots()
+    if not snaps:
+        return False, f"No snapshots available in {root}"
+
+    # Handle numeric index (e.g., '1', '2')
+    resolved_id = snapshot_id
+    if str(snapshot_id).isdigit():
+        idx = int(snapshot_id) - 1
+        if 0 <= idx < len(snaps):
+            resolved_id = snaps[idx]["snapshot_id"]
+        else:
+            return False, f"Invalid snapshot number: {snapshot_id} (Available: 1..{len(snaps)})"
+    elif snapshot_id in ("latest", "", None):
+        resolved_id = snaps[0]["snapshot_id"]
+
+    target_dir = root / resolved_id
 
     if not target_dir.exists():
-        # Check if user passed partial name or index
-        matched = [d for d in root.iterdir() if d.is_dir() and snapshot_id in d.name]
+        # Check if user passed partial name or substring
+        matched = [d for d in root.iterdir() if d.is_dir() and resolved_id in d.name]
         if matched:
             target_dir = matched[0]
         else:
-            return False, f"Snapshot '{snapshot_id}' not found in {root}"
+            return False, f"Snapshot '{resolved_id}' not found in {root}"
 
     manifest_file = target_dir / "manifest.json"
     if not manifest_file.exists():
