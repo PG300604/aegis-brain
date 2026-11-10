@@ -1,0 +1,22 @@
+Welcome to AegisBrain, the open-source neural memory bus and three-tier token arbitrage orchestrator for AI coding agents.
+
+Every developer using AI agents faces two major bottlenecks: context amnesia across sessions, and spending expensive frontier tokens on repetitive boilerplate. Today, we demonstrate how AegisBrain solves this on a real-world mock project inside the Antigravity CLI.
+
+When we launch Antigravity, AegisBrain's zero-UI pre-flight routine executes autonomously, injecting active session context, milestones, and system radar in under four hundred tokens.
+
+Next, we ask the agent to implement a production Redis token bucket rate limiter with burst protection for our ApexPay API gateway. Instead of crawling sixty thousand tokens of unindexed session history, AegisBrain executes a sub-second SQLite FTS5 recall in just eighteen milliseconds, retrieving previous architectural invariants with zero token waste.
+
+Watch how AegisBrain organizes work through our three-tier multi-agent hierarchy. The frontier model acts as the Tier 1 Senior Boss, locking down strict invariants. It spawns a Tier 2 Junior Boss subagent, which dispatches raw candidate code generation directly to our Tier 3 local worker CLI, Hermes Agent.
+
+Hermes synthesizes the Lua scripts and limiter logic locally on our GPU at zero frontier API cost. But AegisBrain never blindly trusts raw drafts. Our Tier 2 subagent audits the code through the four-decision quality architecture gate, catching Lua float conversion flaws, removing polite conversational slop, and enforcing Karpathy simplicity.
+
+When the implementation is finalized, the test suite runs: all eleven unit tests pass in zero point seven two seconds. The architectural decision is committed to persistent neural memory, and the security scanner certifies zero secrets and zero vulnerabilities.
+
+Now, we exit the CLI to demonstrate AegisBrain's standalone tools. Because AegisBrain is cross-assistant, any tool can be executed directly from the terminal. 
+
+We run "aegis recall" to verify our newly indexed decision. 
+Next, "aegis challenge" performs a truth-seeking security audit on our rate limiter, rejecting sycophancy and validating AST safety. 
+Before pushing changes, "aegis snapshot" creates a cryptographic restore point. And if an experiment ever fails, "aegis restore" rolls back the entire workspace with zero residual files.
+Finally, "aegis briefing" provides a complete morning dashboard in under twenty milliseconds.
+
+AegisBrain is open source under GPLv3. Check out the v2.4.0 release on GitHub at PG300604 slash aegis-brain.

@@ -16,4 +16,6 @@ venv/
 .DS_Store
 scratch/
 assets/marketing/linkedin_demo/frames/
+assets/marketing/linkedin_demo/master_edit/seg_*.mp4
+assets/marketing/linkedin_demo/master_edit/stitched_temp.mp4
 hacker_news_post.txt

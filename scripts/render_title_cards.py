@@ -1,0 +1,226 @@
+"""Render Intro and Outro 1080p cards for the master video."""
+
+import subprocess
+from pathlib import Path
+
+OUT_DIR = Path("P:/open-source/aegis-brain/assets/marketing/linkedin_demo/master_edit")
+EDGE_PATH = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+
+INTRO_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at 50% 30%, #0F172A 0%, #04060A 85%);
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #F8FAFC;
+    text-align: center;
+  }
+  .badge {
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid #38BDF8;
+    color: #38BDF8;
+    padding: 8px 24px;
+    border-radius: 999px;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.35);
+  }
+  .title {
+    font-size: 80px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    margin-bottom: 18px;
+    background: linear-gradient(135deg, #FFFFFF 0%, #38BDF8 50%, #818CF8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .subtitle {
+    font-size: 28px;
+    color: #94A3B8;
+    max-width: 1100px;
+    line-height: 1.45;
+    margin-bottom: 48px;
+  }
+  .metrics-grid {
+    display: flex;
+    gap: 32px;
+    margin-top: 10px;
+  }
+  .metric-card {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 24px 36px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 280px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  }
+  .metric-val {
+    font-size: 42px;
+    font-weight: 800;
+    color: #38BDF8;
+    margin-bottom: 6px;
+    font-family: ui-monospace, monospace;
+  }
+  .metric-val.green { color: #34D399; }
+  .metric-val.yellow { color: #FBBF24; }
+  .metric-lbl {
+    font-size: 15px;
+    color: #94A3B8;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <div class="badge">Open Source • GNU GPLv3 • v2.4.0</div>
+  <h1 class="title">AegisBrain</h1>
+  <p class="subtitle">Zero-UI Neural Memory Bus &amp; 3-Tier Token Arbitrage Orchestrator for AI Coding Agents</p>
+  
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-val">&lt; 18.2 ms</div>
+      <div class="metric-lbl">Sub-Second Memory Recall</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val green">92.4%</div>
+      <div class="metric-lbl">Token Arbitrage Savings</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-val yellow">4-Stage</div>
+      <div class="metric-lbl">Architecture Quality Gate</div>
+    </div>
+  </div>
+</body>
+</html>
+"""
+
+OUTRO_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at 50% 30%, #0F172A 0%, #04060A 85%);
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #F8FAFC;
+    text-align: center;
+  }
+  .badge {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid #10B981;
+    color: #34D399;
+    padding: 8px 24px;
+    border-radius: 999px;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.35);
+  }
+  .title {
+    font-size: 72px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    margin-bottom: 18px;
+    background: linear-gradient(135deg, #FFFFFF 0%, #38BDF8 50%, #818CF8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .subtitle {
+    font-size: 28px;
+    color: #94A3B8;
+    max-width: 1000px;
+    line-height: 1.45;
+    margin-bottom: 40px;
+  }
+  .cta-box {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 35px rgba(56, 189, 248, 0.15);
+    padding: 30px 60px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .github-link {
+    font-size: 32px;
+    font-weight: 800;
+    color: #38BDF8;
+    font-family: ui-monospace, monospace;
+    letter-spacing: -0.5px;
+  }
+  .install-cmd {
+    font-size: 18px;
+    color: #34D399;
+    font-family: ui-monospace, monospace;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: 1px solid #1E293B;
+  }
+</style>
+</head>
+<body>
+  <div class="badge">⭐ 100% Free &amp; Open Source (GPLv3)</div>
+  <h1 class="title">Supercharge Your AI Agents</h1>
+  <p class="subtitle">Eliminate context amnesia, slash token waste, and enforce Karpathy simplicity.</p>
+  
+  <div class="cta-box">
+    <div class="github-link">github.com/PG300604/aegis-brain</div>
+    <div class="install-cmd">curl -sSL https://raw.githubusercontent.com/PG300604/aegis-brain/main/install.ps1 | powershell</div>
+  </div>
+</body>
+</html>
+"""
+
+def render_cards():
+    intro_html_path = OUT_DIR / "intro_card.html"
+    intro_png_path = OUT_DIR / "intro_card.png"
+    intro_html_path.write_text(INTRO_HTML, encoding="utf-8")
+    
+    outro_html_path = OUT_DIR / "outro_card.html"
+    outro_png_path = OUT_DIR / "outro_card.png"
+    outro_html_path.write_text(OUTRO_HTML, encoding="utf-8")
+    
+    subprocess.run([
+        EDGE_PATH, "--headless=new", "--disable-gpu", "--window-size=1920,1080",
+        f"--screenshot={intro_png_path.resolve()}", intro_html_path.as_uri()
+    ], check=True)
+    print("Rendered intro_card.png!")
+    
+    subprocess.run([
+        EDGE_PATH, "--headless=new", "--disable-gpu", "--window-size=1920,1080",
+        f"--screenshot={outro_png_path.resolve()}", outro_html_path.as_uri()
+    ], check=True)
+    print("Rendered outro_card.png!")
+
+if __name__ == "__main__":
+    render_cards()
