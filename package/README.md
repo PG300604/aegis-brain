@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-285%20Passing-10B981.svg?logo=githubactions&logoColor=white" alt="CI: 285 Passing"></a>
+  <a href="https://github.com/PG300604/aegis-brain/actions/workflows/ci.yml"><img src="https://img.shields.io/badge/CI-289%20Passing-10B981.svg?logo=githubactions&logoColor=white" alt="CI: 289 Passing"></a>
   <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?logo=python&logoColor=white" alt="Python 3.10+"></a>
   <img src="https://img.shields.io/badge/Dependencies-Zero%20External-F97316.svg" alt="Zero External Dependencies">
   <img src="https://img.shields.io/badge/Memory-%3C%2025%20MB-8B5CF6.svg" alt="Memory: < 25 MB">
@@ -86,7 +86,8 @@ AegisBrain runs a zero-external-dependency background daemon connected to a pers
 1. **Unified AI Agent Client Layer**: Coding agents (Google Antigravity, Anthropic Claude Code, OpenAI Codex, Cursor, Windsurf, Nous Hermes, OpenCode) interact via a standard interface (`127.0.0.1:8765`, CLI `aegis recall`, or native companion skills).
 2. **AegisBrain Daemon Chassis (`aegis.server` on `:8765`)**:
    - **Internal Dispatcher**: Routes tasks across Boss-Worker pairings using `UniversalAgentEnvelope`.
-   - **Deterministic Context Governor**: Inspects git status, diffs, tracked PRs, and active decisions, maintaining working context within $\le 400$ tokens (`ACTIVE_CONTEXT.md`).
+   - **Deterministic Context Governor**: Inspects git status, diffs, workspace-scoped tracked PRs, active decisions, context-aware mistake-ledger anti-traps, and JIT Arsenal skills, maintaining working context within $\le 400$ tokens (`ACTIVE_CONTEXT.md`).
+   - **24/7 Repo & PR Watchdog**: Continuously monitors watched repositories (`aegis repo watch`) for newly opened PRs and tracks review/comment/merge transitions (`aegis pr track`), auto-untracking closed PRs and pushing instant alerts.
    - **Neural Memory Bus & Instant Recall**: Multi-threaded SQLite engine in WAL mode with auto-synchronizing FTS5 virtual tables (< 50ms recall, 99.5% token reduction).
    - **Cross-Model Skill Distiller & Proxy**: OpenAI-compatible reverse proxy (`127.0.0.1:8765/v1`) augmenting prompts with domain heuristics before forwarding to local Ollama instances.
    - **Native Caffeinate Engine**: Win32 `SetThreadExecutionState` Away Mode pulse thread, macOS `caffeinate`, and Linux `systemd-inhibit` preventing system standby.
@@ -316,6 +317,9 @@ aegis doctor
 | `aegis caffeinate` | `enable [--keep-display]` / `disable` | Manage Win32 Away Mode wake-lock assertions to prevent workstation sleep during agent runs. |
 | `aegis snapshot` | `create [--reason R]` / `list` / `restore <id>` | Create and manage instant configuration restore points. |
 | `aegis stealth` | `on` / `off` | Toggle zero-disk private stealth mode for confidential sessions. |
+| `aegis poll` | — | Run immediate watchdog sweep across watched repositories and tracked pull requests. |
+| `aegis repo` | `watch <owner/repo>` / `list` / `unwatch <owner/repo>` | Watch entire GitHub repositories for newly opened PRs, auto-track them, and emit alerts. |
+| `aegis pr` | `track <repo> <num>` / `list [--all]` / `untrack` | Track specific pull requests for review/comment/merge updates with auto-cleanup on merge. |
 | `aegis status` | `[--detailed]` | Display daemon status, database size, hardware metrics, and active session telemetry. |
 | `aegis dashboard` | `[--open] [--port P]` | Launch real-time local web telemetry dashboard (`http://127.0.0.1:8766`). |
 
@@ -344,7 +348,7 @@ aegis doctor
 
 - **Daemon RAM Footprint**: **18.4 MB** (idle), **24.2 MB** (active multi-agent routing).
 - **Daemon Startup Time**: **34 ms** (zero external imports).
-- **Test Suite Coverage**: **285 / 285 passed (100% pass rate)**.
+- **Test Suite Coverage**: **289 / 289 passed (100% pass rate)**.
 - **Cross-Platform Parity**: 100% test pass rate across Ubuntu Linux (Python 3.10–3.13), macOS, and Windows.
 
 ---

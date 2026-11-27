@@ -9,7 +9,14 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from .config import DEFAULT_OPEN_SOURCE_ROOT, get_current_mode
-from .db import add_alert, get_tracked_prs, track_pr
+from .db import (
+    add_alert,
+    get_tracked_prs,
+    get_tracked_repos,
+    track_pr,
+    untrack_pr,
+    watch_repo,
+)
 
 
 def fetch_github_endpoint(path: str) -> Optional[Any]:
@@ -38,6 +45,14 @@ def fetch_github_endpoint(path: str) -> Optional[Any]:
 def fetch_github_pr(repo: str, pr_number: int) -> Optional[Dict[str, Any]]:
     """Fetch pull request status from GitHub API using standard library urllib."""
     return fetch_github_endpoint(f"repos/{repo}/pulls/{pr_number}")
+
+
+def fetch_github_repo_prs(repo: str, state: str = "open") -> Optional[List[Dict[str, Any]]]:
+    """Fetch recent pull requests for a repository from GitHub API."""
+    data = fetch_github_endpoint(
+        f"repos/{repo}/pulls?state={state}&sort=created&direction=desc&per_page=30"
+    )
+    return data if isinstance(data, list) else None
 
 
 def notify_remote_alert(category: str, message: str) -> None:
@@ -103,6 +118,74 @@ def inspect_git_repo_status(repo_dir: Path) -> Optional[Dict[str, Any]]:
     return info
 
 
+def sweep_tracked_repos() -> List[str]:
+    """Discover newly opened PRs on watched repositories and auto-track/notify."""
+    if get_current_mode() == "private":
+        return []
+
+    from .db import init_db
+    init_db()
+    alerts: List[str] = []
+    repos = get_tracked_repos()
+    if not repos:
+        return alerts
+
+    existing_by_repo: Dict[str, set] = {}
+    for pr in get_tracked_prs():
+        existing_by_repo.setdefault(pr["repo"], set()).add(int(pr["pr_number"]))
+
+    for item in repos:
+        repo = item["repo"]
+        last_seen_pr = int(item.get("last_seen_pr") or 0)
+        auto_track = bool(item.get("auto_track_prs", 1))
+
+        open_prs = fetch_github_repo_prs(repo, state="open")
+        if open_prs is None:
+            continue
+
+        known_nums = existing_by_repo.get(repo, set())
+        max_pr_num = last_seen_pr
+
+        # Process oldest-to-newest so alerts arrive in chronological order
+        for pr in sorted(open_prs, key=lambda p: int(p.get("number", 0))):
+            pr_num = int(pr.get("number", 0))
+            if pr_num <= 0:
+                continue
+            if pr_num > max_pr_num:
+                max_pr_num = pr_num
+
+            if pr_num <= last_seen_pr or pr_num in known_nums:
+                continue
+
+            title = (pr.get("title") or f"PR #{pr_num}").strip()
+            author = (pr.get("user") or {}).get("login", "unknown")
+            pr_url = pr.get("html_url", f"https://github.com/{repo}/pull/{pr_num}")
+            labels = [l.get("name") for l in pr.get("labels", []) if isinstance(l, dict) and "name" in l]
+            updated_at = pr.get("updated_at", "")
+
+            if auto_track:
+                track_pr(
+                    repo=repo,
+                    pr_number=pr_num,
+                    title=title,
+                    status="open",
+                    labels=labels,
+                    ci_status=pr.get("mergeable_state", "pending"),
+                    comments_count=int(pr.get("comments", 0) or 0),
+                    review_comments_count=int(pr.get("review_comments", 0) or 0),
+                    updated_at=updated_at,
+                )
+                known_nums.add(pr_num)
+
+            msg = f"🆕 *New PR Opened* [{repo}#{pr_num}]({pr_url})\n*{title}* by @{author}"
+            notify_remote_alert("REPO_NEW_PR", msg)
+            alerts.append(msg)
+
+        watch_repo(repo=repo, last_seen_pr=max_pr_num, auto_track_prs=auto_track)
+
+    return alerts
+
+
 def sweep_tracked_prs() -> List[str]:
     """Check all tracked PRs against GitHub API and update database + alerts + Telegram push."""
     if get_current_mode() == "private":
@@ -159,14 +242,15 @@ def sweep_tracked_prs() -> List[str]:
             alerts.append(msg)
 
         # 3. Detect Formal Reviews & Approvals
+        self_user = os.environ.get("AEGIS_GITHUB_USER", "").strip().lower()
         new_review_state = old_review_state
         reviews_data = fetch_github_endpoint(f"repos/{repo}/pulls/{pr_num}/reviews")
         if isinstance(reviews_data, list) and reviews_data:
-            # Filter out self-reviews by user to avoid self-notification noise
+            # Filter out self-reviews by user (when AEGIS_GITHUB_USER is configured) to avoid self-notification noise
             external_reviews = [
                 r for r in reviews_data
                 if r.get("state") not in ("DISMISSED", "PENDING")
-                and r.get("user", {}).get("login", "").lower() != "pg300604"
+                and (not self_user or r.get("user", {}).get("login", "").lower() != self_user)
             ]
             if external_reviews:
                 latest_rev = external_reviews[-1]
@@ -193,7 +277,7 @@ def sweep_tracked_prs() -> List[str]:
                 for c in comments_data[:diff_comments]:
                     c_user = c.get("user", {}).get("login", "")
                     c_body = (c.get("body") or "").strip()
-                    if c_user.lower() != "pg300604":
+                    if not self_user or c_user.lower() != self_user:
                         msg = f"💬 *New Comment on PR* [{repo}#{pr_num}]({pr_url})\nFrom: @{c_user}\n> {c_body[:350]}"
                         notify_remote_alert("PR_COMMENT", msg)
                         alerts.append(msg)
@@ -207,24 +291,28 @@ def sweep_tracked_prs() -> List[str]:
                     rc_user = rc.get("user", {}).get("login", "")
                     rc_path = rc.get("path", "")
                     rc_body = (rc.get("body") or "").strip()
-                    if rc_user.lower() != "pg300604":
+                    if not self_user or rc_user.lower() != self_user:
                         msg = f"🔍 *Code Review Comment* [{repo}#{pr_num}]({pr_url})\nFrom @{rc_user} on `{rc_path}`:\n> {rc_body[:350]}"
                         notify_remote_alert("PR_INLINE_COMMENT", msg)
                         alerts.append(msg)
 
-        # Persist updated state
-        track_pr(
-            repo=repo,
-            pr_number=pr_num,
-            title=title,
-            status=new_status,
-            labels=labels,
-            ci_status=ci_status,
-            comments_count=current_comments,
-            review_comments_count=current_review_comments,
-            latest_review_state=new_review_state,
-            updated_at=current_updated_at,
-        )
+        # If PR is merged or closed, automatically remove from active tracking
+        if new_status in ("merged", "closed"):
+            untrack_pr(repo=repo, pr_number=pr_num)
+        else:
+            # Persist updated state
+            track_pr(
+                repo=repo,
+                pr_number=pr_num,
+                title=title,
+                status=new_status,
+                labels=labels,
+                ci_status=ci_status,
+                comments_count=current_comments,
+                review_comments_count=current_review_comments,
+                latest_review_state=new_review_state,
+                updated_at=current_updated_at,
+            )
 
     return alerts
 
@@ -267,6 +355,11 @@ class WatchdogRunner:
 
     def _run_loop(self) -> None:
         while not self._stop_event.is_set():
+            try:
+                sweep_tracked_repos()
+            except Exception:
+                pass
+
             try:
                 sweep_tracked_prs()
             except Exception:

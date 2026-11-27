@@ -16,6 +16,7 @@ from .db import (
     get_active_alerts,
     get_recent_decisions,
     get_tracked_prs,
+    get_tracked_repos,
     init_db,
 )
 from .config import get_current_mode
@@ -58,7 +59,8 @@ class OfflineBriefingEngine:
         salutation = cls.get_greeting_salutation(name)
         mode = get_current_mode()
         caff = get_caffeinate_status()
-        tracked_prs = get_tracked_prs()
+        tracked_prs = [pr for pr in get_tracked_prs() if pr.get("status") not in ("merged", "closed")]
+        tracked_repos = get_tracked_repos()
         alerts = get_active_alerts()
         recent_decisions = get_recent_decisions(limit=5)
         snapshots = list_snapshots()[:3]
@@ -71,6 +73,8 @@ class OfflineBriefingEngine:
         for pr in tracked_prs:
             rev_badge = f" | Review: {pr.get('latest_review_state')}" if pr.get('latest_review_state') else ""
             pr_lines.append(f"  • {pr['repo']}#{pr['pr_number']}: {pr['title']} ({pr['status'].upper()}{rev_badge})")
+        for r in tracked_repos:
+            pr_lines.append(f"  • Watching repo {r['repo']} for new PRs (last PR #{r.get('last_seen_pr', 0)})")
         if not pr_lines:
             pr_lines.append("  • No external PRs currently blocking.")
 
@@ -134,7 +138,7 @@ class OfflineBriefingEngine:
 
         # 6. Dynamic Suggested Priorities for Today
         workspace_display = Path.cwd().name or "active workspace"
-        priority_lines: List[str] = [f"Zoe Agent: Lightweight personal desktop agent in {workspace_display}."]
+        priority_lines: List[str] = []
         # Priority from active tasks
         for t in active_tasks[:2]:
             priority_lines.append(f"Task #{t['id']} ({t['title']}): {t.get('description') or 'Continue execution.'}")
@@ -151,7 +155,7 @@ class OfflineBriefingEngine:
 
         # Roadmap fallbacks to ensure actionable choices
         default_priorities = [
-            f"Zoe Agent: Lightweight personal desktop agent in {workspace_display}.",
+            f"Workspace Focus: Review active context and pending tasks in {workspace_display}.",
         ]
         for dp in default_priorities:
             if len(priority_lines) < 4:

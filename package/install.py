@@ -40,7 +40,7 @@ ASCII_LOGO = f"""
 {RED} ██║  ██║███████╗╚██████╔╝██║███████║    ██████╔╝██║  ██║██║  ██║██║██║ ╚████║{RESET}
 {RED} ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝╚══════╝    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝{RESET}
 {DARKGRAY}         [ 24/7 AUTONOMOUS NEURAL MEMORY & 3-TIER AGENT ORCHESTRATOR ]{RESET}
-{DARKGRAY}                               Version 2.4.0 (GPLv3){RESET}
+{DARKGRAY}                               Version 2.5.0 (GPLv3){RESET}
 """
 
 ANTIGRAVITY_DIRECTIVE = """

@@ -28,15 +28,18 @@ from .db import (
     get_active_alerts,
     get_recent_decisions,
     get_tracked_prs,
+    get_tracked_repos,
     init_db,
     record_decision,
     record_session,
     search_memories,
     track_pr,
+    unwatch_repo,
+    watch_repo,
 )
 from .governor import generate_active_context
 from .proxy import forward_chat_completion
-from .watchdog import WatchdogRunner, sweep_tracked_prs
+from .watchdog import WatchdogRunner, sweep_tracked_prs, sweep_tracked_repos
 from .caffeinate import (
     enable_caffeinate,
     disable_caffeinate,
@@ -127,7 +130,7 @@ class AegisRequestHandler(BaseHTTPRequestHandler):
                 "status": "ok",
                 "service": "aegis-brain",
                 "mode": get_current_mode(),
-                "version": "0.1.0",
+                "version": "2.5.0",
             })
         elif path == "/bootstrap":
             workspace_param = params.get("workspace", [None])[0]
@@ -147,6 +150,9 @@ class AegisRequestHandler(BaseHTTPRequestHandler):
         elif path == "/tracked_prs":
             prs = get_tracked_prs()
             self._send_json(200, prs)
+        elif path == "/tracked_repos":
+            repos = get_tracked_repos()
+            self._send_json(200, repos)
         elif path == "/alerts":
             alerts = get_active_alerts()
             self._send_json(200, alerts)
@@ -156,6 +162,11 @@ class AegisRequestHandler(BaseHTTPRequestHandler):
             self._send_html(200, render_dashboard_html())
         elif path == "/api/dashboard":
             self._send_json(200, get_dashboard_summary())
+        elif path == "/api/skills":
+            from .skill_scout import get_installed_skills_inventory, get_discovered_skills
+            installed = sorted(list(get_installed_skills_inventory()))
+            discovered = get_discovered_skills()
+            self._send_json(200, {"installed_count": len(installed), "installed_skills": installed, "discovered": discovered})
         else:
             self._send_json(404, {"error": "Not Found", "path": self.path})
 
@@ -225,6 +236,23 @@ class AegisRequestHandler(BaseHTTPRequestHandler):
             ok, msg = restore_snapshot(snap_id)
             self._send_json(200 if ok else 400, {"success": ok, "message": msg})
             return
+        elif path == "/api/skills/recommend":
+            query = body.get("query") or body.get("task") or body.get("prompt") or ""
+            from .arsenal_optimizer import ArsenalOptimizer
+            from .jev import JevDecisionEngine
+            plan = ArsenalOptimizer.analyze_and_optimize(query)
+            jev = JevDecisionEngine()
+            decision = jev.decide(query)
+            self._send_json(200, {
+                "query": query,
+                "detected_niches": plan.detected_niches,
+                "activated_skills": plan.activated_skills,
+                "model_tier": decision.model_tier.value if hasattr(decision.model_tier, "value") else str(decision.model_tier),
+                "risk_level": decision.risk_level.value if hasattr(decision.risk_level, "value") else str(decision.risk_level),
+                "recommended_worker": decision.recommended_worker,
+                "rationale": decision.rationale,
+            })
+            return
 
         if path == "/decision":
             row_id = record_decision(
@@ -264,9 +292,25 @@ class AegisRequestHandler(BaseHTTPRequestHandler):
                 ci_status=body.get("ci_status", "pending"),
             )
             self._send_json(200, {"status": "tracked"})
+        elif path == "/tracked_repos":
+            repo_name = str(body.get("repo", "")).strip()
+            if not repo_name:
+                self._send_json(400, {"error": "Missing 'repo' field"})
+                return
+            if body.get("action") == "unwatch":
+                removed = unwatch_repo(repo_name)
+                self._send_json(200, {"status": "unwatched" if removed else "not_found", "repo": repo_name})
+            else:
+                watch_repo(
+                    repo=repo_name,
+                    last_seen_pr=body.get("last_seen_pr"),
+                    auto_track_prs=bool(body.get("auto_track_prs", True)),
+                )
+                self._send_json(200, {"status": "watching", "repo": repo_name})
         elif path == "/watchdog/poll":
-            alerts = sweep_tracked_prs()
-            self._send_json(200, {"status": "polled", "new_alerts": alerts})
+            repo_alerts = sweep_tracked_repos()
+            pr_alerts = sweep_tracked_prs()
+            self._send_json(200, {"status": "polled", "new_alerts": repo_alerts + pr_alerts})
         elif path == "/v1/chat/completions":
             status_code, resp_payload = forward_chat_completion(body)
             self._send_json(status_code, resp_payload)

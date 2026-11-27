@@ -1,6 +1,6 @@
 """AegisBrain - Zero-UI Background Neural Memory Bus and Agent Orchestrator."""
 
-__version__ = "0.2.0"
+__version__ = "2.5.0"
 
 import sys
 
@@ -27,6 +27,7 @@ from .db import (
     record_session,
     search_memories,
     track_pr,
+    untrack_pr,
     get_tracked_prs,
     get_recent_decisions,
     get_active_alerts,

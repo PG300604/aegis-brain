@@ -129,6 +129,13 @@ CREATE TABLE IF NOT EXISTS active_agent_config (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS tracked_repos (
+    repo TEXT PRIMARY KEY,
+    last_seen_pr INTEGER DEFAULT 0,
+    auto_track_prs INTEGER DEFAULT 1,
+    last_checked TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 """
 
 
@@ -246,6 +253,16 @@ def track_pr(
         ))
 
 
+def untrack_pr(repo: str, pr_number: int) -> bool:
+    """Remove a pull request from tracking (e.g. once merged or closed)."""
+    with get_connection() as conn:
+        cursor = conn.execute(
+            "DELETE FROM tracked_prs WHERE repo = ? AND pr_number = ?",
+            (repo, pr_number),
+        )
+        return cursor.rowcount > 0
+
+
 def get_tracked_prs(status: Optional[str] = None) -> List[Dict[str, Any]]:
     """Retrieve tracked PRs."""
     query = "SELECT * FROM tracked_prs"
@@ -267,6 +284,69 @@ def get_tracked_prs(status: Optional[str] = None) -> List[Dict[str, Any]]:
                     pass
             result.append(item)
         return result
+
+
+def watch_repo(
+    repo: str,
+    last_seen_pr: Optional[int] = None,
+    auto_track_prs: bool = True,
+) -> None:
+    """Register or update a GitHub repository for new PR auto-discovery."""
+    if get_current_mode() == "private":
+        return
+
+    clean_repo = repo.strip()
+    if not clean_repo:
+        raise ValueError("Repository must be in 'owner/repo' format.")
+
+    auto_flag = 1 if auto_track_prs else 0
+    with get_connection() as conn:
+        if last_seen_pr is None:
+            conn.execute(
+                """
+                INSERT INTO tracked_repos (repo, last_seen_pr, auto_track_prs, last_checked)
+                VALUES (?, 0, ?, CURRENT_TIMESTAMP)
+                ON CONFLICT(repo) DO UPDATE SET
+                    auto_track_prs = excluded.auto_track_prs,
+                    last_checked = CURRENT_TIMESTAMP
+                """,
+                (clean_repo, auto_flag),
+            )
+        else:
+            conn.execute(
+                """
+                INSERT INTO tracked_repos (repo, last_seen_pr, auto_track_prs, last_checked)
+                VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+                ON CONFLICT(repo) DO UPDATE SET
+                    last_seen_pr = CASE
+                        WHEN excluded.last_seen_pr > tracked_repos.last_seen_pr
+                        THEN excluded.last_seen_pr
+                        ELSE tracked_repos.last_seen_pr
+                    END,
+                    auto_track_prs = excluded.auto_track_prs,
+                    last_checked = CURRENT_TIMESTAMP
+                """,
+                (clean_repo, int(last_seen_pr), auto_flag),
+            )
+
+
+def unwatch_repo(repo: str) -> bool:
+    """Stop watching a repository for new pull requests."""
+    with get_connection() as conn:
+        cursor = conn.execute(
+            "DELETE FROM tracked_repos WHERE repo = ?",
+            (repo.strip(),),
+        )
+        return cursor.rowcount > 0
+
+
+def get_tracked_repos() -> List[Dict[str, Any]]:
+    """Retrieve all watched repositories."""
+    with get_connection() as conn:
+        rows = conn.execute(
+            "SELECT * FROM tracked_repos ORDER BY last_checked DESC"
+        ).fetchall()
+        return [dict(r) for r in rows]
 
 
 def get_recent_decisions(limit: int = 10, category: Optional[str] = None) -> List[Dict[str, Any]]:

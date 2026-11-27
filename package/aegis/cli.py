@@ -6,9 +6,14 @@ from .db import (
     get_active_alerts,
     get_recent_decisions,
     get_tracked_prs,
+    get_tracked_repos,
     init_db,
     record_decision,
     search_memories,
+    track_pr,
+    untrack_pr,
+    unwatch_repo,
+    watch_repo,
 )
 from .governor import generate_active_context
 from .hooks import seed_initial_knowledge
@@ -21,7 +26,7 @@ from .service import (
     start_daemon,
     stop_daemon,
 )
-from .watchdog import sweep_tracked_prs
+from .watchdog import fetch_github_repo_prs, sweep_tracked_prs, sweep_tracked_repos
 from .media import generate_media
 from .hardware import format_hardware_report
 from .governance import (
@@ -101,6 +106,36 @@ def main() -> None:
 
     # poll
     subparsers.add_parser("poll", help="Run immediate watchdog sweep on tracked PRs")
+
+    # pr (Track, Untrack, or List Pull Requests)
+    pr_parser = subparsers.add_parser("pr", help="Track, untrack, or list pull requests monitored by Aegis")
+    pr_sub = pr_parser.add_subparsers(dest="pr_action", help="PR action")
+
+    pr_list = pr_sub.add_parser("list", help="List tracked pull requests")
+    pr_list.add_argument("--all", "-a", action="store_true", help="Include merged and closed PRs")
+
+    pr_track = pr_sub.add_parser("track", help="Track a pull request")
+    pr_track.add_argument("repo", help="Repository in 'owner/repo' format (e.g. pipeshub-ai/pipeshub-ai)")
+    pr_track.add_argument("number", type=int, help="Pull request number")
+    pr_track.add_argument("--title", "-t", default="", help="Optional PR title")
+
+    pr_untrack = pr_sub.add_parser("untrack", help="Untrack a pull request")
+    pr_untrack.add_argument("repo", help="Repository in 'owner/repo' format")
+    pr_untrack.add_argument("number", type=int, help="Pull request number")
+
+    # repo (Watch/Unwatch entire repositories for newly opened PRs)
+    repo_parser = subparsers.add_parser("repo", help="Watch repositories for newly opened pull requests")
+    repo_sub = repo_parser.add_subparsers(dest="repo_action", help="Repo watch action")
+
+    repo_sub.add_parser("list", help="List watched repositories")
+
+    repo_watch = repo_sub.add_parser("watch", help="Watch a GitHub repository for new PRs")
+    repo_watch.add_argument("repo", help="Repository in 'owner/repo' format (e.g. owner/repo)")
+    repo_watch.add_argument("--no-auto-track", action="store_true", help="Alert on new PRs without adding them to tracked PRs")
+    repo_watch.add_argument("--no-seed", action="store_true", help="Do not seed existing open PRs as baseline")
+
+    repo_unwatch = repo_sub.add_parser("unwatch", help="Stop watching a GitHub repository")
+    repo_unwatch.add_argument("repo", help="Repository in 'owner/repo' format")
 
     # start (detached daemon)
     subparsers.add_parser("start", help="Start background AegisBrain daemon")
@@ -644,6 +679,10 @@ def main() -> None:
         print(f"Tracked PRs:   {len(prs)}")
         for pr in prs:
             print(f"  - {pr['repo']}#{pr['pr_number']}: {pr['title']} [{pr['status']}]")
+        repos = get_tracked_repos()
+        print(f"Watched Repos: {len(repos)}")
+        for r in repos:
+            print(f"  - {r['repo']} (last PR #{r.get('last_seen_pr', 0)})")
         print(f"Active Alerts: {len(alerts)}")
         for a in alerts:
             print(f"  - [{a['category']}] {a['message']}")
@@ -712,10 +751,96 @@ def main() -> None:
 
     elif args.command == "poll":
         init_db()
-        alerts = sweep_tracked_prs()
+        repo_alerts = sweep_tracked_repos()
+        pr_alerts = sweep_tracked_prs()
+        alerts = repo_alerts + pr_alerts
         print(f"[AegisBrain] Watchdog sweep complete. New alerts: {len(alerts)}")
         for a in alerts:
             print(f"  - {a}")
+
+    elif args.command == "repo":
+        init_db()
+        action = getattr(args, "repo_action", None) or "list"
+        if action == "list":
+            repos = get_tracked_repos()
+            if not repos:
+                print("No repositories currently watched.")
+            else:
+                print(f"Watched Repositories ({len(repos)}):")
+                for r in repos:
+                    auto_s = "auto-track" if r.get("auto_track_prs", 1) else "alert-only"
+                    print(f"  • {r['repo']} (last PR #{r.get('last_seen_pr', 0)} | {auto_s})")
+        elif action == "watch":
+            repo = args.repo.strip()
+            auto_track = not getattr(args, "no_auto_track", False)
+            baseline_pr = 0
+            seeded_count = 0
+            if not getattr(args, "no_seed", False):
+                open_prs = fetch_github_repo_prs(repo, state="open") or []
+                for pr in open_prs:
+                    num = int(pr.get("number", 0) or 0)
+                    if num > baseline_pr:
+                        baseline_pr = num
+                    if auto_track and num > 0:
+                        labels = [l.get("name") for l in pr.get("labels", []) if isinstance(l, dict) and "name" in l]
+                        track_pr(
+                            repo=repo,
+                            pr_number=num,
+                            title=(pr.get("title") or f"PR #{num}").strip(),
+                            status="open",
+                            labels=labels,
+                            ci_status=pr.get("mergeable_state", "pending"),
+                            comments_count=int(pr.get("comments", 0) or 0),
+                            review_comments_count=int(pr.get("review_comments", 0) or 0),
+                            updated_at=pr.get("updated_at", ""),
+                        )
+                        seeded_count += 1
+            watch_repo(repo=repo, last_seen_pr=baseline_pr, auto_track_prs=auto_track)
+            print(f"[AegisBrain] Now watching repository {repo} (baseline PR #{baseline_pr}, {seeded_count} open PR(s) tracked)")
+        elif action == "unwatch":
+            repo = args.repo.strip()
+            ok = unwatch_repo(repo)
+            if ok:
+                print(f"[AegisBrain] Stopped watching repository: {repo}")
+            else:
+                print(f"[AegisBrain] Repository {repo} was not found in watched list.")
+
+    elif args.command == "pr":
+        init_db()
+        action = getattr(args, "pr_action", None) or "list"
+        if action == "list":
+            prs = get_tracked_prs()
+            if not getattr(args, "all", False):
+                prs = [p for p in prs if p.get("status") not in ("merged", "closed")]
+            if not prs:
+                print("No active pull requests being tracked.")
+            else:
+                print(f"Tracked Pull Requests ({len(prs)}):")
+                for p in prs:
+                    rev = f" | Review: {p.get('latest_review_state')}" if p.get('latest_review_state') else ""
+                    print(f"  • {p['repo']}#{p['pr_number']}: {p['title']} [{p['status'].upper()}{rev}]")
+        elif action == "track":
+            repo = args.repo.strip()
+            pr_num = args.number
+            title = args.title.strip()
+            if not title:
+                try:
+                    from .watchdog import fetch_github_pr
+                    data = fetch_github_pr(repo, pr_num)
+                    if data:
+                        title = data.get("title", "")
+                except Exception:
+                    pass
+            track_pr(repo=repo, pr_number=pr_num, title=title or f"PR #{pr_num}", status="open")
+            print(f"[AegisBrain] Now tracking pull request: {repo}#{pr_num} ({title or 'open'})")
+        elif action == "untrack":
+            repo = args.repo.strip()
+            pr_num = args.number
+            ok = untrack_pr(repo=repo, pr_number=pr_num)
+            if ok:
+                print(f"[AegisBrain] Untracked pull request: {repo}#{pr_num}")
+            else:
+                print(f"[AegisBrain] Pull request {repo}#{pr_num} was not found in tracked list.")
 
     elif args.command == "start":
         ok, msg = start_daemon()
